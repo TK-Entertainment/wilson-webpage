@@ -10,17 +10,17 @@ export default function HomePage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar/>
       <main className="overflow-x-clip">
-        <div className="mx-auto flex max-w-[1400px] flex-col px-3 md:px-6">
-          <div className="flex flex-row w-auto mx-auto">
+        <div className="mx-auto flex max-w-[1400px] flex-col px-8 md:px-12">
+          <div className="mt-4 flex sm:flex-row flex-col w-auto mx-auto">
             <div>
               <h1 className="text-4xl font-bold mt-4 mb-4">最新消息</h1>
               <PostBlock page={latestPost}/>
             </div>
-            <div className="mx-2"></div>
+            <div className="sm:mx-2"></div>
             <div>
-              <h1 className="text-4xl font-bold mt-4 mb-4">推薦內容</h1>
+              <h1 className="mt-2 text-4xl font-bold mt-4 mb-4">推薦內容</h1>
               <PostBlock page={latestPost}/>
             </div>
           </div>

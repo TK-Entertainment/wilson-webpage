@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Navbar from "@/components/Navigation/navbar";
 
 export const metadata: Metadata = {
     title: {
@@ -20,5 +21,12 @@ export const metadata: Metadata = {
   };
 
 export default function BlogLayout({ children }: { children: ReactNode }) {
-    return <div className="container">{children}</div>
+    return (
+      <>
+        <Navbar/>
+        <div className="container">
+          {children}
+        </div>
+      </>
+    )
 }

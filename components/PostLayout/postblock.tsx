@@ -8,7 +8,7 @@ export default function PostBlock({ page }: { page: Blog }) {
     return (
         <Link
             href={`/blog/${page.slug}`}
-            className="flex flex-row p-3 overflow-hidden rounded-2xl border bg-card text-card-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            className="flex flex-row p-3 rounded-2xl border bg-card text-card-foreground transition-all hover:bg-accent hover:drop-shadow-2xl hover:scale-105"
         >
             <div className="flex rounded-2xl border overflow-hidden w-64 h-auto">
                 {page.image != null ? (
@@ -31,7 +31,7 @@ export default function PostBlock({ page }: { page: Blog }) {
             <div className="flex flex-col ml-4">
                 <div>
                 {page.tags?.map((tag, index) => (
-                    <span id={`${index}`} className="text-sm mr-1 rounded-2xl border px-2">{tag}</span>
+                    <span key={`${index}`} className="text-sm mr-1 rounded-2xl border px-2">#&nbsp;{tag}</span>
                 ))
                 }
                 </div>
