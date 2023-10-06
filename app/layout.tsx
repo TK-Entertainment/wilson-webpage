@@ -8,6 +8,8 @@ const inter = Inter({
   subsets: ['latin']
 })
 
+export const runtime = 'edge'
+
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={inter.className}>
