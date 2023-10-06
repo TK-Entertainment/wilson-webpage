@@ -36,6 +36,7 @@ const config = createConfig({
   }
 });
 
+// @ts-ignore
 (config.documentTypes as DocumentType[]).push(BlogPost)
 
 export default makeSource(config);
