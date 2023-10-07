@@ -27,7 +27,7 @@ export default function HomePage() {
               <PostBlock page={latestPost}/>
             </div>
           </div>
-          <div className="mt-4 flex sm:flex-col flex-row w-auto space-x-4">
+          <div className="mt-4 flex sm:flex-col flex-row w-auto space-x-4 mb-4">
             <h1 className="text-4xl font-bold mt-4 mb-4">探索主題</h1>
             <div className="flex flex-row">
               {topicTags.map(([topic, count], index) => (

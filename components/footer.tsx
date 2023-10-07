@@ -20,14 +20,30 @@ export default function Footer() {
   
   function Info() {
     return (
-      <div className="hidden flex-col gap-2 sm:flex">
-        <div className="flex flex-row items-center gap-2">
-
-          <h1 className="text-xl font-bold">Yeecord</h1>
-        </div>
-        <p className="mt-auto text-xs text-muted-foreground">
-          YEE式機器龍 © 2019 ~ {new Date(Date.now()).getFullYear()}
+    <>
+      <div className="hidden flex-col sm:flex">
+        <Link href="https://github.com/TK-Entertainment" className="flex flex-row items-center gap-2">
+          <Image 
+          src="/img/wApgX8J.svg"
+          alt="None"
+          width={25}
+          height={25}
+          />
+          <p className="text-base font-base">A Project of TK Entertainment</p>
+        </Link>
+        <p className="text-2xl font-bold">威爾森的科普天地 / Wilson's blog</p>
+        <p className="mt-12 text-xs text-muted-foreground">
+          威爾森 (Wilson Chen) © 2019 ~ {new Date(Date.now()).getFullYear()}
         </p>
       </div>
+      <div className="hidden flex-col sm:flex">
+        <p className="mt-auto text-xs text-muted-foreground">
+          Made with <Link href="https://github.com/vercel/next.js">Next.js</Link>
+        </p>
+        <p className="mt-auto text-xs text-muted-foreground text-right">
+          Next Docs framework by <Link href="https://github.com/fuma-nama">@Fuma Nama</Link>
+        </p>
+      </div>
+    </>
     );
   }
