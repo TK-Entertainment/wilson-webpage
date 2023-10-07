@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import Navbar from "@/components/Navigation/navbar";
+import { RollButton } from 'next-docs-ui/components/roll-button'
 
 export const metadata: Metadata = {
     title: {
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
 export default function BlogLayout({ children }: { children: ReactNode }) {
     return (
       <>
-        <Navbar/>
         <div className="container">
+          <RollButton />
           {children}
         </div>
       </>
