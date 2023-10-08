@@ -20,11 +20,9 @@ export default function BlogPage() {
             <div key={index}>
               <PostBlock page={post} />
             </div>
-          ))
-          }
+          ))}
         </div>
       </div>
-
     </>
   );
 }

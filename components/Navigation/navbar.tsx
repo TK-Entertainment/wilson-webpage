@@ -56,23 +56,26 @@ export default function Navbar() {
             href="/blog"
             className="flex flex-col justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
           >
-            {(pathname !== "/blog") && (pathname !== "/blog/tags") ? (
+            {pathname !== "/blog" && pathname !== "/blog/tags" ? (
               <>
-              {!isMobile && blog ? (
-                <>
-                  <div className="text-sm opacity-60">
-                    <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-                    點此回到文章列表
-                  </div>
-                  <div className="font-bold text-2xl flex flex-row">
-                    <p className="font-normal opacity-70">部落格</p>
-                    <p>&nbsp;/&nbsp;</p>
-                    <p>{blog.title}</p>
-                  </div>
-                </>
-              ) : (
-                <FontAwesomeIcon icon={faArrowLeft} className="p-2 text-2xl" />
-              )}
+                {!isMobile && blog ? (
+                  <>
+                    <div className="text-sm opacity-60">
+                      <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+                      點此回到文章列表
+                    </div>
+                    <div className="font-bold text-2xl flex flex-row">
+                      <p className="font-normal opacity-70">部落格</p>
+                      <p>&nbsp;/&nbsp;</p>
+                      <p>{blog.title}</p>
+                    </div>
+                  </>
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faArrowLeft}
+                    className="p-2 text-2xl"
+                  />
+                )}
               </>
             ) : (
               <p className="font-bold text-2xl">部落格</p>

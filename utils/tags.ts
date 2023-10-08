@@ -35,7 +35,7 @@ export function getTopicTagsMap() {
 
 export function getTagsMapWithoutTopics() {
   const tagsMap = getTagsMap();
-  const topicTagsMap = getTopicTagsMap()
+  const topicTagsMap = getTopicTagsMap();
 
   for (const topics of topicTagsMap ?? []) {
     if (tagsMap.has(topics[0])) {
@@ -43,5 +43,5 @@ export function getTagsMapWithoutTopics() {
     }
   }
 
-  return tagsMap
+  return tagsMap;
 }
