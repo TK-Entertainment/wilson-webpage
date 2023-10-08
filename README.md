@@ -1,4 +1,3 @@
-
 # Wilson's Notes
 
 This is a Next.js application generated with [Create Next Docs](https://github.com/fuma-nama/next-docs).
@@ -12,6 +11,7 @@ pnpm dev
 # or
 yarn dev
 ```
+
 Open http://localhost:3000 with your browser to see the result.
 
 ## Learn More

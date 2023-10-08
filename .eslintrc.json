@@ -1,6 +1,6 @@
 {
-    "extends": "next/core-web-vitals",
-    "env": {
-        "ESNext": true
-    }
+  "extends": "next/core-web-vitals",
+  "env": {
+    "ESNext": true
+  }
 }

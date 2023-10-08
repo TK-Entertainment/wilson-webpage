@@ -1,7 +1,7 @@
-import { DocsLayout } from 'next-docs-ui/layout'
-import type { ReactNode } from 'react'
-import { tree } from '../source'
-import Navbar from '@/components/Navigation/navbar'
+import { DocsLayout } from "next-docs-ui/layout";
+import type { ReactNode } from "react";
+import { tree } from "../source";
+import Navbar from "@/components/Navigation/navbar";
 
 export default function RootDocsLayout({ children }: { children: ReactNode }) {
   return (
@@ -10,5 +10,5 @@ export default function RootDocsLayout({ children }: { children: ReactNode }) {
         {children}
       </DocsLayout>
     </>
-  )
+  );
 }
