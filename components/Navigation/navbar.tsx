@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
-import { MoonIcon, SunIcon, Monitor } from "lucide-react"
+import { MoonIcon, SunIcon, Monitor } from "lucide-react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
 import { allBlogs } from "contentlayer/generated";
@@ -87,7 +87,7 @@ export default function Navbar() {
               href="/blog"
               className="flex flex-col justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
             >
-              {pathname !== "/blog" && (pathname.indexOf("/blog/tags")) ? (
+              {pathname !== "/blog" && pathname.indexOf("/blog/tags") ? (
                 <>
                   {!isMobile && blog ? (
                     <>
@@ -128,8 +128,9 @@ export default function Navbar() {
               <MoonIcon className={"text-2xl my-auto"} />
             ) : theme === "light" ? (
               <SunIcon className={"text-2xl my-auto"} />
-            ) : (<Monitor className={"text-2xl my-auto"} />)
-            }
+            ) : (
+              <Monitor className={"text-2xl my-auto"} />
+            )}
           </Link>
           <Link
             href="https://github.com/TK-Entertainment/wilson-webpage"
@@ -141,7 +142,10 @@ export default function Navbar() {
             href="https://instagram.com/wilson_note"
             className="nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
           >
-            <FontAwesomeIcon icon={faInstagram} className={"text-2xl my-auto"} />
+            <FontAwesomeIcon
+              icon={faInstagram}
+              className={"text-2xl my-auto"}
+            />
           </Link>
         </div>
       </div>

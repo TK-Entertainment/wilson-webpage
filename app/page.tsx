@@ -32,14 +32,17 @@ export default function HomePage() {
           <div className="mt-4 flex sm:flex-col flex-row w-auto space-x-4 mb-4">
             <h1 className="text-4xl font-bold mt-4 mb-4">探索主題</h1>
             <div className="flex flex-row">
-            <Link
+              <Link
                 href={`/blog`}
                 className="flex flex-row p-3 mr-2 w-fit rounded-2xl border bg-card text-card-foreground transition-all hover:bg-accent hover:drop-shadow-2xl hover:scale-105"
               >
                 <div className="relative flex flex-col my-auto">
                   <p className="text-3xl font-bold">查看所有文章</p>
                   <p className="text-base font-normal opacity-70">{`${allBlogs.length} 個文章`}</p>
-                  <FontAwesomeIcon icon={faArrowRight} className="text-7xl opacity-10 absolute inset-y-0 right-0" />
+                  <FontAwesomeIcon
+                    icon={faArrowRight}
+                    className="text-7xl opacity-10 absolute inset-y-0 right-0"
+                  />
                 </div>
               </Link>
               <div className="border-l-2 mr-2"></div>

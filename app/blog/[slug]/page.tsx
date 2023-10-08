@@ -27,8 +27,12 @@ export default async function BlogSlug({
           <div className="col-span-6 px-8 md:px-12 md:mt-8 mt-4">
             <div className="md:py-8 py-4">
               {page.tags?.map((tag, index) => (
-                <Link key={`${index}`} href={`/blog/tags/${tag}`} className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90">
-                    #&nbsp;{tag}
+                <Link
+                  key={`${index}`}
+                  href={`/blog/tags/${tag}`}
+                  className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90"
+                >
+                  #&nbsp;{tag}
                 </Link>
               ))}
               <h1>{page.title}</h1>
