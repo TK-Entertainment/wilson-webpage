@@ -32,3 +32,16 @@ export function getTopicTagsMap() {
 
   return topicTagsMap;
 }
+
+export function getTagsMapWithoutTopics() {
+  const tagsMap = getTagsMap();
+  const topicTagsMap = getTopicTagsMap()
+
+  for (const topics of topicTagsMap ?? []) {
+    if (tagsMap.has(topics[0])) {
+      tagsMap.delete(topics[0]);
+    }
+  }
+
+  return tagsMap
+}

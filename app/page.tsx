@@ -1,8 +1,5 @@
-import Link from "next/link";
-
-import Navbar from "@/components/Navigation/navbar";
 import PostBlock from "@/components/PostLayout/postblock";
-import { type Blog, allBlogs } from "contentlayer/generated";
+import { allBlogs } from "contentlayer/generated";
 import { type TagCount, getTopicTagsMap } from "@/utils/tags";
 import TagBlock from "@/components/PostLayout/tagblock";
 

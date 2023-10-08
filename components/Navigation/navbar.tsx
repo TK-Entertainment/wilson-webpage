@@ -41,7 +41,7 @@ export default function Navbar() {
 
   return (
     <Nav
-      title=""
+      title={""}
       transparent={false}
       links={links}
       collapsibleSidebar={false}
@@ -50,26 +50,32 @@ export default function Navbar() {
       <Link href="/" className="text-2xl font-bold">
         威爾森的科普天地
       </Link>
-      {pathname.startsWith("/blog") && pathname !== "/blog" && blog ? (
+      {pathname.startsWith("/blog") ? (
         <>
           <Link
             href="/blog"
             className="flex flex-col justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
           >
-            {!isMobile ? (
+            {(pathname !== "/blog") && (pathname !== "/blog/tags") ? (
               <>
-                <div className="text-sm opacity-60">
-                  <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-                  點此回到文章列表
-                </div>
-                <div className="font-bold text-2xl flex flex-row">
-                  <p className="font-normal opacity-70">部落格</p>
-                  <p>&nbsp;/&nbsp;</p>
-                  <p>{blog.title}</p>
-                </div>
+              {!isMobile && blog ? (
+                <>
+                  <div className="text-sm opacity-60">
+                    <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+                    點此回到文章列表
+                  </div>
+                  <div className="font-bold text-2xl flex flex-row">
+                    <p className="font-normal opacity-70">部落格</p>
+                    <p>&nbsp;/&nbsp;</p>
+                    <p>{blog.title}</p>
+                  </div>
+                </>
+              ) : (
+                <FontAwesomeIcon icon={faArrowLeft} className="p-2 text-2xl" />
+              )}
               </>
             ) : (
-              <FontAwesomeIcon icon={faArrowLeft} className="p-2 text-2xl" />
+              <p className="font-bold text-2xl">部落格</p>
             )}
           </Link>
         </>

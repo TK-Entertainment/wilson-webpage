@@ -26,7 +26,7 @@ function Info() {
           href="https://github.com/TK-Entertainment"
           className="flex flex-row items-center gap-2"
         >
-          <Image src="/img/wApgX8J.svg" alt="None" width={25} height={25} />
+          <Image src="/img/wApgX8J.svg" alt="None" className={"stroke-black dark:stroke-white"} width={25} height={25} />
           <p className="text-base font-base">A Project of TK Entertainment</p>
         </Link>
         <p className="text-2xl font-bold">威爾森的科普天地 / Wilson's blog</p>
