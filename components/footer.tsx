@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLinkIcon } from "lucide-react";
@@ -26,13 +28,6 @@ function Info() {
           href="https://github.com/TK-Entertainment"
           className="flex flex-row items-center gap-2"
         >
-          <Image
-            src="/img/wApgX8J.svg"
-            alt="None"
-            className={"stroke-black dark:stroke-white"}
-            width={25}
-            height={25}
-          />
           <p className="text-base font-base">A Project of TK Entertainment</p>
         </Link>
         <p className="text-2xl font-bold">威爾森的科普天地 / Wilson's blog</p>
@@ -40,7 +35,7 @@ function Info() {
           威爾森 (Wilson Chen) © 2019 ~ {new Date(Date.now()).getFullYear()}
         </p>
       </div>
-      <div className="hidden flex-col sm:flex">
+      <div className="hidden flex-col sm:flex text-right">
         <p className="mt-auto text-xs text-muted-foreground">
           Made with{" "}
           <Link href="https://github.com/vercel/next.js">Next.js</Link>
@@ -48,6 +43,9 @@ function Info() {
         <p className="mt-auto text-xs text-muted-foreground text-right">
           Next Docs framework by{" "}
           <Link href="https://github.com/fuma-nama">@Fuma Nama</Link>
+        </p>
+        <p className="mt-12 text-xs text-muted-foreground">
+          v20231009 by Kevinowo
         </p>
       </div>
     </>

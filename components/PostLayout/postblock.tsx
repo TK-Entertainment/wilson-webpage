@@ -26,12 +26,9 @@ export default function PostBlock({ page }: { page: Blog }) {
       <div className="flex grow flex-auto flex-col ml-4 w-max">
         <div>
           {page.tags?.map((tag, index) => (
-            <span
-              key={`${index}`}
-              className="text-sm mr-1 rounded-2xl border px-2"
-            >
-              #&nbsp;{tag}
-            </span>
+            <Link key={`${index}`} href={`/blog/tags/${tag}`} className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90">
+                #&nbsp;{tag}
+            </Link>
           ))}
         </div>
         <div>

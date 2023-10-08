@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
-import type { Blog } from "contentlayer/generated";
+import getTopicTagsIcon from "@/utils/tagsicon";
 import type { TagCount } from "@/utils/tags";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTag } from "@fortawesome/free-solid-svg-icons";
@@ -19,7 +18,7 @@ export default function TagBlock({
     >
       <div className="flex rounded-2xl p-5 border overflow-hidden object-cover">
         <FontAwesomeIcon
-          icon={faTag}
+          icon={getTopicTagsIcon(tag)}
           className="text-3xl text-card-foreground m-auto"
         />
       </div>

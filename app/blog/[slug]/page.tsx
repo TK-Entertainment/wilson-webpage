@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faUser } from "@fortawesome/free-regular-svg-icons";
 import { getTableOfContents } from "next-docs-zeta/server";
 import { TOC } from "@/components/toc";
+import Link from "next/link";
 
 export default async function BlogSlug({
   params,
@@ -26,12 +27,9 @@ export default async function BlogSlug({
           <div className="col-span-6 px-8 md:px-12 md:mt-8 mt-4">
             <div className="md:py-8 py-4">
               {page.tags?.map((tag, index) => (
-                <span
-                  key={`${index}`}
-                  className="text-sm mr-1 rounded-2xl border px-2"
-                >
-                  #&nbsp;{tag}
-                </span>
+                <Link key={`${index}`} href={`/blog/tags/${tag}`} className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90">
+                    #&nbsp;{tag}
+                </Link>
               ))}
               <h1>{page.title}</h1>
               <h2>{page.description}</h2>
