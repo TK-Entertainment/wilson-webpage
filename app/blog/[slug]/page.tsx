@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faUser } from "@fortawesome/free-regular-svg-icons";
 import { getTableOfContents } from "next-docs-zeta/server";
 import { TOC } from "@/components/toc";
+import Actionbar from "@/components/Navigation/actionbar";
 import Link from "next/link";
 
 export default async function BlogSlug({
@@ -22,6 +23,7 @@ export default async function BlogSlug({
 
   return (
     <>
+      <Actionbar showTagMenu={null} setShowTagMenu={null}/>
       <MDXContent>
         <div className="grid grid-cols-7">
           <div className="col-span-6 px-8 md:px-12 md:mt-8 mt-4">

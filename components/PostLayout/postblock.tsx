@@ -8,38 +8,39 @@ export default function PostBlock({ page }: { page: Blog }) {
   return (
     <Link
       href={`/blog/${page.slug}`}
-      className="flex flex-row flex-auto p-3 rounded-2xl border bg-card text-card-foreground transition-all hover:bg-accent hover:drop-shadow-2xl hover:scale-105"
+      className="flex flex-col lg:flex-row flex-auto lg:p-3 rounded-2xl border bg-card text-card-foreground transition-all hover:bg-accent hover:drop-shadow-2xl hover:scale-105 active:scale-95 lg:active:scale-100"
     >
-      <div className="flex flex-none rounded-2xl border overflow-hidden w-48 h-auto object-cover">
+      <div className="flex flex-none max-lg:aspect-video max-lg:justify-center rounded-2xl lg:rounded-2xl border overflow-hidden lg:w-48 max-lg:h-48 h-auto object-cover">
         {page.image != null ? (
           <Image alt="img" src={page.image} width={500} height={400} />
         ) : (
           <Image
             alt="none"
             src="/img/taiwan.png"
-            className="object-none overflow-hidden bg-contain bg-center"
+            className="object-cover lg:object-none overflow-hidden max-lg:h-full"
             width={500}
             height={400}
           />
         )}
       </div>
-      <div className="flex grow flex-auto flex-col ml-4 w-max">
-        <div>
+      <div className="flex grow max-lg:p-3 flex-col ml-4 w-max">
+        <div className="flex flex-wrap">
           {page.tags?.map((tag, index) => (
+            <div key={`${index}`}>
             <Link
-              key={`${index}`}
               href={`/blog/tags/${tag}`}
               className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90"
             >
               #&nbsp;{tag}
             </Link>
+            </div>
           ))}
         </div>
-        <div>
-          <p className="flex text-3xl font-bold mt-2 mr-auto">{page.title}</p>
-          <article className="flex text-xl font-base mt-1 mr-auto">
+        <div className="flex flex-col">
+          <p className="flex text-3xl font-bold mt-2 mr-auto break-all">{page.title}</p>
+          <p className="flex text-xl font-base mt-1 mr-auto break-all">
             {page.description}
-          </article>
+          </p>
         </div>
         <div className="mt-auto flex flex-col mr-auto">
           <div className="flex flex-row content-center">

@@ -17,7 +17,7 @@ export default function TagSidebar() {
   const pathname = decodeURIComponent(usePathname());
 
   return (
-    <nav className="overflow-y-auto overflow-x-visible nd-sticky nd-divide-y nd-flex nd-flex-col nd-top-16 nd-gap-4 nd-py-12 nd-px-2 nd-w-[150px] nd-h-[calc(100vh-4rem)] max-xl:nd-hidden">
+    <nav className="overflow-y-auto overflow-x-visible nd-sticky nd-divide-y nd-flex nd-flex-col nd-top-16 nd-gap-4 nd-py-12 nd-px-2 nd-w-[150px] nd-h-[calc(100vh-4rem)]">
       <ul key="all">
         <Link
           href={`/blog`}
@@ -26,7 +26,7 @@ export default function TagSidebar() {
             pathname == `/blog`
               ? "bg-slate-950 text-white dark:bg-white dark:text-black"
               : "hover:bg-accent text-card-foreground"
-          } hover:drop-shadow-2xl hover:scale-105 active:scale-100 justify-center`}
+          } hover:drop-shadow-2xl hover:scale-105 active:scale-95 lg:active:scale-100 justify-center`}
         >
           <FontAwesomeIcon icon={faHome} className="text-base my-auto" />
           <span className="text-base font-bold ml-2 my-auto">全部文章</span>
@@ -48,7 +48,7 @@ export default function TagSidebar() {
               pathname == `/blog/tags/${topic}`
                 ? "bg-slate-950 text-white dark:bg-white dark:text-black"
                 : "hover:bg-accent text-card-foreground"
-            } hover:drop-shadow-2xl hover:scale-105 active:scale-100 justify-center`}
+            } hover:drop-shadow-2xl hover:scale-105 active:scale-95 lg:active:scale-100 justify-center`}
           >
             <FontAwesomeIcon
               icon={getTopicTagsIcon(topic)}
@@ -74,7 +74,7 @@ export default function TagSidebar() {
               pathname == `/blog/tags/${topic}`
                 ? "bg-slate-950 text-white dark:bg-white dark:text-black"
                 : "hover:bg-accent text-card-foreground"
-            } hover:drop-shadow-2xl hover:scale-105 active:scale-100 justify-center`}
+            } hover:drop-shadow-2xl hover:scale-105 active:scale-95 lg:active:scale-100 justify-center`}
           >
             <FontAwesomeIcon icon={faTag} className="text-base my-auto" />
             <span className="text-base font-bold ml-2 my-auto">{topic}</span>

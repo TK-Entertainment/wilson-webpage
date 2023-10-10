@@ -81,15 +81,15 @@ export default function Navbar() {
         <Link href="/" className="text-2xl font-bold">
           威爾森的科普天地
         </Link>
-        {pathname.startsWith("/blog") ? (
+        {pathname.startsWith("/blog") && !isMobile ? (
           <>
             <Link
               href="/blog"
-              className="flex flex-col justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
+              className="max-md:hidden flex flex-col justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
             >
               {pathname !== "/blog" && pathname.indexOf("/blog/tags") ? (
                 <>
-                  {!isMobile && blog ? (
+                  {blog ? (
                     <>
                       <div className="text-sm opacity-60">
                         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
@@ -102,10 +102,7 @@ export default function Navbar() {
                       </div>
                     </>
                   ) : (
-                    <FontAwesomeIcon
-                      icon={faArrowLeft}
-                      className="p-2 text-2xl"
-                    />
+                    <></>
                   )}
                 </>
               ) : (
