@@ -25,16 +25,18 @@ _仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重�
 此專案利用 **Cloudflare Pages** 進行自動部署，在 push 時就會自動建置並部署到 **Cloudflare edge network**
 
 ## 相關截圖
+
 ### 電腦版網站
+
 <img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/bd4d2172-d4fb-46a8-8fa6-a34ead15e318" width=400></img>
 <img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/54b1ed42-3ebf-4ce4-b028-6b6a5c3a6af4" width=400></img>
 <img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/4f677426-c6e3-49c9-a41f-aea0e714d925" width=400></img>
 
 ### 手機版網站
+
 <img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/53672f4b-c20e-460b-9c5d-2519ae000ad6" width=250></img>
 <img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/d2eae6df-f51a-46bd-a815-603fd3c64f89" width=250></img>
 <img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/13cca01b-65e0-4894-b8fd-b03b42e84d7f" width=250></img>
-
 
 ## 使用技術
 
