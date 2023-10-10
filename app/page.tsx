@@ -39,7 +39,7 @@ export default function HomePage() {
                 <div className="relative flex">
                   <FontAwesomeIcon
                     icon={faArrowRight}
-                    className="text-7xl opacity-10"
+                    className="text-7xl opacity-10 max-sm:absolute max-sm:inset-y-0 max-sm:right-0"
                   />
                 </div>
               </div>
