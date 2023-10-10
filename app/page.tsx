@@ -19,7 +19,29 @@ export default function HomePage() {
     <>
       <main className="overflow-x-clip justify-center">
         <div className="flex flex-col px-8 lg:px-20">
-          <div className="mt-4 grid lg:grid-cols-2 lg:grid-rows-1 grid-cols-1 grid-rows-2 lg:space-x-4">
+        <div className="flex flex-col flex-wrap">
+          <h1 className="mt-4 text-4xl font-bold mt-4 mb-4">關於專案</h1>
+          <Link
+              href={`/blog/what-is-young-want-xin-kong`}
+              className="flex flex-row p-3 rounded-2xl border bg-card text-card-foreground transition-all hover:bg-accent hover:drop-shadow-2xl hover:scale-105"
+            >
+              <div className="flex flex-row w-full items-center justify-between">
+                <div className="flex flex-col justify-center">
+                  <p className="text-2xl font-normal">了解什麼是</p>
+                  <p className="text-4xl font-bold">Young Want 星空</p>
+                  <p className="mt-2 text-base font-normal opacity-70">仰望星空科普專案介紹，為你帶來不同以往的科普體驗</p>
+                  <p className="text-base font-normal opacity-70">重拾愛好自然與科學之心，讓我們一起徜徉在浩瀚星河中吧！</p>
+                </div>
+                <div className="relative flex">
+                  <FontAwesomeIcon
+                    icon={faArrowRight}
+                    className="text-7xl opacity-10"
+                  />
+                </div>
+              </div>
+            </Link>
+          </div>
+          <div className="mt-2 grid lg:grid-cols-2 lg:grid-rows-1 grid-cols-1 grid-rows-2 lg:space-x-4">
             <div className="">
               <h1 className="text-4xl font-bold mt-4 mb-4">最新消息</h1>
               <PostBlock page={latestPost} />
