@@ -23,7 +23,7 @@ export default function PostBlock({ page }: { page: Blog }) {
           />
         )}
       </div>
-      <div className="flex grow max-lg:p-3 flex-col ml-4 w-max">
+      <div className="flex max-lg:p-3 flex-col ml-4 w-fit">
         <div className="flex flex-wrap">
           {page.tags?.map((tag, index) => (
             <div key={`${index}`}>
@@ -37,10 +37,10 @@ export default function PostBlock({ page }: { page: Blog }) {
           ))}
         </div>
         <div className="flex flex-col">
-          <p className="flex text-3xl font-bold mt-2 mr-auto break-all">
+          <p className="flex text-3xl max-md:text-2xl font-bold mt-2 mr-auto overflow-hidden overflow-ellipsis">
             {page.title}
           </p>
-          <p className="flex text-xl font-base mt-1 mr-auto break-all">
+          <p className="flex flex-1 text-xl font-base mt-1 mr-auto overflow-hidden overflow-ellipsis text-muted-foreground">
             {page.description}
           </p>
         </div>
