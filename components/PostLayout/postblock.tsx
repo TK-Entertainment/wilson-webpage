@@ -27,17 +27,19 @@ export default function PostBlock({ page }: { page: Blog }) {
         <div className="flex flex-wrap">
           {page.tags?.map((tag, index) => (
             <div key={`${index}`}>
-            <Link
-              href={`/blog/tags/${tag}`}
-              className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90"
-            >
-              #&nbsp;{tag}
-            </Link>
+              <Link
+                href={`/blog/tags/${tag}`}
+                className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90"
+              >
+                #&nbsp;{tag}
+              </Link>
             </div>
           ))}
         </div>
         <div className="flex flex-col">
-          <p className="flex text-3xl font-bold mt-2 mr-auto break-all">{page.title}</p>
+          <p className="flex text-3xl font-bold mt-2 mr-auto break-all">
+            {page.title}
+          </p>
           <p className="flex text-xl font-base mt-1 mr-auto break-all">
             {page.description}
           </p>

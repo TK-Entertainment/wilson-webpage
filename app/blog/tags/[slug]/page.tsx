@@ -21,16 +21,28 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [])
+  }, []);
 
   return (
     <>
-      <Actionbar showTagMenu={showTagMenu} setShowTagMenu={setShowTagMenu}/>
+      <Actionbar showTagMenu={showTagMenu} setShowTagMenu={setShowTagMenu} />
       <div className="grid grid-cols-9">
-        <div className={`${showTagMenu ? "col-span-full" : "max-md:hidden col-span-2 border-r-2 pr-2"}`}>
+        <div
+          className={`${
+            showTagMenu
+              ? "col-span-full"
+              : "max-md:hidden col-span-2 border-r-2 pr-2"
+          }`}
+        >
           <TagSidebar />
         </div>
-        <div className={`${showTagMenu ? "hidden" : "col-span-7 max-md:col-span-full p-6 mt-2 space-y-4"}`}>
+        <div
+          className={`${
+            showTagMenu
+              ? "hidden"
+              : "col-span-7 max-md:col-span-full p-6 mt-2 space-y-4"
+          }`}
+        >
           <Link
             href="/blog"
             className="flex flex-col w-fit justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"

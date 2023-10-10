@@ -23,7 +23,7 @@ export default async function BlogSlug({
 
   return (
     <>
-      <Actionbar showTagMenu={null} setShowTagMenu={null}/>
+      <Actionbar showTagMenu={null} setShowTagMenu={null} />
       <MDXContent>
         <div className="grid grid-cols-7">
           <div className="col-span-6 px-8 md:px-12 md:mt-8 mt-4">

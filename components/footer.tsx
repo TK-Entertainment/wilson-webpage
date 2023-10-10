@@ -40,9 +40,7 @@ function Info() {
             Next Docs framework by{" "}
             <Link href="https://github.com/fuma-nama">@Fuma Nama</Link>
           </p>
-          <p className="text-xs text-muted-foreground">
-            v20231010 by Kevinowo
-          </p>
+          <p className="text-xs text-muted-foreground">v20231010 by Kevinowo</p>
         </div>
         <p className="md:mt-12 text-xs text-muted-foreground">
           威爾森 (Wilson Chen) © 2019 ~ {new Date(Date.now()).getFullYear()}
