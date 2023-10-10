@@ -19,7 +19,7 @@ _仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重�
 
 ## 專案原理
 
-此專案建置於非常好用且好看的 [Next Docs](https://github.com/fuma-nama/next-docs) 框架 (shoutout to @fuma-nama)  
+此專案建置於非常好用且好看的 [Next Docs](https://github.com/fuma-nama/next-docs) 框架 (shoutout to [@fuma-nama](https://github.com/fuma-nama))  
 並自行建置 Blog 的部件，並為手機使用者設計相關導覽邏輯，讓使用者能更方便的瀏覽文章
 
 此專案利用 **Cloudflare Pages** 進行自動部署，在 push 時就會自動建置並部署到 **Cloudflare edge network**
@@ -28,7 +28,7 @@ _仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重�
 
 - Tailwind CSS
 - FontAwesome Icon
-- Next Docs (by @fuma-nama)
+- Next Docs (by [@fuma-nama](https://github.com/fuma-nama))
 - Next.js
 - TypeScript
 
