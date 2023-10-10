@@ -14,7 +14,7 @@ export default function TagBlock({
   return (
     <Link
       href={`/blog/tags/${tag}`}
-      className="flex flex-row p-3 pr-4 w-fit rounded-2xl border bg-card text-card-foreground transition-all hover:bg-accent hover:drop-shadow-2xl hover:scale-105"
+      className="flex flex-row p-3 pr-4 sm:mr-2 sm:w-fit rounded-2xl border bg-card text-card-foreground transition-all hover:bg-accent hover:drop-shadow-2xl hover:scale-105"
     >
       <div className="flex rounded-2xl p-5 border overflow-hidden object-cover">
         <FontAwesomeIcon
