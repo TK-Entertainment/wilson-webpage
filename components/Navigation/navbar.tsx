@@ -81,7 +81,7 @@ export default function Navbar() {
         <Link href="/" className="text-2xl font-bold">
           <div className="max-sm:hidden">威爾森的科普天地</div>
           <div className="sm:hidden flex flex-row">
-            <FontAwesomeIcon icon={faW} className="my-auto"/>
+            <FontAwesomeIcon icon={faW} className="my-auto" />
             <div className="border-r-2 ml-2 mr-2"></div>
             <p>Notes</p>
           </div>
