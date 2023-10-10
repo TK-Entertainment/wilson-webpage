@@ -45,27 +45,37 @@ const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu }) => {
               點此查看所有標籤
             </div>
             <div className="flex flex-row">
-              <p
-                className={`${
-                  pathname.startsWith("/blog/tags")
-                    ? "opacity-70 font-normal"
-                    : "font-bold"
-                } text-2xl text-left`}
-              >
-                部落格
-              </p>
-              {pathname.startsWith("/blog/tags") ? (
-                <>
-                  <p className="opacity-70 font-normal text-2xl text-left">
-                    &nbsp;/&nbsp;標籤
-                  </p>
-                  <p className="font-bold text-2xl text-left">
-                    &nbsp;/&nbsp;#{decodedTag}
-                  </p>
-                </>
-              ) : (
-                <></>
-              )}
+                <div className="flex flex-row max-sm:flex-col">
+                {pathname.startsWith("/blog/tags") ? (
+                    <>
+                        <p
+                            className={`opacity-70 font-normal max-sm:text-base text-2xl text-left`}
+                        >
+                            部落格
+                        </p>
+                    <p className="opacity-70 font-normal max-sm:text-base text-2xl text-left">
+                        &nbsp;/&nbsp;標籤
+                    </p>
+                    </>
+                ) : (
+                    <p
+                    className={`font-bold text-2xl text-left`}
+                >
+                    部落格
+                </p>
+                )}
+                </div>
+                <div className="flex flex-row">
+                {pathname.startsWith("/blog/tags") ? (
+                    <>
+                    <p className="font-bold text-2xl text-left my-auto justify-center items-stretch">
+                        &nbsp;/&nbsp;#{decodedTag}
+                    </p>
+                    </>
+                ) : (
+                    <></>
+                )}
+                </div>
             </div>
           </button>
         ) : (
@@ -78,10 +88,10 @@ const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu }) => {
               點此回到文章列表
             </div>
             <div className="font-bold text-2xl flex flex-row">
-              <p className="font-normal opacity-70">部落格</p>
+              <p className="font-normal max-md:text-base max-md:items-end max-md:mt-auto opacity-70">部落格</p>
               <p>&nbsp;/&nbsp;</p>
               {blog ? (
-                <p>{blog.title}</p>
+                <p className="overflow-hidden overflow-ellipsis">{blog.title}</p>
               ) : (
                 <p className="italic">未知的文章</p>
               )}
