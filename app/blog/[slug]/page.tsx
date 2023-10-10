@@ -41,12 +41,18 @@ export default async function BlogSlug({
               <h2>{page.description}</h2>
               <h4 className="my-auto flex flex-row">
                 <div className="flex flex-row max-sm:flex-col">
-                  <FontAwesomeIcon icon={faUser} className="max-sm:mr-auto my-auto sm:mr-2" />
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    className="max-sm:mr-auto my-auto sm:mr-2"
+                  />
                   {page.authors}
                 </div>
                 <div className="border-r-2 ml-2 mr-2"></div>
                 <div className="flex flex-row max-sm:flex-col">
-                  <FontAwesomeIcon icon={faClock} className="max-sm:mr-auto my-auto sm:mr-2" />
+                  <FontAwesomeIcon
+                    icon={faClock}
+                    className="max-sm:mr-auto my-auto sm:mr-2"
+                  />
                   {new Date(page.date).toLocaleDateString("zh-TW")}
                 </div>
               </h4>

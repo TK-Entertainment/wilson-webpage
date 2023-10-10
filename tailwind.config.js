@@ -56,13 +56,13 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       screens: {
-        'phone': '480px',
+        phone: "480px",
         // => @media (min-width: 512px) { ... }
-  
-        'laptop': '1024px',
+
+        laptop: "1024px",
         // => @media (min-width: 1024px) { ... }
-  
-        'desktop': '1280px',
+
+        desktop: "1280px",
         // => @media (min-width: 1280px) { ... }
       },
     },
