@@ -51,7 +51,7 @@ export default function PostBlock({ page }: { page: Blog }) {
               className="text-base mr-2 my-auto"
             />
             <p className="text-sm my-auto">
-              {new Date(page.date).toLocaleString("zh-TW")}
+              {new Date(page.date).toLocaleDateString("zh-TW")}
             </p>
           </div>
           <div className="flex flex-row content-center mt-1">

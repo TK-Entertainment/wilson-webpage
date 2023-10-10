@@ -79,22 +79,27 @@ const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu }) => {
             href="/blog"
             className="flex flex-col rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
           >
-            <div className="text-sm opacity-60">
-              <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-              點此回到文章列表
-            </div>
-            <div className="font-bold text-2xl flex flex-row">
-              <p className="font-normal max-md:text-base max-md:items-end max-md:mt-auto opacity-70">
-                部落格
-              </p>
-              <p>&nbsp;/&nbsp;</p>
-              {blog ? (
-                <p className="overflow-hidden overflow-ellipsis">
-                  {blog.title}
+            <div className="max-[480px]:hidden">
+                <div className="text-sm opacity-60">
+                <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+                點此回到文章列表
+                </div>
+                <div className="font-bold text-2xl flex flex-row">
+                <p className="font-normal max-md:text-base max-md:items-end max-md:mt-auto opacity-70">
+                    部落格
                 </p>
-              ) : (
-                <p className="italic">未知的文章</p>
-              )}
+                <p>&nbsp;/&nbsp;</p>
+                {blog ? (
+                    <p className="overflow-hidden overflow-ellipsis">
+                    {blog.title}
+                    </p>
+                ) : (
+                    <p className="italic">未知的文章</p>
+                )}
+                </div>
+            </div>
+            <div className="min-[480px]:hidden">
+                <FontAwesomeIcon icon={faArrowLeft} className="text-3xl" />
             </div>
           </Link>
         )}

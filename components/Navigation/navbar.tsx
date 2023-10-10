@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 import { MoonIcon, SunIcon, Monitor } from "lucide-react";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faW } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
 import { allBlogs } from "contentlayer/generated";
 
@@ -79,7 +79,14 @@ export default function Navbar() {
     <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 nd-border-b nd-transition-colors nd-bg-background/80 nd-border-foreground/10 nd-backdrop-blur-sm">
       <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
         <Link href="/" className="text-2xl font-bold">
-          威爾森的科普天地
+          <div className="max-sm:hidden">
+            威爾森的科普天地
+          </div>
+          <div className="sm:hidden">
+            <FontAwesomeIcon icon={faW} />
+            <div className="border-r-2 ml-2 mr-2"></div>
+            <p>Notes</p>
+          </div>
         </Link>
         {pathname.startsWith("/blog") && !isMobile ? (
           <>

@@ -26,7 +26,7 @@ export default async function BlogSlug({
       <Actionbar showTagMenu={null} setShowTagMenu={null} />
       <MDXContent>
         <div className="grid grid-cols-7">
-          <div className="col-span-6 px-8 md:px-12 md:mt-8 mt-4">
+          <div className="col-span-6 max-xl:col-span-full px-8 md:px-12 md:mt-8 mt-4">
             <div className="md:py-8 py-4">
               {page.tags?.map((tag, index) => (
                 <Link
@@ -40,11 +40,15 @@ export default async function BlogSlug({
               <h1>{page.title}</h1>
               <h2>{page.description}</h2>
               <h4 className="my-auto flex flex-row">
-                <FontAwesomeIcon icon={faUser} className="my-auto mr-2" />
-                {page.authors}
-                <div className="border-r-2 ml-2"></div>
-                <FontAwesomeIcon icon={faClock} className="my-auto ml-2 mr-2" />
-                {new Date(page.date).toLocaleString("zh-TW")}
+                <div className="flex flex-row max-sm:flex-col">
+                  <FontAwesomeIcon icon={faUser} className="max-sm:mr-auto my-auto sm:mr-2" />
+                  {page.authors}
+                </div>
+                <div className="border-r-2 ml-2 mr-2"></div>
+                <div className="flex flex-row max-sm:flex-col">
+                  <FontAwesomeIcon icon={faClock} className="max-sm:mr-auto my-auto sm:mr-2" />
+                  {new Date(page.date).toLocaleDateString("zh-TW")}
+                </div>
               </h4>
             </div>
             <Content code={page.body.code} />
