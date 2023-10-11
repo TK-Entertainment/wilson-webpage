@@ -2,9 +2,9 @@
 
 ### A Project of TK Entertainment | with Wilson Chen
 
-# Wilson's Notes
+# Wilson's Notes｜Young Want 星空
 
-[![CodeFactor](https://www.codefactor.io/repository/github/tk-entertainment/wilson-webpage/badge)](https://www.codefactor.io/repository/github/tk-entertainment/wilson-webpage)
+[![CodeFactor](https://www.codefactor.io/repository/github/tk-entertainment/wilson-webpage/badge)](https://www.codefactor.io/repository/github/tk-entertainment/wilson-webpage)  
 [來看看網站吧~](https://wilson.trygong.uk)
 
 ## 認識 Young Want 星空
