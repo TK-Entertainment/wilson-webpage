@@ -14,7 +14,7 @@ _仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重�
 
 ## 專案目的
 
-此專案主要用於提供 **Wilson Chen (威爾森)** 發布地科相關題材之文章的平台  
+此專案主要用於提供 **[@Wilsonsonsonsonson](https://github.com/Wilsonsonsonsonson) / Wilson Chen (威爾森)** 發布地科相關題材之文章的平台  
 並同時作為自己練習 TypeScript / JavaScript 的實作
 
 ## 專案原理
@@ -96,5 +96,5 @@ pnpm run dev
 > **文章部分 (/content/\*)** 受到著作權保護，請不要隨意修改及發布
 
 ## 作者
-
-By TK Entertainment / @Kevinowo
+Website design by Kevinowo @ TK Entertainment
+Articles written by @Wilsonsonsonsonson (Wilson Chen)
