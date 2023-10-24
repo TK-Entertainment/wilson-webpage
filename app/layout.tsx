@@ -12,6 +12,7 @@ const inter = Inter({
 
 export const runtime = "edge";
 
+
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={inter.className}>
@@ -20,15 +21,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         <RootProvider>{children}</RootProvider>
         <Footer />
       </body>
-      <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DNHD0LDL"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-      
-        gtag('config', 'G-34DNHD0LDL');
-      </script>
     </html>
   );
 }
