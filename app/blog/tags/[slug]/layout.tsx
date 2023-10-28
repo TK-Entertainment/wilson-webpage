@@ -22,10 +22,6 @@ export function generateMetadata({
   };
 }
 
-  export default function TagLayout({ children }: { children: ReactNode }) {
-    return (
-      <>
-        {children}
-      </>
-    );
-  }
+export default function TagLayout({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}
