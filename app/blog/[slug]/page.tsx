@@ -1,3 +1,4 @@
+import { type Metadata } from "next";
 import { allBlogs } from "contentlayer/generated";
 import { MDXContent } from "next-docs-ui/mdx";
 import { Content } from "@/components/content";
@@ -7,6 +8,32 @@ import { getTableOfContents } from "next-docs-zeta/server";
 import { TOC } from "@/components/toc";
 import Actionbar from "@/components/Navigation/actionbar";
 import Link from "next/link";
+
+export function generateMetadata({ params }: { params: { slug?: string } }): Metadata {
+  const slug = params.slug ?? "";
+  const blog = allBlogs.find((blog) => blog.slug == params.slug);
+
+  return {
+    title: {
+      template: `Wilson's Notes | ${blog?.title}`,
+      default: "Wilson's Notes",
+      absolute: "Wilson's Notes",
+    },
+    description: blog?.description,
+    openGraph: {
+      type: "article",
+      images: blog?.image ?? "",
+      title: {
+        template: `Wilson's Notes | ${blog?.title}`,
+        absolute: "Wilson's Notes",
+        default: "Wilson's Notes",
+      },
+      authors: blog?.authors,
+      tags: blog?.tags,
+      description: blog?.description,
+    },
+  }
+};
 
 export default async function BlogSlug({
   params,
