@@ -1,13 +1,13 @@
-import { getPageUrl } from "@/app/source";
-import { allDocs } from "contentlayer/generated";
-import { createSearchAPI } from "next-docs-zeta/server";
+import { structure } from 'next-docs-zeta/mdx-plugins'
+import { allBlogs } from "contentlayer/generated";
+import { createSearchAPI } from "next-docs-zeta/search/server";
 
 export const { GET } = createSearchAPI("advanced", {
-  indexes: allDocs.map((page) => ({
-    id: page._id,
-    title: page.title,
-    content: page.body.raw,
-    url: getPageUrl(page.slug),
-    structuredData: page.structuredData,
+  indexes: allBlogs.map((blog) => ({
+    id: blog._id,
+    title: blog.title,
+    content: blog.body.raw,
+    url: `/blog/${blog.slug}`,
+    structuredData: structure(blog.body.raw)
   })),
 });
