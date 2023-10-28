@@ -56,7 +56,7 @@ function Info() {
           <Link href="https://github.com/fuma-nama">@Fuma Nama</Link>
         </p>
         <p className="mt-12 text-xs text-muted-foreground">
-          v20231010 by Kevinowo
+          v20231028 by Kevinowo
         </p>
       </div>
     </>

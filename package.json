@@ -1,6 +1,6 @@
 {
   "name": "Wilson's Notes",
-  "version": "v20231010",
+  "version": "v20231028",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -19,8 +19,8 @@
     "lucide-react": "^0.284.0",
     "next": "13.5.2",
     "next-contentlayer": "0.3.4",
-    "next-docs-ui": "2.4.0",
-    "next-docs-zeta": "2.4.0",
+    "next-docs-ui": "4.0.3",
+    "next-docs-zeta": "4.0.3",
     "prettier": "^3.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",

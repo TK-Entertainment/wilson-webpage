@@ -25,6 +25,29 @@ const BlogPost = defineDocumentType(() => ({
   },
 }));
 
+const BlogPreviewPost = defineDocumentType(() => ({
+  name: "BlogPreview",
+  filePathPattern: "preview/**",
+  contentType: "mdx",
+  fields: {
+    title: { type: "string", required: true },
+    description: { type: "string", required: false },
+    date: { type: "date", required: true },
+    image: { type: "string", required: false },
+    tags: { type: "list", of: { type: "string" } },
+    authors: { type: "list", of: { type: "string" } },
+    theme: { type: "string", required: false },
+  },
+  computedFields: {
+    slug: {
+      type: "string",
+      resolve(page) {
+        return page._raw.flattenedPath.split("/")[1];
+      },
+    },
+  },
+}));
+
 const config = createConfig({
   docsComputedFields: {
     structuredData: {
@@ -35,6 +58,6 @@ const config = createConfig({
 });
 
 // @ts-ignore
-(config.documentTypes as DocumentType[]).push(BlogPost);
+(config.documentTypes as DocumentType[]).push(BlogPost, BlogPreviewPost);
 
 export default makeSource(config);
