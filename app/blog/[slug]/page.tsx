@@ -18,20 +18,12 @@ export function generateMetadata({
   const blog = allBlogs.find((blog) => blog.slug == params.slug);
 
   return {
-    title: {
-      template: `Wilson's Notes | ${blog?.title}`,
-      default: "Wilson's Notes",
-      absolute: "Wilson's Notes",
-    },
+    title: `Wilson's Notes | ${blog?.title}`,
     description: blog?.description,
     openGraph: {
       type: "article",
       images: blog?.image ?? "",
-      title: {
-        template: `Wilson's Notes | ${blog?.title}`,
-        absolute: "Wilson's Notes",
-        default: "Wilson's Notes",
-      },
+      title: `Wilson's Notes | ${blog?.title}`,
       authors: blog?.authors,
       tags: blog?.tags,
       description: blog?.description,
