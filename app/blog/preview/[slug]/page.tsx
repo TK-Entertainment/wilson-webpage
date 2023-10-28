@@ -16,7 +16,9 @@ export function generateMetadata({
   params: { slug?: string };
 }): Metadata {
   const slug = params.slug ?? "";
-  const blog = allBlogPreviews.find((previewblog) => previewblog.slug == params.slug);
+  const blog = allBlogPreviews.find(
+    (previewblog) => previewblog.slug == params.slug,
+  );
 
   return {
     title: `[PREVIEW] Wilson's Notes | ${blog?.title}`,
@@ -37,7 +39,9 @@ export default async function BlogSlug({
 }: {
   params: { slug?: string };
 }) {
-  const page = allBlogPreviews.find((previewblog) => previewblog.slug == params.slug);
+  const page = allBlogPreviews.find(
+    (previewblog) => previewblog.slug == params.slug,
+  );
 
   if (page == undefined) {
     return <></>;
@@ -82,14 +86,15 @@ export default async function BlogSlug({
                 此處為未完成文章之預覽頁面，僅供預覽參考使用
               </span>
               <span className="text-normal font-normal">
-                若已準備好發布，請將此檔案從 <span className="font-bold">content/preview/</span> 移動至 <span className="font-bold">content/blog/</span> 來正式發布此文章
+                若已準備好發布，請將此檔案從{" "}
+                <span className="font-bold">content/preview/</span> 移動至{" "}
+                <span className="font-bold">content/blog/</span>{" "}
+                來正式發布此文章
               </span>
             </div>
             <div className="md:py-8 py-4">
-              <span
-                    className="transition-all text-sm mr-1 rounded-2xl border px-2 bg-red-200 hover:bg-red-500"
-                  >
-                    {`<!> 預覽 Preview`}
+              <span className="transition-all text-sm mr-1 rounded-2xl border px-2 bg-red-200 hover:bg-red-500">
+                {`<!> 預覽 Preview`}
               </span>
               {page.tags?.map((tag, index) => (
                 <Link
