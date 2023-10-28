@@ -31,13 +31,13 @@ export function generateMetadata({
   };
 }
 
-  export default function TagLayout({ children }: { children: ReactNode }) {
-    return (
-      <>
-        <div className="container">
-          <RollButton />
-          {children}
-        </div>
-      </>
-    );
-  }
+export default function TagLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <div className="container">
+        <RollButton />
+        {children}
+      </div>
+    </>
+  );
+}
