@@ -55,7 +55,7 @@ export default async function BlogSlug({
       <MDXContent>
         <div className="grid grid-cols-7">
           <div className="col-span-6 max-xl:col-span-full px-8 md:px-12 md:mt-8 mt-4">
-            <div className="flex flex-col p-4 w-full rounded-2xl border bg-orange-200 transition-all hover:drop-shadow-2xl">
+            <div className="flex flex-col p-4 w-full rounded-2xl border bg-orange-200 dark:bg-orange-500 transition-all hover:drop-shadow-2xl">
               <div className="flex flex-row">
                 <FontAwesomeIcon
                   icon={faWarning}
@@ -72,7 +72,7 @@ export default async function BlogSlug({
                 還請您不要將此連結發出去，並點擊左上角的標題回到首頁，謝謝！
               </span>
             </div>
-            <div className="flex flex-col mt-2 p-4 w-full rounded-2xl border bg-slate-300 transition-all hover:drop-shadow-2xl">
+            <div className="flex flex-col mt-2 p-4 w-full rounded-2xl border bg-slate-300 dark:bg-slate-600 transition-all hover:drop-shadow-2xl">
               <div className="flex flex-row">
                 <FontAwesomeIcon
                   icon={faInfoCircle}
@@ -93,7 +93,7 @@ export default async function BlogSlug({
               </span>
             </div>
             <div className="md:py-8 py-4">
-              <span className="transition-all text-sm mr-1 rounded-2xl border px-2 bg-red-200 hover:bg-red-500">
+              <span className="transition-all text-sm mr-1 rounded-2xl border px-2 bg-red-200 dark:bg-red-400 hover:bg-red-500">
                 {`<!> 預覽 Preview`}
               </span>
               {page.tags?.map((tag, index) => (

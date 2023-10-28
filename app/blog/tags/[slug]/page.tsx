@@ -5,7 +5,7 @@ import TagSidebar from "@/components/Navigation/tagsidebar";
 import PostBlock from "@/components/PostLayout/postblock";
 import { allBlogs } from "contentlayer/generated";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
 export default function TagSlug({ params }: { params: { slug?: string } }) {
@@ -57,11 +57,23 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
               <p>#{decodedTag}</p>
             </div>
           </Link>
-          {postSortedByTags.map((post, index) => (
-            <div key={index}>
-              <PostBlock page={post} />
-            </div>
-          ))}
+          {postSortedByTags.length != 0 ? (
+            <>
+              {postSortedByTags.map((post, index) => (
+                <div key={index}>
+                  <PostBlock page={post} />
+                </div>
+              ))}
+            </>
+          ) : (
+          <div className="mx-auto">
+            <FontAwesomeIcon icon={faQuestionCircle} className="mr-2" />
+            <span className="text-normal font-bold">
+              沒有找到任何有 #{decodedTag} 標籤的文章
+            </span>
+          </div>
+          )}
+
         </div>
       </div>
     </>
