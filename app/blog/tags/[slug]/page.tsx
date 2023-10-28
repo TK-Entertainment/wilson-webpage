@@ -5,7 +5,10 @@ import TagSidebar from "@/components/Navigation/tagsidebar";
 import PostBlock from "@/components/PostLayout/postblock";
 import { allBlogs } from "contentlayer/generated";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
 export default function TagSlug({ params }: { params: { slug?: string } }) {
@@ -66,14 +69,13 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
               ))}
             </>
           ) : (
-          <div className="mx-auto">
-            <FontAwesomeIcon icon={faQuestionCircle} className="mr-2" />
-            <span className="text-normal font-bold">
-              沒有找到任何有 #{decodedTag} 標籤的文章
-            </span>
-          </div>
+            <div className="mx-auto">
+              <FontAwesomeIcon icon={faQuestionCircle} className="mr-2" />
+              <span className="text-normal font-bold">
+                沒有找到任何有 #{decodedTag} 標籤的文章
+              </span>
+            </div>
           )}
-
         </div>
       </div>
     </>
