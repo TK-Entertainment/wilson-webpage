@@ -9,7 +9,11 @@ import { TOC } from "@/components/toc";
 import Actionbar from "@/components/Navigation/actionbar";
 import Link from "next/link";
 
-export function generateMetadata({ params }: { params: { slug?: string } }): Metadata {
+export function generateMetadata({
+  params,
+}: {
+  params: { slug?: string };
+}): Metadata {
   const slug = params.slug ?? "";
   const blog = allBlogs.find((blog) => blog.slug == params.slug);
 
@@ -32,8 +36,8 @@ export function generateMetadata({ params }: { params: { slug?: string } }): Met
       tags: blog?.tags,
       description: blog?.description,
     },
-  }
-};
+  };
+}
 
 export default async function BlogSlug({
   params,
