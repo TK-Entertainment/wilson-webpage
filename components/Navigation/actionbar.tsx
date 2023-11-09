@@ -36,14 +36,22 @@ const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu }) => {
             onClick={() => showTagMenuHandler()}
             className="flex flex-col rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
           >
+            {showTagMenu ? (
             <div
-              className={`${
-                showTagMenu! ? "nd-hidden" : "md:nd-hidden"
-              } text-sm opacity-60 text-left`}
+              className={`md:nd-hidden text-sm opacity-60 text-left`}
+            >
+              <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+              點此回到文章列表
+            </div>
+            ) : (
+            <div
+              className={`md:nd-hidden text-sm opacity-60 text-left`}
             >
               <FontAwesomeIcon icon={faBars} className="mr-2" />
               點此查看所有標籤
             </div>
+              )
+            }
             <div className="flex flex-row">
               <div className="flex flex-row max-sm:flex-col">
                 {pathname.startsWith("/blog/tags") ? (
