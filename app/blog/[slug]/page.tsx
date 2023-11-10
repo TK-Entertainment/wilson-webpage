@@ -49,7 +49,7 @@ export default async function BlogSlug({
       <Actionbar showTagMenu={null} setShowTagMenu={null} />
       <MDXContent>
         <div className="grid grid-cols-7">
-          <div className="col-span-6 max-xl:col-span-full md:px-12 md:mt-8 mt-4">
+          <div className="col-span-6 max-xl:col-span-full px-2 md:px-12 md:mt-8 mt-4">
             <div className="md:py-8 py-4">
               {page.tags?.map((tag, index) => (
                 <Link
