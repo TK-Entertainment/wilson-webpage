@@ -14,6 +14,8 @@ const BlogPost = defineDocumentType(() => ({
     tags: { type: "list", of: { type: "string" } },
     authors: { type: "list", of: { type: "string" } },
     theme: { type: "string", required: false },
+    outside: { type: "boolean", required: true },
+    outsideLink: { type: "string", required: false },
   },
   computedFields: {
     slug: {
@@ -37,6 +39,8 @@ const BlogPreviewPost = defineDocumentType(() => ({
     tags: { type: "list", of: { type: "string" } },
     authors: { type: "list", of: { type: "string" } },
     theme: { type: "string", required: false },
+    outside: { type: "boolean", required: true },
+    outsideLink: { type: "string", required: false },
   },
   computedFields: {
     slug: {

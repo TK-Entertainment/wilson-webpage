@@ -5,4 +5,6 @@ description: "這是簡述，反正你也不會看"
 tags: ["Discord", "dc", "Discord RPC", "Discord Rich Presence", "Rich Presence"]
 date: 2022-07-08T13:01:00
 image:
+outside: false
+outsideLink:
 ---
