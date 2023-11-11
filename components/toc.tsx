@@ -16,7 +16,7 @@ export const cn = createTailwindMerge(getDefaultConfig, (config) => ({
 
 export function TOC(props: { items: TOCItemType[] }) {
   return (
-    <div className="nd-sticky nd-divide-y nd-flex nd-flex-col nd-top-16 nd-gap-4 nd-py-12 nd-w-[250px] nd-h-[calc(100vh-4rem)] max-xl:nd-hidden">
+    <div className="nd-sticky nd-divide-y nd-flex nd-flex-col nd-top-16 nd-gap-4 nd-py-12 nd-w-[250px] nd-h-[calc(100vh-4rem)] max-xl:hidden">
       {props.items.length > 0 && <TOCItems items={props.items} />}
     </div>
   );
