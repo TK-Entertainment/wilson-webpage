@@ -38,7 +38,7 @@ export default function TagSidebar() {
       <ul key="topic" className="">
         <p className="mt-4 text-2xl font-bold mb-2">
           <FontAwesomeIcon icon={faNewspaper} className="mr-2" />
-          主題版
+          主題板
         </p>
         {topicTags.map(([topic, count], index) => (
           <Link
