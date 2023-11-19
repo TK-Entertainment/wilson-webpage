@@ -1,4 +1,5 @@
 import { allBlogs } from "contentlayer/generated";
+import { getTagExistance } from "./tagsicon";
 
 export type TagCount = {
   count: number;
@@ -25,7 +26,7 @@ export function getTopicTagsMap() {
   const topicTagsMap = new Map<string, TagCount>();
 
   for (const tag of tagsMap ?? []) {
-    if (tag[0].slice(-1) === "版") {
+    if (getTagExistance(tag[0])) {
       topicTagsMap.set(tag[0], tag[1]);
     }
   }
