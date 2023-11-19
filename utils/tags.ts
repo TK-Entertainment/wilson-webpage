@@ -26,7 +26,7 @@ export function getTopicTagsMap() {
   const topicTagsMap = new Map<string, TagCount>();
 
   for (const tag of tagsMap ?? []) {
-    if (getTagExistance(tag[0])) {
+    if (getTagExistance(tag[0]) || tag[0] === "Young Want星空") {
       topicTagsMap.set(tag[0], tag[1]);
     }
   }
