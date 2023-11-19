@@ -15,7 +15,7 @@ export default function HomePage() {
     (a, b) => b[1].count - a[1].count,
   );
 
-  const suggestIndex = Math.floor((Math.random() * (allBlogs.length - 1)));
+  const suggestIndex = Math.floor(Math.random() * (allBlogs.length - 1));
   const suggestPost = allBlogs[suggestIndex];
 
   return (
