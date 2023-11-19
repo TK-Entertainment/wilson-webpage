@@ -1,6 +1,6 @@
 {
   "name": "Wilson's Notes",
-  "version": "v20231109",
+  "version": "v20231120",
   "private": true,
   "scripts": {
     "dev": "next dev",
