@@ -15,6 +15,9 @@ export default function HomePage() {
     (a, b) => b[1].count - a[1].count,
   );
 
+  const suggestIndex = Math.floor((Math.random() * (allBlogs.length - 1)));
+  const suggestPost = allBlogs[suggestIndex];
+
   return (
     <>
       <main className="overflow-x-clip justify-center">
@@ -52,7 +55,7 @@ export default function HomePage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold mt-4 mb-4">推薦內容</h1>
-              <PostBlock page={latestPost} />
+              <PostBlock page={suggestPost} />
             </div>
           </div>
           <div className="mt-4 flex flex-col w-auto space-x-4 mb-4">
