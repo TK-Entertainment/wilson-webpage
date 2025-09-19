@@ -55,8 +55,6 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
               點此檢視所有文章
             </div>
             <div className="font-bold text-2xl flex">
-              <p className="font-normal opacity-70">全部文章</p>
-              <p>&nbsp;/&nbsp;</p>
               <p>#{decodedTag}</p>
             </div>
           </Link>

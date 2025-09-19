@@ -1,6 +1,6 @@
 {
   "name": "Wilson's Notes",
-  "version": "v20231120",
+  "version": "v20250919",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,13 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
-    "@fortawesome/free-brands-svg-icons": "^6.4.2",
-    "@fortawesome/free-regular-svg-icons": "^6.4.2",
-    "@fortawesome/free-solid-svg-icons": "^6.4.2",
-    "@fortawesome/react-fontawesome": "^0.2.0",
-    "algoliasearch": "^4.20.0",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.6",
+    "algoliasearch": "^4.25.2",
     "contentlayer": "0.3.4",
-    "eslint": "^8.53.0",
+    "eslint": "^8.57.1",
     "fontawesome-react": "^2.0.0",
     "fs": "0.0.1-security",
     "lucide-react": "^0.284.0",
@@ -23,7 +23,7 @@
     "next-docs-ui": "4.0.3",
     "next-docs-zeta": "4.0.3",
     "path": "^0.12.7",
-    "prettier": "^3.0.3",
+    "prettier": "^3.6.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwind-merge": "^1.14.0"

@@ -7,6 +7,7 @@ import { faClock, faUser } from "@fortawesome/free-regular-svg-icons";
 import { getTableOfContents } from "next-docs-zeta/server";
 import { TOC } from "@/components/toc";
 import Actionbar from "@/components/Navigation/actionbar";
+import ArticleMobileTocLauncher from "@/components/ArticleMobileTocLauncher";
 import Link from "next/link";
 
 export function generateMetadata({
@@ -46,7 +47,7 @@ export default async function BlogSlug({
 
   return (
     <>
-      <Actionbar showTagMenu={null} setShowTagMenu={null} />
+      <ArticleMobileTocLauncher items={toc} />
       <MDXContent>
         <div className="grid grid-cols-7">
           <div className="col-span-6 max-xl:col-span-full px-2 md:px-12 md:mt-8 mt-4">

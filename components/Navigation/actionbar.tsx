@@ -10,9 +10,10 @@ import { allBlogs } from "contentlayer/generated";
 interface ActionbarProps {
   showTagMenu: boolean | null;
   setShowTagMenu: ((showTagMenu: boolean) => void) | null;
+  onOpenToc?: (() => void) | null;
 }
 
-const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu }) => {
+const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu, onOpenToc = null }) => {
   const pathname = usePathname();
   const blogSlug = pathname.split("/")[2];
   const tagSlug = pathname.split("/")[3];
@@ -28,7 +29,7 @@ const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu }) => {
 
   return (
     <nav
-      className={`md:nd-hidden nd-content-start text-left nd-sticky nd-top-0 nd-h-16 nd-z-50 nd-border-b nd-transition-colors nd-bg-background/80 nd-border-foreground/10 nd-backdrop-blur-sm`}
+      className={`md:nd-hidden nd-content-start text-left nd-sticky nd-top-16 nd-h-16 nd-z-50 nd-border-b nd-transition-colors nd-bg-background/80 nd-border-foreground/10 nd-backdrop-blur-sm`}
     >
       <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
         {pathname === "/blog" || pathname.startsWith("/blog/tags") ? (
@@ -78,33 +79,45 @@ const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu }) => {
             </div>
           </button>
         ) : (
-          <Link
-            href="/blog"
-            className="flex flex-col rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
-          >
-            <div className="max-[480px]:hidden">
-              <div className="text-sm opacity-60">
-                <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-                點此回到文章列表
-              </div>
-              <div className="font-bold text-2xl flex flex-row">
-                <p className="font-normal max-md:text-base max-md:items-end max-md:mt-auto opacity-70">
-                  部落格
-                </p>
-                <p>&nbsp;/&nbsp;</p>
-                {blog ? (
-                  <p className="overflow-hidden overflow-ellipsis">
-                    {blog.title}
+          <div className="flex flex-row">
+            <Link
+              href="/blog"
+              className="flex flex-col rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
+            >
+              <div className="max-[480px]:hidden">
+                <div className="text-sm opacity-60">
+                  <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+                  點此回到文章列表
+                </div>
+                <div className="font-bold text-2xl flex flex-row">
+                  <p className="font-normal max-md:text-base max-md:items-end max-md:mt-auto opacity-70">
+                    部落格
                   </p>
-                ) : (
-                  <p className="italic">未知的文章</p>
-                )}
+                  <p>&nbsp;/&nbsp;</p>
+                  {blog ? (
+                    <p className="overflow-hidden overflow-ellipsis">
+                      {blog.title}
+                    </p>
+                  ) : (
+                    <p className="italic">未知的文章</p>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="min-[480px]:hidden">
-              <FontAwesomeIcon icon={faArrowLeft} className="text-3xl" />
-            </div>
-          </Link>
+              <div className="min-[480px]:hidden">
+                <FontAwesomeIcon icon={faArrowLeft} className="text-3xl" />
+              </div>
+            </Link>
+            <button
+              type="button"
+              aria-label="Open Table of Contents"
+              onClick={() => {
+                if (onOpenToc) onOpenToc();
+              }}
+              className="min-[480px]:hidden rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
+            >
+              <FontAwesomeIcon icon={faBars} className="text-3xl" />
+            </button>
+          </div>
         )}
       </div>
     </nav>

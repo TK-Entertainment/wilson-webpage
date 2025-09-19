@@ -23,7 +23,7 @@ export default function HomePage() {
       <main className="overflow-x-clip justify-center">
         <div className="flex flex-col px-8 lg:px-20">
           <div className="flex flex-col flex-wrap">
-            <h1 className="mt-4 text-4xl font-bold mt-4 mb-4">關於專案</h1>
+            <h1 className="mt-4 text-4xl font-bold mb-4">關於專案</h1>
             <Link
               href={`/blog/what-is-young-want-xin-kong`}
               className="flex flex-row p-3 rounded-2xl border bg-card text-card-foreground transition-all hover:bg-accent hover:drop-shadow-2xl hover:scale-105"
