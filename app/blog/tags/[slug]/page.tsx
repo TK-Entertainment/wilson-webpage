@@ -17,8 +17,8 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
   );
   const slug = params.slug ?? "";
   const decodedTag = decodeURIComponent(slug);
-  const postSortedByTags = postSorted.filter(
-    (post) => post.tags?.includes(decodedTag),
+  const postSortedByTags = postSorted.filter((post) =>
+    post.tags?.includes(decodedTag),
   );
   const [showTagMenu, setShowTagMenu] = useState(false);
 

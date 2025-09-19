@@ -50,12 +50,16 @@ export function MobileTOC({
   onClose: () => void;
 }) {
   return (
-    <div className={`xl:hidden fixed inset-0 z-50 transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+    <div
+      className={`xl:hidden fixed inset-0 z-50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+    >
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       />
-      <div className={`absolute right-0 top-16 bottom-0 w-[85%] max-w-[360px] p-4 bg-background border-l shadow-xl overflow-y-auto transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div
+        className={`absolute right-0 top-16 bottom-0 w-[85%] max-w-[360px] p-4 bg-background border-l shadow-xl overflow-y-auto transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "translate-x-full"}`}
+      >
         {items.length > 0 && (
           <div className="pb-8">
             <TOCItems items={items} />

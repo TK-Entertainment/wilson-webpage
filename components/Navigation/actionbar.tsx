@@ -13,7 +13,11 @@ interface ActionbarProps {
   onOpenToc?: (() => void) | null;
 }
 
-const Actionbar: FC<ActionbarProps> = ({ showTagMenu, setShowTagMenu, onOpenToc = null }) => {
+const Actionbar: FC<ActionbarProps> = ({
+  showTagMenu,
+  setShowTagMenu,
+  onOpenToc = null,
+}) => {
   const pathname = usePathname();
   const blogSlug = pathname.split("/")[2];
   const tagSlug = pathname.split("/")[3];
