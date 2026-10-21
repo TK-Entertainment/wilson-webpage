@@ -31,7 +31,18 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --no-frozen-lockfile 2>&1 | tee install.log; exit ${PIPESTATUS[0]}
 
       - name: Build with next-on-pages
-        run: npx -y @cloudflare/next-on-pages@1
+        run: npx -y @cloudflare/next-on-pages@1 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+
+      # 把錯誤紀錄最後一段寫成 annotation，不用登入 GitHub 也能透過 API 讀到
+      - name: Report failure log
+        if: failure()
+        run: |
+          for f in install.log build.log; do
+            [ -f "$f" ] || continue
+            tail -n 80 "$f" | sed 's/\x1b\[[0-9;]*m//g' > tail.txt
+            body=$(awk '{printf "%s%%0A", $0}' tail.txt)
+            echo "::error title=$f::${body}"
+          done
