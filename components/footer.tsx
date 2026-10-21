@@ -30,7 +30,7 @@ function Info() {
         >
           <p className="text-base font-base">A Project of TK Entertainment</p>
         </Link>
-        <p className="text-2xl font-bold">威爾森的生活札記 / Wilson's Notes</p>
+        <p className="text-lg">威爾森的生活札記 / Wilson's Notes</p>
         <div className="max-md:mt-12 flex flex-col md:hidden text-left">
           <p className="mt-auto text-xs text-muted-foreground">
             Made with{" "}

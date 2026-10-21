@@ -34,7 +34,7 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
           className={`${
             showTagMenu
               ? "col-span-full"
-              : "max-md:hidden col-span-2 border-r-2 pr-2"
+              : "max-md:hidden col-span-2 border-r pr-4"
           }`}
         >
           <TagSidebar />
@@ -43,28 +43,28 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
           className={`${
             showTagMenu
               ? "hidden"
-              : "col-span-7 max-md:col-span-full p-6 mt-2 space-y-4"
+              : "col-span-7 max-md:col-span-full px-6 sm:px-10 pt-10 max-w-3xl"
           }`}
         >
           <Link
             href="/blog"
-            className="flex flex-col w-fit justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
+            className="group flex flex-col w-full border-b pb-4"
           >
-            <div className="text-sm opacity-60">
+            <div className="text-sm text-muted-foreground transition-colors group-hover:text-foreground">
               <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-              點此檢視所有文章
+              回到全部碎念
             </div>
-            <div className="font-bold text-2xl flex">
+            <div className="mt-1 text-3xl tracking-wide flex">
               <p>#{decodedTag}</p>
             </div>
           </Link>
           {postSortedByTags.length != 0 ? (
             <>
-              {postSortedByTags.map((post, index) => (
-                <div key={index}>
-                  <PostBlock page={post} />
-                </div>
-              ))}
+              <div className="divide-y">
+                {postSortedByTags.map((post) => (
+                  <PostBlock key={post.slug} page={post} />
+                ))}
+              </div>
             </>
           ) : (
             <div className="mx-auto">

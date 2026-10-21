@@ -2,8 +2,6 @@ import { type Metadata } from "next";
 import { allBlogs } from "contentlayer/generated";
 import { MDXContent } from "next-docs-ui/mdx";
 import { Content } from "@/components/content";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faUser } from "@fortawesome/free-regular-svg-icons";
 import { getTableOfContents } from "next-docs-zeta/server";
 import { TOC } from "@/components/toc";
 import Actionbar from "@/components/Navigation/actionbar";
@@ -50,37 +48,34 @@ export default async function BlogSlug({
       <ArticleMobileTocLauncher items={toc} />
       <MDXContent>
         <div className="grid grid-cols-7">
-          <div className="col-span-6 max-xl:col-span-full px-2 md:px-12 md:mt-8 mt-4">
-            <div className="md:py-8 py-4">
-              {page.tags?.map((tag, index) => (
-                <Link
-                  key={`${index}`}
-                  href={`/blog/tags/${tag}`}
-                  className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90"
-                >
-                  #&nbsp;{tag}
-                </Link>
-              ))}
-              <h1>{page.title}</h1>
-              <h2>{page.description}</h2>
-              <h4 className="my-auto flex flex-row">
-                <div className="flex flex-row max-sm:flex-col">
-                  <FontAwesomeIcon
-                    icon={faUser}
-                    className="max-sm:mr-auto my-auto sm:mr-2"
-                  />
-                  {page.authors}
-                </div>
-                <div className="border-r-2 ml-2 mr-2"></div>
-                <div className="flex flex-row max-sm:flex-col">
-                  <FontAwesomeIcon
-                    icon={faClock}
-                    className="max-sm:mr-auto my-auto sm:mr-2"
-                  />
-                  {new Date(page.date).toLocaleDateString("zh-TW")}
-                </div>
-              </h4>
-            </div>
+          <div className="col-span-6 max-xl:col-span-full px-2 md:px-12 md:mt-8 mt-4 max-w-3xl">
+            <header className="nd-not-prose mb-10 border-b pb-8 md:pt-8 pt-4">
+              <p className="text-sm text-muted-foreground">
+                {new Date(page.date).toLocaleDateString("zh-TW")}
+                {page.authors ? ` · ${page.authors.join("、")}` : ""}
+              </p>
+              <h1 className="mt-3 text-4xl leading-tight tracking-wide">
+                {page.title}
+              </h1>
+              {page.description ? (
+                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                  {page.description}
+                </p>
+              ) : (
+                <></>
+              )}
+              <div className="mt-5 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                {page.tags?.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/blog/tags/${tag}`}
+                    className="transition-colors hover:text-foreground"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            </header>
             <Content code={page.body.code} />
           </div>
           <TOC items={toc} />

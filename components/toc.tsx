@@ -13,7 +13,7 @@ export const cn = createTailwindMerge(getDefaultConfig);
 
 export function TOC(props: { items: TOCItemType[] }) {
   return (
-    <div className="sticky divide-y flex flex-col top-16 gap-4 py-12 w-[250px] h-[calc(100vh-4rem)] max-xl:hidden">
+    <div className="nd-not-prose sticky divide-y flex flex-col top-16 gap-4 py-12 w-[250px] h-[calc(100vh-4rem)] max-xl:hidden">
       {props.items.length > 0 && <TOCItems items={props.items} />}
     </div>
   );

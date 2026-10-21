@@ -7,11 +7,11 @@ import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 import { MoonIcon, SunIcon, Monitor } from "lucide-react";
 import {
   faArrowLeft,
-  faW,
   faMugHot,
   faMugSaucer,
 } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
+import Logo from "@/components/logo";
 import { allBlogs } from "contentlayer/generated";
 
 export default function Navbar() {
@@ -81,104 +81,76 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 nd-border-b nd-transition-colors nd-bg-background/80 nd-border-foreground/10 nd-backdrop-blur-sm">
+    <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 nd-border-b nd-transition-colors nd-bg-background/80 nd-border-foreground/5 nd-backdrop-blur-sm">
       <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
-        <Link href="/" className="text-2xl font-bold">
-          <div className="max-sm:hidden">威爾森的生活札記</div>
-          <div className="sm:hidden flex flex-row">
-            <FontAwesomeIcon icon={faW} className="my-auto mr-2" />
-            <p>Notes</p>
-          </div>
+        <Link
+          href="/"
+          className="flex flex-row items-center gap-2 text-xl tracking-wide"
+        >
+          <Logo className="h-7 w-7" />
+          <span className="max-sm:hidden">威爾森的生活札記</span>
+          <span className="sm:hidden">生活札記</span>
         </Link>
-        {pathname.startsWith("/blog") && !isMobile ? (
-          <>
-            <Link
-              href="/blog"
-              className="max-md:hidden flex flex-col justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
-            >
-              {pathname !== "/blog" && pathname.indexOf("/blog/tags") ? (
-                <>
-                  {blog ? (
-                    <>
-                      <div className="text-sm opacity-60">
-                        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-                        點此回到文章列表
-                      </div>
-                      <div className="font-bold text-2xl flex flex-row">
-                        <p className="font-normal opacity-70">
-                          來杯好茶の日常碎念
-                        </p>
-                        <p>&nbsp;/&nbsp;</p>
-                        <p>{blog.title}</p>
-                      </div>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </>
-              ) : (
-                <p className="font-bold text-2xl">來杯好茶の日常碎念</p>
-              )}
-            </Link>
-          </>
+        {blog && !isMobile ? (
+          <Link
+            href="/blog"
+            className="max-md:hidden text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+            回到日常碎念
+          </Link>
         ) : (
           <></>
         )}
         <div className="nd-flex nd-flex-row content-end ml-auto">
           <Link
             href="/blog"
-            className={`nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95 ${
-              pathname.startsWith("/blog") ? "bg-accent" : ""
+            className={`nd-flex items-center gap-2 px-2 py-1 transition-colors hover:text-foreground ${
+              pathname.startsWith("/blog")
+                ? "text-foreground"
+                : "text-muted-foreground"
             }`}
           >
-            <FontAwesomeIcon icon={faMugHot} className={"text-2xl my-auto"} />
-            <span className="max-md:hidden ml-2 my-auto font-bold">
-              日常碎念
-            </span>
+            <FontAwesomeIcon icon={faMugHot} className="text-lg" />
+            <span className="max-md:hidden">日常碎念</span>
           </Link>
           <Link
             href="/docs"
-            className={`nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95 ${
-              pathname.startsWith("/docs") ? "bg-accent" : ""
+            className={`nd-flex items-center gap-2 px-2 py-1 transition-colors hover:text-foreground ${
+              pathname.startsWith("/docs")
+                ? "text-foreground"
+                : "text-muted-foreground"
             }`}
           >
-            <FontAwesomeIcon
-              icon={faMugSaucer}
-              className={"text-2xl my-auto"}
-            />
-            <span className="max-md:hidden ml-2 my-auto font-bold">
-              學習日常
-            </span>
+            <FontAwesomeIcon icon={faMugSaucer} className="text-lg" />
+            <span className="max-md:hidden">學習日常</span>
           </Link>
           <Link
             href={`${pathname}#`}
             onClick={() => handlePrefferedThemeChange()}
-            className="justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
+            className="nd-flex items-center px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
           >
             {!theme ? (
-              <Monitor className={"text-2xl my-auto"} />
+              <Monitor className="h-5 w-5 text-lg" />
             ) : theme === "dark" ? (
-              <MoonIcon className={"text-2xl my-auto"} />
+              <MoonIcon className="h-5 w-5 text-lg" />
             ) : theme === "light" ? (
-              <SunIcon className={"text-2xl my-auto"} />
+              <SunIcon className="h-5 w-5 text-lg" />
             ) : (
-              <Monitor className={"text-2xl my-auto"} />
+              <Monitor className="h-5 w-5 text-lg" />
             )}
           </Link>
           <Link
             href="https://github.com/TK-Entertainment/wilson-webpage"
-            className="max-sm:hidden nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
+            className="max-sm:hidden nd-flex items-center px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
           >
-            <FontAwesomeIcon icon={faGithub} className={"text-2xl my-auto"} />
+            <FontAwesomeIcon icon={faGithub} className="h-5 w-5 text-lg" />
           </Link>
           <Link
             href="https://instagram.com/wilson_note"
-            className="nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
+            className="nd-flex items-center px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
           >
-            <FontAwesomeIcon
-              icon={faInstagram}
-              className={"text-2xl my-auto"}
-            />
+            <FontAwesomeIcon icon={faInstagram} className="h-5 w-5 text-lg" />
           </Link>
         </div>
       </div>

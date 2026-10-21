@@ -30,22 +30,24 @@ export default function BlogPage() {
           className={`${
             showTagMenu
               ? "col-span-full"
-              : "max-md:hidden col-span-2 border-r-2 pr-2"
+              : "max-md:hidden col-span-2 border-r pr-4"
           }`}
         >
           <TagSidebar />
         </div>
         <div
           className={`${
-            showTagMenu ? "hidden" : "col-span-7 max-md:col-span-full p-6 mt-2"
+            showTagMenu
+              ? "hidden"
+              : "col-span-7 max-md:col-span-full px-6 sm:px-10 pt-10 max-w-3xl"
           }`}
         >
-          <p className="text-3xl font-bold">來杯好茶の日常碎念</p>
-          <div className="mt-4 h-auto space-y-4">
-            {postSorted.map((post, index) => (
-              <div key={index}>
-                <PostBlock page={post} />
-              </div>
+          <h1 className="text-3xl tracking-wide border-b pb-4">
+            來杯好茶の日常碎念
+          </h1>
+          <div className="divide-y">
+            {postSorted.map((post) => (
+              <PostBlock key={post.slug} page={post} />
             ))}
           </div>
         </div>

@@ -1,6 +1,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 中文用霞鶩文楷，英數字維持 Inter */
+html body {
+  font-family:
+    "LXGW WenKai TC", var(--font-inter, "Inter"), system-ui, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* 文章內文放寬行距 */
+.nd-prose p,
+.nd-prose li {
+  line-height: 1.9;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 3px;

@@ -35,7 +35,19 @@ export function generateMetadata(): Metadata {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="zh-Hant-TW" className={inter.className}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@300;400;700&display=swap"
+        />
+      </head>
       <body>
         <Navbar />
         <RootProvider>{children}</RootProvider>
