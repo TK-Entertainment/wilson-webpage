@@ -48,6 +48,14 @@ export default function BlogPage() {
             <GlitchText text="日常碎念" />
           </h1>
           <div className="border-b-2 border-foreground">
+            {postSorted.length == 0 ? (
+              <p className="border-t-2 border-foreground py-6 font-mono-label text-sm font-bold">
+                {"> 第一杯茶正在泡，碎念即將上桌"}
+                <span className="caret" aria-hidden="true" />
+              </p>
+            ) : (
+              <></>
+            )}
             {postSorted.map((post) => (
               <PostBlock key={post.slug} page={post} />
             ))}

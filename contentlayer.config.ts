@@ -52,6 +52,28 @@ const BlogPreviewPost = defineDocumentType(() => ({
   },
 }));
 
+// 來杯果汁の生活影像：一則一個相簿，照片放在 public/img/gallery/<檔名>/
+const Album = defineDocumentType(() => ({
+  name: "Album",
+  filePathPattern: "gallery/**",
+  contentType: "mdx",
+  fields: {
+    title: { type: "string", required: true },
+    description: { type: "string", required: false },
+    date: { type: "date", required: true },
+    cover: { type: "string", required: false },
+    location: { type: "string", required: false },
+  },
+  computedFields: {
+    slug: {
+      type: "string",
+      resolve(page) {
+        return page._raw.flattenedPath.split("/")[1];
+      },
+    },
+  },
+}));
+
 const config = createConfig({
   docsComputedFields: {
     structuredData: {
@@ -62,6 +84,6 @@ const config = createConfig({
 });
 
 // @ts-ignore
-(config.documentTypes as DocumentType[]).push(BlogPost, BlogPreviewPost);
+(config.documentTypes as DocumentType[]).push(BlogPost, BlogPreviewPost, Album);
 
 export default makeSource(config);

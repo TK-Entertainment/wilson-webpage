@@ -21,6 +21,11 @@ const sections = [
     label: "/學習日常",
     shape: "h-3 w-3 bg-bh-blue [clip-path:polygon(50%_0,100%_100%,0_100%)]",
   },
+  {
+    href: "/gallery",
+    label: "/生活影像",
+    shape: "h-3 w-3 bg-bh-yellow",
+  },
 ];
 
 export default function Navbar() {
@@ -118,12 +123,12 @@ export default function Navbar() {
               href={section.href}
               className={`nd-flex items-center gap-2 px-2 py-1 font-mono-label text-sm font-bold transition-colors ${
                 pathname.startsWith(section.href)
-                  ? "bg-bh-yellow text-bh-ink"
+                  ? "bg-foreground text-background"
                   : "hover:text-bh-red"
               }`}
             >
               <span className={section.shape} aria-hidden="true" />
-              <span className="max-md:hidden">{section.label}</span>
+              <span className="max-lg:hidden">{section.label}</span>
             </Link>
           ))}
           <Link

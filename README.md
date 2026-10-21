@@ -13,6 +13,7 @@
 | --- | --- | --- |
 | 來杯好茶の日常碎念 | `/blog` | `content/blog/*.mdx` |
 | 來杯咖啡の學習日常 | `/docs` | `content/docs/**` |
+| 來杯果汁の生活影像 | `/gallery` | `content/gallery/*.mdx` |
 
 ## 如何新增內容
 
@@ -36,6 +37,39 @@ outsideLink:
 - `outside: false` 一定要寫，缺少會建置失敗
 - 封面圖放在 `public/img/<檔名>/cover.png`，資料夾名稱要和 `.mdx` 檔名相同；不需要封面就把 `image:` 留空
 - 標籤要出現在「主題板」，必須先在 `utils/tagsicon.ts` 登記（`iconList.set("板名", 圖示)`）
+
+### 生活影像（`content/gallery/`）
+
+一則一個相簿。新增 `.mdx` 檔，檔名就是網址（例如 `2026-10-kenting.mdx` → `/gallery/2026-10-kenting`），
+照片和影片放在 `public/img/gallery/<檔名>/`：
+
+```mdx
+---
+title: 墾丁三天兩夜
+date: 2026-10-20
+description: 一句話簡介
+cover: 1.jpg
+location: 屏東墾丁
+---
+
+想寫的文字可以直接寫。
+
+<Photos>
+
+![海邊](/img/gallery/2026-10-kenting/1.jpg)
+
+![夕陽](/img/gallery/2026-10-kenting/2.jpg)
+
+</Photos>
+
+<Video src="/img/gallery/2026-10-kenting/clip.mp4" caption="浮潛" />
+
+<YouTube id="影片網址 watch?v= 後面那串" caption="vlog" />
+```
+
+- `cover`、`location`、`description` 可省略
+- `<Photos>` 裡每張圖片之間要空一行
+- 影片檔請壓在 25MB 以下（Cloudflare 單檔上限）；較長的影片建議上傳 YouTube 後用 `<YouTube>`
 
 ### 學習日常（`content/docs/`）
 

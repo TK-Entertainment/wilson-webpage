@@ -1,4 +1,5 @@
 import { type Metadata } from "next";
+import { notFound } from "next/navigation";
 import { allBlogs } from "contentlayer/generated";
 import { MDXContent } from "next-docs-ui/mdx";
 import { Content } from "@/components/content";
@@ -39,7 +40,7 @@ export default async function BlogSlug({
   const page = allBlogs.find((blog) => blog.slug == params.slug);
 
   if (page == undefined) {
-    return <></>;
+    notFound();
   }
 
   const toc = await getTableOfContents(page.body.raw);
@@ -89,7 +90,11 @@ export default async function BlogSlug({
 export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
-  return allBlogs.map((blog) => ({
+  const params = allBlogs.map((blog) => ({
     slug: blog.slug,
   }));
+
+  // Cloudflare (next-on-pages) 要求此路由至少有一個預先產生的頁面，
+  // 還沒有任何文章時放一個會 404 的佔位頁
+  return params.length > 0 ? params : [{ slug: "_placeholder" }];
 }

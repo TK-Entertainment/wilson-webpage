@@ -19,7 +19,7 @@ export function generateMetadata(): Metadata {
       absolute: "威爾森的生活札記",
     },
     description:
-      "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常。威爾森的生活與上課筆記都在這裡。",
+      "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像。",
     openGraph: {
       images: "",
       title: {
@@ -28,7 +28,7 @@ export function generateMetadata(): Metadata {
         default: "威爾森的生活札記",
       },
       description:
-        "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常。威爾森的生活與上課筆記都在這裡。",
+        "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像。",
     },
   };
 }
