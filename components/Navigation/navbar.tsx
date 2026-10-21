@@ -5,14 +5,23 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 import { MoonIcon, SunIcon, Monitor } from "lucide-react";
-import {
-  faArrowLeft,
-  faMugHot,
-  faMugSaucer,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/logo";
 import { allBlogs } from "contentlayer/generated";
+
+const sections = [
+  {
+    href: "/blog",
+    label: "/日常碎念",
+    shape: "h-3 w-3 rounded-full bg-bh-red",
+  },
+  {
+    href: "/docs",
+    label: "/學習日常",
+    shape: "h-3 w-3 bg-bh-blue [clip-path:polygon(50%_0,100%_100%,0_100%)]",
+  },
+];
 
 export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
@@ -81,20 +90,20 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 nd-border-b nd-transition-colors nd-bg-background/80 nd-border-foreground/5 nd-backdrop-blur-sm">
+    <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 border-b-4 border-foreground bg-background">
       <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
         <Link
           href="/"
-          className="flex flex-row items-center gap-2 text-xl tracking-wide"
+          className="group flex flex-row items-center gap-3 text-lg font-black"
         >
-          <Logo className="h-7 w-7" />
+          <Logo className="h-4 w-12 jitter-hover" />
           <span className="max-sm:hidden">威爾森的生活札記</span>
           <span className="sm:hidden">生活札記</span>
         </Link>
         {blog && !isMobile ? (
           <Link
             href="/blog"
-            className="max-md:hidden text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="max-md:hidden font-mono-label text-sm text-muted-foreground transition-colors hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
             回到日常碎念
@@ -102,33 +111,25 @@ export default function Navbar() {
         ) : (
           <></>
         )}
-        <div className="nd-flex nd-flex-row content-end ml-auto">
-          <Link
-            href="/blog"
-            className={`nd-flex items-center gap-2 px-2 py-1 transition-colors hover:text-foreground ${
-              pathname.startsWith("/blog")
-                ? "text-foreground"
-                : "text-muted-foreground"
-            }`}
-          >
-            <FontAwesomeIcon icon={faMugHot} className="text-lg" />
-            <span className="max-md:hidden">日常碎念</span>
-          </Link>
-          <Link
-            href="/docs"
-            className={`nd-flex items-center gap-2 px-2 py-1 transition-colors hover:text-foreground ${
-              pathname.startsWith("/docs")
-                ? "text-foreground"
-                : "text-muted-foreground"
-            }`}
-          >
-            <FontAwesomeIcon icon={faMugSaucer} className="text-lg" />
-            <span className="max-md:hidden">學習日常</span>
-          </Link>
+        <div className="nd-flex nd-flex-row items-center gap-1 ml-auto">
+          {sections.map((section) => (
+            <Link
+              key={section.href}
+              href={section.href}
+              className={`nd-flex items-center gap-2 px-2 py-1 font-mono-label text-sm font-bold transition-colors ${
+                pathname.startsWith(section.href)
+                  ? "bg-bh-yellow text-bh-ink"
+                  : "hover:text-bh-red"
+              }`}
+            >
+              <span className={section.shape} aria-hidden="true" />
+              <span className="max-md:hidden">{section.label}</span>
+            </Link>
+          ))}
           <Link
             href={`${pathname}#`}
             onClick={() => handlePrefferedThemeChange()}
-            className="nd-flex items-center px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
+            className="nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
           >
             {!theme ? (
               <Monitor className="h-5 w-5 text-lg" />
@@ -142,13 +143,13 @@ export default function Navbar() {
           </Link>
           <Link
             href="https://github.com/TK-Entertainment/wilson-webpage"
-            className="max-sm:hidden nd-flex items-center px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
+            className="max-sm:hidden nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faGithub} className="h-5 w-5 text-lg" />
           </Link>
           <Link
             href="https://instagram.com/wilson_note"
-            className="nd-flex items-center px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
+            className="nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faInstagram} className="h-5 w-5 text-lg" />
           </Link>

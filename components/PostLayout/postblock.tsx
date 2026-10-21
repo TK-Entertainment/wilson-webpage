@@ -8,15 +8,15 @@ export default function PostBlock({ page }: { page: Blog }) {
     page.image != null ? `/img/${page.slug}/${page.image}` : "/img/taiwan.png";
 
   return (
-    <article className="group flex flex-row gap-5 py-6">
-      <div className="flex flex-col flex-1 min-w-0">
-        <p className="text-sm text-muted-foreground">
-          {new Date(page.date).toLocaleDateString("zh-TW")}
-          {page.outside ? " · 外部文章" : ""}
+    <article className="group flex flex-row gap-5 border-t-2 border-foreground py-6">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <p className="font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
+          {new Date(page.date).toLocaleDateString("sv-SE")}
+          {page.outside ? " // 外部文章" : ""}
         </p>
         <Link
           href={href}
-          className="mt-1 text-2xl leading-snug decoration-1 underline-offset-4 hover:underline"
+          className="split-hover mt-1 text-2xl font-black leading-snug"
         >
           {page.title}
         </Link>
@@ -27,12 +27,12 @@ export default function PostBlock({ page }: { page: Blog }) {
         ) : (
           <></>
         )}
-        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
+        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-mono-label text-xs font-bold">
           {page.tags?.map((tag) => (
             <Link
               key={tag}
               href={`/blog/tags/${tag}`}
-              className="transition-colors hover:text-foreground"
+              className="transition-colors hover:text-bh-red"
             >
               #{tag}
             </Link>
@@ -41,12 +41,12 @@ export default function PostBlock({ page }: { page: Blog }) {
       </div>
       <Link
         href={href}
-        className="flex-none self-start w-24 sm:w-40 aspect-[4/3] overflow-hidden rounded-lg"
+        className="aspect-[4/3] w-24 flex-none self-start overflow-hidden border-2 border-foreground sm:w-40"
       >
         <Image
           alt={page.title}
           src={cover}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full object-cover grayscale transition duration-300 group-hover:grayscale-0"
           width={320}
           height={240}
         />

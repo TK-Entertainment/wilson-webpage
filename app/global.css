@@ -1,35 +1,331 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 中文用霞鶩文楷，英數字維持 Inter */
-html body {
-  font-family:
-    "LXGW WenKai TC", var(--font-inter, "Inter"), system-ui, sans-serif;
-  letter-spacing: 0.02em;
+/* 包浩斯 × 故障風：覆寫 next-docs-ui 的顏色變數，筆記區也會一起套用 */
+:root {
+  --background: 40 19% 92%; /* 紙白 #efece6 */
+  --foreground: 0 0% 8%; /* 墨黑 #141414 */
+  --muted: 40 16% 87%;
+  --muted-foreground: 36 6% 33%;
+  --popover: 40 19% 94%;
+  --popover-foreground: 0 0% 8%;
+  --card: 40 22% 95%;
+  --card-foreground: 0 0% 8%;
+  --border: 0 0% 8%;
+  --input: 0 0% 8%;
+  --primary: 4 76% 53%; /* 紅 #e2342b */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 40 16% 87%;
+  --secondary-foreground: 0 0% 8%;
+  --accent: 44 88% 57%; /* 黃 #f2c230 */
+  --accent-foreground: 0 0% 8%;
+  --ring: 218 68% 38%; /* 藍 #1f4fa3 */
+
+  /* 故障效果的兩個色版 */
+  --glitch-a: #1f4fa3;
+  --glitch-b: #f2c230;
+  --glitch-blend: multiply;
 }
 
-/* 文章內文放寬行距 */
+.dark {
+  --background: 0 0% 8%;
+  --foreground: 40 19% 92%;
+  --muted: 0 0% 14%;
+  --muted-foreground: 38 8% 64%;
+  --popover: 0 0% 10%;
+  --popover-foreground: 40 19% 92%;
+  --card: 0 0% 11%;
+  --card-foreground: 40 19% 92%;
+  --border: 40 19% 92%;
+  --input: 40 19% 92%;
+  --primary: 4 76% 58%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 14%;
+  --secondary-foreground: 40 19% 92%;
+  --accent: 44 88% 57%;
+  --accent-foreground: 0 0% 8%;
+  --ring: 218 68% 55%;
+
+  --glitch-a: #e2342b;
+  --glitch-b: #3b74d6;
+  --glitch-blend: screen;
+}
+
+html body {
+  font-family:
+    "Noto Sans TC", var(--font-inter, "Inter"), system-ui, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.font-mono-label {
+  font-family: "Space Mono", ui-monospace, monospace;
+}
+
+/* ---------- 故障標題：兩個色版偶爾錯位閃爍 ---------- */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: var(--glitch-blend);
+  opacity: 0;
+}
+.glitch::before {
+  color: var(--glitch-a);
+  animation: glitch-a 3.4s steps(1) infinite;
+}
+.glitch::after {
+  color: var(--glitch-b);
+  animation: glitch-b 4.1s steps(1) infinite;
+}
+@keyframes glitch-a {
+  0%,
+  86%,
+  100% {
+    opacity: 0;
+    transform: none;
+    clip-path: none;
+  }
+  87% {
+    opacity: 1;
+    transform: translate(-4px, 1px);
+    clip-path: inset(10% 0 62% 0);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(5px, -1px);
+    clip-path: inset(55% 0 20% 0);
+  }
+  93% {
+    opacity: 1;
+    transform: translate(-2px, 0);
+    clip-path: inset(30% 0 45% 0);
+  }
+}
+@keyframes glitch-b {
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+    transform: none;
+    clip-path: none;
+  }
+  81% {
+    opacity: 1;
+    transform: translate(4px, -1px);
+    clip-path: inset(70% 0 5% 0);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(-5px, 1px);
+    clip-path: inset(5% 0 75% 0);
+  }
+}
+
+/* 滑過時的紅藍錯位與抖動 */
+.split-hover {
+  transition: text-shadow 0.15s;
+}
+.group:hover .split-hover,
+.split-hover:hover {
+  text-shadow:
+    -2px 0 #e2342b,
+    2px 0 #1f4fa3;
+}
+.jitter-hover:hover,
+.group:hover .jitter-hover {
+  animation: jitter 0.3s steps(2) 2;
+}
+@keyframes jitter {
+  50% {
+    transform: translate(3px, -1px) skewX(-6deg);
+  }
+}
+
+/* 終端機游標 */
+.caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  margin-left: 4px;
+  vertical-align: -0.15em;
+  background: #e2342b;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 跑馬燈 */
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 26s linear infinite;
+}
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* 首頁幾何構圖 */
+.bh-art .circle {
+  animation: tear 4.5s steps(1) infinite;
+}
+.bh-art .ghost {
+  opacity: 0;
+  mix-blend-mode: multiply;
+  animation: ghost 4.5s steps(1) infinite;
+}
+.bh-art .bar {
+  animation: slide-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.bh-art .quarter {
+  transform-origin: top right;
+  animation: pop-in 0.9s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.bh-art .tri {
+  animation: spin 9s linear infinite;
+}
+.bh-art .scan {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(20, 20, 20, 0.18) 0 2px,
+    transparent 2px 5px
+  );
+  animation: sweep 5s linear infinite;
+}
+@keyframes tear {
+  0%,
+  88%,
+  100% {
+    transform: none;
+    clip-path: none;
+  }
+  89% {
+    transform: translateX(14px);
+    clip-path: inset(20% 0 55% 0);
+  }
+  91% {
+    transform: translateX(-10px);
+    clip-path: inset(60% 0 15% 0);
+  }
+  93% {
+    transform: translateX(6px);
+  }
+}
+@keyframes ghost {
+  0%,
+  88%,
+  95%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+  89%,
+  93% {
+    opacity: 1;
+    transform: translate(-12px, 4px);
+  }
+}
+@keyframes sweep {
+  from {
+    top: -20%;
+  }
+  to {
+    top: 110%;
+  }
+}
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes pop-in {
+  from {
+    transform: scale(0);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* 整頁淡淡的掃描線 */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(20, 20, 20, 0.03) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* 文章內文 */
 .nd-prose p,
 .nd-prose li {
   line-height: 1.9;
 }
+.nd-prose a:not(:where(.nd-not-prose *)) {
+  color: #e2342b;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.nd-prose h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.nd-prose h2::before {
+  content: "";
+  flex: none;
+  width: 0.55em;
+  height: 0.55em;
+  background: #e2342b;
+  border-radius: 50%;
+}
+.nd-prose blockquote {
+  border-left: 4px solid #1f4fa3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 
 /* width */
 ::-webkit-scrollbar {
-  width: 3px;
+  width: 6px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: hsl(var(--background));
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: hsl(var(--foreground));
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #e2342b;
 }

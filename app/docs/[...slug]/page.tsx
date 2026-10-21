@@ -6,6 +6,7 @@ import { DocsPage } from "next-docs-ui/page";
 import { findNeighbour, getTableOfContents } from "next-docs-zeta/server";
 import { notFound } from "next/navigation";
 import { Content } from "@/components/content";
+import GlitchText from "@/components/glitchtext";
 
 export default async function Page({
   params,
@@ -24,7 +25,9 @@ export default async function Page({
   return (
     <DocsPage toc={toc} footer={neighbour}>
       <MDXContent>
-        <h1>{page.title}</h1>
+        <h1 className="font-black">
+          <GlitchText text={page.title} />
+        </h1>
         <Content code={page.body.code} />
       </MDXContent>
     </DocsPage>

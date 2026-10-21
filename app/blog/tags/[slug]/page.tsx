@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Actionbar from "@/components/Navigation/actionbar";
 import TagSidebar from "@/components/Navigation/tagsidebar";
 import PostBlock from "@/components/PostLayout/postblock";
+import GlitchText from "@/components/glitchtext";
 import { allBlogs } from "contentlayer/generated";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -34,7 +35,7 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
           className={`${
             showTagMenu
               ? "col-span-full"
-              : "max-md:hidden col-span-2 border-r pr-4"
+              : "max-md:hidden col-span-2 border-r-4 border-foreground pr-4"
           }`}
         >
           <TagSidebar />
@@ -46,21 +47,18 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
               : "col-span-7 max-md:col-span-full px-6 sm:px-10 pt-10 max-w-3xl"
           }`}
         >
-          <Link
-            href="/blog"
-            className="group flex flex-col w-full border-b pb-4"
-          >
-            <div className="text-sm text-muted-foreground transition-colors group-hover:text-foreground">
+          <Link href="/blog" className="group flex flex-col w-full pb-6">
+            <div className="font-mono-label text-sm font-bold transition-colors group-hover:text-bh-red">
               <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
               回到全部碎念
             </div>
-            <div className="mt-1 text-3xl tracking-wide flex">
-              <p>#{decodedTag}</p>
+            <div className="mt-1 text-4xl font-black flex">
+              <GlitchText text={`#${decodedTag}`} />
             </div>
           </Link>
           {postSortedByTags.length != 0 ? (
             <>
-              <div className="divide-y">
+              <div className="border-b-2 border-foreground">
                 {postSortedByTags.map((post) => (
                   <PostBlock key={post.slug} page={post} />
                 ))}

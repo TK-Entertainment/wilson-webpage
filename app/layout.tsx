@@ -45,10 +45,10 @@ export default function Layout({ children }: { children: ReactNode }) {
         />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@300;400;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap"
         />
       </head>
-      <body>
+      <body className="scanlines">
         <Navbar />
         <RootProvider>{children}</RootProvider>
         <Footer />

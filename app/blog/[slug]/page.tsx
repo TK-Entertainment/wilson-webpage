@@ -7,6 +7,7 @@ import { TOC } from "@/components/toc";
 import Actionbar from "@/components/Navigation/actionbar";
 import ArticleMobileTocLauncher from "@/components/ArticleMobileTocLauncher";
 import Link from "next/link";
+import GlitchText from "@/components/glitchtext";
 
 export function generateMetadata({
   params,
@@ -49,27 +50,27 @@ export default async function BlogSlug({
       <MDXContent>
         <div className="grid grid-cols-7">
           <div className="col-span-6 max-xl:col-span-full px-2 md:px-12 md:mt-8 mt-4 max-w-3xl">
-            <header className="nd-not-prose mb-10 border-b pb-8 md:pt-8 pt-4">
-              <p className="text-sm text-muted-foreground">
-                {new Date(page.date).toLocaleDateString("zh-TW")}
-                {page.authors ? ` · ${page.authors.join("、")}` : ""}
+            <header className="nd-not-prose mb-10 border-b-4 border-foreground pb-8 md:pt-8 pt-4">
+              <p className="font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
+                {new Date(page.date).toLocaleDateString("sv-SE")}
+                {page.authors ? ` // ${page.authors.join("、")}` : ""}
               </p>
-              <h1 className="mt-3 text-4xl leading-tight tracking-wide">
-                {page.title}
+              <h1 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">
+                <GlitchText text={page.title} />
               </h1>
               {page.description ? (
-                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                <p className="mt-4 text-lg font-medium leading-relaxed">
                   {page.description}
                 </p>
               ) : (
                 <></>
               )}
-              <div className="mt-5 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
+              <div className="mt-5 flex flex-wrap gap-2 font-mono-label text-xs font-bold">
                 {page.tags?.map((tag) => (
                   <Link
                     key={tag}
                     href={`/blog/tags/${tag}`}
-                    className="transition-colors hover:text-foreground"
+                    className="border-2 border-foreground px-2 py-1 transition-colors hover:bg-bh-yellow hover:text-bh-ink"
                   >
                     #{tag}
                   </Link>

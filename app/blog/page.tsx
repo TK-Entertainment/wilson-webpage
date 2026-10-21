@@ -2,6 +2,7 @@
 import TagSidebar from "@/components/Navigation/tagsidebar";
 import Actionbar from "@/components/Navigation/actionbar";
 import PostBlock from "@/components/PostLayout/postblock";
+import GlitchText from "@/components/glitchtext";
 import { allBlogs } from "contentlayer/generated";
 import { useState, useEffect } from "react";
 
@@ -30,7 +31,7 @@ export default function BlogPage() {
           className={`${
             showTagMenu
               ? "col-span-full"
-              : "max-md:hidden col-span-2 border-r pr-4"
+              : "max-md:hidden col-span-2 border-r-4 border-foreground pr-4"
           }`}
         >
           <TagSidebar />
@@ -42,10 +43,11 @@ export default function BlogPage() {
               : "col-span-7 max-md:col-span-full px-6 sm:px-10 pt-10 max-w-3xl"
           }`}
         >
-          <h1 className="text-3xl tracking-wide border-b pb-4">
-            來杯好茶の日常碎念
+          <p className="font-mono-label text-sm font-bold">[01] 來杯好茶の</p>
+          <h1 className="pb-6 text-4xl font-black sm:text-5xl">
+            <GlitchText text="日常碎念" />
           </h1>
-          <div className="divide-y">
+          <div className="border-b-2 border-foreground">
             {postSorted.map((post) => (
               <PostBlock key={post.slug} page={post} />
             ))}
