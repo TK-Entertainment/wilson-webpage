@@ -19,12 +19,12 @@ export function generateMetadata({
   const blog = allBlogs.find((blog) => blog.slug == params.slug);
 
   return {
-    title: `Wilson's Notes | ${blog?.title}`,
+    title: `威爾森的生活札記 | ${blog?.title}`,
     description: blog?.description,
     openGraph: {
       type: "article",
       images: blog?.image ?? "",
-      title: `Wilson's Notes | ${blog?.title}`,
+      title: `威爾森的生活札記 | ${blog?.title}`,
       authors: blog?.authors,
       tags: blog?.tags,
       description: blog?.description,
@@ -89,6 +89,8 @@ export default async function BlogSlug({
     </>
   );
 }
+
+export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   return allBlogs.map((blog) => ({

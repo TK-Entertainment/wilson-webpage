@@ -11,26 +11,24 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-export const runtime = "edge";
-
 export function generateMetadata(): Metadata {
   return {
     title: {
-      template: "Wilson's Notes",
-      default: "Wilson's Notes",
-      absolute: "Wilson's Notes",
+      template: "威爾森的生活札記",
+      default: "威爾森的生活札記",
+      absolute: "威爾森的生活札記",
     },
     description:
-      "仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重拾愛好自然與科學之心，讓我們一起徜徉在浩瀚星河中吧！",
+      "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常。威爾森的生活與上課筆記都在這裡。",
     openGraph: {
       images: "",
       title: {
-        template: "Wilson's Notes",
-        absolute: "Wilson's Notes",
-        default: "Wilson's Notes",
+        template: "威爾森的生活札記",
+        absolute: "威爾森的生活札記",
+        default: "威爾森的生活札記",
       },
       description:
-        "仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重拾愛好自然與科學之心，讓我們一起徜徉在浩瀚星河中吧！",
+        "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常。威爾森的生活與上課筆記都在這裡。",
     },
   };
 }

@@ -40,7 +40,7 @@ export default function BlogPage() {
             showTagMenu ? "hidden" : "col-span-7 max-md:col-span-full p-6 mt-2"
           }`}
         >
-          <p className="text-3xl font-bold">全部文章</p>
+          <p className="text-3xl font-bold">來杯好茶の日常碎念</p>
           <div className="mt-4 h-auto space-y-4">
             {postSorted.map((post, index) => (
               <div key={index}>

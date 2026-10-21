@@ -2,20 +2,69 @@
 
 ### A Project of TK Entertainment | with Wilson Chen
 
-# Wilson's Notes｜Young Want 星空
+# 威爾森的生活札記｜Wilson's Notes
 
 [![CodeFactor](https://www.codefactor.io/repository/github/tk-entertainment/wilson-webpage/badge)](https://www.codefactor.io/repository/github/tk-entertainment/wilson-webpage)  
 [來看看網站吧~](https://wilson.trygong.uk)
 
-## 認識 Young Want 星空
+## 網站分區
 
-_仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重拾愛好自然與科學之心，讓我們一起徜徉在浩瀚星河中吧！_  
-[>> 前往了解](https://wilson.trygong.uk/blog/what-is-young-want-xin-kong)
+| 分區 | 網址 | 內容放在 |
+| --- | --- | --- |
+| 來杯好茶の日常碎念 | `/blog` | `content/blog/*.mdx` |
+| 來杯咖啡の學習日常 | `/docs` | `content/docs/**` |
 
-## 專案目的
+## 如何新增內容
 
-此專案主要用於提供 **[@Wilsonsonsonsonson](https://github.com/Wilsonsonsonsonson) / Wilson Chen (威爾森)** 發布地科相關題材之文章的平台  
-並同時作為自己練習 TypeScript / JavaScript 的實作
+### 日常碎念（`content/blog/`）
+
+新增一個 `.mdx` 檔，檔名就是網址（例如 `my-day.mdx` → `/blog/my-day`），開頭寫：
+
+```yaml
+---
+title: 文章標題
+authors: [威爾森]
+description: "一句話簡介"
+tags: ["日常紀錄板", "其他標籤"]
+date: 2026-10-21T12:00:00
+image: cover.png
+outside: false
+outsideLink:
+---
+```
+
+- `outside: false` 一定要寫，缺少會建置失敗
+- 封面圖放在 `public/img/<檔名>/cover.png`，資料夾名稱要和 `.mdx` 檔名相同；不需要封面就把 `image:` 留空
+- 標籤要出現在「主題板」，必須先在 `utils/tagsicon.ts` 登記（`iconList.set("板名", 圖示)`）
+
+### 學習日常（`content/docs/`）
+
+一門課開一個資料夾，一章一個檔案，左側目錄會自動產生：
+
+```
+content/docs/
+  index.mdx              ← 學習日常首頁
+  calculus/
+    meta.json            ← 左側目錄顯示的課程名稱
+    ch1-limits.mdx       ← /docs/calculus/ch1-limits
+```
+
+`meta.json` 內容（資料夾名稱建議用英文，中文課名寫在這裡）：
+
+```json
+{
+  "title": "微積分"
+}
+```
+
+每個筆記檔案開頭只需要：
+
+```yaml
+---
+title: 第一章 極限
+description: 一句話簡介
+---
+```
 
 ## 專案原理
 
@@ -88,7 +137,7 @@ pnpm run dev
 
 ## 授權
 
-**Wilson's Notes 開發專案**  
+**威爾森的生活札記 開發專案**  
 本專案依 **MIT License** 授權 _(限於其餘程式部分)_  
 授權詳細內容請參 **LICENSE** 檔案 _(限於其餘程式部分)_
 

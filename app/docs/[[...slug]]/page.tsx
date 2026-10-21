@@ -31,6 +31,8 @@ export default async function Page({
   );
 }
 
+export const dynamicParams = false;
+
 export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   return allDocs.map((page) => ({
     slug: page.slug.split("/"),

@@ -5,7 +5,12 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 import { MoonIcon, SunIcon, Monitor } from "lucide-react";
-import { faArrowLeft, faW } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faW,
+  faMugHot,
+  faMugSaucer,
+} from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
 import { allBlogs } from "contentlayer/generated";
 
@@ -79,7 +84,7 @@ export default function Navbar() {
     <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 nd-border-b nd-transition-colors nd-bg-background/80 nd-border-foreground/10 nd-backdrop-blur-sm">
       <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
         <Link href="/" className="text-2xl font-bold">
-          <div className="max-sm:hidden">威爾森的科普天地</div>
+          <div className="max-sm:hidden">威爾森的生活札記</div>
           <div className="sm:hidden flex flex-row">
             <FontAwesomeIcon icon={faW} className="my-auto mr-2" />
             <p>Notes</p>
@@ -100,7 +105,9 @@ export default function Navbar() {
                         點此回到文章列表
                       </div>
                       <div className="font-bold text-2xl flex flex-row">
-                        <p className="font-normal opacity-70">部落格</p>
+                        <p className="font-normal opacity-70">
+                          來杯好茶の日常碎念
+                        </p>
                         <p>&nbsp;/&nbsp;</p>
                         <p>{blog.title}</p>
                       </div>
@@ -110,7 +117,7 @@ export default function Navbar() {
                   )}
                 </>
               ) : (
-                <p className="font-bold text-2xl">部落格</p>
+                <p className="font-bold text-2xl">來杯好茶の日常碎念</p>
               )}
             </Link>
           </>
@@ -118,6 +125,31 @@ export default function Navbar() {
           <></>
         )}
         <div className="nd-flex nd-flex-row content-end ml-auto">
+          <Link
+            href="/blog"
+            className={`nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95 ${
+              pathname.startsWith("/blog") ? "bg-accent" : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faMugHot} className={"text-2xl my-auto"} />
+            <span className="max-md:hidden ml-2 my-auto font-bold">
+              日常碎念
+            </span>
+          </Link>
+          <Link
+            href="/docs"
+            className={`nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95 ${
+              pathname.startsWith("/docs") ? "bg-accent" : ""
+            }`}
+          >
+            <FontAwesomeIcon
+              icon={faMugSaucer}
+              className={"text-2xl my-auto"}
+            />
+            <span className="max-md:hidden ml-2 my-auto font-bold">
+              學習日常
+            </span>
+          </Link>
           <Link
             href={`${pathname}#`}
             onClick={() => handlePrefferedThemeChange()}
@@ -135,7 +167,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="https://github.com/TK-Entertainment/wilson-webpage"
-            className="nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
+            className="max-sm:hidden nd-flex justify-left rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
           >
             <FontAwesomeIcon icon={faGithub} className={"text-2xl my-auto"} />
           </Link>

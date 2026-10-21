@@ -21,12 +21,12 @@ export function generateMetadata({
   );
 
   return {
-    title: `[PREVIEW] Wilson's Notes | ${blog?.title}`,
+    title: `[PREVIEW] 威爾森的生活札記 | ${blog?.title}`,
     description: blog?.description,
     openGraph: {
       type: "article",
       images: blog?.image ?? "",
-      title: `[PREVIEW] Wilson's Notes | ${blog?.title}`,
+      title: `[PREVIEW] 威爾森的生活札記 | ${blog?.title}`,
       authors: blog?.authors,
       tags: blog?.tags,
       description: blog?.description,

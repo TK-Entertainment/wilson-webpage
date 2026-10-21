@@ -4,14 +4,14 @@ import { RollButton } from "next-docs-ui/components/roll-button";
 
 export function generateMetadata(): Metadata {
   return {
-    title: "Wilson's Notes | 部落格",
+    title: "威爾森的生活札記 | 來杯好茶の日常碎念",
     description:
-      "仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重拾愛好自然與科學之心，讓我們一起徜徉在浩瀚星河中吧！",
+      "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常。威爾森的生活與上課筆記都在這裡。",
     openGraph: {
       images: "",
-      title: "Wilson's Notes | 部落格",
+      title: "威爾森的生活札記 | 來杯好茶の日常碎念",
       description:
-        "仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重拾愛好自然與科學之心，讓我們一起徜徉在浩瀚星河中吧！",
+        "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常。威爾森的生活與上課筆記都在這裡。",
     },
   };
 }

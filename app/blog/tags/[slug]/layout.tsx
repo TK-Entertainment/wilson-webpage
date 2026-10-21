@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { getTagsMap } from "@/utils/tags";
+
+export const dynamicParams = false;
+
+export function generateStaticParams(): { slug: string }[] {
+  return [...getTagsMap().keys()].map((tag) => ({ slug: tag }));
+}
 
 export function generateMetadata({
   params,
@@ -10,14 +17,14 @@ export function generateMetadata({
   const decodedTag = decodeURIComponent(slug);
 
   return {
-    title: `Wilson's Notes | 標籤 > ${decodedTag}`,
+    title: `威爾森的生活札記 | 標籤 > ${decodedTag}`,
     description:
-      "仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重拾愛好自然與科學之心，讓我們一起徜徉在浩瀚星河中吧！",
+      "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常。威爾森的生活與上課筆記都在這裡。",
     openGraph: {
       images: "",
-      title: `Wilson's Notes | 標籤 > ${decodedTag}`,
+      title: `威爾森的生活札記 | 標籤 > ${decodedTag}`,
       description:
-        "仰望星空科普專案介紹，為你帶來不同以往的科普體驗，重拾愛好自然與科學之心，讓我們一起徜徉在浩瀚星河中吧！",
+        "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常。威爾森的生活與上課筆記都在這裡。",
     },
   };
 }

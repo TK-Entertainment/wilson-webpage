@@ -59,14 +59,16 @@ const Actionbar: FC<ActionbarProps> = ({
                     <p
                       className={`opacity-70 font-normal max-sm:text-base text-2xl text-left`}
                     >
-                      部落格
+                      來杯好茶の日常碎念
                     </p>
                     <p className="opacity-70 font-normal max-sm:text-base text-2xl text-left">
                       &nbsp;/&nbsp;標籤
                     </p>
                   </>
                 ) : (
-                  <p className={`font-bold text-2xl text-left`}>部落格</p>
+                  <p className={`font-bold text-2xl text-left`}>
+                    來杯好茶の日常碎念
+                  </p>
                 )}
               </div>
               <div className="flex flex-row">
@@ -95,7 +97,7 @@ const Actionbar: FC<ActionbarProps> = ({
                 </div>
                 <div className="font-bold text-2xl flex flex-row">
                   <p className="font-normal max-md:text-base max-md:items-end max-md:mt-auto opacity-70">
-                    部落格
+                    來杯好茶の日常碎念
                   </p>
                   <p>&nbsp;/&nbsp;</p>
                   {blog ? (
