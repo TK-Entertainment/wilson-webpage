@@ -34,11 +34,15 @@ export default async function Page({
 export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
-  return allDocs
+  const params = allDocs
     .filter((page) => page.slug !== "")
     .map((page) => ({
       slug: page.slug.split("/"),
     }));
+
+  // Cloudflare (next-on-pages) 要求此路由至少有一個預先產生的頁面，
+  // 還沒有任何筆記時放一個會 404 的佔位頁
+  return params.length > 0 ? params : [{ slug: ["_placeholder"] }];
 }
 
 export function generateMetadata({ params }: { params: { slug?: string[] } }) {
