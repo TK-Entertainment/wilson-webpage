@@ -42,7 +42,7 @@ jobs:
         run: |
           for f in install.log build.log; do
             [ -f "$f" ] || continue
-            tail -n 80 "$f" | sed 's/\x1b\[[0-9;]*m//g' > tail.txt
+            grep -v "Invalid prerender config" "$f" | tail -n 30 | sed 's/\x1b\[[0-9;]*m//g' > tail.txt
             body=$(awk '{printf "%s%%0A", $0}' tail.txt)
             echo "::error title=$f::${body}"
           done
