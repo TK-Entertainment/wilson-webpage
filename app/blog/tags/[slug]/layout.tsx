@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { getTagsMap } from "@/utils/tags";
 
-export const dynamicParams = false;
-
-export function generateStaticParams(): { slug: string }[] {
-  return [...getTagsMap().keys()].map((tag) => ({ slug: tag }));
-}
+// 標籤頁不渲染 MDX，可以在 edge 上即時產生（中文網址在靜態檔案下會 404）
+export const runtime = "edge";
 
 export function generateMetadata({
   params,
