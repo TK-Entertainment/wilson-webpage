@@ -12,11 +12,13 @@
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.6",
+    "@giscus/react": "3.0.0",
     "algoliasearch": "^4.25.2",
     "contentlayer": "0.3.4",
     "eslint": "^8.57.1",
     "fontawesome-react": "^2.0.0",
     "fs": "0.0.1-security",
+    "katex": "0.16.11",
     "lucide-react": "^0.284.0",
     "next": "14.0.2",
     "next-contentlayer": "0.3.4",
@@ -26,6 +28,8 @@
     "prettier": "^3.6.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "rehype-katex": "6.0.3",
+    "remark-math": "5.1.1",
     "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
