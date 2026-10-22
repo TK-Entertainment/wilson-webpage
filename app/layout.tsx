@@ -6,6 +6,7 @@ import Navbar from "@/components/Navigation/navbar";
 import Footer from "@/components/footer";
 import GlitchScroll from "@/components/glitchscroll";
 import BackToTop from "@/components/backtotop";
+import NoDocSearch from "@/components/search/nodocsearch";
 import {
   ogImage,
   rssAlternate,
@@ -64,7 +65,9 @@ export default function Layout({ children }: { children: ReactNode }) {
       </head>
       <body className="scanlines">
         <Navbar />
-        <RootProvider>{children}</RootProvider>
+        <RootProvider search={{ SearchDialog: NoDocSearch }}>
+          {children}
+        </RootProvider>
         <Footer />
         <GlitchScroll />
         <BackToTop />
