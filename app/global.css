@@ -312,6 +312,15 @@ button[aria-label="Scroll to Top"] {
   border: 2px solid hsl(var(--foreground));
 }
 
+/* 照片牆只有一張照片時：顯示完整比例，不裁成正方形 */
+.photos:not(:has(p + p)) {
+  grid-template-columns: minmax(0, 720px);
+}
+.photos:not(:has(p + p)) img {
+  aspect-ratio: auto;
+  height: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
