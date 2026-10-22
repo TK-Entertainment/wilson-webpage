@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Navbar from "@/components/Navigation/navbar";
 import Footer from "@/components/footer";
 import GlitchScroll from "@/components/glitchscroll";
+import BackToTop from "@/components/backtotop";
 import "next-docs-ui/style.css";
 import "./global.css";
 
@@ -54,6 +55,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <RootProvider>{children}</RootProvider>
         <Footer />
         <GlitchScroll />
+        <BackToTop />
       </body>
     </html>
   );
