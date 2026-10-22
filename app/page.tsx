@@ -1,6 +1,13 @@
 import { allBlogs, allAlbums } from "contentlayer/generated";
 import ScrollHome from "@/components/home/scrollhome";
+import { pageMetadata, siteName } from "@/utils/seo";
 import "./home.css";
+
+export const metadata = pageMetadata({
+  title: siteName,
+  path: "/",
+  image: "default",
+});
 
 const byDate = (a: { date: string }, b: { date: string }) =>
   new Date(b.date).getTime() - new Date(a.date).getTime();

@@ -12,6 +12,8 @@ import GlitchText from "@/components/glitchtext";
 import ReadingProgress from "@/components/ReadingProgress";
 import ArticleNeighbours from "@/components/ArticleNeighbours";
 import { readingTimeLabel } from "@/utils/readingtime";
+import Comments from "@/components/comments";
+import { pageMetadata } from "@/utils/seo";
 
 export function generateMetadata({
   params,
@@ -21,18 +23,16 @@ export function generateMetadata({
   const slug = params.slug ?? "";
   const blog = allBlogs.find((blog) => blog.slug == params.slug);
 
-  return {
+  return pageMetadata({
     title: `威爾森的生活札記 | ${blog?.title}`,
     description: blog?.description,
-    openGraph: {
-      type: "article",
-      images: blog?.image ?? "",
-      title: `威爾森的生活札記 | ${blog?.title}`,
-      authors: blog?.authors,
-      tags: blog?.tags,
-      description: blog?.description,
-    },
-  };
+    path: `/blog/${slug}`,
+    image: blog ? `blog/${blog.slug}` : "blog",
+    type: "article",
+    publishedTime: blog?.date,
+    authors: blog?.authors,
+    tags: blog?.tags,
+  });
 }
 
 export default async function BlogSlug({
@@ -87,6 +87,7 @@ export default async function BlogSlug({
               <Content code={page.body.code} />
             </div>
             <ArticleNeighbours slug={page.slug} />
+            <Comments />
           </div>
           <TOC items={toc} />
         </div>

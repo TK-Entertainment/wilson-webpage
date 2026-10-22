@@ -16,3 +16,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 wilson-webpage.code-workspace
+
+# 建置時由 scripts/og.mjs 產生的分享卡片
+/public/og/

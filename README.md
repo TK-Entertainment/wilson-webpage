@@ -113,6 +113,42 @@ $$
 - 公式太長時會在框內左右捲動，不會撐開整頁
 - 公式裡的 `{`、`}` 不會被當成 MDX 語法；但公式「以外」的文字若要寫大括號，仍要寫成 `\{`、`\}`
 
+## 留言區、分享卡片與 RSS
+
+### 留言區（giscus）
+
+文章與相簿頁面最下方的留言區使用 [giscus](https://giscus.app)，留言會存放在本 repo 的 GitHub Discussions。
+設定集中在 `utils/comments.ts`，`categoryId` 還沒填時頁面會顯示「留言區準備中」。啟用步驟：
+
+1. 到 GitHub repo 的 **Settings → General → Features**，勾選 **Discussions**
+2. 安裝 giscus app：<https://github.com/apps/giscus>，授權給 `TK-Entertainment/wilson-webpage`
+3. （建議）在 Discussions 新增一個 **Announcement** 類型的分類，例如 `Comments`，只讓 giscus 建立討論串
+4. 打開 <https://giscus.app>，Repository 填 `TK-Entertainment/wilson-webpage`，對應方式選 `pathname`，分類選上一步的分類
+5. 從頁面下方產生的設定中複製 `data-category` 與 `data-category-id`（若 `data-repo-id` 和檔案裡的不同也一併更新），填進 `utils/comments.ts`：
+
+```ts
+export const commentsConfig = {
+  repo: "TK-Entertainment/wilson-webpage",
+  repoId: "R_kgDOKXkJtQ",
+  category: "Comments",
+  categoryId: "DIC_kwDO........", // 填入後留言區就會出現
+};
+```
+
+留言區會跟著網站的深淺色模式自動切換。
+
+### 分享卡片（Open Graph 圖片）
+
+分享到 IG、LINE、Facebook 時顯示的預覽圖，是 `pnpm build` 時由 `scripts/og.mjs` 產生的 1200×630 PNG，
+輸出在 `public/og/`（不進版控）。每篇文章、相簿、筆記與各分區首頁都有一張；想先在本機看效果可以執行 `pnpm og`。
+
+- 中文字型會從 Google Fonts 下載需要的字（Noto Sans TC）；離線時可設定 `OG_FONT=/path/to/字型.ttf`（不支援 `.ttc`）
+- 兩者都拿不到時會改產生只有幾何圖形與英文的卡片，不會讓建置失敗
+
+### RSS 訂閱
+
+網址是 `/rss.xml`，會列出所有日常碎念與生活影像（新到舊），建置時產生成靜態檔案。
+
 ## 專案原理
 
 此專案建置於非常好用且好看的 [Next Docs](https://github.com/fuma-nama/next-docs) 框架 (shoutout to [@fuma-nama](https://github.com/fuma-nama))  

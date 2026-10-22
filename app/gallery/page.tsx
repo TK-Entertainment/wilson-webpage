@@ -3,11 +3,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { allAlbums } from "contentlayer/generated";
 import GlitchText from "@/components/glitchtext";
+import { pageMetadata } from "@/utils/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "威爾森的生活札記 | 來杯果汁の生活影像",
-  description: "生活照片與影片紀錄",
-};
+  description: "來杯果汁，收藏生活裡的照片與影片紀錄。",
+  path: "/gallery",
+  image: "gallery",
+});
 
 export default function GalleryPage() {
   const albums = [...allAlbums].sort(
