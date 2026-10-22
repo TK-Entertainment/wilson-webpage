@@ -100,9 +100,9 @@ export default function Navbar() {
       <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
         <Link
           href="/"
-          className="group flex flex-row items-center gap-3 text-lg font-black"
+          className="group flex flex-none flex-row items-center gap-2 whitespace-nowrap text-base font-black sm:gap-3 sm:text-lg"
         >
-          <Logo className="h-4 w-12 jitter-hover" />
+          <Logo className="h-3.5 w-10 flex-none jitter-hover sm:h-4 sm:w-12" />
           <span className="max-sm:hidden">威爾森的生活札記</span>
           <span className="sm:hidden">生活札記</span>
         </Link>

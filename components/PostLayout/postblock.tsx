@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Blog } from "contentlayer/generated";
+import PostCover from "@/components/PostCover";
 
 export default function PostBlock({ page }: { page: Blog }) {
   const href = page.outside ? `${page.outsideLink}` : `/blog/${page.slug}`;
-  const cover =
-    page.image != null ? `/img/${page.slug}/${page.image}` : "/img/taiwan.png";
+  const cover = page.image ? `/img/${page.slug}/${page.image}` : null;
 
   return (
     <article className="group flex flex-row gap-5 border-t-2 border-foreground py-6">
@@ -43,13 +43,19 @@ export default function PostBlock({ page }: { page: Blog }) {
         href={href}
         className="aspect-[4/3] w-24 flex-none self-start overflow-hidden border-2 border-foreground sm:w-40"
       >
-        <Image
-          alt={page.title}
-          src={cover}
-          className="h-full w-full object-cover grayscale transition duration-300 group-hover:grayscale-0"
-          width={320}
-          height={240}
-        />
+        {cover ? (
+          <Image
+            alt={page.title}
+            src={cover}
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            width={320}
+            height={240}
+          />
+        ) : (
+          <div className="h-full w-full transition duration-300 group-hover:scale-105">
+            <PostCover seed={page.slug} />
+          </div>
+        )}
       </Link>
     </article>
   );

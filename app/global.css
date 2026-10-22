@@ -146,6 +146,11 @@ html body {
 .vshape {
   /* 形狀不再做捲動錯位，保持乾淨 */
 }
+/* next-docs-ui 在手機文章頁內建的回到頂端按鈕：網站已有 BackToTop，避免重複 */
+button[aria-label="Scroll to Top"] {
+  display: none !important;
+}
+
 /* 終端機游標 */
 .caret {
   display: inline-block;

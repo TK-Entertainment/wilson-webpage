@@ -181,8 +181,10 @@ export default function ScrollHome({
       // 關於我：直向捲動轉成橫向
       const a = progress.get(about) ?? 0;
       const max = Math.max(0, track.scrollWidth - window.innerWidth);
-      about.style.setProperty("--tx", `${(-a * max).toFixed(1)}px`);
-      about.style.setProperty("--a", clamp(a * 4.5).toFixed(4));
+      // 前 18% 停在自我介紹（頭像在前 12% 拼好），之後才開始橫移
+      const slide = clamp((a - 0.18) / 0.82);
+      about.style.setProperty("--tx", `${(-slide * max).toFixed(1)}px`);
+      about.style.setProperty("--a", clamp(a / 0.12).toFixed(4));
 
       sig.textContent = channels[active];
     }
