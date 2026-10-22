@@ -8,11 +8,20 @@ export function Photos({ children }: { children: ReactNode }) {
 }
 
 // 影片檔（建議 25MB 以下，放在 public/img/gallery/<相簿>/）
-export function Video({ src, caption }: { src: string; caption?: string }) {
+export function Video({
+  src,
+  caption,
+  poster,
+}: {
+  src: string;
+  caption?: string;
+  poster?: string;
+}) {
   return (
     <figure className="nd-not-prose my-6">
       <video
         src={src}
+        poster={poster}
         controls
         playsInline
         preload="metadata"
