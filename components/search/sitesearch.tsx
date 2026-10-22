@@ -257,7 +257,7 @@ export default function SiteSearch() {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative flex h-full w-full flex-col bg-background text-foreground sm:h-auto sm:max-h-[75vh] sm:max-w-2xl sm:border-4 sm:border-foreground sm:shadow-[8px_8px_0_#e2342b]"
+        className="relative flex h-full w-full flex-col bg-background text-foreground sm:h-auto sm:max-h-[75vh] sm:max-w-2xl sm:border-4 sm:border-foreground sm:shadow-[8px_8px_0_#d9302a]"
         style={{
           paddingTop: "env(safe-area-inset-top)",
           paddingBottom: "env(safe-area-inset-bottom)",

@@ -12,7 +12,7 @@ export default function Footer() {
             © 2023–{new Date(Date.now()).getFullYear()} 威爾森 (Wilson Chen)
           </p>
         </div>
-        <div className="flex flex-col gap-1 font-mono-label text-xs opacity-70 md:text-right">
+        <div className="flex flex-col gap-1 font-mono-label text-xs opacity-70 md:items-end md:text-right [&_a]:inline-block [&_a]:py-1">
           <a href="/rss.xml" className="hover:text-bh-yellow">
             RSS 訂閱
           </a>

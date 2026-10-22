@@ -43,7 +43,7 @@ const channels = [
   "CH-02 // COFFEE.EXE",
   "CH-03 // JUICE.EXE",
 ];
-const wipes = ["#e2342b", "#1f4fa3", "#1f9d55"];
+const wipes = ["#d9302a", "#1f4fa3", "#178046"];
 
 // 圓 → 三角 → 方：沿同樣的角度取樣，讓每個點一一對應，變形才會平順
 const N = 72;
@@ -87,7 +87,7 @@ const SQUARE = rayPolygon([
 const SHAPE_COLORS = [
   [242, 194, 48],
   [242, 194, 48],
-  [226, 52, 43],
+  [217, 48, 42],
 ];
 
 const clamp = (v: number) => Math.max(0, Math.min(1, v));
@@ -491,7 +491,7 @@ export default function ScrollHome({
               width: "28vmin",
               height: "28vmin",
               borderRadius: "50%",
-              background: "#e2342b",
+              background: "#d9302a",
             })}
           />
           <i
@@ -525,7 +525,7 @@ export default function ScrollHome({
                 left: "84vmin",
                 width: "40vmin",
                 height: "9vmin",
-                background: "#1f9d55",
+                background: "#178046",
               },
               -8,
             )}

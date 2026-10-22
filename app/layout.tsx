@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 import { RootProvider } from "next-docs-ui/provider";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans_TC, Space_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import Navbar from "@/components/Navigation/navbar";
 import Footer from "@/components/footer";
@@ -19,6 +19,22 @@ import "./global.css";
 
 const inter = Inter({
   subsets: ["latin"],
+});
+
+// 字型在建置時下載並由網站自己提供，不再讓 Google 字型擋住畫面
+// 只保留一般與特粗兩種粗細（粗體 700 會用特粗 900 顯示）
+const noto = Noto_Sans_TC({
+  weight: ["400", "900"],
+  display: "swap",
+  preload: false,
+  variable: "--font-noto",
+});
+
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
 });
 
 export function generateMetadata(): Metadata {
@@ -50,19 +66,10 @@ export function generateMetadata(): Metadata {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="zh-Hant-TW" className={inter.className}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap"
-        />
-      </head>
+    <html
+      lang="zh-Hant-TW"
+      className={`${inter.className} ${noto.variable} ${spaceMono.variable}`}
+    >
       <body className="scanlines">
         <Navbar />
         <RootProvider search={{ SearchDialog: NoDocSearch }}>

@@ -17,12 +17,12 @@ module.exports = {
     extend: {
       colors: {
         bh: {
-          red: "#e2342b",
+          red: "#d9302a",
           blue: "#1f4fa3",
           yellow: "#f2c230",
           ink: "#141414",
           paper: "#efece6",
-          green: "#1f9d55",
+          green: "#178046",
           purple: "#7b3fc4",
           orange: "#f2721c",
         },

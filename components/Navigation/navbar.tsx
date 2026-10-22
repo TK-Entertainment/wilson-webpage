@@ -122,6 +122,7 @@ export default function Navbar() {
             <Link
               key={section.href}
               href={section.href}
+              aria-label={section.label.replace("/", "")}
               className={`nd-flex items-center gap-2 px-2 py-1 font-mono-label text-sm font-bold transition-colors ${
                 pathname.startsWith(section.href)
                   ? "bg-foreground text-background"
@@ -136,6 +137,7 @@ export default function Navbar() {
           <Link
             href={`${pathname}#`}
             onClick={() => handlePrefferedThemeChange()}
+            aria-label="切換深色／淺色模式"
             className="nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
           >
             {!theme ? (
@@ -150,12 +152,14 @@ export default function Navbar() {
           </Link>
           <Link
             href="https://github.com/TK-Entertainment/wilson-webpage"
+            aria-label="GitHub 原始碼"
             className="max-sm:hidden nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faGithub} className="h-5 w-5 text-lg" />
           </Link>
           <Link
             href="https://instagram.com/wilson_note"
+            aria-label="Instagram @wilson_note"
             className="nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faInstagram} className="h-5 w-5 text-lg" />

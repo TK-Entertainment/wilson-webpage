@@ -75,7 +75,7 @@
   transform: translateX(calc(var(--p, 0) * -45vw));
 }
 .sh-title .sh-r2 {
-  color: #e2342b;
+  color: #d9302a;
   transform: translateX(calc(var(--p, 0) * 45vw));
 }
 .sh-lede {
@@ -115,7 +115,7 @@
   width: 56vmin;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #e2342b;
+  background: #d9302a;
   right: 6vw;
   top: 8vh;
   z-index: 2;
@@ -144,7 +144,7 @@
 .sh-bar {
   height: 3.2vmin;
   width: 34vw;
-  background: #1f9d55;
+  background: #178046;
   left: 0;
   top: 8vh;
   transform-origin: left;
@@ -179,7 +179,7 @@
   inset: 0;
 }
 .sh-l1 {
-  background: #e2342b;
+  background: #d9302a;
 }
 .sh-l2 {
   background: #1f4fa3;
@@ -217,7 +217,7 @@
 .sh-orbit i:nth-child(1) {
   left: 0;
   top: 44%;
-  background: #1f9d55;
+  background: #178046;
   border-radius: 50%;
 }
 .sh-orbit i:nth-child(2) {
@@ -304,7 +304,8 @@
 }
 .sh-count {
   position: absolute;
-  right: clamp(16px, 4vw, 48px);
+  /* 讓出右下角給「回到頂端」按鈕 */
+  right: calc(clamp(16px, 4vw, 48px) + 64px);
   bottom: 5vh;
   padding: 4px 8px;
   font-size: 13px;
@@ -405,7 +406,7 @@
   top: -12%;
   width: 80%;
   height: 26%;
-  background: #e2342b;
+  background: #d9302a;
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
   --dx: 20vw;
   --dy: -60vh;
@@ -459,7 +460,7 @@
   --dy: 20vh;
 }
 .sh-panel.green {
-  background: #1f9d55;
+  background: #178046;
   color: #fff;
 }
 .sh-panel.purple {
@@ -511,7 +512,7 @@
   border-radius: 50% 0;
 }
 .ink .sh-big {
-  background: #e2342b;
+  background: #d9302a;
   clip-path: polygon(0 0, 100% 0, 100% 30%, 30% 30%, 30% 100%, 0 100%);
 }
 .sh-now {
@@ -549,7 +550,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--wipe, #e2342b);
+  background: var(--wipe, #d9302a);
   transform-origin: right;
 }
 @supports (animation-timeline: view()) {
@@ -695,7 +696,7 @@
   transform: none !important;
 }
 .sh.rm .sh-d0 {
-  background: #e2342b;
+  background: #d9302a;
 }
 .sh.rm .sh-d1 {
   background: #1f4fa3;

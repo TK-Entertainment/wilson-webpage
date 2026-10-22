@@ -18,7 +18,7 @@ const require = createRequire(import.meta.url);
 const C = {
   paper: "#efece6",
   ink: "#141414",
-  red: "#e2342b",
+  red: "#d9302a",
   blue: "#1f4fa3",
   yellow: "#f2c230",
 };

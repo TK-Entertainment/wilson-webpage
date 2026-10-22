@@ -13,7 +13,7 @@
   --card-foreground: 0 0% 8%;
   --border: 0 0% 8%;
   --input: 0 0% 8%;
-  --primary: 4 76% 53%; /* 紅 #e2342b */
+  --primary: 3 71% 46%; /* 文字用紅 #c92a22，紙白底對比 4.6 */
   --primary-foreground: 0 0% 100%;
   --secondary: 40 16% 87%;
   --secondary-foreground: 0 0% 8%;
@@ -46,20 +46,21 @@
   --accent-foreground: 0 0% 8%;
   --ring: 218 68% 55%;
 
-  --glitch-a: #e2342b;
+  --glitch-a: #d9302a;
   --glitch-b: #3b74d6;
   --glitch-blend: screen;
 }
 
 html body {
   font-family:
-    "Noto Sans TC", var(--font-inter, "Inter"), system-ui, sans-serif;
+    var(--font-noto), "Noto Sans TC", var(--font-inter, "Inter"), system-ui,
+    sans-serif;
   background: hsl(var(--background));
   color: hsl(var(--foreground));
 }
 
 .font-mono-label {
-  font-family: "Space Mono", ui-monospace, monospace;
+  font-family: var(--font-mono), "Space Mono", ui-monospace, monospace;
 }
 
 /* ---------- 故障標題：兩個色版偶爾錯位閃爍 ---------- */
@@ -135,7 +136,7 @@ html body {
 .group:hover .split-hover,
 .split-hover:hover {
   text-shadow:
-    -2px 0 #e2342b,
+    -2px 0 #d9302a,
     2px 0 #1f4fa3;
 }
 .jitter-hover:hover,
@@ -183,7 +184,7 @@ html body {
   height: 1.05em;
   margin-left: 4px;
   vertical-align: -0.15em;
-  background: #e2342b;
+  background: #d9302a;
   animation: blink 1s steps(1) infinite;
 }
 @keyframes blink {
@@ -308,9 +309,12 @@ html body {
   line-height: 1.9;
 }
 .nd-prose a:not(:where(.nd-not-prose *)) {
-  color: #e2342b;
+  color: #c92a22;
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
+}
+.dark .nd-prose a:not(:where(.nd-not-prose *)) {
+  color: #ff7a70; /* 深色底上的文字用紅，對比 > 6 */
 }
 .nd-prose h2 {
   display: flex;
@@ -322,7 +326,7 @@ html body {
   flex: none;
   width: 0.55em;
   height: 0.55em;
-  background: #e2342b;
+  background: #d9302a;
   border-radius: 50%;
 }
 .nd-prose blockquote {
@@ -374,7 +378,7 @@ html body {
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #e2342b;
+  background: #d9302a;
 }
 
 /* ---------- 圖片燈箱（components/lightbox.tsx） ---------- */
@@ -392,7 +396,7 @@ html body {
 }
 .photos img.zoomable:hover {
   transform: translate(-3px, -3px);
-  box-shadow: 6px 6px 0 #e2342b;
+  box-shadow: 6px 6px 0 #d9302a;
 }
 .lb-btn {
   flex: none;
@@ -422,12 +426,12 @@ html body {
   0% {
     transform: translateX(-14px) skewX(-8deg);
     clip-path: inset(8% 0 52% 0);
-    filter: drop-shadow(-10px 0 #e2342b) drop-shadow(10px 0 #1f4fa3);
+    filter: drop-shadow(-10px 0 #d9302a) drop-shadow(10px 0 #1f4fa3);
   }
   25% {
     transform: translateX(10px);
     clip-path: inset(48% 0 12% 0);
-    filter: drop-shadow(8px 0 #e2342b) drop-shadow(-8px 0 #1f4fa3);
+    filter: drop-shadow(8px 0 #d9302a) drop-shadow(-8px 0 #1f4fa3);
   }
   50% {
     transform: translateX(-5px);
@@ -437,7 +441,7 @@ html body {
   75% {
     transform: translateX(3px);
     clip-path: none;
-    filter: drop-shadow(2px 0 #e2342b);
+    filter: drop-shadow(2px 0 #d9302a);
   }
   100% {
     transform: none;

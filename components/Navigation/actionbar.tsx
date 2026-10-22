@@ -88,6 +88,7 @@ const Actionbar: FC<ActionbarProps> = ({
           <div className="flex flex-row">
             <Link
               href="/blog"
+              aria-label="回到日常碎念"
               className="flex flex-col rounded-2xl px-2 py-1 transition-all hover:bg-accent hover:drop-shadow-normal active:scale-95"
             >
               <div className="max-[480px]:hidden">
