@@ -1,1 +1,5 @@
-export { default } from "next-docs-ui/not-found";
+import NotFoundScreen from "@/components/notfound";
+
+export default function NotFound() {
+  return <NotFoundScreen compact />;
+}
