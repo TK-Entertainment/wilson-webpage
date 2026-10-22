@@ -8,6 +8,7 @@ import { MoonIcon, SunIcon, Monitor } from "lucide-react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/logo";
+import SiteSearch from "@/components/search/sitesearch";
 import { allBlogs } from "contentlayer/generated";
 
 const sections = [
@@ -131,6 +132,7 @@ export default function Navbar() {
               <span className="max-lg:hidden">{section.label}</span>
             </Link>
           ))}
+          <SiteSearch />
           <Link
             href={`${pathname}#`}
             onClick={() => handlePrefferedThemeChange()}
