@@ -79,57 +79,47 @@ html body {
 }
 .glitch::before {
   color: var(--glitch-a);
-  animation: glitch-a 3.4s steps(1) infinite;
+  animation: glitch-a 7.5s steps(1) infinite;
 }
 .glitch::after {
   color: var(--glitch-b);
-  animation: glitch-b 4.1s steps(1) infinite;
+  animation: glitch-b 9.5s steps(1) infinite;
 }
 @keyframes glitch-a {
   0%,
-  86%,
+  95%,
   100% {
     opacity: 0;
     transform: none;
     clip-path: none;
   }
-  87% {
-    opacity: 1;
-    transform: translate(-4px, 1px);
-    clip-path: inset(10% 0 62% 0);
-  }
-  90% {
-    opacity: 1;
-    transform: translate(5px, -1px);
-    clip-path: inset(55% 0 20% 0);
-  }
-  93% {
-    opacity: 1;
+  96% {
+    opacity: 0.85;
     transform: translate(-2px, 0);
-    clip-path: inset(30% 0 45% 0);
+    clip-path: inset(40% 0 35% 0);
+  }
+  97.5% {
+    opacity: 0.85;
+    transform: translate(2px, 0);
+    clip-path: inset(40% 0 35% 0);
   }
 }
 @keyframes glitch-b {
   0%,
-  80%,
+  92%,
   100% {
     opacity: 0;
     transform: none;
     clip-path: none;
   }
-  81% {
-    opacity: 1;
-    transform: translate(4px, -1px);
-    clip-path: inset(70% 0 5% 0);
-  }
-  85% {
-    opacity: 1;
-    transform: translate(-5px, 1px);
-    clip-path: inset(5% 0 75% 0);
+  93% {
+    opacity: 0.8;
+    transform: translate(2px, 0);
+    clip-path: inset(10% 0 70% 0);
   }
 }
 
-/* 滑過時的紅藍錯位與抖動 */
+/* 滑過時的紅藍錯位與浮起 */
 .split-hover {
   transition: text-shadow 0.15s;
 }
@@ -139,44 +129,23 @@ html body {
     -2px 0 #d9302a,
     2px 0 #1f4fa3;
 }
+.jitter-hover {
+  transition: translate 0.25s ease;
+}
 .jitter-hover:hover,
 .group:hover .jitter-hover {
-  animation: jitter 0.3s steps(2) 2;
-}
-@keyframes jitter {
-  50% {
-    transform: translate(3px, -1px) skewX(-6deg);
-  }
+  translate: 0 -4px;
 }
 
 /* 捲動速度故障：--v（0～1）由 GlitchScroll 寫入 */
 .vsplit {
   text-shadow:
-    calc(var(--v, 0) * -10px) 0 var(--glitch-a),
-    calc(var(--v, 0) * 10px) 0 var(--glitch-b);
+    calc(var(--v, 0) * -3px) 0 var(--glitch-a),
+    calc(var(--v, 0) * 3px) 0 var(--glitch-b);
 }
 .vshape {
-  filter: drop-shadow(calc(var(--v, 0) * -12px) 0 #1f4fa3)
-    drop-shadow(calc(var(--v, 0) * 12px) 0 #141414);
+  /* 形狀不再做捲動錯位，保持乾淨 */
 }
-.jolt {
-  translate: var(--jx, 0px) 0;
-}
-.tears {
-  position: fixed;
-  inset: 0;
-  z-index: 61;
-  pointer-events: none;
-}
-.tears i {
-  position: absolute;
-  left: 0;
-  display: block;
-  width: 100%;
-  opacity: 0;
-  mix-blend-mode: var(--glitch-blend);
-}
-
 /* 終端機游標 */
 .caret {
   display: inline-block;
@@ -287,20 +256,6 @@ html body {
   to {
     transform: rotate(-360deg);
   }
-}
-
-/* 整頁淡淡的掃描線 */
-.scanlines::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 60;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(20, 20, 20, 0.03) 0 1px,
-    transparent 1px 3px
-  );
 }
 
 /* 文章內文 */

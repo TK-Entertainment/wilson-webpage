@@ -664,6 +664,76 @@
   }
 }
 
+/* ---------- 閒置時的緩慢動態（和捲動效果疊加，使用獨立的 translate / rotate / scale） ---------- */
+.sh-tri {
+  animation: sh-float 7s ease-in-out infinite;
+}
+.sh-sq {
+  animation:
+    sh-float 6s -2s ease-in-out infinite,
+    sh-tilt 9s ease-in-out infinite alternate;
+}
+.sh-circle {
+  animation: sh-breathe 6s ease-in-out infinite;
+}
+.sh-quarter {
+  animation: sh-turn 28s linear infinite;
+}
+.sh-dots {
+  animation: sh-drift 10s linear infinite;
+}
+.sh-bar {
+  animation: sh-sway 8s ease-in-out infinite alternate;
+}
+.sh-morph-shape {
+  animation: sh-breathe 5s ease-in-out infinite;
+}
+.sh-orbit {
+  animation: sh-turn 22s linear infinite;
+}
+.sh-big {
+  animation: sh-turn 40s linear infinite;
+}
+.sh-avatar {
+  animation: sh-float 5s ease-in-out infinite;
+}
+@keyframes sh-float {
+  50% {
+    translate: 0 -14px;
+  }
+}
+@keyframes sh-tilt {
+  from {
+    rotate: -8deg;
+  }
+  to {
+    rotate: 8deg;
+  }
+}
+@keyframes sh-breathe {
+  50% {
+    scale: 1.04;
+  }
+}
+@keyframes sh-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes sh-drift {
+  to {
+    background-position: 5vmin 2.5vmin;
+  }
+}
+@keyframes sh-sway {
+  from {
+    translate: -2vw 0;
+  }
+  to {
+    translate: 2vw 0;
+  }
+}
+
 /* 減少動態：場景攤平成一般頁面 */
 .sh.rm .sh-scene {
   height: auto;

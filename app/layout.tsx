@@ -70,7 +70,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       lang="zh-Hant-TW"
       className={`${inter.className} ${noto.variable} ${spaceMono.variable}`}
     >
-      <body className="scanlines">
+      <body>
         <Navbar />
         <RootProvider search={{ SearchDialog: NoDocSearch }}>
           {children}

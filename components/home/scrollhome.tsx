@@ -118,7 +118,6 @@ export default function ScrollHome({
     }
 
     const scenes = Array.from(root.querySelectorAll<HTMLElement>(".sh-scene"));
-    const hero = root.querySelector<HTMLElement>(".sh-hero")!;
     const drinkScene = root.querySelector<HTMLElement>(".sh-drinks")!;
     const about = root.querySelector<HTMLElement>(".sh-about")!;
     const track = root.querySelector<HTMLElement>(".sh-track")!;
@@ -131,7 +130,6 @@ export default function ScrollHome({
     );
     const count = root.querySelector<HTMLElement>(".sh-count")!;
     const sig = root.querySelector<HTMLElement>(".sh-sig")!;
-    const jolts = Array.from(root.querySelectorAll<HTMLElement>(".jolt"));
     const progress = new Map<HTMLElement, number>();
     const mobile = window.matchMedia("(max-width: 760px)");
 
@@ -186,23 +184,7 @@ export default function ScrollHome({
       about.style.setProperty("--tx", `${(-a * max).toFixed(1)}px`);
       about.style.setProperty("--a", clamp(a * 4.5).toFixed(4));
 
-      // 換場故障：紅圓吞滿畫面、換杯的瞬間抖動
-      const hp = progress.get(hero) ?? 0;
-      const g = Math.max(
-        Math.sin(f1 * Math.PI),
-        Math.sin(f2 * Math.PI),
-        hp > 0.82 && hp < 0.98 ? 0.7 : 0,
-      );
-      jolts.forEach((el) =>
-        el.style.setProperty(
-          "--jx",
-          `${(g > 0.12 ? (Math.random() - 0.5) * g * 36 : 0).toFixed(1)}px`,
-        ),
-      );
-      sig.textContent =
-        g > 0.3 && Math.random() < 0.5
-          ? "▓▒░ SIGNAL LOST ░▒▓"
-          : channels[active];
+      sig.textContent = channels[active];
     }
 
     let queued = false;
@@ -266,7 +248,7 @@ export default function ScrollHome({
           <div className="sh-layer sh-l1" />
           <div className="sh-layer sh-l2" />
           <div className="sh-layer sh-l3" />
-          <div className="sh-morph jolt" aria-hidden="true">
+          <div className="sh-morph" aria-hidden="true">
             <div className="sh-morph-shape vshape" />
             <div className="sh-orbit">
               <i />
@@ -275,7 +257,7 @@ export default function ScrollHome({
             </div>
           </div>
           {drinks.map((drink, i) => (
-            <div key={drink.href} className={`sh-drink sh-d${i} jolt`}>
+            <div key={drink.href} className={`sh-drink sh-d${i}`}>
               <small className="font-mono-label">{drink.code}</small>
               <strong className="glitch vsplit" data-text={drink.title}>
                 {drink.title}
