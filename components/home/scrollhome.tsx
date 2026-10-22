@@ -345,8 +345,9 @@ export default function ScrollHome({
                 最近在做
               </h2>
               <ul className="sh-now">
+                <li>做地球科學日報小幫手</li>
+                <li>籌備 2026 地科展</li>
                 <li>重新設計這個網站</li>
-                <li>開始整理上課筆記</li>
               </ul>
             </div>
           </div>
