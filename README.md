@@ -100,6 +100,19 @@ description: 一句話簡介
 ---
 ```
 
+筆記（以及日常碎念、生活影像）都可以寫 LaTeX 數學公式：行內用 `$...$`，獨立一行的區塊用 `$$...$$`：
+
+```mdx
+理想氣體方程式 $PV = nRT$ 可以寫在句子裡。
+
+$$
+\lim_{x \to 0} \frac{\sin x}{x} = 1
+$$
+```
+
+- 公式太長時會在框內左右捲動，不會撐開整頁
+- 公式裡的 `{`、`}` 不會被當成 MDX 語法；但公式「以外」的文字若要寫大括號，仍要寫成 `\{`、`\}`
+
 ## 專案原理
 
 此專案建置於非常好用且好看的 [Next Docs](https://github.com/fuma-nama/next-docs) 框架 (shoutout to [@fuma-nama](https://github.com/fuma-nama))  

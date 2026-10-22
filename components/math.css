@@ -1,0 +1,29 @@
+/* 數學公式（KaTeX）：沿用文字顏色，深色模式也清楚 */
+.katex {
+  color: inherit;
+  font-size: 1.1em;
+}
+.katex svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* 區塊公式：太寬時在自己框內橫向捲動，不撐開整頁 */
+.katex-display {
+  contain: inline-size;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 1.5em 0;
+  padding: 0.75em 0.75em 0.75em 1em;
+  border-left: 4px solid #1f4fa3;
+  -webkit-overflow-scrolling: touch;
+}
+.dark .katex-display {
+  border-left-color: #f2c230;
+}
+.katex-display > .katex {
+  padding: 0.1em 0;
+}
+.katex-display::-webkit-scrollbar {
+  height: 6px;
+}

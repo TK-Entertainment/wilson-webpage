@@ -9,6 +9,9 @@ import Actionbar from "@/components/Navigation/actionbar";
 import ArticleMobileTocLauncher from "@/components/ArticleMobileTocLauncher";
 import Link from "next/link";
 import GlitchText from "@/components/glitchtext";
+import ReadingProgress from "@/components/ReadingProgress";
+import ArticleNeighbours from "@/components/ArticleNeighbours";
+import { readingTimeLabel } from "@/utils/readingtime";
 
 export function generateMetadata({
   params,
@@ -48,6 +51,7 @@ export default async function BlogSlug({
   return (
     <>
       <ArticleMobileTocLauncher items={toc} />
+      <ReadingProgress />
       <MDXContent>
         <div className="grid grid-cols-7">
           <div className="col-span-6 max-xl:col-span-full px-2 md:px-12 md:mt-8 mt-4 max-w-3xl">
@@ -55,6 +59,7 @@ export default async function BlogSlug({
               <p className="font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
                 {new Date(page.date).toLocaleDateString("sv-SE")}
                 {page.authors ? ` // ${page.authors.join("、")}` : ""}
+                {` // ${readingTimeLabel(page.body.raw)}`}
               </p>
               <h1 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">
                 <GlitchText text={page.title} />
@@ -78,7 +83,10 @@ export default async function BlogSlug({
                 ))}
               </div>
             </header>
-            <Content code={page.body.code} />
+            <div data-reading-body>
+              <Content code={page.body.code} />
+            </div>
+            <ArticleNeighbours slug={page.slug} />
           </div>
           <TOC items={toc} />
         </div>
