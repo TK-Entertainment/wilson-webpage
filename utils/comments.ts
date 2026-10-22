@@ -11,9 +11,9 @@ export const commentsConfig: {
   repo: "TK-Entertainment/wilson-webpage",
   repoId: "R_kgDOKXkJtQ",
   /** Discussions 分類名稱，例如 "Comments" */
-  category: "",
+  category: "Announcements",
   /** Discussions 分類 ID，例如 "DIC_kwDOKXkJtc4C..." */
-  categoryId: "",
+  categoryId: "DIC_kwDOKXkJtc4DJU1_",
 };
 
 // categoryId 還沒填就顯示「留言區準備中」
