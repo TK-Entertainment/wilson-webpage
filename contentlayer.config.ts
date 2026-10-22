@@ -1,6 +1,8 @@
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
 import { createConfig } from "next-docs-zeta/contentlayer/configuration";
 import { structure } from "next-docs-zeta/mdx-plugins";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 const BlogPost = defineDocumentType(() => ({
   name: "Blog",
@@ -78,10 +80,18 @@ const config = createConfig({
   docsComputedFields: {
     structuredData: {
       type: "json",
-      resolve: (page) => structure(page.body.raw),
+      resolve: (page) => structure(page.body.raw, [remarkMath]),
     },
   },
 });
+
+// 數學公式：$行內$ 與 $$區塊$$。保留 next-docs 原本的外掛，只額外加上 math，
+// makeSource 的 mdx 設定會套用到所有文件類型（筆記、文章、相簿）
+config.mdx = {
+  ...config.mdx,
+  remarkPlugins: [remarkMath, ...(config.mdx?.remarkPlugins ?? [])],
+  rehypePlugins: [rehypeKatex, ...(config.mdx?.rehypePlugins ?? [])],
+};
 
 // @ts-ignore
 (config.documentTypes as DocumentType[]).push(BlogPost, BlogPreviewPost, Album);

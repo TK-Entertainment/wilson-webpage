@@ -7,6 +7,8 @@ import { findNeighbour, getTableOfContents } from "next-docs-zeta/server";
 import { notFound } from "next/navigation";
 import { Content } from "@/components/content";
 import GlitchText from "@/components/glitchtext";
+import ReadingProgress from "@/components/ReadingProgress";
+import { readingTimeLabel } from "@/utils/readingtime";
 
 export default async function Page({
   params,
@@ -24,11 +26,17 @@ export default async function Page({
 
   return (
     <DocsPage toc={toc} footer={neighbour}>
+      <ReadingProgress />
       <MDXContent>
         <h1 className="font-black">
           <GlitchText text={page.title} />
         </h1>
-        <Content code={page.body.code} />
+        <p className="nd-not-prose -mt-4 mb-8 font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
+          閱讀時間 // {readingTimeLabel(page.body.raw)}
+        </p>
+        <div data-reading-body>
+          <Content code={page.body.code} />
+        </div>
       </MDXContent>
     </DocsPage>
   );
