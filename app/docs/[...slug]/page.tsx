@@ -10,6 +10,7 @@ import GlitchText from "@/components/glitchtext";
 import ReadingProgress from "@/components/ReadingProgress";
 import { readingTimeLabel } from "@/utils/readingtime";
 import { pageMetadata } from "@/utils/seo";
+import NotesIndex from "@/components/NotesIndex";
 
 export default async function Page({
   params,
@@ -38,6 +39,7 @@ export default async function Page({
         <div data-reading-body>
           <Content code={page.body.code} />
         </div>
+        {(params.slug ?? []).length === 0 ? <NotesIndex tree={tree} /> : <></>}
       </MDXContent>
     </DocsPage>
   );
