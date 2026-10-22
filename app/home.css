@@ -1,0 +1,717 @@
+/* 首頁捲動場景：外層 .sh-scene 撐出捲動距離，內層 .sh-stage 黏在導覽列下方 */
+.sh {
+  --nav: 64px;
+  --paper: hsl(var(--background));
+  --ink: hsl(var(--foreground));
+  overflow-x: clip;
+}
+.sh-scene {
+  position: relative;
+}
+.sh-stage {
+  position: sticky;
+  top: var(--nav);
+  height: calc(100vh - var(--nav));
+  height: calc(100svh - var(--nav));
+  overflow: hidden;
+}
+
+/* ---------- 場景 1：首屏 ---------- */
+.sh-hero {
+  height: 240vh;
+}
+.sh-hero .sh-stage {
+  background: var(--paper);
+}
+.sh-copy {
+  position: absolute;
+  left: clamp(16px, 5vw, 64px);
+  bottom: 12vh;
+  z-index: 3;
+  opacity: calc(1 - var(--p, 0) * 1.6);
+}
+.sh-boot {
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.7;
+  opacity: 0.8;
+}
+.sh-boot span {
+  display: block;
+  animation: sh-type 0.4s steps(1) both;
+}
+.sh-boot span:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.sh-boot span:nth-child(2) {
+  animation-delay: 0.7s;
+}
+.sh-boot span:nth-child(3) {
+  animation-delay: 1.2s;
+}
+@keyframes sh-type {
+  from {
+    visibility: hidden;
+  }
+}
+.sh-kicker {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.sh-title {
+  margin: 0;
+  font-weight: 900;
+  font-size: clamp(52px, 10vw, 136px);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+}
+.sh-title span.sh-row {
+  display: block;
+}
+.sh-title .sh-r1 {
+  transform: translateX(calc(var(--p, 0) * -45vw));
+}
+.sh-title .sh-r2 {
+  color: #e2342b;
+  transform: translateX(calc(var(--p, 0) * 45vw));
+}
+.sh-lede {
+  margin: 20px 0 0;
+  max-width: 30ch;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.7;
+  transform: translateY(calc(var(--p, 0) * 30vh));
+}
+.sh-hint {
+  position: absolute;
+  right: clamp(16px, 4vw, 48px);
+  bottom: 4vh;
+  z-index: 5;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--paper);
+  opacity: calc(1 - var(--p, 0) * 8);
+}
+.sh-hint::after {
+  content: " ↓";
+  display: inline-block;
+  animation: sh-nudge 1.4s ease-in-out infinite;
+}
+@keyframes sh-nudge {
+  50% {
+    transform: translateY(5px);
+  }
+}
+.sh-shape {
+  position: absolute;
+  display: block;
+}
+.sh-circle {
+  width: 56vmin;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #e2342b;
+  right: 6vw;
+  top: 8vh;
+  z-index: 2;
+  transform: scale(calc(1 + var(--p, 0) * 6));
+}
+.sh-tri {
+  width: 24vmin;
+  aspect-ratio: 1;
+  background: #1f4fa3;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  right: 42vw;
+  top: 6vh;
+  transform: translate(calc(var(--p, 0) * -30vw), calc(var(--p, 0) * -50vh))
+    rotate(calc(var(--p, 0) * 300deg));
+}
+.sh-sq {
+  width: 18vmin;
+  aspect-ratio: 1;
+  background: #f2c230;
+  right: 4vw;
+  bottom: 8vh;
+  z-index: 3;
+  transform: translate(calc(var(--p, 0) * 20vw), calc(var(--p, 0) * 40vh))
+    rotate(calc(var(--p, 0) * -200deg));
+}
+.sh-bar {
+  height: 3.2vmin;
+  width: 34vw;
+  background: #1f9d55;
+  left: 0;
+  top: 8vh;
+  transform-origin: left;
+  transform: scaleX(calc(1 - var(--p, 0) * 1.2));
+}
+.sh-quarter {
+  width: 16vmin;
+  aspect-ratio: 1;
+  background: #7b3fc4;
+  border-radius: 0 0 100% 0;
+  left: 46vw;
+  bottom: 0;
+  transform-origin: 0 100%;
+  transform: rotate(calc(var(--p, 0) * 360deg));
+}
+.sh-dots {
+  width: 22vmin;
+  height: 10vmin;
+  left: 38vw;
+  top: 12vh;
+  background: radial-gradient(circle, #f2721c 0 32%, transparent 34%) 0 0 /
+    5vmin 5vmin;
+  transform: translateY(calc(var(--p, 0) * -40vh));
+}
+
+/* ---------- 場景 2：三杯飲料 ---------- */
+.sh-drinks {
+  height: 420vh;
+}
+.sh-layer {
+  position: absolute;
+  inset: 0;
+}
+.sh-l1 {
+  background: #e2342b;
+}
+.sh-l2 {
+  background: #1f4fa3;
+  clip-path: circle(calc(var(--f1, 0) * 150%) at 72% 50%);
+}
+.sh-l3 {
+  background: #f2c230;
+  clip-path: circle(calc(var(--f2, 0) * 150%) at 72% 50%);
+}
+.sh-morph {
+  position: absolute;
+  right: 8vw;
+  top: 50%;
+  width: min(48vmin, 44vw);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+}
+.sh-morph-shape {
+  position: absolute;
+  inset: 0;
+  background: var(--shape-color, #f2c230);
+  transform: rotate(calc(var(--p, 0) * 90deg));
+}
+.sh-orbit {
+  position: absolute;
+  inset: -22%;
+  transform: rotate(calc(var(--p, 0) * 1080deg));
+}
+.sh-orbit i {
+  position: absolute;
+  display: block;
+  width: 11%;
+  aspect-ratio: 1;
+}
+.sh-orbit i:nth-child(1) {
+  left: 0;
+  top: 44%;
+  background: #1f9d55;
+  border-radius: 50%;
+}
+.sh-orbit i:nth-child(2) {
+  right: 4%;
+  top: 6%;
+  background: #7b3fc4;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.sh-orbit i:nth-child(3) {
+  left: 46%;
+  bottom: 0;
+  background: #f2721c;
+}
+.sh-drink {
+  position: absolute;
+  left: clamp(16px, 6vw, 80px);
+  top: 50%;
+  max-width: 42vw;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform: translateY(-50%);
+}
+.sh-drink small {
+  font-size: 14px;
+  font-weight: 700;
+}
+.sh-drink strong {
+  font-size: clamp(56px, 9vw, 128px);
+  font-weight: 900;
+  line-height: 0.95;
+}
+.sh-drink p {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.sh-go {
+  margin-top: 10px;
+  align-self: flex-start;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 3px solid currentColor;
+}
+.sh-go:hover {
+  background: #141414;
+  color: #efece6;
+  border-color: #141414;
+}
+.sh-d0,
+.sh-d1 {
+  color: #fff;
+}
+.sh-d2 {
+  color: #141414;
+}
+.sh-steps {
+  position: absolute;
+  left: clamp(16px, 6vw, 80px);
+  bottom: 5vh;
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sh-steps li {
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s;
+}
+.sh-steps li:nth-child(1) {
+  border-radius: 50%;
+}
+.sh-steps li:nth-child(2) {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.sh-steps li.on {
+  background: #141414;
+  transform: scale(1.4);
+}
+.sh-count {
+  position: absolute;
+  right: clamp(16px, 4vw, 48px);
+  bottom: 5vh;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #141414;
+  background: #efece6;
+}
+.sh-sig {
+  position: absolute;
+  left: clamp(16px, 6vw, 80px);
+  top: 4vh;
+  z-index: 4;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ---------- 場景 3：關於我（直向捲動轉橫向） ---------- */
+.sh-about {
+  height: 360vh;
+}
+.sh-about .sh-stage {
+  background: var(--paper);
+  border-top: 4px solid var(--ink);
+}
+.sh-track {
+  display: flex;
+  height: 100%;
+  width: max-content;
+  transform: translateX(var(--tx, 0px));
+}
+.sh-panel {
+  position: relative;
+  flex: none;
+  width: min(80vw, 900px);
+  height: 100%;
+  padding: clamp(24px, 6vh, 72px) clamp(20px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
+  border-right: 4px solid var(--ink);
+  overflow: hidden;
+}
+.sh-panel.intro {
+  width: min(92vw, 1000px);
+  justify-content: center;
+}
+.sh-label {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.sh-panel h2 {
+  margin: 0;
+  font-size: clamp(40px, 6vw, 84px);
+  font-weight: 900;
+  line-height: 1;
+}
+.sh-panel p {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.8;
+}
+.sh-intro-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(20px, 4vw, 56px);
+  align-items: center;
+}
+.sh-avatar {
+  position: relative;
+  width: clamp(150px, 26vmin, 260px);
+  aspect-ratio: 1;
+}
+.sh-avatar i {
+  position: absolute;
+  display: block;
+  transform: translate(
+      calc((1 - var(--a, 1)) * var(--dx)),
+      calc((1 - var(--a, 1)) * var(--dy))
+    )
+    rotate(calc((1 - var(--a, 1)) * var(--r)));
+}
+.av-face {
+  inset: 0;
+  border-radius: 50%;
+  background: #f2c230;
+  border: 5px solid #141414;
+  --dx: -60vw;
+  --dy: 10vh;
+  --r: -200deg;
+}
+.av-hat {
+  left: 10%;
+  top: -12%;
+  width: 80%;
+  height: 26%;
+  background: #e2342b;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  --dx: 20vw;
+  --dy: -60vh;
+  --r: 300deg;
+}
+.av-eye {
+  top: 40%;
+  width: 13%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #141414;
+  --r: 0deg;
+}
+.av-eye.l {
+  left: 30%;
+  --dx: -30vw;
+  --dy: 50vh;
+}
+.av-eye.r {
+  left: 57%;
+  --dx: 40vw;
+  --dy: 50vh;
+}
+.av-mouth {
+  left: 32%;
+  top: 62%;
+  width: 36%;
+  height: 12%;
+  border-bottom: 5px solid #141414;
+  border-radius: 0 0 999px 999px;
+  --dx: 50vw;
+  --dy: -30vh;
+  --r: 180deg;
+}
+.av-cheek {
+  top: 58%;
+  width: 10%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #f2721c;
+  --r: 0deg;
+}
+.av-cheek.l {
+  left: 18%;
+  --dx: -50vw;
+  --dy: -40vh;
+}
+.av-cheek.r {
+  left: 72%;
+  --dx: 60vw;
+  --dy: 20vh;
+}
+.sh-panel.green {
+  background: #1f9d55;
+  color: #fff;
+}
+.sh-panel.purple {
+  background: #7b3fc4;
+  color: #fff;
+}
+.sh-panel.orange {
+  background: #f2721c;
+  color: #141414;
+}
+.sh-panel.ink {
+  background: #141414;
+  color: #efece6;
+}
+.sh-big {
+  position: absolute;
+  right: 8%;
+  top: 10%;
+  width: 40%;
+  aspect-ratio: 1;
+  transform: rotate(calc(var(--p, 0) * 540deg));
+}
+.green .sh-big {
+  background: #f2c230;
+  clip-path: polygon(
+    50% 0,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
+.purple .sh-big {
+  border-radius: 50%;
+  background: conic-gradient(
+    #1f4fa3 0 25%,
+    #f2721c 0 50%,
+    #1f4fa3 0 75%,
+    #f2721c 0
+  );
+}
+.orange .sh-big {
+  background: #1f4fa3;
+  border-radius: 50% 0;
+}
+.ink .sh-big {
+  background: #e2342b;
+  clip-path: polygon(0 0, 100% 0, 100% 30%, 30% 30%, 30% 100%, 0 100%);
+}
+.sh-now {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 500;
+}
+.sh-now li::before {
+  content: "■ ";
+  color: #f2c230;
+}
+.sh-hbar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 100%;
+  height: 8px;
+  background: var(--ink);
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+}
+
+/* ---------- 最新內容：進場時色條掃過 ---------- */
+.sh-post {
+  position: relative;
+  overflow: hidden;
+}
+.sh-post::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--wipe, #e2342b);
+  transform-origin: right;
+}
+@supports (animation-timeline: view()) {
+  .sh-post::after {
+    animation: sh-wipe linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 40%;
+  }
+  @keyframes sh-wipe {
+    to {
+      transform: scaleX(0);
+    }
+  }
+  .sh-album {
+    animation: sh-pop linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 35%;
+  }
+  @keyframes sh-pop {
+    from {
+      transform: translateY(60px) rotate(-6deg) scale(0.8);
+    }
+  }
+}
+@supports not (animation-timeline: view()) {
+  .sh-post::after {
+    display: none;
+  }
+}
+
+/* ---------- 場景 4：結尾，形狀掉落堆疊 ---------- */
+.sh-outro {
+  height: 190vh;
+}
+.sh-outro .sh-stage {
+  background: #141414;
+  color: #efece6;
+}
+.sh-fall {
+  position: absolute;
+  bottom: 0;
+  display: block;
+  --t: clamp(0, calc((var(--p, 0) - var(--d)) / 0.28), 1);
+  transform: translateY(calc((1 - var(--t)) * -115vh))
+    rotate(calc((1 - var(--t)) * var(--r) + var(--end, 0deg)));
+}
+.sh-outro h2 {
+  position: absolute;
+  left: clamp(16px, 5vw, 64px);
+  top: 12vh;
+  margin: 0;
+  font-size: clamp(40px, 7vw, 96px);
+  font-weight: 900;
+  line-height: 1.05;
+  opacity: clamp(0, calc((var(--p, 0) - 0.55) * 4), 1);
+}
+.sh-outro-links {
+  position: absolute;
+  left: clamp(16px, 5vw, 64px);
+  top: calc(12vh + clamp(100px, 17vw, 220px));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  opacity: clamp(0, calc((var(--p, 0) - 0.7) * 4), 1);
+}
+.sh-outro-links a {
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 3px solid #efece6;
+}
+.sh-outro-links a:hover {
+  background: #f2c230;
+  color: #141414;
+  border-color: #f2c230;
+}
+
+@media (max-width: 760px) {
+  .sh-morph {
+    right: 50%;
+    top: 30%;
+    width: 60vw;
+    transform: translate(50%, -50%);
+  }
+  .sh-drink {
+    top: auto;
+    bottom: 12vh;
+    right: 16px;
+    max-width: none;
+    transform: none;
+  }
+  .sh-l2 {
+    clip-path: circle(calc(var(--f1, 0) * 150%) at 50% 30%);
+  }
+  .sh-l3 {
+    clip-path: circle(calc(var(--f2, 0) * 150%) at 50% 30%);
+  }
+  .sh-intro-grid {
+    grid-template-columns: 1fr;
+  }
+  .sh-panel {
+    width: 88vw;
+  }
+  .sh-panel.intro {
+    width: 92vw;
+  }
+  .sh-circle {
+    width: 70vmin;
+    right: -10vw;
+    top: 4vh;
+  }
+}
+
+/* 減少動態：場景攤平成一般頁面 */
+.sh.rm .sh-scene {
+  height: auto;
+}
+.sh.rm .sh-stage {
+  position: relative;
+  top: 0;
+  height: auto;
+  min-height: 70svh;
+}
+.sh.rm .sh-layer,
+.sh.rm .sh-morph,
+.sh.rm .sh-steps,
+.sh.rm .sh-count,
+.sh.rm .sh-sig,
+.sh.rm .sh-hint {
+  display: none;
+}
+.sh.rm .sh-drinks .sh-stage {
+  display: flex;
+  flex-direction: column;
+}
+.sh.rm .sh-drink {
+  position: relative;
+  inset: auto;
+  max-width: none;
+  padding: 10vh clamp(16px, 6vw, 80px);
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+.sh.rm .sh-d0 {
+  background: #e2342b;
+}
+.sh.rm .sh-d1 {
+  background: #1f4fa3;
+}
+.sh.rm .sh-d2 {
+  background: #f2c230;
+}
+.sh.rm .sh-track {
+  flex-wrap: wrap;
+  width: auto;
+  transform: none;
+}
+.sh.rm .sh-panel {
+  width: 100%;
+  min-height: 60svh;
+}
+.sh.rm .sh-outro .sh-stage {
+  min-height: 80svh;
+}

@@ -148,6 +148,34 @@ html body {
   }
 }
 
+/* 捲動速度故障：--v（0～1）由 GlitchScroll 寫入 */
+.vsplit {
+  text-shadow:
+    calc(var(--v, 0) * -10px) 0 var(--glitch-a),
+    calc(var(--v, 0) * 10px) 0 var(--glitch-b);
+}
+.vshape {
+  filter: drop-shadow(calc(var(--v, 0) * -12px) 0 #1f4fa3)
+    drop-shadow(calc(var(--v, 0) * 12px) 0 #141414);
+}
+.jolt {
+  translate: var(--jx, 0px) 0;
+}
+.tears {
+  position: fixed;
+  inset: 0;
+  z-index: 61;
+  pointer-events: none;
+}
+.tears i {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 100%;
+  opacity: 0;
+  mix-blend-mode: var(--glitch-blend);
+}
+
 /* 終端機游標 */
 .caret {
   display: inline-block;

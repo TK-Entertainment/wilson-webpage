@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import Navbar from "@/components/Navigation/navbar";
 import Footer from "@/components/footer";
+import GlitchScroll from "@/components/glitchscroll";
 import "next-docs-ui/style.css";
 import "./global.css";
 
@@ -52,6 +53,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <Navbar />
         <RootProvider>{children}</RootProvider>
         <Footer />
+        <GlitchScroll />
       </body>
     </html>
   );

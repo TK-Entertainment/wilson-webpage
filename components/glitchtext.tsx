@@ -7,7 +7,7 @@ export default function GlitchText({
   className?: string;
 }) {
   return (
-    <span className={`glitch ${className ?? ""}`} data-text={text}>
+    <span className={`glitch vsplit ${className ?? ""}`} data-text={text}>
       {text}
     </span>
   );
