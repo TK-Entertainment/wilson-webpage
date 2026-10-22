@@ -13,6 +13,9 @@ export default function Footer() {
           </p>
         </div>
         <div className="flex flex-col gap-1 font-mono-label text-xs opacity-70 md:text-right">
+          <a href="/rss.xml" className="hover:text-bh-yellow">
+            RSS 訂閱
+          </a>
           <Link
             href="https://github.com/TK-Entertainment"
             className="hover:text-bh-yellow"

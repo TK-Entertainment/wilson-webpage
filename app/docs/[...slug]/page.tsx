@@ -7,6 +7,7 @@ import { findNeighbour, getTableOfContents } from "next-docs-zeta/server";
 import { notFound } from "next/navigation";
 import { Content } from "@/components/content";
 import GlitchText from "@/components/glitchtext";
+import { pageMetadata } from "@/utils/seo";
 
 export default async function Page({
   params,
@@ -48,13 +49,24 @@ export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   return params.length > 0 ? params : [{ slug: ["_placeholder"] }];
 }
 
-export function generateMetadata({ params }: { params: { slug?: string[] } }) {
+export function generateMetadata({
+  params,
+}: {
+  params: { slug?: string[] };
+}): Metadata | undefined {
   const page = getPage(params.slug);
 
   if (page == null) return;
 
-  return {
-    title: page.title,
+  const slug = params.slug?.join("/") ?? "";
+  const isIndex = slug === "";
+
+  return pageMetadata({
+    title: isIndex
+      ? "威爾森的生活札記 | 來杯咖啡の學習日常"
+      : `威爾森的生活札記 | ${page.title}`,
     description: page.description,
-  } satisfies Metadata;
+    path: isIndex ? "/docs" : `/docs/${slug}`,
+    image: isIndex ? "docs" : `docs/${slug}`,
+  });
 }

@@ -5,6 +5,8 @@ import { allAlbums } from "contentlayer/generated";
 import { MDXContent } from "next-docs-ui/mdx";
 import { Content } from "@/components/content";
 import GlitchText from "@/components/glitchtext";
+import Comments from "@/components/comments";
+import { pageMetadata } from "@/utils/seo";
 
 export const dynamicParams = false;
 
@@ -23,13 +25,14 @@ export function generateMetadata({
 }): Metadata {
   const album = allAlbums.find((album) => album.slug == params.slug);
 
-  return {
+  return pageMetadata({
     title: `威爾森的生活札記 | ${album?.title ?? "生活影像"}`,
     description: album?.description,
-    openGraph: {
-      images: album?.cover ? `/img/gallery/${album.slug}/${album.cover}` : "",
-    },
-  };
+    path: `/gallery/${params.slug}`,
+    image: album ? `gallery/${album.slug}` : "gallery",
+    type: "article",
+    publishedTime: album?.date,
+  });
 }
 
 export default function AlbumPage({ params }: { params: { slug: string } }) {
@@ -65,6 +68,7 @@ export default function AlbumPage({ params }: { params: { slug: string } }) {
           )}
         </header>
         <Content code={album.body.code} />
+        <Comments />
       </div>
     </MDXContent>
   );

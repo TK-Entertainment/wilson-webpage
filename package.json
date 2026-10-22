@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "og": "node scripts/og.mjs",
+    "build": "node scripts/og.mjs && next build",
     "start": "next start"
   },
   "dependencies": {

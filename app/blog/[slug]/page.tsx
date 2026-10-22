@@ -9,6 +9,8 @@ import Actionbar from "@/components/Navigation/actionbar";
 import ArticleMobileTocLauncher from "@/components/ArticleMobileTocLauncher";
 import Link from "next/link";
 import GlitchText from "@/components/glitchtext";
+import Comments from "@/components/comments";
+import { pageMetadata } from "@/utils/seo";
 
 export function generateMetadata({
   params,
@@ -18,18 +20,16 @@ export function generateMetadata({
   const slug = params.slug ?? "";
   const blog = allBlogs.find((blog) => blog.slug == params.slug);
 
-  return {
+  return pageMetadata({
     title: `威爾森的生活札記 | ${blog?.title}`,
     description: blog?.description,
-    openGraph: {
-      type: "article",
-      images: blog?.image ?? "",
-      title: `威爾森的生活札記 | ${blog?.title}`,
-      authors: blog?.authors,
-      tags: blog?.tags,
-      description: blog?.description,
-    },
-  };
+    path: `/blog/${slug}`,
+    image: blog ? `blog/${blog.slug}` : "blog",
+    type: "article",
+    publishedTime: blog?.date,
+    authors: blog?.authors,
+    tags: blog?.tags,
+  });
 }
 
 export default async function BlogSlug({
@@ -79,6 +79,7 @@ export default async function BlogSlug({
               </div>
             </header>
             <Content code={page.body.code} />
+            <Comments />
           </div>
           <TOC items={toc} />
         </div>
