@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, type CSSProperties } from "react";
+import { useRouter } from "next/navigation";
+import { openPortal } from "@/components/tarot/portal";
 
 export type HomePost = {
   href: string;
@@ -105,6 +107,7 @@ export default function ScrollHome({
   albumCount: number;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const root = rootRef.current;
@@ -323,7 +326,19 @@ export default function ScrollHome({
               <p>從恆星的一生到行星的誕生，仰望星空是我最初的熱情。</p>
             </div>
             <div className="sh-panel purple">
-              <i className="sh-big vshape" aria-hidden="true" />
+              {/* 彩蛋：點旋轉的圓盤可以進到抽牌頁 */}
+              <Link
+                href="/tarot"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0)
+                    return;
+                  e.preventDefault();
+                  openPortal(e.clientX, e.clientY, () => router.push("/tarot"));
+                }}
+                className="sh-big vshape sh-egg"
+                aria-label="彩蛋：喝完茶，來抽一張牌"
+                title="?"
+              />
               <p className="sh-label font-mono-label">02 / EARTH SCIENCE</p>
               <h2 className="glitch vsplit" data-text="地球科學">
                 地球科學

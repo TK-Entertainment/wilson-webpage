@@ -478,3 +478,106 @@ button[aria-label="Scroll to Top"] {
     transform: rotate(0);
   }
 }
+
+/* ---------- 抽牌頁的穿越轉場（components/tarot/portal.ts） ---------- */
+#tarot-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: #7b3fc4;
+  color: #efece6;
+  clip-path: circle(150% at 50% 50%);
+  pointer-events: none;
+}
+#tarot-portal .tp-card {
+  width: min(34vw, 180px);
+  aspect-ratio: 3 / 5;
+  border-radius: 4.3% / 2.6%;
+  box-shadow: 10px 10px 0 #141414;
+}
+#tarot-portal.is-opening .tp-card {
+  animation: tp-spin 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+}
+#tarot-portal.is-closing .tp-card {
+  animation: tp-glitch 0.4s steps(1) both;
+}
+#tarot-portal .tp-line {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+#tarot-portal .tp-ok {
+  color: #f2c230;
+  opacity: 0;
+}
+#tarot-portal.is-closing .tp-ok {
+  opacity: 1;
+}
+#tarot-portal .tp-stars {
+  position: absolute;
+  inset: 0;
+}
+#tarot-portal .tp-stars i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  aspect-ratio: 1;
+  background: #f2c230;
+  clip-path: polygon(
+    50% 0,
+    62% 38%,
+    100% 50%,
+    62% 62%,
+    50% 100%,
+    38% 62%,
+    0 50%,
+    38% 38%
+  );
+  --a: calc(var(--k) * 360deg / 14);
+  transform: rotate(var(--a)) translateX(0) scale(0);
+}
+#tarot-portal.is-opening .tp-stars i {
+  animation: tp-burst 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.25s both;
+}
+#tarot-portal.is-closing .tp-stars i {
+  transform: rotate(var(--a)) translateX(min(42vw, 320px)) scale(1);
+}
+#tarot-portal .tp-stars i:nth-child(3n) {
+  background: #efece6;
+  width: 12px;
+}
+#tarot-portal .tp-stars i:nth-child(3n + 1) {
+  background: #d9302a;
+  width: 14px;
+  clip-path: circle(50%);
+}
+@keyframes tp-spin {
+  from {
+    transform: perspective(900px) rotateY(-540deg) scale(0.2);
+  }
+}
+@keyframes tp-burst {
+  to {
+    transform: rotate(var(--a)) translateX(min(42vw, 320px)) scale(1);
+  }
+}
+@keyframes tp-glitch {
+  0% {
+    filter: drop-shadow(-6px 0 #d9302a) drop-shadow(6px 0 #1f4fa3);
+    clip-path: inset(10% 0 55% 0);
+  }
+  30% {
+    filter: drop-shadow(6px 0 #d9302a) drop-shadow(-6px 0 #1f4fa3);
+    clip-path: inset(60% 0 8% 0);
+  }
+  60% {
+    filter: none;
+    clip-path: none;
+  }
+}

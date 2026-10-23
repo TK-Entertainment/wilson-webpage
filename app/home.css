@@ -507,6 +507,29 @@
     #f2721c 0
   );
 }
+/* 首頁彩蛋：地球科學的圓盤可以點，滑過時轉快一點、冒出一點光暈 */
+.sh-egg {
+  display: block;
+  z-index: 1;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.sh-egg:hover,
+.sh-egg:focus-visible {
+  box-shadow:
+    0 0 0 6px #f2c230,
+    10px 10px 0 6px #141414;
+  animation: sh-egg-wiggle 0.4s steps(2) infinite;
+}
+.sh-egg:focus-visible {
+  outline: none;
+}
+@keyframes sh-egg-wiggle {
+  50% {
+    translate: 3px -3px;
+  }
+}
+
 .orange .sh-big {
   background: #1f4fa3;
   border-radius: 50% 0;
