@@ -15,12 +15,16 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = path.join(root, "public", "og");
 const require = createRequire(import.meta.url);
 
+// 跟網站同一組配色（首頁 v8）
 const C = {
-  paper: "#efece6",
-  ink: "#141414",
-  red: "#d9302a",
-  blue: "#1f4fa3",
-  yellow: "#f2c230",
+  paper: "#ebe7de",
+  ink: "#1c2135",
+  navy: "#26304f",
+  cream: "#efe4c8",
+  gold: "#d6a53c",
+  orange: "#e2782d",
+  teal: "#4cb8b0",
+  soft: "#6b6a64",
 };
 
 const SECTIONS = {
@@ -29,21 +33,24 @@ const SECTIONS = {
     label: "來杯好茶の日常碎念",
     latin: "TEA // DAILY NOTES",
     description: "來杯好茶，聊聊生活裡的大小事。",
-    color: C.red,
+    color: C.gold,
+    ghost: "TEA",
   },
   docs: {
     no: "02",
     label: "來杯咖啡の學習日常",
     latin: "COFFEE // STUDY NOTES",
     description: "來杯咖啡，記下上課筆記與學習心得。",
-    color: C.blue,
+    color: C.teal,
+    ghost: "COFFEE",
   },
   gallery: {
     no: "03",
     label: "來杯果汁の生活影像",
     latin: "JUICE // GALLERY",
     description: "來杯果汁，收藏生活裡的照片與影片。",
-    color: C.yellow,
+    color: C.orange,
+    ghost: "JUICE",
   },
 };
 
@@ -118,25 +125,67 @@ const svg = (w, hgt, ...children) => ({
 });
 const shape = (type, props) => ({ type, props });
 
-function geometry(color) {
-  // 右側包浩斯構圖：大圓、方塊、三角形與粗黑線
+function geometry(color, ghost) {
+  // 右側：跟首頁一樣的斜切深藍色塊＋金線＋橘條，色塊裡放 ○□△ 與淡淡的英文大字
   return h(
     "div",
-    { position: "absolute", right: 0, top: 0, width: 430, height: 630 },
+    { position: "absolute", right: 0, top: 0, width: 600, height: 630 },
     svg(
-      430,
+      600,
       630,
-      shape("rect", { x: 0, y: 0, width: 430, height: 630, fill: C.paper }),
-      shape("circle", { cx: 250, cy: 230, r: 165, fill: color }),
-      shape("rect", { x: 60, y: 380, width: 170, height: 170, fill: C.ink }),
-      shape("polygon", {
-        points: "430,330 430,630 160,630",
-        fill: color === C.yellow ? C.red : C.yellow,
+      shape("polygon", { points: "232,0 272,0 112,630 72,630", fill: C.orange }),
+      shape("polygon", { points: "300,0 600,0 600,630 140,630", fill: C.navy }),
+      shape("polygon", { points: "352,0 360,0 200,630 192,630", fill: C.gold }),
+      shape("circle", {
+        cx: 432,
+        cy: 92,
+        r: 20,
+        fill: "none",
+        stroke: C.orange,
+        "stroke-width": 5,
       }),
-      shape("rect", { x: 0, y: 0, width: 14, height: 630, fill: C.ink }),
-      shape("rect", { x: 0, y: 350, width: 430, height: 14, fill: C.ink }),
-      shape("circle", { cx: 330, cy: 470, r: 34, fill: C.blue }),
+      shape("rect", {
+        x: 474,
+        y: 72,
+        width: 40,
+        height: 40,
+        fill: "none",
+        stroke: C.cream,
+        "stroke-width": 5,
+      }),
+      shape("polygon", {
+        points: "556,72 579,112 533,112",
+        fill: "none",
+        stroke: color,
+        "stroke-width": 5,
+        "stroke-linejoin": "round",
+      }),
     ),
+    h(
+      "div",
+      {
+        position: "absolute",
+        right: 46,
+        bottom: 40,
+        fontFamily: "Mono",
+        fontSize: ghost.length > 4 ? 104 : 136,
+        fontWeight: 700,
+        color: "#323d63",
+        transform: "skewX(-12deg)",
+        letterSpacing: -4,
+      },
+      ghost,
+    ),
+  );
+}
+
+function logo() {
+  return svg(
+    72,
+    24,
+    shape("circle", { cx: 10, cy: 12, r: 10, fill: C.orange }),
+    shape("rect", { x: 26, y: 2, width: 20, height: 20, fill: C.gold }),
+    shape("polygon", { points: "61,2 72,22 50,22", fill: C.ink }),
   );
 }
 
@@ -147,10 +196,18 @@ function trimText(text, max) {
     : chars.join("");
 }
 
-function card({ color, kicker, title, description, footer, cjk }) {
+function card({ color, ghost, kicker, title, lines, accent, description, footer, cjk }) {
   const t = trimText(title, 36);
   const len = [...t].length;
-  const titleSize = len <= 8 ? 84 : len <= 10 ? 72 : len <= 18 ? 64 : 54;
+  const titleSize = lines ? 104 : len <= 6 ? 92 : len <= 10 ? 60 : len <= 18 ? 56 : 50;
+  // lines：指定斷行；accent：最後一行的最後幾個字改成金色（首頁的「札記」）
+  const rows = lines ?? [t];
+  const row = (r, i) => {
+    const last = i === rows.length - 1 && accent;
+    const head = last ? [...r].slice(0, -accent).join("") : r;
+    const tail = last ? [...r].slice(-accent).join("") : "";
+    return h("div", { flexWrap: "wrap" }, head, tail ? h("span", { color: C.gold }, tail) : []);
+  };
   return h(
     "div",
     {
@@ -161,32 +218,15 @@ function card({ color, kicker, title, description, footer, cjk }) {
       color: C.ink,
       fontFamily: cjk ? "TC, Mono" : "Mono",
     },
-    // 左上色塊與頂部粗線
-    h("div", {
-      position: "absolute",
-      left: 0,
-      top: 0,
-      width: 1200,
-      height: 22,
-      background: C.ink,
-    }),
-    h("div", {
-      position: "absolute",
-      left: 0,
-      top: 22,
-      width: 22,
-      height: 608,
-      background: color,
-    }),
-    geometry(color),
+    geometry(color, ghost),
     h(
       "div",
       {
         position: "absolute",
-        left: 70,
-        top: 70,
-        width: 680,
-        height: 500,
+        left: 72,
+        top: 64,
+        width: 600,
+        height: 506,
         flexDirection: "column",
         justifyContent: "space-between",
       },
@@ -197,38 +237,42 @@ function card({ color, kicker, title, description, footer, cjk }) {
           "div",
           {
             fontFamily: "Mono",
-            fontSize: 26,
+            fontSize: 24,
             fontWeight: 700,
             letterSpacing: 2,
             alignItems: "center",
+            color: C.ink,
           },
           h("div", {
-            width: 26,
-            height: 26,
+            width: 34,
+            height: 14,
             background: color,
             marginRight: 14,
+            transform: "skewX(-16deg)",
           }),
           kicker,
         ),
         h(
           "div",
           {
-            marginTop: 30,
+            marginTop: 28,
             fontSize: titleSize,
             fontWeight: 900,
-            lineHeight: 1.15,
-            flexWrap: "wrap",
+            lineHeight: 1.12,
+            letterSpacing: -2,
+            flexDirection: "column",
           },
-          t,
+          rows.map(row),
         ),
         description
           ? h(
               "div",
               {
-                marginTop: 24,
-                fontSize: 30,
-                lineHeight: 1.45,
+                marginTop: 26,
+                fontSize: 28,
+                lineHeight: 1.5,
                 fontWeight: 500,
+                color: C.soft,
               },
               trimText(description, 60),
             )
@@ -237,15 +281,16 @@ function card({ color, kicker, title, description, footer, cjk }) {
       h(
         "div",
         {
-          borderTop: `8px solid ${C.ink}`,
+          borderTop: `5px solid ${C.ink}`,
           paddingTop: 18,
           fontFamily: "Mono",
-          fontSize: 24,
+          fontSize: 22,
           fontWeight: 700,
+          alignItems: "center",
           justifyContent: "space-between",
         },
-        h("div", {}, "WILSON.TRYGONG.UK"),
-        h("div", {}, footer ?? ""),
+        h("div", { alignItems: "center" }, logo(), h("div", { marginLeft: 16 }, "WILSON.TRYGONG.UK")),
+        h("div", { color: C.soft }, footer ?? ""),
       ),
     ),
   );
@@ -356,9 +401,12 @@ async function main() {
     [
       "default",
       {
-        color: C.red,
+        color: C.gold,
+        ghost: "NOTES",
         kicker: "[00] WILSON'S NOTES",
         title: "威爾森的生活札記",
+        lines: ["威爾森的", "生活札記"],
+        accent: 2,
         description:
           "來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像。",
         footer: "TEA / COFFEE / JUICE",
@@ -370,6 +418,7 @@ async function main() {
       key,
       {
         color: s.color,
+        ghost: s.ghost,
         kicker: `[${s.no}] ${s.latin}`,
         title: s.label,
         description: s.description,
@@ -385,6 +434,7 @@ async function main() {
         `${section}/${item.slug}`,
         {
           color: s.color,
+          ghost: s.ghost,
           kicker: `[${s.no}] ${s.latin}`,
           title: item.title ?? s.label,
           description: item.description,
