@@ -2,7 +2,8 @@
 @tailwind utilities;
 
 /* 包浩斯 × 故障風：覆寫 next-docs-ui 的顏色變數，筆記區也會一起套用 */
-:root {
+/* 用 :root:root／:root.dark 提高優先權：Next 14.2 起 CSS 載入順序會變，否則會被 next-docs-ui 的預設顏色蓋掉 */
+:root:root {
   --background: 40 19% 92%; /* 紙白 #efece6 */
   --foreground: 0 0% 8%; /* 墨黑 #141414 */
   --muted: 40 16% 87%;
@@ -27,7 +28,7 @@
   --glitch-blend: multiply;
 }
 
-.dark {
+:root.dark {
   --background: 0 0% 8%;
   --foreground: 40 19% 92%;
   --muted: 0 0% 14%;
