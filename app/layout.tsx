@@ -46,6 +46,8 @@ export function generateMetadata(): Metadata {
       default: siteName,
     },
     description: siteDescription,
+    // 圖示放在 public/：app/icon.svg 會被新版 vercel CLI 當成要在伺服器跑的路由，next-on-pages 不接受
+    icons: { icon: { url: "/icon.svg", type: "image/svg+xml" } },
     alternates: rssAlternate,
     openGraph: {
       type: "website",
