@@ -617,8 +617,8 @@ button[aria-label="Scroll to Top"] {
   z-index: -1;
   left: 2px;
   right: 2px;
-  top: 55%;
-  bottom: 12%;
+  top: 78%;
+  bottom: 4%;
   background: var(--c);
   transform: skewX(-16deg) scaleX(0);
   transform-origin: left;
@@ -627,6 +627,10 @@ button[aria-label="Scroll to Top"] {
 .nav-sec:hover::before,
 .nav-sec[aria-current="page"]::before {
   transform: skewX(-16deg) scaleX(1);
+}
+/* 色條移到字下方，所在頁面的編號改成跟文字同色才看得清楚 */
+.nav-sec[aria-current="page"] > span:first-child {
+  color: hsl(var(--foreground));
 }
 
 /* ---------- 共用頁首（components/PageHeader.tsx） ---------- */

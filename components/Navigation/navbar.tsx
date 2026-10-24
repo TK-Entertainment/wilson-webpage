@@ -7,6 +7,7 @@ import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 import { MoonIcon, SunIcon, Monitor } from "lucide-react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
+import Logo from "@/components/logo";
 import SiteSearch from "@/components/search/sitesearch";
 import { allBlogs } from "contentlayer/generated";
 
@@ -84,15 +85,12 @@ export default function Navbar() {
 
   return (
     <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 border-b border-foreground/15 bg-background">
-      <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
+      <div className="nd-flex nd-flex-row nd-items-center nd-h-full gap-2 px-4 sm:gap-4 sm:px-5 lg:px-[44px]">
         <Link
           href="/"
           className="group flex flex-none flex-row items-center gap-2 whitespace-nowrap text-base font-black sm:gap-3 sm:text-lg"
         >
-          <span
-            className="h-3 w-3 flex-none rotate-45 bg-[var(--gold)] transition-transform group-hover:rotate-[135deg]"
-            aria-hidden="true"
-          />
+          <Logo className="h-3.5 w-10 flex-none jitter-hover sm:h-4 sm:w-12" />
           <span className="max-sm:hidden">威爾森的生活札記</span>
           <span className="sm:hidden">生活札記</span>
         </Link>
@@ -107,7 +105,7 @@ export default function Navbar() {
         ) : (
           <></>
         )}
-        <div className="nd-flex nd-flex-row items-center gap-1 ml-auto">
+        <div className="nd-flex nd-flex-row items-center gap-0.5 sm:gap-1 ml-auto">
           {sections.map((section) => (
             <Link
               key={section.href}
@@ -116,7 +114,7 @@ export default function Navbar() {
               aria-current={
                 pathname.startsWith(section.href) ? "page" : undefined
               }
-              className="nav-sec group/sec relative nd-flex items-baseline gap-1.5 px-2 py-1 text-[15px] font-black"
+              className="nav-sec group/sec relative nd-flex items-baseline gap-1.5 px-1.5 py-1 text-[15px] sm:px-2 font-black"
               style={{ ["--c" as string]: section.color }}
             >
               <span className="font-mono-label text-[11px] font-bold text-muted-foreground">
@@ -130,7 +128,7 @@ export default function Navbar() {
             href={`${pathname}#`}
             onClick={() => handlePrefferedThemeChange()}
             aria-label="切換深色／淺色模式"
-            className="nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
+            className="nd-flex items-center px-1.5 py-1 transition-colors sm:px-2 hover:text-bh-red"
           >
             {!theme ? (
               <Monitor className="h-5 w-5 text-lg" />
@@ -145,14 +143,14 @@ export default function Navbar() {
           <Link
             href="https://github.com/TK-Entertainment/wilson-webpage"
             aria-label="GitHub 原始碼"
-            className="max-sm:hidden nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
+            className="max-sm:hidden nd-flex items-center px-1.5 py-1 transition-colors sm:px-2 hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faGithub} className="h-5 w-5 text-lg" />
           </Link>
           <Link
             href="https://instagram.com/wilson_note"
             aria-label="Instagram @wilson_note"
-            className="nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
+            className="nd-flex items-center px-1.5 py-1 transition-colors sm:px-2 hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faInstagram} className="h-5 w-5 text-lg" />
           </Link>
