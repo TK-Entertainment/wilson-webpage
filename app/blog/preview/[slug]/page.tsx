@@ -8,14 +8,14 @@ import { getTableOfContents } from "next-docs-zeta/server";
 import { TOC } from "@/components/toc";
 import Actionbar from "@/components/Navigation/actionbar";
 import Link from "next/link";
+import { tagHref } from "@/utils/tags";
 import { faInfoCircle, faWarning } from "@fortawesome/free-solid-svg-icons";
 
-export function generateMetadata({
-  params,
-}: {
-  params: { slug?: string };
-}): Metadata {
-  const slug = params.slug ?? "";
+// Next 15 起 params 是 Promise
+type Props = { params: Promise<{ slug?: string }> };
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const blog = allBlogPreviews.find(
     (previewblog) => previewblog.slug == params.slug,
   );
@@ -34,11 +34,8 @@ export function generateMetadata({
   };
 }
 
-export default async function BlogSlug({
-  params,
-}: {
-  params: { slug?: string };
-}) {
+export default async function BlogSlug(props: Props) {
+  const params = await props.params;
   const page = allBlogPreviews.find(
     (previewblog) => previewblog.slug == params.slug,
   );
@@ -99,7 +96,7 @@ export default async function BlogSlug({
               {page.tags?.map((tag, index) => (
                 <Link
                   key={`${index}`}
-                  href={`/blog/tags/${tag}`}
+                  href={tagHref(tag)}
                   className="transition-all text-sm mr-1 rounded-2xl border px-2 hover:bg-accent active:scale-90"
                 >
                   #&nbsp;{tag}

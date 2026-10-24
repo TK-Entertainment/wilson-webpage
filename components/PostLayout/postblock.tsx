@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { tagHref } from "@/utils/tags";
 import Image from "next/image";
 import type { Blog } from "contentlayer/generated";
 import PostCover from "@/components/PostCover";
@@ -31,7 +32,7 @@ export default function PostBlock({ page }: { page: Blog }) {
           {page.tags?.map((tag) => (
             <Link
               key={tag}
-              href={`/blog/tags/${tag}`}
+              href={tagHref(tag)}
               className="transition-colors hover:text-bh-red"
             >
               #{tag}

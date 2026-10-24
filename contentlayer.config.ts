@@ -1,8 +1,13 @@
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
 import { createConfig } from "next-docs-zeta/contentlayer/configuration";
-import { structure } from "next-docs-zeta/mdx-plugins";
-import remarkMath from "remark-math";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { imageSize } from "image-size";
 import rehypeKatex from "rehype-katex";
+import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import { visit } from "unist-util-visit";
 
 const BlogPost = defineDocumentType(() => ({
   name: "Blog",
@@ -82,21 +87,36 @@ const Album = defineDocumentType(() => ({
   },
 }));
 
-const config = createConfig({
-  docsComputedFields: {
-    structuredData: {
-      type: "json",
-      resolve: (page) => structure(page.body.raw, [remarkMath]),
-    },
-  },
-});
+// 內文圖片（/img/... 開頭）補上寬高：next-docs-ui 的 img 是 next/image，少了寬高會報錯
+function rehypeLocalImageSize() {
+  return (tree: any) => {
+    visit(tree, "element", (node: any) => {
+      const src = node.tagName === "img" ? node.properties?.src : undefined;
+      if (typeof src !== "string" || !src.startsWith("/")) return;
+      if (node.properties.width && node.properties.height) return;
+      try {
+        const { width, height } = imageSize(
+          readFileSync(path.join("public", decodeURI(src))),
+        );
+        node.properties.width ??= width;
+        node.properties.height ??= height;
+      } catch {
+        // 找不到檔案就維持原樣
+      }
+    });
+  };
+}
 
-// 數學公式：$行內$ 與 $$區塊$$。保留 next-docs 原本的外掛，只額外加上 math，
-// makeSource 的 mdx 設定會套用到所有文件類型（筆記、文章、相簿）
+const config = createConfig();
+
+// MDX 外掛：contentlayer2 用的是 MDX 3（unified 11），next-docs-zeta 內建的外掛是舊版，
+// 這裡整組換掉，只保留實際用得到的功能，套用到所有文件類型（筆記、文章、相簿）
+// - remark-gfm：表格、刪除線
+// - remark-math＋rehype-katex：$行內$ 與 $$區塊$$ 數學公式
+// - rehype-slug：標題 id，跟目錄（getTableOfContents）一樣用 github-slugger
 config.mdx = {
-  ...config.mdx,
-  remarkPlugins: [remarkMath, ...(config.mdx?.remarkPlugins ?? [])],
-  rehypePlugins: [rehypeKatex, ...(config.mdx?.rehypePlugins ?? [])],
+  remarkPlugins: [remarkGfm, remarkMath],
+  rehypePlugins: [rehypeSlug, rehypeKatex, rehypeLocalImageSize],
 };
 
 // @ts-ignore

@@ -46,3 +46,8 @@ export function getTagsMapWithoutTopics() {
 
   return tagsMap;
 }
+
+// 標籤頁網址：一個靜態頁＋?tag= 參數（中文路徑的靜態頁在 Cloudflare 上會 404）
+export function tagHref(tag: string) {
+  return `/blog/tags?tag=${encodeURIComponent(tag)}`;
+}

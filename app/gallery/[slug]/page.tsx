@@ -18,11 +18,11 @@ export function generateStaticParams(): { slug: string }[] {
   return params.length > 0 ? params : [{ slug: "_placeholder" }];
 }
 
-export function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Metadata {
+// Next 15 起 params 是 Promise
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const album = allAlbums.find((album) => album.slug == params.slug);
 
   return pageMetadata({
@@ -35,7 +35,8 @@ export function generateMetadata({
   });
 }
 
-export default function AlbumPage({ params }: { params: { slug: string } }) {
+export default async function AlbumPage(props: Props) {
+  const params = await props.params;
   const album = allAlbums.find((album) => album.slug == params.slug);
 
   if (album == undefined) {

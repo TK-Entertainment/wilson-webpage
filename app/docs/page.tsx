@@ -3,9 +3,9 @@ import DocsSlugPage, {
 } from "./[...slug]/page";
 
 export default function DocsIndexPage() {
-  return DocsSlugPage({ params: {} });
+  return DocsSlugPage({ params: Promise.resolve({}) });
 }
 
 export function generateMetadata() {
-  return generateSlugMetadata({ params: {} });
+  return generateSlugMetadata({ params: Promise.resolve({}) });
 }

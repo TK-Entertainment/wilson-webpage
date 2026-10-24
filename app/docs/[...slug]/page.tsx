@@ -13,11 +13,11 @@ import { pageMetadata } from "@/utils/seo";
 import NotesIndex from "@/components/NotesIndex";
 import PageHeader from "@/components/PageHeader";
 
-export default async function Page({
-  params,
-}: {
-  params: { slug?: string[] };
-}) {
+// Next 15 起 params 是 Promise
+type Props = { params: Promise<{ slug?: string[] }> };
+
+export default async function Page(props: Props) {
+  const params = await props.params;
   const page = getPage(params.slug);
 
   if (page == null) {
@@ -71,11 +71,10 @@ export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   return params.length > 0 ? params : [{ slug: ["_placeholder"] }];
 }
 
-export function generateMetadata({
-  params,
-}: {
-  params: { slug?: string[] };
-}): Metadata | undefined {
+export async function generateMetadata(
+  props: Props,
+): Promise<Metadata | undefined> {
+  const params = await props.params;
   const page = getPage(params.slug);
 
   if (page == null) return;

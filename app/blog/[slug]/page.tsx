@@ -14,12 +14,13 @@ import ArticleNeighbours from "@/components/ArticleNeighbours";
 import { readingTimeLabel } from "@/utils/readingtime";
 import Comments from "@/components/comments";
 import { pageMetadata } from "@/utils/seo";
+import { tagHref } from "@/utils/tags";
 
-export function generateMetadata({
-  params,
-}: {
-  params: { slug?: string };
-}): Metadata {
+// Next 15 起 params 是 Promise
+type Props = { params: Promise<{ slug?: string }> };
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const slug = params.slug ?? "";
   const blog = allBlogs.find((blog) => blog.slug == params.slug);
 
@@ -35,11 +36,8 @@ export function generateMetadata({
   });
 }
 
-export default async function BlogSlug({
-  params,
-}: {
-  params: { slug?: string };
-}) {
+export default async function BlogSlug(props: Props) {
+  const params = await props.params;
   const page = allBlogs.find((blog) => blog.slug == params.slug);
 
   if (page == undefined) {
@@ -75,7 +73,7 @@ export default async function BlogSlug({
                 {page.tags?.map((tag) => (
                   <Link
                     key={tag}
-                    href={`/blog/tags/${tag}`}
+                    href={tagHref(tag)}
                     className="border-2 border-foreground px-2 py-1 transition-colors hover:bg-bh-yellow hover:text-bh-ink"
                   >
                     #{tag}
