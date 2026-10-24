@@ -19,7 +19,7 @@
     "eslint": "^8.57.1",
     "fontawesome-react": "^2.0.0",
     "fs": "0.0.1-security",
-    "katex": "0.16.11",
+    "katex": "^0.16.25",
     "lucide-react": "^0.284.0",
     "next": "14.2.35",
     "next-contentlayer": "0.3.4",
@@ -36,10 +36,16 @@
   "devDependencies": {
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.1",
-    "autoprefixer": "10.4.14",
-    "postcss": "8.4.31",
-    "tailwindcss": "3.3.2",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^3.4.19",
     "typescript": "5.1.6",
-    "vercel": "39.1.1"
+    "vercel": "47.0.4"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": "^8.5.31",
+      "katex": "^0.16.25"
+    }
   }
 }
