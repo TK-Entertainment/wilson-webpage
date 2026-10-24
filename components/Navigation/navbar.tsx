@@ -148,8 +148,8 @@ export default function Navbar() {
             <FontAwesomeIcon icon={faGithub} className="h-5 w-5 text-lg" />
           </Link>
           <Link
-            href="https://instagram.com/wilson_note"
-            aria-label="Instagram @wilson_note"
+            href="https://instagram.com/sleepy__wilson"
+            aria-label="Instagram @sleepy__wilson"
             className="nd-flex items-center px-1.5 py-1 transition-colors sm:px-2 hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faInstagram} className="h-5 w-5 text-lg" />
