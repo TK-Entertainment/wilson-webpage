@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Actionbar from "@/components/Navigation/actionbar";
 import TagSidebar from "@/components/Navigation/tagsidebar";
 import PostBlock from "@/components/PostLayout/postblock";
@@ -12,12 +13,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
-export default function TagSlug({ params }: { params: { slug?: string } }) {
+// 標籤頁：/blog/tags?tag=標籤（整頁在瀏覽器裡依標籤篩選文章）
+export default function TagPage() {
+  const decodedTag = useSearchParams().get("tag") ?? "";
   const postSorted = allBlogs.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
-  const slug = params.slug ?? "";
-  const decodedTag = decodeURIComponent(slug);
   const postSortedByTags = postSorted.filter((post) =>
     post.tags?.includes(decodedTag),
   );
@@ -25,11 +26,18 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [decodedTag]);
+
 
   return (
     <>
-      <Actionbar showTagMenu={showTagMenu} setShowTagMenu={setShowTagMenu} />
+      {/* 靜態頁的標題沒辦法帶標籤名稱，用 React 19 的 <title> 在瀏覽器裡補上 */}
+      {decodedTag ? <title>{`威爾森的生活札記 | 標籤 > ${decodedTag}`}</title> : null}
+      <Actionbar
+        showTagMenu={showTagMenu}
+        setShowTagMenu={setShowTagMenu}
+        tag={decodedTag}
+      />
       <div className="grid grid-cols-9">
         <div
           className={`${
@@ -38,7 +46,7 @@ export default function TagSlug({ params }: { params: { slug?: string } }) {
               : "max-md:hidden col-span-2 border-r-4 border-foreground pr-4"
           }`}
         >
-          <TagSidebar />
+          <TagSidebar activeTag={decodedTag} />
         </div>
         <div
           className={`${

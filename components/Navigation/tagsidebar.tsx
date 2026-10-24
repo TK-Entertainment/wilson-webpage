@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { allBlogs } from "@/.contentlayer/generated";
-import { getTopicTagsMap, getTagsMapWithoutTopics } from "@/utils/tags";
+import { getTopicTagsMap, getTagsMapWithoutTopics, tagHref } from "@/utils/tags";
 import { usePathname } from "next/navigation";
 import getTopicTagsIcon from "@/utils/tagsicon";
 import Link from "next/link";
@@ -11,7 +11,7 @@ function itemClass(active: boolean) {
   }`;
 }
 
-export default function TagSidebar() {
+export default function TagSidebar({ activeTag }: { activeTag?: string }) {
   const topicTags = [...getTopicTagsMap().entries()].sort(
     (a, b) => b[1].count - a[1].count,
   );
@@ -23,7 +23,7 @@ export default function TagSidebar() {
 
   return (
     <nav className="sticky top-16 flex h-[calc(100vh-4rem)] flex-col gap-8 overflow-y-auto px-2 py-10">
-      <Link href="/blog" className={itemClass(pathname == "/blog")}>
+      <Link href="/blog" className={itemClass(pathname == "/blog" && !activeTag)}>
         <span className="h-3 w-3 rounded-full bg-bh-red" aria-hidden="true" />
         <span className="text-lg">全部碎念</span>
         <span className="ml-auto font-mono-label text-xs">{blogCount}</span>
@@ -34,9 +34,9 @@ export default function TagSidebar() {
         </p>
         {topicTags.map(([topic, count]) => (
           <Link
-            href={`/blog/tags/${topic}`}
+            href={tagHref(topic)}
             key={topic}
-            className={itemClass(pathname == `/blog/tags/${topic}`)}
+            className={itemClass(activeTag === topic)}
           >
             <FontAwesomeIcon
               icon={getTopicTagsIcon(topic)}
@@ -56,10 +56,10 @@ export default function TagSidebar() {
         <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono-label text-xs font-bold">
           {nonTopicTags.map(([tag]) => (
             <Link
-              href={`/blog/tags/${tag}`}
+              href={tagHref(tag)}
               key={tag}
               className={
-                pathname == `/blog/tags/${tag}`
+                activeTag === tag
                   ? "bg-bh-yellow px-1 text-bh-ink"
                   : "transition-colors hover:text-bh-red"
               }

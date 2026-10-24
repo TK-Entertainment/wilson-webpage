@@ -32,11 +32,13 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
+  // 家目錄另有 package-lock.json，明確指定專案根目錄，免得 Next 15 猜錯
+  outputFileTracingRoot: __dirname,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
 };
 
-const { withContentlayer } = require("next-contentlayer");
+const { withContentlayer } = require("next-contentlayer2");
 
 module.exports = withContentlayer(config);

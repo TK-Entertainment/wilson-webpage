@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/date";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,11 +19,11 @@ export function generateStaticParams(): { slug: string }[] {
   return params.length > 0 ? params : [{ slug: "_placeholder" }];
 }
 
-export function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Metadata {
+// Next 15 起 params 是 Promise
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const album = allAlbums.find((album) => album.slug == params.slug);
 
   return pageMetadata({
@@ -35,7 +36,8 @@ export function generateMetadata({
   });
 }
 
-export default function AlbumPage({ params }: { params: { slug: string } }) {
+export default async function AlbumPage(props: Props) {
+  const params = await props.params;
   const album = allAlbums.find((album) => album.slug == params.slug);
 
   if (album == undefined) {
@@ -53,7 +55,7 @@ export default function AlbumPage({ params }: { params: { slug: string } }) {
             ← 回到生活影像
           </Link>
           <p className="mt-4 font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
-            {new Date(album.date).toLocaleDateString("sv-SE")}
+            {formatDate(album.date)}
             {album.location ? ` // ${album.location}` : ""}
           </p>
           <h1 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">

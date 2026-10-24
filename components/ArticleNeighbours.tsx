@@ -1,12 +1,9 @@
+import { formatDate } from "@/utils/date";
 import Link from "next/link";
 import { allBlogs, type Blog } from "contentlayer/generated";
 
 function byDateAsc(a: Blog, b: Blog) {
   return new Date(a.date).getTime() - new Date(b.date).getTime();
-}
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("sv-SE");
 }
 
 /** 文章底部：上一篇／下一篇（依日期）與相關文章（共同標籤最多的前三篇） */

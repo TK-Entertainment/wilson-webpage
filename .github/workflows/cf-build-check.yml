@@ -14,7 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ["18.17.1", "20", "22"]
+        # Next 15 需要 Node 18.18 以上；Cloudflare 會照 .nvmrc 的版本建置
+        node: [".nvmrc", "20", "22"]
 
     steps:
       - name: Check out Git repository
@@ -28,7 +29,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ matrix.node != '.nvmrc' && matrix.node || '' }}
+          node-version-file: ${{ matrix.node == '.nvmrc' && '.nvmrc' || '' }}
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile 2>&1 | tee install.log; exit ${PIPESTATUS[0]}

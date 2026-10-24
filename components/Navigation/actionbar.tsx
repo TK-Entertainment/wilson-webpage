@@ -11,17 +11,18 @@ interface ActionbarProps {
   showTagMenu: boolean | null;
   setShowTagMenu: ((showTagMenu: boolean) => void) | null;
   onOpenToc?: (() => void) | null;
+  tag?: string;
 }
 
 const Actionbar: FC<ActionbarProps> = ({
   showTagMenu,
   setShowTagMenu,
   onOpenToc = null,
+  tag,
 }) => {
   const pathname = usePathname();
   const blogSlug = pathname.split("/")[2];
-  const tagSlug = pathname.split("/")[3];
-  const decodedTag = decodeURIComponent(tagSlug);
+  const decodedTag = tag ?? "";
   const blog = allBlogs.find((blog) => blog.slug == blogSlug);
 
   const showTagMenuHandler = () => {

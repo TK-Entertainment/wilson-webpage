@@ -276,12 +276,18 @@ button[aria-label="Scroll to Top"] {
   line-height: 1.9;
 }
 .nd-prose a:not(:where(.nd-not-prose *)) {
-  color: #c92a22;
+  color: #ad5a1f; /* 深橘，紙色底對比 4.6 */
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
 .dark .nd-prose a:not(:where(.nd-not-prose *)) {
-  color: #ff7a70; /* 深色底上的文字用紅，對比 > 6 */
+  color: #f0a060; /* 深色底上的亮橘，對比 > 7 */
+}
+/* 小標題裡的錨點連結：跟標題同色，不吃連結的橘色 */
+.nd-prose :is(h1, h2, h3, h4, h5, h6) a:not(:where(.nd-not-prose *)),
+.dark .nd-prose :is(h1, h2, h3, h4, h5, h6) a:not(:where(.nd-not-prose *)) {
+  color: inherit;
+  text-decoration: none;
 }
 .nd-prose h2 {
   display: flex;

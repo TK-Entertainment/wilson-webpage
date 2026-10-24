@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/date";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -48,7 +49,7 @@ export default function GalleryPage() {
                 )}
               </div>
               <p className="font-mono-label text-xs font-bold text-bh-blue dark:text-bh-yellow">
-                {new Date(album.date).toLocaleDateString("sv-SE")}
+                {formatDate(album.date)}
                 {album.location ? ` // ${album.location}` : ""}
               </p>
               <p className="split-hover text-lg font-black leading-snug">

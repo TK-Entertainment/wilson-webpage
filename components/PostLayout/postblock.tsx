@@ -1,4 +1,6 @@
+import { formatDate } from "@/utils/date";
 import Link from "next/link";
+import { tagHref } from "@/utils/tags";
 import Image from "next/image";
 import type { Blog } from "contentlayer/generated";
 import PostCover from "@/components/PostCover";
@@ -11,7 +13,7 @@ export default function PostBlock({ page }: { page: Blog }) {
     <article className="group flex flex-row gap-5 border-t-2 border-foreground py-6">
       <div className="flex min-w-0 flex-1 flex-col">
         <p className="font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
-          {new Date(page.date).toLocaleDateString("sv-SE")}
+          {formatDate(page.date)}
           {page.outside ? " // 外部文章" : ""}
         </p>
         <Link
@@ -31,7 +33,7 @@ export default function PostBlock({ page }: { page: Blog }) {
           {page.tags?.map((tag) => (
             <Link
               key={tag}
-              href={`/blog/tags/${tag}`}
+              href={tagHref(tag)}
               className="transition-colors hover:text-bh-red"
             >
               #{tag}

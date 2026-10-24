@@ -1,6 +1,6 @@
 "use client";
 
-import { useMDXComponent } from "next-contentlayer/hooks";
+import { useMDXComponent } from "next-contentlayer2/hooks";
 import defaultComponents from "next-docs-ui/mdx";
 import { Photos, Video, YouTube } from "@/components/media";
 import "katex/dist/katex.min.css";

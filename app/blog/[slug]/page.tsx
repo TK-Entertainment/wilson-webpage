@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/date";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { allBlogs } from "contentlayer/generated";
@@ -14,12 +15,13 @@ import ArticleNeighbours from "@/components/ArticleNeighbours";
 import { readingTimeLabel } from "@/utils/readingtime";
 import Comments from "@/components/comments";
 import { pageMetadata } from "@/utils/seo";
+import { tagHref } from "@/utils/tags";
 
-export function generateMetadata({
-  params,
-}: {
-  params: { slug?: string };
-}): Metadata {
+// Next 15 起 params 是 Promise
+type Props = { params: Promise<{ slug?: string }> };
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const slug = params.slug ?? "";
   const blog = allBlogs.find((blog) => blog.slug == params.slug);
 
@@ -35,11 +37,8 @@ export function generateMetadata({
   });
 }
 
-export default async function BlogSlug({
-  params,
-}: {
-  params: { slug?: string };
-}) {
+export default async function BlogSlug(props: Props) {
+  const params = await props.params;
   const page = allBlogs.find((blog) => blog.slug == params.slug);
 
   if (page == undefined) {
@@ -57,7 +56,7 @@ export default async function BlogSlug({
           <div className="col-span-6 max-xl:col-span-full px-2 md:px-12 md:mt-8 mt-4 max-w-3xl">
             <header className="nd-not-prose mb-10 border-b-4 border-foreground pb-8 md:pt-8 pt-4">
               <p className="font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
-                {new Date(page.date).toLocaleDateString("sv-SE")}
+                {formatDate(page.date)}
                 {page.authors ? ` // ${page.authors.join("、")}` : ""}
                 {` // ${readingTimeLabel(page.body.raw)}`}
               </p>
@@ -75,7 +74,7 @@ export default async function BlogSlug({
                 {page.tags?.map((tag) => (
                   <Link
                     key={tag}
-                    href={`/blog/tags/${tag}`}
+                    href={tagHref(tag)}
                     className="border-2 border-foreground px-2 py-1 transition-colors hover:bg-bh-yellow hover:text-bh-ink"
                   >
                     #{tag}
