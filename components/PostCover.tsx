@@ -1,6 +1,5 @@
-// 沒有封面照片時，依文章網址產生固定的包浩斯幾何封面（同一篇永遠長一樣）
-const BG = ["#d9302a", "#1f4fa3", "#f2c230", "#178046", "#7b3fc4", "#f2721c"];
-const FG = ["#141414", "#efece6", "#f2c230", "#d9302a", "#1f4fa3"];
+// 沒有封面照片時，依文章網址產生固定的封面（同一篇永遠長一樣）：深藍底＋斜切的金、橘色帶
+const STRIPE = ["#e2782d", "#d6a53c", "#4cb8b0"];
 
 function hash(text: string) {
   let h = 2166136261;
@@ -13,43 +12,33 @@ function hash(text: string) {
 
 export default function PostCover({ seed }: { seed: string }) {
   const h = hash(seed);
-  const pick = <T,>(list: T[], shift: number) =>
-    list[(h >>> shift) % list.length];
-  const bg = pick(BG, 5);
-  const others = FG.filter((c) => c !== bg);
-  const c1 = others[(h >>> 3) % others.length];
-  const c2 =
-    others[(h >>> 7) % others.length] === c1
-      ? others[(h >>> 11) % others.length]
-      : others[(h >>> 7) % others.length];
-  const flip = (h >>> 13) % 2 === 1;
+  const main = STRIPE[h % STRIPE.length];
+  const thin =
+    STRIPE[(h >>> 4) % STRIPE.length] === main
+      ? "#efe4c8"
+      : STRIPE[(h >>> 4) % STRIPE.length];
+  const x = 18 + ((h >>> 8) % 46);
+  const ring = (h >>> 14) % 3;
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden"
-      style={{ background: bg }}
+      className="relative h-full w-full overflow-hidden bg-[#26304f]"
       aria-hidden="true"
     >
       <span
-        className="absolute aspect-square w-[70%] rounded-full"
-        style={{
-          background: c1,
-          top: "-18%",
-          [flip ? "left" : "right"]: "-12%",
-        }}
+        className="absolute top-[-10%] h-[120%] w-[22%] -skew-x-12"
+        style={{ left: `${x}%`, background: main }}
       />
       <span
-        className="absolute aspect-square w-[42%]"
-        style={{
-          background: c2,
-          bottom: "-6%",
-          [flip ? "right" : "left"]: "8%",
-          clipPath: (h >>> 17) % 2 ? "polygon(50% 0,100% 100%,0 100%)" : "none",
-        }}
+        className="absolute top-[-10%] h-[120%] w-[4%] -skew-x-12"
+        style={{ left: `${x + 28}%`, background: thin }}
       />
       <span
-        className="absolute h-[10%] w-full"
-        style={{ background: "#141414", top: `${48 + ((h >>> 21) % 20)}%` }}
+        className="absolute bottom-[12%] right-[10%] aspect-square w-[22%] border-[3px] border-[#efe4c8]"
+        style={{
+          borderRadius: ring === 0 ? "50%" : 0,
+          transform: ring === 2 ? "rotate(45deg)" : undefined,
+        }}
       />
     </div>
   );

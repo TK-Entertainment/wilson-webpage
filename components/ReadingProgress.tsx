@@ -76,7 +76,7 @@ export default function ReadingProgress({
         style={{
           clipPath: "inset(0 100% 0 0)",
           background:
-            "linear-gradient(to right, #d9302a 0 33.34%, #f2c230 33.34% 66.67%, #1f4fa3 66.67% 100%)",
+            "linear-gradient(to right, #e2782d 0 33.34%, #d6a53c 33.34% 66.67%, #26304f 66.67% 100%)",
         }}
       />
     </div>

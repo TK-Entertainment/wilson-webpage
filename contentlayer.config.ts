@@ -65,6 +65,12 @@ const Album = defineDocumentType(() => ({
     date: { type: "date", required: true },
     cover: { type: "string", required: false },
     location: { type: "string", required: false },
+    // 首頁照片旁的空心大字：上排地點、下排主題（沒填就用「・」拆標題）
+    place: { type: "string", required: false },
+    subject: { type: "string", required: false },
+    // 拍攝地點座標（首頁顯示 LOC）
+    lat: { type: "number", required: false },
+    lng: { type: "number", required: false },
   },
   computedFields: {
     slug: {

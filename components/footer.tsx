@@ -1,24 +1,26 @@
 import Link from "next/link";
-import Logo from "@/components/logo";
 
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t-4 border-foreground bg-bh-ink text-bh-paper">
+    <footer className="relative mt-auto bg-[var(--navy)] text-[var(--cream)] before:absolute before:inset-x-0 before:top-0 before:h-[5px] before:bg-[var(--gold)]">
       <div className="container flex flex-col justify-between gap-8 py-10 md:flex-row md:items-end">
         <div className="flex flex-col gap-3">
-          <Logo className="h-5 w-[60px]" />
+          <span
+            className="h-3.5 w-3.5 rotate-45 bg-[var(--gold)]"
+            aria-hidden="true"
+          />
           <p className="text-2xl font-black">威爾森的生活札記</p>
           <p className="font-mono-label text-xs opacity-70">
             © 2023–{new Date(Date.now()).getFullYear()} 威爾森 (Wilson Chen)
           </p>
         </div>
         <div className="flex flex-col gap-1 font-mono-label text-xs opacity-70 md:items-end md:text-right [&_a]:inline-block [&_a]:py-1">
-          <a href="/rss.xml" className="hover:text-bh-yellow">
+          <a href="/rss.xml" className="hover:text-[var(--gold)]">
             RSS 訂閱
           </a>
           <Link
             href="https://github.com/TK-Entertainment"
-            className="hover:text-bh-yellow"
+            className="hover:text-[var(--gold)]"
           >
             A Project of TK Entertainment
           </Link>
@@ -26,14 +28,14 @@ export default function Footer() {
             Made with{" "}
             <Link
               href="https://github.com/vercel/next.js"
-              className="hover:text-bh-yellow"
+              className="hover:text-[var(--gold)]"
             >
               Next.js
             </Link>{" "}
             + Next Docs by{" "}
             <Link
               href="https://github.com/fuma-nama"
-              className="hover:text-bh-yellow"
+              className="hover:text-[var(--gold)]"
             >
               @Fuma Nama
             </Link>

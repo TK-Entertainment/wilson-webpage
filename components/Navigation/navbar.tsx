@@ -12,21 +12,9 @@ import SiteSearch from "@/components/search/sitesearch";
 import { allBlogs } from "contentlayer/generated";
 
 const sections = [
-  {
-    href: "/blog",
-    label: "/日常碎念",
-    shape: "h-3 w-3 rounded-full bg-bh-red",
-  },
-  {
-    href: "/docs",
-    label: "/學習日常",
-    shape: "h-3 w-3 bg-bh-blue [clip-path:polygon(50%_0,100%_100%,0_100%)]",
-  },
-  {
-    href: "/gallery",
-    label: "/生活影像",
-    shape: "h-3 w-3 bg-bh-yellow",
-  },
+  { href: "/blog", label: "日常碎念", no: "01", color: "var(--gold)" },
+  { href: "/docs", label: "學習日常", no: "02", color: "var(--teal)" },
+  { href: "/gallery", label: "生活影像", no: "03", color: "var(--orange)" },
 ];
 
 export default function Navbar() {
@@ -96,8 +84,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 border-b-4 border-foreground bg-background">
-      <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
+    <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 border-b border-foreground/15 bg-background">
+      <div className="nd-flex nd-flex-row nd-items-center nd-h-full gap-2 px-4 sm:gap-4 sm:px-5 lg:px-[44px]">
         <Link
           href="/"
           className="group flex flex-none flex-row items-center gap-2 whitespace-nowrap text-base font-black sm:gap-3 sm:text-lg"
@@ -117,19 +105,21 @@ export default function Navbar() {
         ) : (
           <></>
         )}
-        <div className="nd-flex nd-flex-row items-center gap-1 ml-auto">
+        <div className="nd-flex nd-flex-row items-center gap-0.5 sm:gap-1 ml-auto">
           {sections.map((section) => (
             <Link
               key={section.href}
               href={section.href}
-              aria-label={section.label.replace("/", "")}
-              className={`nd-flex items-center gap-2 px-2 py-1 font-mono-label text-sm font-bold transition-colors ${
-                pathname.startsWith(section.href)
-                  ? "bg-foreground text-background"
-                  : "hover:text-bh-red"
-              }`}
+              aria-label={section.label}
+              aria-current={
+                pathname.startsWith(section.href) ? "page" : undefined
+              }
+              className="nav-sec group/sec relative nd-flex items-baseline gap-1.5 px-1.5 py-1 text-[15px] sm:px-2 font-black"
+              style={{ ["--c" as string]: section.color }}
             >
-              <span className={section.shape} aria-hidden="true" />
+              <span className="font-mono-label text-[11px] font-bold text-muted-foreground">
+                {section.no}
+              </span>
               <span className="max-lg:hidden">{section.label}</span>
             </Link>
           ))}
@@ -138,7 +128,7 @@ export default function Navbar() {
             href={`${pathname}#`}
             onClick={() => handlePrefferedThemeChange()}
             aria-label="切換深色／淺色模式"
-            className="nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
+            className="nd-flex items-center px-1.5 py-1 transition-colors sm:px-2 hover:text-bh-red"
           >
             {!theme ? (
               <Monitor className="h-5 w-5 text-lg" />
@@ -153,14 +143,14 @@ export default function Navbar() {
           <Link
             href="https://github.com/TK-Entertainment/wilson-webpage"
             aria-label="GitHub 原始碼"
-            className="max-sm:hidden nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
+            className="max-sm:hidden nd-flex items-center px-1.5 py-1 transition-colors sm:px-2 hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faGithub} className="h-5 w-5 text-lg" />
           </Link>
           <Link
             href="https://instagram.com/wilson_note"
             aria-label="Instagram @wilson_note"
-            className="nd-flex items-center px-2 py-1 transition-colors hover:text-bh-red"
+            className="nd-flex items-center px-1.5 py-1 transition-colors sm:px-2 hover:text-bh-red"
           >
             <FontAwesomeIcon icon={faInstagram} className="h-5 w-5 text-lg" />
           </Link>
