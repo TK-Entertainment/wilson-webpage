@@ -484,15 +484,24 @@ button[aria-label="Scroll to Top"] {
   position: fixed;
   inset: 0;
   z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+  color: #efece6;
+}
+#tarot-portal .tp-disc {
+  position: absolute;
+  border-radius: 50%;
+  background: #7b3fc4;
+  will-change: transform;
+}
+#tarot-portal .tp-body {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 28px;
-  background: #7b3fc4;
-  color: #efece6;
-  clip-path: circle(150% at 50% 50%);
-  pointer-events: none;
 }
 #tarot-portal .tp-card {
   width: min(34vw, 180px);
@@ -501,7 +510,7 @@ button[aria-label="Scroll to Top"] {
   box-shadow: 10px 10px 0 #141414;
 }
 #tarot-portal.is-opening .tp-card {
-  animation: tp-spin 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+  animation: tp-spin 0.85s cubic-bezier(0.3, 0.7, 0.2, 1) both;
 }
 #tarot-portal.is-closing .tp-card {
   animation: tp-glitch 0.4s steps(1) both;
@@ -523,6 +532,7 @@ button[aria-label="Scroll to Top"] {
   inset: 0;
 }
 #tarot-portal .tp-stars i {
+  will-change: transform;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -543,7 +553,7 @@ button[aria-label="Scroll to Top"] {
   transform: rotate(var(--a)) translateX(0) scale(0);
 }
 #tarot-portal.is-opening .tp-stars i {
-  animation: tp-burst 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.25s both;
+  animation: tp-burst 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
 }
 #tarot-portal.is-closing .tp-stars i {
   transform: rotate(var(--a)) translateX(min(42vw, 320px)) scale(1);

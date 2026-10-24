@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
-import { openPortal } from "@/components/tarot/portal";
+import { openPortal, preloadPortal } from "@/components/tarot/portal";
 
 export type HomePost = {
   href: string;
@@ -108,6 +108,15 @@ export default function ScrollHome({
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // 彩蛋：先把抽牌頁的程式和牌背圖載好，點下去的轉場才不會卡
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      router.prefetch("/tarot");
+      preloadPortal();
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [router]);
 
   useEffect(() => {
     const root = rootRef.current;
