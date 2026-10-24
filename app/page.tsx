@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/date";
 import { allBlogs, allAlbums } from "contentlayer/generated";
 import Home, { type HomePhoto } from "@/components/home/home";
 import { pageMetadata, siteName } from "@/utils/seo";
@@ -13,7 +14,7 @@ const byDate = (a: { date: string }, b: { date: string }) =>
   new Date(b.date).getTime() - new Date(a.date).getTime();
 
 const dot = (d: string) =>
-  new Date(d).toLocaleDateString("sv-SE").replace(/-/g, ".");
+  formatDate(d).replace(/-/g, ".");
 
 export default function HomePage() {
   const albumsByDate = [...allAlbums].sort(byDate);
@@ -42,7 +43,7 @@ export default function HomePage() {
     .map((post) => ({
       href: post.outside ? `${post.outsideLink}` : `/blog/${post.slug}`,
       title: post.title,
-      date: new Date(post.date).toLocaleDateString("sv-SE"),
+      date: formatDate(post.date),
       description: post.description,
     }));
 

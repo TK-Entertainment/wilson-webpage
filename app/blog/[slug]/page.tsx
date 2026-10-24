@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/date";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { allBlogs } from "contentlayer/generated";
@@ -55,7 +56,7 @@ export default async function BlogSlug(props: Props) {
           <div className="col-span-6 max-xl:col-span-full px-2 md:px-12 md:mt-8 mt-4 max-w-3xl">
             <header className="nd-not-prose mb-10 border-b-4 border-foreground pb-8 md:pt-8 pt-4">
               <p className="font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
-                {new Date(page.date).toLocaleDateString("sv-SE")}
+                {formatDate(page.date)}
                 {page.authors ? ` // ${page.authors.join("、")}` : ""}
                 {` // ${readingTimeLabel(page.body.raw)}`}
               </p>

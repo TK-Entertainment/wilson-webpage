@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/date";
 import { type Metadata } from "next";
 import { allBlogPreviews } from "contentlayer/generated";
 import { MDXContent } from "next-docs-ui/mdx";
@@ -118,7 +119,7 @@ export default async function BlogSlug(props: Props) {
                     icon={faClock}
                     className="max-sm:mr-auto my-auto sm:mr-2"
                   />
-                  {new Date(page.date).toLocaleDateString("zh-TW")}
+                  {formatDate(page.date)}
                 </div>
               </h4>
             </div>

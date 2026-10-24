@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/date";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -54,7 +55,7 @@ export default async function AlbumPage(props: Props) {
             ← 回到生活影像
           </Link>
           <p className="mt-4 font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
-            {new Date(album.date).toLocaleDateString("sv-SE")}
+            {formatDate(album.date)}
             {album.location ? ` // ${album.location}` : ""}
           </p>
           <h1 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">
