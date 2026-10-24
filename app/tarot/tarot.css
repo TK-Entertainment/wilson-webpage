@@ -64,11 +64,11 @@
 
 /* 抽法按鈕：彩色色塊＋黑色硬陰影（跟 404 頁的連結一樣） */
 .tarot-mode.is-red {
-  background: #d9302a;
+  background: #e2782d;
   color: #fff;
 }
 .tarot-mode.is-blue {
-  background: #1f4fa3;
+  background: #26304f;
   color: #fff;
 }
 .tarot-mode {
@@ -85,7 +85,7 @@
   box-shadow: 2px 2px 0 hsl(var(--foreground));
 }
 .tarot-mode:focus-visible {
-  outline: 4px solid #f2c230;
+  outline: 4px solid #d6a53c;
   outline-offset: 3px;
 }
 .tarot-mode[disabled] {
@@ -124,32 +124,32 @@
   background: var(--t-paper);
   color: var(--t-ink);
   cursor: pointer;
-  box-shadow: 4px 4px 0 #1f4fa3;
+  box-shadow: 4px 4px 0 #26304f;
   transition:
     transform 0.15s,
     box-shadow 0.15s;
 }
 .tarot-btn:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 #1f4fa3;
+  box-shadow: 6px 6px 0 #26304f;
 }
 .tarot-btn:active {
   transform: translate(3px, 3px);
   box-shadow: none;
 }
 .tarot-btn.primary {
-  background: #f2c230;
-  color: #141414;
-  box-shadow: 4px 4px 0 #d9302a;
+  background: #d6a53c;
+  color: #1c2135;
+  box-shadow: 4px 4px 0 #e2782d;
 }
 .tarot-btn.primary:hover {
-  box-shadow: 6px 6px 0 #d9302a;
+  box-shadow: 6px 6px 0 #e2782d;
 }
 .tarot-btn:focus-visible,
 .tarot-fan-card:focus-visible,
 .tarot-flip:focus-visible,
 .tarot-grid-card:focus-visible {
-  outline: 4px solid #1f4fa3;
+  outline: 4px solid #26304f;
   outline-offset: 3px;
 }
 .tarot-btn[disabled] {
@@ -166,7 +166,7 @@
 }
 .tarot-hint::before {
   content: "> ";
-  color: #d9302a;
+  color: #e2782d;
 }
 
 /* ---------- 牌：完整牌面圖片（深藍底金線框，圓角跟牌一致） ---------- */
@@ -190,7 +190,7 @@
   transform: translate(calc(var(--i) * -4px), calc(var(--i) * -4px));
 }
 .tarot-stack > span:first-child .tcard {
-  box-shadow: 8px 8px 0 #1f4fa3;
+  box-shadow: 8px 8px 0 #26304f;
 }
 .tarot-stack.is-shuffling > span:nth-child(odd) {
   animation: tarot-riffle-l 0.5s steps(4) 3;
@@ -250,7 +250,7 @@
 .tarot-fan-card:hover .tcard,
 .tarot-fan-card:focus-visible .tcard {
   transform: translateY(-22%);
-  box-shadow: 5px 5px 0 #f2c230;
+  box-shadow: 5px 5px 0 #d6a53c;
 }
 .tarot-fan-card.is-picked {
   visibility: hidden;
@@ -284,15 +284,15 @@
   color: var(--t-paper);
 }
 .tarot-slot:nth-child(1) .tarot-pos span {
-  background: #d9302a;
+  background: #e2782d;
   color: #fff;
 }
 .tarot-slot:nth-child(2) .tarot-pos span {
-  background: #f2c230;
-  color: #141414;
+  background: #d6a53c;
+  color: #1c2135;
 }
 .tarot-slot:nth-child(3) .tarot-pos span {
-  background: #1f4fa3;
+  background: #26304f;
   color: #fff;
 }
 .tarot-slot {
@@ -306,18 +306,18 @@
   width: 118%;
   aspect-ratio: 1;
   translate: -50% 0;
-  background: #d9302a;
+  background: #e2782d;
   border-radius: 50%;
   animation: tarot-drop 0.7s cubic-bezier(0.5, 0, 0.7, 1.4) both;
 }
 .tarot-slot:nth-child(2) .tarot-slot-shape {
-  background: #f2c230;
+  background: #d6a53c;
   border-radius: 0;
   rotate: 12deg;
   animation-delay: 0.1s;
 }
 .tarot-slot:nth-child(3) .tarot-slot-shape {
-  background: #1f4fa3;
+  background: #26304f;
   border-radius: 0;
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
   top: 6%;
@@ -325,7 +325,7 @@
   animation-delay: 0.2s;
 }
 .tarot-spread.n1 .tarot-slot-shape {
-  background: #7b3fc4;
+  background: #4cb8b0;
   width: 130%;
 }
 .tarot-flip {
@@ -361,10 +361,10 @@
 }
 .tarot-flip .face .tcard {
   height: 100%;
-  box-shadow: 6px 6px 0 #141414;
+  box-shadow: 6px 6px 0 #1c2135;
 }
 .dark .tarot-flip .face .tcard {
-  box-shadow: 6px 6px 0 #efece6;
+  box-shadow: 6px 6px 0 #ebe7de;
 }
 .tarot-flip.is-reversed .front {
   transform: rotateY(180deg) rotate(180deg);
@@ -390,11 +390,11 @@
 }
 @keyframes tarot-glitch {
   0% {
-    filter: drop-shadow(-4px 0 #d9302a) drop-shadow(4px 0 #1f4fa3);
+    filter: drop-shadow(-4px 0 #e2782d) drop-shadow(4px 0 #26304f);
     clip-path: inset(10% 0 55% 0);
   }
   25% {
-    filter: drop-shadow(4px 0 #d9302a) drop-shadow(-4px 0 #1f4fa3);
+    filter: drop-shadow(4px 0 #e2782d) drop-shadow(-4px 0 #26304f);
     clip-path: inset(60% 0 8% 0);
   }
   50% {
@@ -425,19 +425,19 @@
 .tarot-reading-pos {
   margin: 0 -22px 14px !important;
   padding: 6px 22px;
-  background: #d9302a;
+  background: #e2782d;
   color: #fff;
   border-bottom: 4px solid var(--t-ink);
 }
 .tarot-reading:nth-child(2) .tarot-reading-pos {
-  background: #f2c230;
-  color: #141414;
+  background: #d6a53c;
+  color: #1c2135;
 }
 .tarot-reading:nth-child(3) .tarot-reading-pos {
-  background: #1f4fa3;
+  background: #26304f;
 }
 .tarot-readings.n1 .tarot-reading-pos {
-  background: #7b3fc4;
+  background: #4cb8b0;
   color: #fff;
 }
 @keyframes tarot-rise {
@@ -463,21 +463,21 @@
 .tarot-reading h2 small {
   font-size: 12px;
   font-weight: 700;
-  color: #1f4fa3;
+  color: #26304f;
 }
 .dark .tarot-reading h2 small {
-  color: #f2c230;
+  color: #d6a53c;
 }
 .tarot-tag {
   display: inline-block;
   padding: 1px 8px;
-  background: #1f4fa3;
+  background: #26304f;
   color: #fff;
   font-size: 12px;
   font-weight: 900;
 }
 .tarot-tag.rev {
-  background: #d9302a;
+  background: #e2782d;
 }
 .tarot-reading p,
 .tarot-dialog p {
@@ -496,8 +496,8 @@
   border-top: 4px solid var(--t-ink);
 }
 .tarot-toggle {
-  background: #f2c230;
-  color: #141414;
+  background: #d6a53c;
+  color: #1c2135;
 }
 .tarot-grid {
   animation: tarot-rise 0.4s ease-out both;
@@ -528,7 +528,7 @@
 }
 .tarot-grid-card:hover .tcard {
   transform: translate(-3px, -3px);
-  box-shadow: 6px 6px 0 #f2c230;
+  box-shadow: 6px 6px 0 #d6a53c;
 }
 
 /* ---------- 單張牌詳情 ---------- */
@@ -539,10 +539,10 @@
   border: 4px solid var(--t-ink);
   background: var(--t-paper);
   color: var(--t-ink);
-  box-shadow: 8px 8px 0 #d9302a;
+  box-shadow: 8px 8px 0 #e2782d;
 }
 .tarot-dialog::backdrop {
-  background: #141414b3;
+  background: #1c2135b3;
 }
 .tarot-dialog-body {
   display: grid;

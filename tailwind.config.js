@@ -17,14 +17,14 @@ module.exports = {
     extend: {
       colors: {
         bh: {
-          red: "#d9302a",
-          blue: "#1f4fa3",
-          yellow: "#f2c230",
-          ink: "#141414",
-          paper: "#efece6",
-          green: "#178046",
-          purple: "#7b3fc4",
-          orange: "#f2721c",
+          red: "#e2782d",
+          blue: "#26304f",
+          yellow: "#d6a53c",
+          ink: "#1c2135",
+          paper: "#ebe7de",
+          green: "#4cb8b0",
+          purple: "#4cb8b0",
+          orange: "#e2782d",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

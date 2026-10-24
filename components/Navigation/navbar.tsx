@@ -7,26 +7,13 @@ import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 import { MoonIcon, SunIcon, Monitor } from "lucide-react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
-import Logo from "@/components/logo";
 import SiteSearch from "@/components/search/sitesearch";
 import { allBlogs } from "contentlayer/generated";
 
 const sections = [
-  {
-    href: "/blog",
-    label: "/日常碎念",
-    shape: "h-3 w-3 rounded-full bg-bh-red",
-  },
-  {
-    href: "/docs",
-    label: "/學習日常",
-    shape: "h-3 w-3 bg-bh-blue [clip-path:polygon(50%_0,100%_100%,0_100%)]",
-  },
-  {
-    href: "/gallery",
-    label: "/生活影像",
-    shape: "h-3 w-3 bg-bh-yellow",
-  },
+  { href: "/blog", label: "日常碎念", no: "01", color: "var(--gold)" },
+  { href: "/docs", label: "學習日常", no: "02", color: "var(--teal)" },
+  { href: "/gallery", label: "生活影像", no: "03", color: "var(--orange)" },
 ];
 
 export default function Navbar() {
@@ -96,13 +83,16 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 border-b-4 border-foreground bg-background">
+    <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 border-b border-foreground/15 bg-background">
       <div className="nd-container nd-flex nd-flex-row nd-items-center nd-h-full nd-gap-4">
         <Link
           href="/"
           className="group flex flex-none flex-row items-center gap-2 whitespace-nowrap text-base font-black sm:gap-3 sm:text-lg"
         >
-          <Logo className="h-3.5 w-10 flex-none jitter-hover sm:h-4 sm:w-12" />
+          <span
+            className="h-3 w-3 flex-none rotate-45 bg-[var(--gold)] transition-transform group-hover:rotate-[135deg]"
+            aria-hidden="true"
+          />
           <span className="max-sm:hidden">威爾森的生活札記</span>
           <span className="sm:hidden">生活札記</span>
         </Link>
@@ -122,14 +112,16 @@ export default function Navbar() {
             <Link
               key={section.href}
               href={section.href}
-              aria-label={section.label.replace("/", "")}
-              className={`nd-flex items-center gap-2 px-2 py-1 font-mono-label text-sm font-bold transition-colors ${
-                pathname.startsWith(section.href)
-                  ? "bg-foreground text-background"
-                  : "hover:text-bh-red"
-              }`}
+              aria-label={section.label}
+              aria-current={
+                pathname.startsWith(section.href) ? "page" : undefined
+              }
+              className="nav-sec group/sec relative nd-flex items-baseline gap-1.5 px-2 py-1 text-[15px] font-black"
+              style={{ ["--c" as string]: section.color }}
             >
-              <span className={section.shape} aria-hidden="true" />
+              <span className="font-mono-label text-[11px] font-bold text-muted-foreground">
+                {section.no}
+              </span>
               <span className="max-lg:hidden">{section.label}</span>
             </Link>
           ))}

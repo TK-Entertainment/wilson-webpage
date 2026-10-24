@@ -11,6 +11,7 @@ import ReadingProgress from "@/components/ReadingProgress";
 import { readingTimeLabel } from "@/utils/readingtime";
 import { pageMetadata } from "@/utils/seo";
 import NotesIndex from "@/components/NotesIndex";
+import PageHeader from "@/components/PageHeader";
 
 export default async function Page({
   params,
@@ -30,9 +31,20 @@ export default async function Page({
     <DocsPage toc={toc} footer={neighbour}>
       <ReadingProgress />
       <MDXContent>
-        <h1 className="font-black">
-          <GlitchText text={page.title} />
-        </h1>
+        {(params.slug ?? []).length === 0 ? (
+          <div className="nd-not-prose">
+            <PageHeader
+              code="[02] 來杯咖啡の"
+              title="學習日常"
+              en="COFFEE"
+              color="var(--teal)"
+            />
+          </div>
+        ) : (
+          <h1 className="font-black">
+            <GlitchText text={page.title} />
+          </h1>
+        )}
         <p className="nd-not-prose -mt-4 mb-8 font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
           閱讀時間 // {readingTimeLabel(page.body.raw)}
         </p>

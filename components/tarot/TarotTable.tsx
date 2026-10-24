@@ -174,7 +174,7 @@ export default function TarotTable() {
           <GlitchText text="一張牌" />
         </h1>
 
-        <div className="mt-8 max-w-xl border-4 border-foreground bg-bh-ink p-4 font-mono-label text-sm leading-relaxed text-bh-paper shadow-[8px_8px_0_#1f4fa3] sm:text-base">
+        <div className="mt-8 max-w-xl border-4 border-foreground bg-bh-ink p-4 font-mono-label text-sm leading-relaxed text-bh-paper shadow-[8px_8px_0_#26304f] sm:text-base">
           <p>
             {"> 載入牌組 ............ "}
             <span className="text-bh-yellow">22 張 OK</span>

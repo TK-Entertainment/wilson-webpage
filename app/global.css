@@ -1,53 +1,60 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 包浩斯 × 故障風：覆寫 next-docs-ui 的顏色變數，筆記區也會一起套用 */
-:root {
-  --background: 40 19% 92%; /* 紙白 #efece6 */
-  --foreground: 0 0% 8%; /* 墨黑 #141414 */
-  --muted: 40 16% 87%;
-  --muted-foreground: 36 6% 33%;
-  --popover: 40 19% 94%;
-  --popover-foreground: 0 0% 8%;
-  --card: 40 22% 95%;
-  --card-foreground: 0 0% 8%;
-  --border: 0 0% 8%;
-  --input: 0 0% 8%;
-  --primary: 3 71% 46%; /* 文字用紅 #c92a22，紙白底對比 4.6 */
+/* 用 :root:root／:root.dark 提高優先權：Next 14.2 起 CSS 載入順序會變，否則會被 next-docs-ui 的預設顏色蓋掉 */
+:root:root {
+  --background: 42 22% 90%; /* 紙 #ebe7de */
+  --foreground: 229 31% 16%; /* 墨藍 #1c2135 */
+  --muted: 40 18% 85%;
+  --muted-foreground: 40 4% 41%;
+  --popover: 42 22% 93%;
+  --popover-foreground: 229 31% 16%;
+  --card: 42 25% 94%;
+  --card-foreground: 229 31% 16%;
+  --border: 229 31% 16%;
+  --input: 229 31% 16%;
+  --primary: 22 70% 40%; /* 文字用深橘 #ad5a1f，紙色底對比 4.6 */
   --primary-foreground: 0 0% 100%;
-  --secondary: 40 16% 87%;
-  --secondary-foreground: 0 0% 8%;
-  --accent: 44 88% 57%; /* 黃 #f2c230 */
-  --accent-foreground: 0 0% 8%;
-  --ring: 218 68% 38%; /* 藍 #1f4fa3 */
+  --secondary: 40 18% 85%;
+  --secondary-foreground: 229 31% 16%;
+  --accent: 40 65% 54%; /* 金 #d6a53c */
+  --accent-foreground: 229 31% 16%;
+  --ring: 227 35% 23%; /* 深藍 #26304f */
 
   /* 故障效果的兩個色版 */
-  --glitch-a: #1f4fa3;
-  --glitch-b: #f2c230;
+  --glitch-a: #e2782d;
+  --glitch-b: #4cb8b0;
   --glitch-blend: multiply;
+
+  /* 新配色（取自 Meridian）：深藍、米白、金、橘、青綠 */
+  --navy: #26304f;
+  --cream: #efe4c8;
+  --gold: #d6a53c;
+  --orange: #e2782d;
+  --teal: #4cb8b0;
 }
 
-.dark {
-  --background: 0 0% 8%;
-  --foreground: 40 19% 92%;
-  --muted: 0 0% 14%;
-  --muted-foreground: 38 8% 64%;
-  --popover: 0 0% 10%;
-  --popover-foreground: 40 19% 92%;
-  --card: 0 0% 11%;
-  --card-foreground: 40 19% 92%;
-  --border: 40 19% 92%;
-  --input: 40 19% 92%;
-  --primary: 4 76% 58%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 14%;
-  --secondary-foreground: 40 19% 92%;
-  --accent: 44 88% 57%;
-  --accent-foreground: 0 0% 8%;
-  --ring: 218 68% 55%;
+:root.dark {
+  --background: 229 35% 10%;
+  --foreground: 42 40% 88%;
+  --muted: 229 25% 16%;
+  --muted-foreground: 40 10% 64%;
+  --popover: 229 30% 12%;
+  --popover-foreground: 42 40% 88%;
+  --card: 229 28% 13%;
+  --card-foreground: 42 40% 88%;
+  --border: 42 40% 88%;
+  --input: 42 40% 88%;
+  --primary: 25 75% 60%;
+  --primary-foreground: 229 35% 10%;
+  --secondary: 229 25% 16%;
+  --secondary-foreground: 42 40% 88%;
+  --accent: 40 65% 54%;
+  --accent-foreground: 229 35% 10%;
+  --ring: 40 65% 54%;
 
-  --glitch-a: #d9302a;
-  --glitch-b: #3b74d6;
+  --glitch-a: #e2782d;
+  --glitch-b: #4cb8b0;
   --glitch-blend: screen;
 }
 
@@ -126,8 +133,8 @@ html body {
 .group:hover .split-hover,
 .split-hover:hover {
   text-shadow:
-    -2px 0 #d9302a,
-    2px 0 #1f4fa3;
+    -2px 0 #e2782d,
+    2px 0 #26304f;
 }
 .jitter-hover {
   transition: translate 0.25s ease;
@@ -158,7 +165,7 @@ button[aria-label="Scroll to Top"] {
   height: 1.05em;
   margin-left: 4px;
   vertical-align: -0.15em;
-  background: #d9302a;
+  background: #e2782d;
   animation: blink 1s steps(1) infinite;
 }
 @keyframes blink {
@@ -286,11 +293,11 @@ button[aria-label="Scroll to Top"] {
   flex: none;
   width: 0.55em;
   height: 0.55em;
-  background: #d9302a;
+  background: #e2782d;
   border-radius: 50%;
 }
 .nd-prose blockquote {
-  border-left: 4px solid #1f4fa3;
+  border-left: 4px solid #26304f;
 }
 
 /* 相簿照片牆 */
@@ -347,7 +354,7 @@ button[aria-label="Scroll to Top"] {
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #d9302a;
+  background: #e2782d;
 }
 
 /* ---------- 圖片燈箱（components/lightbox.tsx） ---------- */
@@ -355,7 +362,7 @@ button[aria-label="Scroll to Top"] {
   cursor: zoom-in;
 }
 .zoomable:focus-visible {
-  outline: 4px solid #f2c230;
+  outline: 4px solid #d6a53c;
   outline-offset: 2px;
 }
 .photos img.zoomable {
@@ -365,7 +372,7 @@ button[aria-label="Scroll to Top"] {
 }
 .photos img.zoomable:hover {
   transform: translate(-3px, -3px);
-  box-shadow: 6px 6px 0 #d9302a;
+  box-shadow: 6px 6px 0 #e2782d;
 }
 .lb-btn {
   flex: none;
@@ -373,18 +380,18 @@ button[aria-label="Scroll to Top"] {
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  border: 4px solid #efece6;
-  box-shadow: 4px 4px 0 #efece6;
+  border: 4px solid #ebe7de;
+  box-shadow: 4px 4px 0 #ebe7de;
   transition:
     translate 0.1s,
     box-shadow 0.1s;
 }
 .lb-btn:hover {
   translate: 2px 2px;
-  box-shadow: 2px 2px 0 #efece6;
+  box-shadow: 2px 2px 0 #ebe7de;
 }
 .lb-btn:focus-visible {
-  outline: 4px solid #f2c230;
+  outline: 4px solid #d6a53c;
   outline-offset: 3px;
 }
 /* 換圖時一下 RGB 錯位＋撕裂 */
@@ -395,22 +402,22 @@ button[aria-label="Scroll to Top"] {
   0% {
     transform: translateX(-14px) skewX(-8deg);
     clip-path: inset(8% 0 52% 0);
-    filter: drop-shadow(-10px 0 #d9302a) drop-shadow(10px 0 #1f4fa3);
+    filter: drop-shadow(-10px 0 #e2782d) drop-shadow(10px 0 #26304f);
   }
   25% {
     transform: translateX(10px);
     clip-path: inset(48% 0 12% 0);
-    filter: drop-shadow(8px 0 #d9302a) drop-shadow(-8px 0 #1f4fa3);
+    filter: drop-shadow(8px 0 #e2782d) drop-shadow(-8px 0 #26304f);
   }
   50% {
     transform: translateX(-5px);
     clip-path: inset(0 0 30% 0);
-    filter: drop-shadow(-5px 0 #f2c230) drop-shadow(5px 0 #1f4fa3);
+    filter: drop-shadow(-5px 0 #d6a53c) drop-shadow(5px 0 #26304f);
   }
   75% {
     transform: translateX(3px);
     clip-path: none;
-    filter: drop-shadow(2px 0 #d9302a);
+    filter: drop-shadow(2px 0 #e2782d);
   }
   100% {
     transform: none;
@@ -426,22 +433,53 @@ button[aria-label="Scroll to Top"] {
 .nf-err {
   animation: blink 0.8s steps(1) infinite;
 }
-.nf-circle {
-  animation: nf-roll 1.1s cubic-bezier(0.3, 0.7, 0.3, 1) both;
+.nf-slab,
+.nf-stripe,
+.nf-stripe2 {
+  transform: skewX(-12deg);
+  transform-origin: bottom;
+  animation: nf-slide 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
-.nf-square {
-  transform: rotate(24deg);
-  animation: nf-fall-square 0.9s 0.15s cubic-bezier(0.5, 0, 0.7, 1.4) both;
+.nf-stripe {
+  animation-delay: 0.08s;
 }
-.nf-tri {
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-  transform: rotate(118deg);
-  animation: nf-fall-tri 1s 0.3s cubic-bezier(0.5, 0, 0.7, 1.4) both;
+.nf-stripe2 {
+  animation-delay: 0.16s;
 }
-.nf-bar {
-  transform: rotate(-9deg);
-  transform-origin: left center;
-  animation: nf-fall-bar 0.8s 0.1s cubic-bezier(0.5, 0, 0.7, 1.5) both;
+@keyframes nf-slide {
+  0% {
+    translate: 40vw 0;
+  }
+  60% {
+    translate: -12px 0;
+  }
+  70% {
+    translate: 8px 0;
+  }
+}
+.nf-slab,
+.nf-stripe,
+.nf-stripe2 {
+  transform: skewX(-12deg);
+  transform-origin: bottom;
+  animation: nf-slide 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.nf-stripe {
+  animation-delay: 0.08s;
+}
+.nf-stripe2 {
+  animation-delay: 0.16s;
+}
+@keyframes nf-slide {
+  0% {
+    translate: 40vw 0;
+  }
+  60% {
+    translate: -12px 0;
+  }
+  70% {
+    translate: 8px 0;
+  }
 }
 .nf-link {
   box-shadow: 5px 5px 0 hsl(var(--foreground));
@@ -455,28 +493,8 @@ button[aria-label="Scroll to Top"] {
   box-shadow: 2px 2px 0 hsl(var(--foreground));
 }
 .nf-link:focus-visible {
-  outline: 4px solid #f2c230;
+  outline: 4px solid #d6a53c;
   outline-offset: 3px;
-}
-@keyframes nf-roll {
-  from {
-    transform: translateX(-60vw) rotate(-200deg);
-  }
-}
-@keyframes nf-fall-square {
-  from {
-    transform: translateY(-70vh) rotate(0);
-  }
-}
-@keyframes nf-fall-tri {
-  from {
-    transform: translateY(-40vh) rotate(0);
-  }
-}
-@keyframes nf-fall-bar {
-  from {
-    transform: rotate(0);
-  }
 }
 
 /* ---------- 抽牌頁的穿越轉場（components/tarot/portal.ts） ---------- */
@@ -486,12 +504,12 @@ button[aria-label="Scroll to Top"] {
   z-index: 100;
   overflow: hidden;
   pointer-events: none;
-  color: #efece6;
+  color: #ebe7de;
 }
 #tarot-portal .tp-disc {
   position: absolute;
   border-radius: 50%;
-  background: #7b3fc4;
+  background: #4cb8b0;
   will-change: transform;
 }
 #tarot-portal .tp-body {
@@ -507,7 +525,7 @@ button[aria-label="Scroll to Top"] {
   width: min(34vw, 180px);
   aspect-ratio: 3 / 5;
   border-radius: 4.3% / 2.6%;
-  box-shadow: 10px 10px 0 #141414;
+  box-shadow: 10px 10px 0 #1c2135;
 }
 #tarot-portal.is-opening .tp-card {
   animation: tp-spin 0.85s cubic-bezier(0.3, 0.7, 0.2, 1) both;
@@ -521,7 +539,7 @@ button[aria-label="Scroll to Top"] {
   font-weight: 700;
 }
 #tarot-portal .tp-ok {
-  color: #f2c230;
+  color: #d6a53c;
   opacity: 0;
 }
 #tarot-portal.is-closing .tp-ok {
@@ -538,7 +556,7 @@ button[aria-label="Scroll to Top"] {
   left: 50%;
   width: 18px;
   aspect-ratio: 1;
-  background: #f2c230;
+  background: #d6a53c;
   clip-path: polygon(
     50% 0,
     62% 38%,
@@ -559,11 +577,11 @@ button[aria-label="Scroll to Top"] {
   transform: rotate(var(--a)) translateX(min(42vw, 320px)) scale(1);
 }
 #tarot-portal .tp-stars i:nth-child(3n) {
-  background: #efece6;
+  background: #ebe7de;
   width: 12px;
 }
 #tarot-portal .tp-stars i:nth-child(3n + 1) {
-  background: #d9302a;
+  background: #e2782d;
   width: 14px;
   clip-path: circle(50%);
 }
@@ -579,15 +597,173 @@ button[aria-label="Scroll to Top"] {
 }
 @keyframes tp-glitch {
   0% {
-    filter: drop-shadow(-6px 0 #d9302a) drop-shadow(6px 0 #1f4fa3);
+    filter: drop-shadow(-6px 0 #e2782d) drop-shadow(6px 0 #26304f);
     clip-path: inset(10% 0 55% 0);
   }
   30% {
-    filter: drop-shadow(6px 0 #d9302a) drop-shadow(-6px 0 #1f4fa3);
+    filter: drop-shadow(6px 0 #e2782d) drop-shadow(-6px 0 #26304f);
     clip-path: inset(60% 0 8% 0);
   }
   60% {
     filter: none;
     clip-path: none;
   }
+}
+
+/* ---------- 導覽列：欄目滑過或所在頁時，底下刷出一條斜切色帶 ---------- */
+.nav-sec::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 2px;
+  right: 2px;
+  top: 55%;
+  bottom: 12%;
+  background: var(--c);
+  transform: skewX(-16deg) scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nav-sec:hover::before,
+.nav-sec[aria-current="page"]::before {
+  transform: skewX(-16deg) scaleX(1);
+}
+
+/* ---------- 共用頁首（components/PageHeader.tsx） ---------- */
+.ph {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  min-height: 200px;
+  padding: 36px 0 28px;
+  margin-bottom: 28px;
+  border-bottom: 4px solid hsl(var(--foreground));
+  overflow: hidden;
+}
+.ph-code {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+.ph-title {
+  margin: 6px 0 0;
+  font-weight: 900;
+  font-size: clamp(44px, 6vw, 76px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.ph-title::after {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 6px;
+  margin-top: 16px;
+  background: var(--c);
+  transform: skewX(-16deg);
+}
+.ph-slab {
+  position: absolute;
+  z-index: -1;
+  right: -40px;
+  top: -20px;
+  bottom: -20px;
+  width: min(42cqw, 380px);
+  background: var(--navy);
+  transform: skewX(-12deg);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 44px;
+}
+.ph-slab::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--gold);
+}
+.ph-slab::after {
+  content: "";
+  position: absolute;
+  left: -34px;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  background: var(--c);
+}
+.ph-slab span {
+  transform: skewX(12deg);
+  font-family: var(--font-inter, "Inter"), sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  /* 字越多越小，塞得進色塊 */
+  font-size: min(
+    84px,
+    calc((min(42cqw, 380px) - 100px) * 1.45 / var(--len, 4))
+  );
+  letter-spacing: -0.03em;
+  color: var(--navy);
+  -webkit-text-stroke: 2px rgba(239, 228, 200, 0.55);
+  paint-order: stroke fill;
+}
+@media (max-width: 640px) {
+  .ph-slab {
+    width: 36%;
+  }
+  .ph-slab span {
+    display: none;
+  }
+}
+
+/* ---------- 大字選單：滑過時底下刷出一條斜切色帶（404 等頁共用） ---------- */
+.sweep-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 6px 48px;
+}
+.sweep-menu a {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 2px 6px 2px 0;
+}
+.sweep-menu a::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -8px;
+  right: -12px;
+  top: 22%;
+  bottom: 6%;
+  background: var(--c);
+  transform: skewX(-16deg) scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.sweep-menu a:hover::before,
+.sweep-menu a:focus-visible::before {
+  transform: skewX(-16deg) scaleX(1);
+}
+.sweep-menu .n {
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+.sweep-menu .t {
+  font-weight: 900;
+  font-size: clamp(24px, 2.8vw, 36px);
+}
+.sweep-menu .a {
+  font-weight: 900;
+  transition: translate 0.2s;
+}
+.sweep-menu a:hover .a {
+  translate: 6px 0;
 }
