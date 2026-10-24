@@ -44,7 +44,7 @@ export default function BackToTop() {
       title="回到頂端"
       aria-hidden={!visible}
       tabIndex={visible ? 0 : -1}
-      className={`group fixed z-40 flex h-12 w-12 items-center justify-center border-2 border-foreground bg-bh-ink shadow-[4px_4px_0_#d9302a] transition-[opacity,transform,box-shadow] duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#d9302a] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-bh-blue active:translate-x-1 active:translate-y-1 active:shadow-none motion-reduce:transition-none max-sm:h-11 max-sm:w-11 ${
+      className={`group fixed z-40 flex h-12 w-12 items-center justify-center border-2 border-foreground bg-bh-ink shadow-[4px_4px_0_#e2782d] transition-[opacity,transform,box-shadow] duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#e2782d] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-bh-blue active:translate-x-1 active:translate-y-1 active:shadow-none motion-reduce:transition-none max-sm:h-11 max-sm:w-11 ${
         visible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-4 opacity-0"

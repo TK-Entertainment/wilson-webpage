@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { allAlbums } from "contentlayer/generated";
-import GlitchText from "@/components/glitchtext";
+import PageHeader from "@/components/PageHeader";
 import { pageMetadata } from "@/utils/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -19,21 +19,22 @@ export default function GalleryPage() {
 
   return (
     <main className="px-6 py-10 md:px-12">
-      <p className="font-mono-label text-sm font-bold">[03] 來杯果汁の</p>
-      <h1 className="flex items-center gap-4 pb-6 text-4xl font-black sm:text-5xl">
-        <span className="h-8 w-8 flex-none bg-bh-yellow" aria-hidden="true" />
-        <GlitchText text="生活影像" />
-      </h1>
+      <PageHeader
+        code="[03] 來杯果汁の"
+        title="生活影像"
+        en="JUICE"
+        color="var(--orange)"
+      />
 
       {albums.length > 0 ? (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8 border-t-4 border-foreground pt-8 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-8 pt-2 md:grid-cols-3">
           {albums.map((album) => (
             <Link
               key={album.slug}
               href={`/gallery/${album.slug}`}
               className="group flex flex-col gap-2"
             >
-              <div className="aspect-[4/5] overflow-hidden border-2 border-foreground bg-bh-yellow transition-shadow group-hover:shadow-[6px_6px_0_#f2c230]">
+              <div className="aspect-[4/5] overflow-hidden border-2 border-foreground bg-bh-yellow transition-shadow group-hover:shadow-[6px_6px_0_#d6a53c]">
                 {album.cover ? (
                   <Image
                     alt={album.title}

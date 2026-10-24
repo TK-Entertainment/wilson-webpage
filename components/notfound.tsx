@@ -1,29 +1,14 @@
 import Link from "next/link";
 import GlitchText from "@/components/glitchtext";
 
-// 404：包浩斯 × 故障風（純靜態，build 時就產生）
+// 404：訊號中斷（純靜態，build 時就產生）
 // compact：放在筆記區（有側邊欄）時用比較小的版面
 
 const routes = [
-  { href: "/", label: "首頁", code: "00", color: "bg-bh-red text-white" },
-  {
-    href: "/blog",
-    label: "日常碎念",
-    code: "01",
-    color: "bg-bh-blue text-white",
-  },
-  {
-    href: "/docs",
-    label: "學習日常",
-    code: "02",
-    color: "bg-bh-yellow text-bh-ink",
-  },
-  {
-    href: "/gallery",
-    label: "生活影像",
-    code: "03",
-    color: "bg-foreground text-background",
-  },
+  { href: "/", label: "首頁", code: "00", color: "var(--orange)" },
+  { href: "/blog", label: "日常碎念", code: "01", color: "var(--gold)" },
+  { href: "/docs", label: "學習日常", code: "02", color: "var(--teal)" },
+  { href: "/gallery", label: "生活影像", code: "03", color: "var(--orange)" },
 ];
 
 export default function NotFoundScreen({ compact }: { compact?: boolean }) {
@@ -40,22 +25,14 @@ export default function NotFoundScreen({ compact }: { compact?: boolean }) {
         className="nf-shapes pointer-events-none absolute inset-0 -z-10"
         aria-hidden="true"
       >
-        <span className="nf-circle absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-bh-red md:h-80 md:w-80" />
+        {/* 斜切的深藍色塊＋金、橘斜線，進場時像訊號斷掉一樣滑進來 */}
+        <span className="nf-slab absolute -right-16 -top-10 h-[130%] w-[34vw] bg-[var(--navy)]" />
         <span
-          className={`nf-square absolute bottom-6 right-40 hidden h-24 w-24 border-4 border-foreground bg-bh-yellow ${
-            compact ? "" : "md:block"
+          className={`nf-stripe absolute -top-10 h-[130%] w-4 bg-[var(--orange)] ${
+            compact ? "right-[30vw]" : "right-[calc(34vw-10px)]"
           }`}
         />
-        {compact ? (
-          <></>
-        ) : (
-          <span className="nf-tri absolute right-6 top-8 h-24 w-28 bg-bh-blue md:right-24 md:h-32 md:w-36" />
-        )}
-        <span
-          className={`nf-bar absolute -left-10 bottom-24 h-4 w-72 bg-foreground md:w-[28rem] ${
-            compact ? "hidden" : ""
-          }`}
-        />
+        <span className="nf-stripe2 absolute -top-10 right-[calc(34vw-90px)] h-[130%] w-1 bg-[var(--gold)]" />
       </div>
 
       <p className="font-mono-label text-sm font-bold">
@@ -84,7 +61,7 @@ export default function NotFoundScreen({ compact }: { compact?: boolean }) {
         訊號中斷，這一頁不見了
       </p>
 
-      <div className="mt-8 max-w-xl border-4 border-foreground bg-bh-ink p-4 font-mono-label text-sm leading-relaxed text-bh-paper shadow-[8px_8px_0_#1f4fa3] sm:text-base">
+      <div className="mt-8 max-w-xl border-4 border-foreground bg-bh-ink p-4 font-mono-label text-sm leading-relaxed text-bh-paper shadow-[8px_8px_0_#26304f] sm:text-base">
         <p>
           {"> 連線到這個頁面 ......... "}
           <span className="text-bh-yellow">OK</span>
@@ -100,24 +77,18 @@ export default function NotFoundScreen({ compact }: { compact?: boolean }) {
         </p>
       </div>
 
-      <nav aria-label="回到其他頁面" className="mt-10 max-w-3xl">
-        <ul
-          className={`grid grid-cols-2 gap-3 ${
-            compact ? "" : "sm:grid-cols-4"
-          }`}
-        >
+      <nav aria-label="回到其他頁面" className="mt-10">
+        <ul className="sweep-menu">
           {routes.map((route) => (
             <li key={route.href}>
               <Link
                 href={route.href}
-                className={`nf-link group flex h-full flex-col justify-between gap-6 border-4 border-foreground p-3 ${route.color}`}
+                style={{ ["--c" as string]: route.color }}
               >
-                <span className="font-mono-label text-xs font-bold">
-                  [{route.code}]
-                </span>
-                <span className="jitter-hover flex items-center justify-between text-lg font-black">
-                  {route.label}
-                  <span aria-hidden="true">→</span>
+                <span className="n font-mono-label">{route.code}</span>
+                <span className="t">{route.label}</span>
+                <span className="a" aria-hidden="true">
+                  →
                 </span>
               </Link>
             </li>

@@ -4,29 +4,71 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import GlitchText from "@/components/glitchtext";
 import { closePortal } from "@/components/tarot/portal";
 import { tarotCards, type TarotCard } from "@/utils/tarot";
+import { minorCards, suits } from "@/utils/tarotMinor";
+
+// 完整一副牌：22 張大阿爾克那＋56 張小阿爾克那
+const fullDeck: TarotCard[] = [...tarotCards, ...minorCards];
+
+// 整副牌的分組：大阿爾克那一組，小阿爾克那依花色各一組
+const groups = [
+  { code: "22", en: "MAJOR ARCANA", title: "大阿爾克那", cards: tarotCards },
+  ...suits.map((s) => ({
+    code: "14",
+    en: s.en.toUpperCase(),
+    title: `${s.name}・${s.sphere}`,
+    cards: minorCards.filter((c) => c.suit === s.key),
+  })),
+];
 
 type Phase = "idle" | "shuffling" | "picking" | "reading";
 type Pick = { card: TarotCard; reversed: boolean; flipped: boolean };
 
+type ModeKey = "one" | "three" | "theme";
+
 const SPREADS = {
-  1: [{ en: "TODAY", zh: "今日指引" }],
-  3: [
+  one: [{ en: "TODAY", zh: "今日指引" }],
+  three: [
     { en: "PAST", zh: "過去" },
     { en: "PRESENT", zh: "現在" },
     { en: "FUTURE", zh: "未來" },
   ],
+  // 大小牌分開抽：第一張從大牌選主題，後兩張從小牌看細節
+  theme: [
+    { en: "THEME", zh: "主題" },
+    { en: "DETAIL", zh: "現況" },
+    { en: "ADVICE", zh: "建議" },
+  ],
 } as const;
 
 const MODES = [
-  { n: 1, code: "01", label: "抽一張", sub: "今日指引", color: "is-red" },
   {
-    n: 3,
+    key: "one",
+    code: "01",
+    label: "抽一張",
+    sub: "今日指引",
+    color: "is-red",
+  },
+  {
+    key: "three",
     code: "03",
     label: "抽三張",
     sub: "過去・現在・未來",
     color: "is-blue",
   },
+  {
+    key: "theme",
+    code: "1+2",
+    label: "主題＋細節",
+    sub: "大牌定主題・小牌看細節",
+    color: "is-teal",
+  },
 ] as const;
+
+// 每種抽法第 i 張牌要從哪一疊抽
+function pileFor(mode: ModeKey, i: number) {
+  if (mode !== "theme") return fullDeck;
+  return i === 0 ? tarotCards : minorCards;
+}
 
 function shuffled<T>(arr: T[]) {
   const a = [...arr];
@@ -77,8 +119,8 @@ function CardBack() {
 export default function TarotTable() {
   const reduce = useReducedMotion();
   const [phase, setPhase] = useState<Phase>("idle");
-  const [count, setCount] = useState<1 | 3>(3);
-  const [deck, setDeck] = useState<TarotCard[]>(tarotCards);
+  const [mode, setMode] = useState<ModeKey>("three");
+  const [deck, setDeck] = useState<TarotCard[]>(fullDeck);
   const [picks, setPicks] = useState<Pick[]>([]);
   const [detail, setDetail] = useState<TarotCard | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -95,11 +137,13 @@ export default function TarotTable() {
     closePortal();
   }, []);
 
-  function start(n: 1 | 3) {
+  const count = SPREADS[mode].length;
+
+  function start(m: ModeKey) {
     timers.current.forEach(clearTimeout);
-    setCount(n);
+    setMode(m);
     setPicks([]);
-    setDeck(shuffled(tarotCards));
+    setDeck(shuffled(pileFor(m, 0)));
     setPhase("shuffling");
     timers.current.push(
       window.setTimeout(() => setPhase("picking"), reduce ? 0 : 1500),
@@ -115,6 +159,13 @@ export default function TarotTable() {
       { card, reversed: Math.random() < 0.5, flipped: false },
     ];
     setPicks(next);
+    // 主題＋細節：選完大牌後，扇形換成小牌那一疊
+    if (
+      next.length < count &&
+      pileFor(mode, next.length) !== pileFor(mode, picks.length)
+    ) {
+      setDeck(shuffled(pileFor(mode, next.length)));
+    }
     if (next.length === count) {
       timers.current.push(
         window.setTimeout(() => setPhase("reading"), reduce ? 0 : 700),
@@ -145,21 +196,21 @@ export default function TarotTable() {
     setPicks((ps) => ps.map((p, j) => (j === i ? { ...p, flipped: true } : p)));
   }
 
-  const labels = SPREADS[count];
+  const labels = SPREADS[mode];
   const pickedKeys = new Set(picks.map((p) => p.card.key));
   const allOpen = picks.length === count && picks.every((p) => p.flipped);
 
   return (
     <div className="tarot relative isolate overflow-hidden">
-      {/* 包浩斯幾何色塊：開場時滾進來、掉下來 */}
+      {/* 包浩斯幾何色塊：開場時滾進來、掉下來（方塊和橫條在手機上會壓到按鈕，手機版不顯示） */}
       <div
         className="tarot-shapes pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px]"
         aria-hidden="true"
       >
         <span className="tarot-circle absolute -right-24 top-10 h-72 w-72 rounded-full bg-bh-red md:right-[6%] md:h-[22rem] md:w-[22rem]" />
         <span className="tarot-tri absolute right-[38%] top-4 hidden h-28 w-32 bg-bh-blue md:block" />
-        <span className="tarot-square absolute right-[4%] top-[22rem] h-24 w-24 border-4 border-foreground bg-bh-yellow md:h-32 md:w-32" />
-        <span className="tarot-bar absolute -left-8 top-[34rem] h-4 w-56 bg-foreground md:top-[37rem] md:w-80" />
+        <span className="tarot-square absolute max-sm:hidden right-[4%] top-[22rem] h-24 w-24 border-4 border-foreground bg-bh-yellow md:h-32 md:w-32" />
+        <span className="tarot-bar absolute max-sm:hidden -left-8 top-[34rem] h-4 w-56 bg-foreground md:top-[37rem] md:w-80" />
         <span className="tarot-half absolute left-[42%] top-[24rem] hidden h-20 w-40 rounded-t-full bg-bh-purple md:block" />
       </div>
 
@@ -174,10 +225,10 @@ export default function TarotTable() {
           <GlitchText text="一張牌" />
         </h1>
 
-        <div className="mt-8 max-w-xl border-4 border-foreground bg-bh-ink p-4 font-mono-label text-sm leading-relaxed text-bh-paper shadow-[8px_8px_0_#1f4fa3] sm:text-base">
+        <div className="mt-8 max-w-xl border-4 border-foreground bg-bh-ink p-4 font-mono-label text-sm leading-relaxed text-bh-paper shadow-[8px_8px_0_#26304f] sm:text-base">
           <p>
             {"> 載入牌組 ............ "}
-            <span className="text-bh-yellow">22 張 OK</span>
+            <span className="text-bh-yellow">{fullDeck.length} 張 OK</span>
           </p>
           <p className="opacity-70">{"> 靜下心，想一個問題"}</p>
           <p aria-live="polite">
@@ -193,7 +244,11 @@ export default function TarotTable() {
             )}
             {phase === "picking" &&
               picks.length < count &&
-              `憑直覺選出 ${count - picks.length} 張牌`}
+              (mode === "theme"
+                ? picks.length === 0
+                  ? "先從 22 張大牌選 1 張，當作主題"
+                  : `再從 56 張小牌選 ${count - picks.length} 張，看細節`
+                : `憑直覺選出 ${count - picks.length} 張牌`)}
             {phase === "picking" && picks.length === count && "牌選好了"}
             {phase === "reading" && !allOpen && "點牌，翻開它"}
             {phase === "reading" && allOpen && (
@@ -206,21 +261,23 @@ export default function TarotTable() {
           </p>
         </div>
 
-        <ul className="mt-10 grid max-w-2xl grid-cols-2 gap-3">
+        <ul className="mt-10 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-3">
           {MODES.map((m) => (
-            <li key={m.n}>
+            <li key={m.key}>
               <button
                 type="button"
-                className={`tarot-mode group flex h-full w-full flex-col justify-between gap-6 border-4 border-foreground p-3 text-left ${m.color} ${count === m.n && phase !== "idle" ? "is-active" : ""}`}
-                onClick={() => start(m.n)}
+                className={`tarot-mode flex h-full w-full flex-col gap-3 ${m.color} ${mode === m.key && phase !== "idle" ? "is-active" : ""}`}
+                onClick={() => start(m.key)}
                 disabled={phase === "shuffling"}
               >
-                <span className="font-mono-label text-xs font-bold">
+                <span className="tarot-mode-code font-mono-label">
                   [{m.code}] {m.sub}
                 </span>
-                <span className="jitter-hover flex items-center justify-between text-xl font-black sm:text-2xl">
+                <span className="tarot-mode-t text-2xl sm:text-3xl">
                   {m.label}
-                  <span aria-hidden="true">→</span>
+                  <span className="arrow" aria-hidden="true">
+                    →
+                  </span>
                 </span>
               </button>
             </li>
@@ -251,7 +308,9 @@ export default function TarotTable() {
                 className={`tarot-fan-card ${pickedKeys.has(card.key) ? "is-picked" : ""}`}
                 style={{
                   ["--i" as string]: i,
-                  animationDelay: reduce ? undefined : `${i * 28}ms`,
+                  animationDelay: reduce
+                    ? undefined
+                    : `${Math.round((i * 600) / deck.length)}ms`,
                 }}
                 onClick={(e) => pick(card, e.currentTarget)}
                 disabled={pickedKeys.has(card.key)}
@@ -338,7 +397,7 @@ export default function TarotTable() {
 
       <section className="tarot-gallery" aria-labelledby="tarot-all">
         <p className="font-mono-label text-sm font-bold">
-          [22] {"//"} MAJOR ARCANA
+          [{fullDeck.length}] {"//"} FULL DECK
         </p>
         <h2
           id="tarot-all"
@@ -349,37 +408,45 @@ export default function TarotTable() {
         </h2>
         <button
           type="button"
-          className="tarot-mode tarot-toggle mt-2 flex w-full max-w-md items-center justify-between gap-4 border-4 border-foreground p-3 text-left"
+          className="tarot-mode tarot-toggle mt-2 flex w-full max-w-md flex-col gap-3"
           aria-expanded={showAll}
           aria-controls="tarot-grid"
           onClick={() => setShowAll((v) => !v)}
         >
-          <span>
-            <span className="block font-mono-label text-xs font-bold">
-              [22] 點任何一張看正位和逆位的牌義
-            </span>
-            <span className="text-xl font-black">
-              {showAll ? "收起整副牌" : "展開整副牌"}
-            </span>
+          <span className="tarot-mode-code font-mono-label">
+            [{fullDeck.length}] 點任何一張看正位和逆位的牌義
           </span>
-          <span className="text-2xl font-black" aria-hidden="true">
-            {showAll ? "−" : "+"}
+          <span className="tarot-mode-t text-2xl">
+            {showAll ? "收起整副牌" : "展開整副牌"}
+            <span aria-hidden="true">{showAll ? "−" : "+"}</span>
           </span>
         </button>
         {showAll ? (
-          <div id="tarot-grid" className="tarot-grid">
-            {tarotCards.map((c) => (
-              <button
-                type="button"
-                key={c.key}
-                className="tarot-grid-card"
-                onClick={() => setDetail(c)}
-              >
-                <CardFace card={c} lazy />
-                <span className="split-hover">
-                  {c.name}・{c.animal}
-                </span>
-              </button>
+          <div id="tarot-grid">
+            {groups.map((g) => (
+              <div key={g.en} className="tarot-group">
+                <h3 className="tarot-group-title">
+                  <span className="font-mono-label">
+                    [{g.code}] {g.en}
+                  </span>
+                  {g.title}
+                </h3>
+                <div className="tarot-grid">
+                  {g.cards.map((c) => (
+                    <button
+                      type="button"
+                      key={c.key}
+                      className="tarot-grid-card"
+                      onClick={() => setDetail(c)}
+                    >
+                      <CardFace card={c} lazy />
+                      <span className="split-hover">
+                        {c.name}・{c.animal}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         ) : null}
