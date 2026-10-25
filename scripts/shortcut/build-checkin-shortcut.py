@@ -55,10 +55,16 @@ A.append(act("is.workflow.actions.setvariable", WFVariableName="照片", WFInput
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=1, WFMenuItemTitle="不放照片"))
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=2, UUID=U()))
 
-# 2. 位置：先讀照片的位置，沒有就用現在位置
+# 2. 位置與日期都以第一張照片為準（先拍照、事後換地方上傳也對）
+first = U()
+A.append(act("is.workflow.actions.getitemfromlist", UUID=first, WFItemSpecifier="First Item", WFInput=attach(var("照片"))))
 ploc = U()
-A.append(act("is.workflow.actions.properties.images", UUID=ploc, WFContentItemPropertyName="Location", WFInput=attach(var("照片"))))
+A.append(act("is.workflow.actions.properties.images", UUID=ploc, WFContentItemPropertyName="Location", WFInput=attach(out(first, "清單中的項目"))))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(ploc, "位置"))))
+ptime = U()
+A.append(act("is.workflow.actions.properties.images", UUID=ptime, WFContentItemPropertyName="Date Taken", WFInput=attach(out(first, "清單中的項目"))))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="拍照日期", WFInput=attach(out(ptime, "拍攝日期"))))
+# 照片沒有位置（截圖、LINE 存下來的、關了定位）→ 先用目前位置，下一步再讓使用者確認
 gi = U()
 A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gi, WFControlFlowMode=0, WFCondition=101,
              WFInput={"Type": "Variable", "Variable": attach(var("位置"))}))
@@ -66,6 +72,23 @@ cur = U()
 A.append(act("is.workflow.actions.getcurrentlocation", UUID=cur))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(cur, "目前位置"))))
 A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gi, WFControlFlowMode=2, UUID=U()))
+
+# 送出前確認位置：對／用現在位置／搜尋地點
+gm = U()
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=0,
+             WFMenuPrompt=tstr("位置：", var("位置"), "，對嗎？"), WFMenuItems=["對", "用現在位置", "搜尋地點"]))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=1, WFMenuItemTitle="對"))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=1, WFMenuItemTitle="用現在位置"))
+cur2 = U()
+A.append(act("is.workflow.actions.getcurrentlocation", UUID=cur2))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(cur2, "目前位置"))))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=1, WFMenuItemTitle="搜尋地點"))
+q = U()
+A.append(act("is.workflow.actions.ask", UUID=q, WFAskActionPrompt="輸入地名或地址（例如：龜山島、台北市大安區和平東路一段 162 號）", WFInputType="Text"))
+# 文字交給「取得位置詳細資訊」時，捷徑會自動查成座標
+A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(q, "提供的輸入"))))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=2, UUID=U()))
+
 lat = U(); lng = U()
 A.append(act("is.workflow.actions.properties.locations", UUID=lat, WFContentItemPropertyName="Latitude", WFInput=attach(var("位置"))))
 A.append(act("is.workflow.actions.properties.locations", UUID=lng, WFContentItemPropertyName="Longitude", WFInput=attach(var("位置"))))
@@ -89,9 +112,15 @@ A.append(act("is.workflow.actions.ask", UUID=note, WFAskActionPrompt="一句話�
 # 「格式化日期」一定要明確接「目前日期」：沒給輸入時不會自己用現在時間，會輸出空字串
 now = U()
 A.append(act("is.workflow.actions.date", UUID=now, WFDateActionMode="Current Date"))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="日期", WFInput=attach(out(now, "日期"))))
+gd = U()
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gd, WFControlFlowMode=0, WFCondition=100,
+             WFInput={"Type": "Variable", "Variable": attach(var("拍照日期"))}))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="日期", WFInput=attach(var("拍照日期"))))
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gd, WFControlFlowMode=2, UUID=U()))
 day = U()
 A.append(act("is.workflow.actions.format.date", UUID=day, WFDateFormatStyle="Custom", WFDateFormat="yyyy-MM-dd",
-             WFDate=tstr(out(now, "日期"))))
+             WFDate=tstr(var("日期"))))
 pid = U()
 A.append(act("is.workflow.actions.format.date", UUID=pid, WFDateFormatStyle="Custom", WFDateFormat="yyyy-MM-dd-HHmmss",
              WFDate=tstr(out(now, "日期"))))
