@@ -325,6 +325,16 @@ button[aria-label="Scroll to Top"] {
   border: 2px solid hsl(var(--foreground));
 }
 
+/* 打卡相簿（足跡地圖打卡照片）：一律方格排列，照片下面有地點說明 */
+.photos.checkin-photos {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 22px 14px;
+}
+.photos.checkin-photos img {
+  aspect-ratio: 1 / 1;
+  height: auto;
+}
+
 /* 照片牆只有一張照片時：顯示完整比例，不裁成正方形 */
 .photos:not(:has(p + p)) {
   grid-template-columns: minmax(0, 720px);

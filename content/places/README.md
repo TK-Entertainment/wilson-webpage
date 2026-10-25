@@ -16,3 +16,14 @@ url: https://example.com    # 選填：其他連結
 ```
 
 座標可以在 Google 地圖對地點按右鍵複製，或用 OpenStreetMap 查。
+
+## iPhone 捷徑「足跡打卡」
+
+手機打卡用的捷徑由 `scripts/shortcut/build-checkin-shortcut.py` 產生：
+拍照或選照片 → 抓位置（照片沒有位置就用目前位置）→ 名稱、分類、一句話 →
+照片縮成 1600px JPEG（去掉 GPS 等資訊）上傳到 `public/img/places/<代號>/1.jpg…`，
+最後把打卡資料寫成 `content/places/<代號>.json`，直接推到 Release。
+
+- 代號是打卡時間，例如 `2026-10-26-153012`
+- 照片會自動出現在地圖卡片，以及「生活影像」的月份打卡相簿（/gallery/checkins-2026-10）
+- 資料有缺（例如沒抓到位置）只會跳過那一筆，不會讓網站建置失敗
