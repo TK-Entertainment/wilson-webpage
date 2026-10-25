@@ -5,6 +5,7 @@ import Image from "next/image";
 import { allAlbums } from "contentlayer/generated";
 import PageHeader from "@/components/PageHeader";
 import { pageMetadata } from "@/utils/seo";
+import { getCheckinAlbums } from "@/utils/checkinAlbums";
 
 export const metadata: Metadata = pageMetadata({
   title: "威爾森的生活札記 | 來杯果汁の生活影像",
@@ -14,9 +15,25 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function GalleryPage() {
-  const albums = [...allAlbums].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  // 手動整理的相簿＋足跡地圖打卡照片自動整理的月份相簿，一起依日期排
+  const albums = [
+    ...allAlbums.map((a) => ({
+      slug: a.slug,
+      title: a.title,
+      date: a.date,
+      location: a.location,
+      cover: a.cover ? `/img/gallery/${a.slug}/${a.cover}` : undefined,
+      checkin: false,
+    })),
+    ...getCheckinAlbums().map((a) => ({
+      slug: a.slug,
+      title: a.title,
+      date: a.date,
+      location: `${a.photos.length} 張 // ${a.counties.join("・")}`,
+      cover: a.cover,
+      checkin: true,
+    })),
+  ].sort((a, b) => b.date.localeCompare(a.date));
 
   return (
     <main className="px-6 py-10 md:px-12">
@@ -39,7 +56,7 @@ export default function GalleryPage() {
                 {album.cover ? (
                   <Image
                     alt={album.title}
-                    src={`/img/gallery/${album.slug}/${album.cover}`}
+                    src={album.cover}
                     width={480}
                     height={600}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -53,6 +70,14 @@ export default function GalleryPage() {
                 {album.location ? ` // ${album.location}` : ""}
               </p>
               <p className="split-hover text-lg font-black leading-snug">
+                {album.checkin ? (
+                  <span
+                    className="mr-1.5 inline-block bg-[var(--teal)] px-1 align-middle font-mono-label text-[10px] text-bh-ink"
+                    aria-hidden="true"
+                  >
+                    CHECK-IN
+                  </span>
+                ) : null}
                 {album.title}
               </p>
             </Link>

@@ -200,6 +200,45 @@
   font-weight: 900;
   min-height: 1.3em;
 }
+/* 打卡照片：米白細框（同首頁照片） */
+.fm-photo {
+  margin: 12px 0 10px;
+}
+.fm-photo > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 2px solid var(--cream);
+  padding: 4px;
+  background: var(--navy);
+}
+.fm-photo.fm-swap {
+  animation: fm-swap 0.32s steps(2) 1;
+}
+.fm-thumbs {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  overflow-x: auto;
+}
+.fm-thumbs button {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1.5px solid rgba(239, 228, 200, 0.35);
+  opacity: 0.6;
+}
+.fm-thumbs button.on {
+  border-color: var(--gold);
+  opacity: 1;
+}
+.fm-thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .fm-card .where {
   font-size: 12px;
   font-weight: 700;
@@ -453,8 +492,15 @@
 }
 .zoomed .fm-map {
   overflow: hidden;
-  -webkit-mask-image: radial-gradient(ellipse 52% 54% at 52% 50%, #000 66%, transparent 100%);
-  mask-image: radial-gradient(ellipse 52% 54% at 52% 50%, #000 66%, transparent 100%);
+  /* 四周淡出，左邊再多淡一段，不要壓到橘條 */
+  -webkit-mask-image:
+    radial-gradient(ellipse 52% 54% at 52% 50%, #000 66%, transparent 100%),
+    linear-gradient(to right, transparent 4%, #000 26%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(ellipse 52% 54% at 52% 50%, #000 66%, transparent 100%),
+    linear-gradient(to right, transparent 4%, #000 26%);
+  mask-composite: intersect;
 }
 
 /* 金門、馬祖小框 */

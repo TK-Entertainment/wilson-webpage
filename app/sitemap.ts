@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { allAlbums, allBlogs, allDocs } from "contentlayer/generated";
 import { siteUrl } from "@/utils/seo";
+import { getCheckinAlbums } from "@/utils/checkinAlbums";
 
 // 建置時產生的靜態 sitemap.xml，方便搜尋引擎找到每一篇內容
 export const dynamic = "force-static";
@@ -22,5 +23,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${siteUrl}/gallery/${album.slug}`,
     lastModified: new Date(album.date),
   }));
-  return [...pages, ...posts, ...notes, ...albums];
+  const checkinAlbums = getCheckinAlbums().map((album) => ({
+    url: `${siteUrl}/gallery/${album.slug}`,
+    lastModified: new Date(album.date),
+  }));
+  return [...pages, ...posts, ...notes, ...albums, ...checkinAlbums];
 }

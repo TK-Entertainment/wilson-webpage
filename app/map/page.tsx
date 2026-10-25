@@ -32,6 +32,7 @@ export default function MapPage() {
     lng: p.lng,
     county: p.countyName,
     text: p.text,
+    photos: (p.photos as string[] | undefined) ?? [],
     link: linkOf(p),
   }));
 

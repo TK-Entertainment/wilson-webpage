@@ -1,6 +1,6 @@
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
 import { createConfig } from "next-docs-zeta/contentlayer/configuration";
-import { readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { imageSize } from "image-size";
 import rehypeKatex from "rehype-katex";
@@ -137,7 +137,8 @@ function countyOf(lng: number, lat: number) {
 
 const Place = defineDocumentType(() => ({
   name: "Place",
-  filePathPattern: "places/**/*.yaml",
+  // 手動加的用 yaml；iPhone 捷徑打卡送來的是 json（名稱裡的引號、冒號不用另外處理）
+  filePathPattern: "places/**/*.{yaml,json}",
   contentType: "data",
   fields: {
     name: { type: "string", required: true },
@@ -161,6 +162,19 @@ const Place = defineDocumentType(() => ({
     countyName: {
       type: "string",
       resolve: (doc) => doc.county || countyOf(doc.lng, doc.lat),
+    },
+    // 照片：public/img/places/<代號>/ 裡的圖檔，依檔名排序（捷徑上傳成 1.jpg、2.jpg…）
+    photos: {
+      type: "list",
+      resolve: (doc) => {
+        const id = doc._raw.flattenedPath.split("/").pop() ?? "";
+        const dir = path.join("public", "img", "places", id);
+        if (!existsSync(dir)) return [];
+        return readdirSync(dir)
+          .filter((f) => /\.(jpe?g|png|webp)$/i.test(f))
+          .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+          .map((f) => `/img/places/${id}/${f}`);
+      },
     },
   },
 }));

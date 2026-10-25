@@ -16,6 +16,8 @@ export type CheckIn = {
   lng: number;
   county: string;
   text?: string;
+  /** 打卡照片（/img/places/<代號>/1.jpg…） */
+  photos?: string[];
   link?: { label: string; href: string };
 };
 
@@ -455,7 +457,39 @@ export default function FootprintMap({
       const where = document.createElement("div");
       where.className = "where";
       where.textContent = `${ci.county} ・ ${CAT[ci.cat].zh} ・ ${ci.lat.toFixed(2)}N ${ci.lng.toFixed(2)}E`;
-      cardBody.append(m, h, where);
+      // 照片：大圖＋多張時下面一排小圖，點小圖換大圖
+      if (ci.photos?.length) {
+        const fig = document.createElement("figure");
+        fig.className = "fm-photo";
+        const img = document.createElement("img");
+        img.src = ci.photos[0];
+        img.alt = ci.name;
+        img.loading = "lazy";
+        fig.appendChild(img);
+        if (ci.photos.length > 1) {
+          const strip = document.createElement("div");
+          strip.className = "fm-thumbs";
+          ci.photos.forEach((src, i) => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.setAttribute("aria-label", `第 ${i + 1} 張照片`);
+            if (i === 0) b.className = "on";
+            const t = document.createElement("img");
+            t.src = src;
+            t.alt = "";
+            t.loading = "lazy";
+            b.appendChild(t);
+            b.addEventListener("click", () => {
+              img.src = src;
+              strip.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+              swap(fig);
+            });
+            strip.appendChild(b);
+          });
+          fig.appendChild(strip);
+        }
+        cardBody.append(m, fig, h, where);
+      } else cardBody.append(m, h, where);
       if (ci.text) {
         const p = document.createElement("p");
         p.textContent = ci.text;
@@ -502,8 +536,14 @@ export default function FootprintMap({
     });
 
     on(window, "resize", drawPins);
+    // 網址帶 ?place=代號（例如從打卡相簿點「在地圖上看」）：直接選到那個點並放大到它的縣市
+    const wanted = new URLSearchParams(window.location.search).get("place");
+    const target = checkins.find((c) => c.id === wanted);
     const latest = [...checkins].sort(byDate)[0];
-    if (latest) select(latest);
+    if (target) {
+      select(target);
+      zoomTo(target.county);
+    } else if (latest) select(latest);
     else {
       drawPins();
       renderList();
