@@ -86,10 +86,15 @@ note = U()
 A.append(act("is.workflow.actions.ask", UUID=note, WFAskActionPrompt="一句話（可以留空）", WFInputType="Text", WFAllowsMultilineText=True))
 
 # 4. 日期與打卡代號（時間）
+# 「格式化日期」一定要明確接「目前日期」：沒給輸入時不會自己用現在時間，會輸出空字串
+now = U()
+A.append(act("is.workflow.actions.date", UUID=now, WFDateActionMode="Current Date"))
 day = U()
-A.append(act("is.workflow.actions.format.date", UUID=day, WFDateFormatStyle="Custom", WFDateFormat="yyyy-MM-dd"))
+A.append(act("is.workflow.actions.format.date", UUID=day, WFDateFormatStyle="Custom", WFDateFormat="yyyy-MM-dd",
+             WFDate=tstr(out(now, "日期"))))
 pid = U()
-A.append(act("is.workflow.actions.format.date", UUID=pid, WFDateFormatStyle="Custom", WFDateFormat="yyyy-MM-dd-HHmmss"))
+A.append(act("is.workflow.actions.format.date", UUID=pid, WFDateFormatStyle="Custom", WFDateFormat="yyyy-MM-dd-HHmmss",
+             WFDate=tstr(out(now, "日期"))))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="代號", WFInput=attach(out(pid, "格式化的日期"))))
 
 headers = dictfield([("Authorization", tstr("Bearer ", var("token")), 0), ("Accept", "application/vnd.github+json", 0)])
