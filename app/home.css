@@ -258,7 +258,7 @@
 .hm-ghost {
   white-space: nowrap;
   font-weight: 900;
-  font-size: clamp(64px, min(11vh, 7vw), 116px);
+  font-size: calc(clamp(64px, min(11vh, 7vw), 116px) * var(--k, 1));
   line-height: 1.02;
   color: hsl(var(--background));
   -webkit-text-stroke: 3px hsl(var(--foreground) / 0.2);
