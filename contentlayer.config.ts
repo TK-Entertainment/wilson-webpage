@@ -8,6 +8,7 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
+import counties from "./data/map/counties-lnglat.json";
 
 const BlogPost = defineDocumentType(() => ({
   name: "Blog",
@@ -107,6 +108,63 @@ function rehypeLocalImageSize() {
   };
 }
 
+// 來杯什麼の足跡地圖：一個打卡點一個 yaml（content/places/），縣市依座標自動判斷
+
+type Ring = number[][];
+function inRing(x: number, y: number, r: Ring) {
+  let c = false;
+  for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+    const [xi, yi] = r[i], [xj, yj] = r[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c;
+  }
+  return c;
+}
+function countyOf(lng: number, lat: number) {
+  const polys = (f: any): Ring[][] =>
+    f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+  for (const f of (counties as any).features)
+    if (polys(f).some((p) => inRing(lng, lat, p[0]))) return f.properties.name as string;
+  // 海岸邊的點可能落在簡化後的邊界外：取最近的縣市
+  let best = { d: Infinity, name: "" };
+  for (const f of (counties as any).features)
+    for (const p of polys(f))
+      for (const [x, y] of p[0]) {
+        const d = (x - lng) ** 2 + (y - lat) ** 2;
+        if (d < best.d) best = { d, name: f.properties.name };
+      }
+  return best.name;
+}
+
+const Place = defineDocumentType(() => ({
+  name: "Place",
+  filePathPattern: "places/**/*.yaml",
+  contentType: "data",
+  fields: {
+    name: { type: "string", required: true },
+    category: { type: "enum", options: ["trip", "life", "work", "wild"], required: true },
+    // 可以只寫年份或年月，所以用字串
+    date: { type: "string", required: false },
+    lat: { type: "number", required: true },
+    lng: { type: "number", required: true },
+    // 自動判斷錯了才需要手動指定
+    county: { type: "string", required: false },
+    text: { type: "string", required: false },
+    album: { type: "string", required: false },
+    post: { type: "string", required: false },
+    url: { type: "string", required: false },
+  },
+  computedFields: {
+    id: {
+      type: "string",
+      resolve: (doc) => doc._raw.flattenedPath.split("/").pop() ?? "",
+    },
+    countyName: {
+      type: "string",
+      resolve: (doc) => doc.county || countyOf(doc.lng, doc.lat),
+    },
+  },
+}));
+
 const config = createConfig();
 
 // MDX 外掛：contentlayer2 用的是 MDX 3（unified 11），next-docs-zeta 內建的外掛是舊版，
@@ -120,6 +178,10 @@ config.mdx = {
 };
 
 // @ts-ignore
-(config.documentTypes as DocumentType[]).push(BlogPost, BlogPreviewPost, Album);
+(config.documentTypes as DocumentType[]).push(BlogPost, BlogPreviewPost, Album, Place);
+
+// 打卡點資料夾的格式說明不是文件
+// @ts-ignore
+config.contentDirExclude = [...(config.contentDirExclude ?? []), "places/README.md"];
 
 export default makeSource(config);

@@ -52,6 +52,14 @@ const SECTIONS = {
     color: C.orange,
     ghost: "JUICE",
   },
+  map: {
+    no: "04",
+    label: "帶著飲料出門の足跡地圖",
+    latin: "FOOTPRINTS // MAP",
+    description: "去過的地方、生活裡有趣的點，一個一個打卡，把版圖慢慢點亮。",
+    color: C.teal,
+    ghost: "MAP",
+  },
 };
 
 /* ---------------- 讀取 MDX frontmatter ---------------- */
