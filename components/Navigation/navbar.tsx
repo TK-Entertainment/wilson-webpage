@@ -15,6 +15,7 @@ const sections = [
   { href: "/blog", label: "日常碎念", no: "01", color: "var(--gold)" },
   { href: "/docs", label: "學習日常", no: "02", color: "var(--teal)" },
   { href: "/gallery", label: "生活影像", no: "03", color: "var(--orange)" },
+  { href: "/map", label: "足跡地圖", no: "04", color: "var(--teal)" },
 ];
 
 export default function Navbar() {
@@ -92,7 +93,7 @@ export default function Navbar() {
         >
           <Logo className="h-3.5 w-10 flex-none jitter-hover sm:h-4 sm:w-12" />
           <span className="max-sm:hidden">威爾森的生活札記</span>
-          <span className="sm:hidden">生活札記</span>
+          <span className="sm:hidden max-[400px]:hidden">生活札記</span>
         </Link>
         {blog && !isMobile ? (
           <Link

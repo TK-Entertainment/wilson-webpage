@@ -6,7 +6,7 @@ import { siteUrl } from "@/utils/seo";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = ["/", "/blog", "/docs", "/gallery"].map((path) => ({
+  const pages = ["/", "/blog", "/docs", "/gallery", "/map"].map((path) => ({
     url: `${siteUrl}${path === "/" ? "" : path}`,
   }));
   const posts = allBlogs

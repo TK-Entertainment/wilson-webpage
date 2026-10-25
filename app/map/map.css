@@ -1,0 +1,738 @@
+/* 帶著飲料出門の足跡地圖（components/map/FootprintMap.tsx） */
+.fm {
+  --fm-soft: hsl(var(--muted-foreground));
+  --fm-line: hsl(var(--foreground) / 0.18);
+  --fm-navy2: #323d63;
+  position: relative;
+  min-height: calc(100vh - 4rem);
+  display: grid;
+  grid-template-columns: minmax(380px, 460px) 1fr;
+  /* clip 不會變成捲動容器，右邊地圖的 sticky 才會以視窗為準 */
+  overflow: clip;
+}
+
+/* ---------- 右邊的斜切深藍色塊＋橘條＋金線（同首頁） ---------- */
+.fm-slab,
+.fm-stripe,
+.fm-goldline {
+  position: absolute;
+  top: -10%;
+  height: 120%;
+  transform: skewX(-12deg);
+  transform-origin: bottom;
+  z-index: 0;
+}
+.fm-slab {
+  right: -8vw;
+  width: 64vw;
+  background: var(--navy);
+}
+.fm-stripe {
+  right: calc(56vw + 18px);
+  width: 26px;
+  background: var(--orange);
+}
+.fm-goldline {
+  right: calc(56vw - 60px);
+  width: 4px;
+  background: var(--gold);
+}
+
+/* ---------- 左欄 ---------- */
+.fm-left {
+  position: relative;
+  z-index: 2;
+}
+.fm-side {
+  padding: 48px 44px 0;
+}
+.fm-side-list {
+  padding-bottom: 40px;
+}
+.fm-boot {
+  margin: 0 0 18px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.9;
+}
+.fm-boot b {
+  color: var(--teal);
+}
+.fm-kicker {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--fm-soft);
+}
+.fm-title {
+  margin: 6px 0 0;
+  font-weight: 900;
+  font-size: clamp(56px, 5.4vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.fm-title em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+/* 版圖進度：22 格斜切小色塊 */
+.fm-progress {
+  margin-top: 26px;
+}
+.fm-progress .bar {
+  display: flex;
+  gap: 3px;
+}
+.fm-progress .bar i {
+  flex: 1;
+  height: 14px;
+  background: var(--fm-line);
+  transform: skewX(-16deg);
+}
+.fm-progress .bar i.on {
+  background: var(--gold);
+}
+.fm-progress p {
+  margin: 10px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+  font-weight: 700;
+}
+.fm-progress p b {
+  font-size: 15px;
+  font-weight: 900;
+}
+.fm-progress p b em {
+  font-style: normal;
+  color: var(--orange);
+}
+
+/* 圖例：點一下篩選分類 */
+.fm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+.fm-legend button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.2s;
+}
+.fm-legend button[aria-pressed="false"] {
+  opacity: 0.3;
+  text-decoration: line-through;
+}
+.fm-legend svg {
+  width: 16px;
+  height: 16px;
+}
+.fm-legend button span {
+  font-size: 11px;
+  color: var(--fm-soft);
+}
+
+/* 打卡卡片：深藍底＋金色四角對位記號 */
+.fm-card {
+  position: relative;
+  z-index: 3;
+  margin: 28px 44px 28px;
+  padding: 18px 20px 16px;
+  color: var(--cream);
+  background: var(--navy);
+  box-shadow:
+    inset 0 0 0 6px var(--navy),
+    inset 0 0 0 7px rgba(239, 228, 200, 0.5);
+}
+.fm-card > i {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 0 solid var(--gold);
+}
+.fm-card > i:nth-of-type(1) {
+  left: -8px;
+  top: -8px;
+  border-left-width: 3px;
+  border-top-width: 3px;
+}
+.fm-card > i:nth-of-type(2) {
+  right: -8px;
+  top: -8px;
+  border-right-width: 3px;
+  border-top-width: 3px;
+}
+.fm-card > i:nth-of-type(3) {
+  left: -8px;
+  bottom: -8px;
+  border-left-width: 3px;
+  border-bottom-width: 3px;
+}
+.fm-card > i:nth-of-type(4) {
+  right: -8px;
+  bottom: -8px;
+  border-right-width: 3px;
+  border-bottom-width: 3px;
+}
+.fm-card .m {
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.fm-card .m em {
+  font-style: normal;
+  color: var(--gold);
+}
+.fm-card h2 {
+  margin: 6px 0 2px;
+  font-size: 24px;
+  font-weight: 900;
+  min-height: 1.3em;
+}
+.fm-card .where {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.75;
+}
+.fm-card p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.fm-card a {
+  display: inline-flex;
+  gap: 8px;
+  margin-top: 12px;
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--gold);
+}
+.fm-card a:hover {
+  color: var(--orange);
+}
+
+/* 打卡清單：上方粗線＋斜切色條（同首頁選單） */
+.fm-listhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 3px solid hsl(var(--foreground));
+  font-size: 12px;
+  font-weight: 700;
+}
+.fm-listhead b {
+  font-size: 16px;
+  font-weight: 900;
+}
+.fm-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fm-list li {
+  border-bottom: 1px solid var(--fm-line);
+}
+.fm-list button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 12px 0;
+  text-align: left;
+}
+.fm-list .d {
+  grid-column: 2 / 4;
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fm-soft);
+}
+.fm-list .ic {
+  grid-row: 1 / 3;
+  width: 18px;
+  height: 18px;
+}
+.fm-list .t {
+  position: relative;
+  isolation: isolate;
+  justify-self: start;
+  font-weight: 900;
+  font-size: 19px;
+  padding-right: 6px;
+}
+.fm-list .t::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -6px;
+  right: -8px;
+  top: 30%;
+  bottom: 2%;
+  background: var(--c);
+  opacity: 0.85;
+  transform: skewX(-16deg) scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.fm-list button:hover .t::before,
+.fm-list li.active .t::before {
+  transform: skewX(-16deg) scaleX(1);
+}
+.fm-list button:hover .t {
+  animation: fm-rgb 0.3s steps(2) 1;
+}
+.fm-list .c {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fm-soft);
+}
+.fm-more {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 12px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--fm-line);
+}
+.fm-more:hover {
+  color: var(--orange);
+}
+.fm-credit {
+  margin-top: 26px;
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--fm-soft);
+}
+
+/* ---------- 地圖（固定在右邊，捲左欄時不跟著跑） ---------- */
+.fm-mapwrap {
+  position: sticky;
+  top: 4rem;
+  align-self: start;
+  height: calc(100vh - 4rem);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px 48px 20px 120px;
+}
+.fm-mapbox {
+  position: relative;
+  width: min(100%, calc((100vh - 4rem - 40px - 64px) * 620 / 825));
+}
+.fm-map {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* 縣市名：地圖上方獨立一行，靠右 */
+.fm-ghost {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  height: 64px;
+  padding-right: 150px;
+  pointer-events: none;
+}
+.fm-ghost b {
+  display: inline-block;
+  transform: skewX(-12deg);
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--navy);
+  -webkit-text-stroke: 1.5px var(--cream);
+  paint-order: stroke fill;
+  white-space: nowrap;
+}
+.fm-ghost b:empty {
+  display: none;
+}
+.fm-ghost span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.fm-ghost span::before {
+  content: "";
+  width: 24px;
+  height: 2px;
+  background: var(--orange);
+  flex: none;
+}
+.fm-ghost span em {
+  font-style: normal;
+  color: var(--orange);
+}
+
+.fm-ctl {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  top: 14px;
+  display: flex;
+  gap: 8px;
+}
+.fm-ctl button {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cream);
+  border: 1.5px solid rgba(239, 228, 200, 0.6);
+  padding: 5px 9px;
+  background: var(--navy);
+}
+.fm-ctl button:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+.fm-back {
+  display: none;
+}
+.zoomed .fm-back {
+  display: block;
+}
+
+/* 縣市：沒去過暗藍，去過的依打卡數變亮（--lv 由程式給） */
+.fm-county {
+  fill: var(--fm-navy2);
+  stroke: rgba(239, 228, 200, 0.55);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  cursor: zoom-in;
+  transition:
+    fill 0.25s,
+    stroke 0.2s,
+    opacity 0.3s;
+}
+.fm-county.on {
+  fill: var(--lv, var(--cream));
+  stroke: var(--navy);
+}
+.fm-county:hover {
+  stroke: var(--orange);
+  stroke-width: 2.4;
+}
+.fm-county.on:hover {
+  fill: #fff3d6;
+}
+.zoomed .fm-county {
+  cursor: pointer;
+}
+.zoomed .fm-county.focus {
+  stroke: var(--orange);
+  stroke-width: 2;
+}
+/* 放大時其他縣市退成背景的深藍，四周淡出，看不出裁切的框 */
+.zoomed .fm-county:not(.focus) {
+  fill: #2c3659;
+  stroke: rgba(239, 228, 200, 0.22);
+}
+.zoomed .fm-map {
+  overflow: hidden;
+  -webkit-mask-image: radial-gradient(ellipse 52% 54% at 52% 50%, #000 66%, transparent 100%);
+  mask-image: radial-gradient(ellipse 52% 54% at 52% 50%, #000 66%, transparent 100%);
+}
+
+/* 金門、馬祖小框 */
+.fm-inset {
+  transition: opacity 0.3s;
+}
+.zoomed .fm-inset {
+  opacity: 0.15;
+}
+.fm-inset .frame {
+  fill: none;
+  stroke: rgba(239, 228, 200, 0.6);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.fm-inset .corner {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+}
+.fm-inset text {
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--cream);
+  letter-spacing: 0.08em;
+}
+
+/* 打卡點：很小，滑過才放大、才出現名稱 */
+.fm-pin {
+  cursor: pointer;
+}
+.fm-pin .hit {
+  fill: transparent;
+}
+.fm-pin .shape {
+  stroke: #1c2135;
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: transform 0.15s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.fm-pin:hover .shape,
+.fm-pin.active .shape {
+  transform: scale(1.9);
+}
+.fm-pin.dim {
+  opacity: 0.12;
+  pointer-events: none;
+}
+.fm-pin .ring {
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.fm-pin.active .ring {
+  animation: fm-ping 1.6s ease-out infinite;
+}
+@keyframes fm-ping {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+.fm-pin .lbl {
+  font-weight: 900;
+  fill: var(--cream);
+  paint-order: stroke;
+  stroke: var(--navy);
+  stroke-linejoin: round;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.fm-pin:hover .lbl,
+.fm-pin.active .lbl {
+  opacity: 1;
+}
+.fm-pin.pop {
+  animation: fm-pop 0.5s steps(4) both;
+  animation-delay: var(--d, 0ms);
+}
+.fm-pin.dim.pop {
+  animation: none;
+}
+@keyframes fm-pop {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  75%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 十字準星＋即時經緯度 */
+.fm-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.fm-mapbox:hover .fm-hud {
+  opacity: 1;
+}
+.fm-hud .hx,
+.fm-hud .hy {
+  position: absolute;
+  background: rgba(239, 228, 200, 0.28);
+}
+.fm-hud .hx {
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+.fm-hud .hy {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+.fm-hud .hc {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cream);
+  white-space: nowrap;
+  transform: translate(10px, 8px);
+  text-shadow: 0 0 4px var(--navy);
+}
+.fm-hud .hc em {
+  font-style: normal;
+  color: var(--orange);
+}
+
+/* ---------- 故障風（同首頁 app/home.css 的 hm-rgb／hm-swap） ---------- */
+.fm-glitching {
+  animation: fm-rgb 0.3s steps(2) 1;
+}
+@keyframes fm-rgb {
+  0% {
+    text-shadow:
+      -4px 0 var(--orange),
+      4px 2px var(--teal);
+    translate: -3px 0;
+  }
+  50% {
+    text-shadow:
+      5px 0 var(--orange),
+      -4px 0 var(--teal);
+    translate: 3px 0;
+    clip-path: inset(20% 0 35% 0);
+  }
+}
+.fm-card.fm-swap,
+.fm-map g.fm-swap {
+  animation: fm-swap 0.32s steps(2) 1;
+}
+@keyframes fm-swap {
+  50% {
+    filter: drop-shadow(-6px 0 var(--orange)) drop-shadow(6px 0 var(--teal));
+    translate: 6px 0;
+  }
+}
+/* 滑過縣市：橘、青兩色輪廓錯位閃一下 */
+.fm-rgb {
+  pointer-events: none;
+  fill: none;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  mix-blend-mode: screen;
+  animation: fm-rgbline 0.38s steps(3) forwards;
+}
+.fm-rgb.a {
+  stroke: var(--orange);
+}
+.fm-rgb.b {
+  stroke: var(--teal);
+}
+@keyframes fm-rgbline {
+  0% {
+    opacity: 1;
+    transform: translate(var(--dx), 0);
+  }
+  66% {
+    opacity: 0.8;
+    transform: translate(calc(var(--dx) * -0.6), 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fm-rgb {
+    display: none;
+  }
+  .fm-pin.pop,
+  .fm-pin.active .ring,
+  .fm-map g.fm-swap,
+  .fm-card.fm-swap,
+  .fm-glitching,
+  .fm-list button:hover .t {
+    animation: none;
+  }
+}
+
+/* ---------- 手機：標題 → 地圖 → 卡片 → 清單 ---------- */
+@media (max-width: 900px) {
+  .fm {
+    display: flex;
+    flex-direction: column;
+  }
+  .fm-left {
+    display: contents;
+  }
+  .fm-side {
+    order: 1;
+    padding: 28px 20px 24px;
+  }
+  .fm-side-list {
+    order: 4;
+    padding: 8px 20px 40px;
+  }
+  .fm-card {
+    order: 3;
+    margin: 20px 20px 8px;
+  }
+  .fm-mapwrap {
+    order: 2;
+    align-self: stretch;
+    position: relative;
+    top: auto;
+    height: auto;
+    padding: 24px 16px 20px;
+    background: var(--navy);
+  }
+  .fm-slab,
+  .fm-stripe,
+  .fm-goldline {
+    display: none;
+  }
+  .fm-mapbox {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .fm-ghost {
+    padding-right: 0;
+    height: 48px;
+    align-items: flex-start;
+  }
+  .fm-ghost b {
+    font-size: 30px;
+  }
+  .fm-ctl {
+    top: 8px;
+  }
+  .fm-hud {
+    display: none;
+  }
+}
