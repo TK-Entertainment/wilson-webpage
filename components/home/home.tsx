@@ -53,9 +53,12 @@ function useReducedMotion() {
 }
 
 // 每個字用 span 包起來，故障時才能一個字一個字換
+// 字多的時候（例如打卡地點「臨江街夜市」）自動縮小，維持跟三個字差不多寬，不會壓到右邊的色塊
 function Ghost({ text, id }: { text: string; id: string }) {
+  const width = [...text].reduce((w, c) => w + (/[\x00-\x7f]/.test(c) ? 0.6 : 1), 0);
+  const k = Math.min(1, 3.2 / Math.max(width, 1));
   return (
-    <div className="hm-ghost" id={id}>
+    <div className="hm-ghost" id={id} style={{ ["--k" as string]: k }}>
       {[...text].map((c, i) => (
         <span key={i} data-c={c}>
           {c}

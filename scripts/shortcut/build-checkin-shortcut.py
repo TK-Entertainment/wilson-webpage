@@ -55,10 +55,16 @@ A.append(act("is.workflow.actions.setvariable", WFVariableName="照片", WFInput
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=1, WFMenuItemTitle="不放照片"))
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=2, UUID=U()))
 
-# 2. 位置：先讀照片的位置，沒有就用現在位置
+# 2. 位置與日期都以第一張照片為準（先拍照、事後換地方上傳也對）
+first = U()
+A.append(act("is.workflow.actions.getitemfromlist", UUID=first, WFItemSpecifier="First Item", WFInput=attach(var("照片"))))
 ploc = U()
-A.append(act("is.workflow.actions.properties.images", UUID=ploc, WFContentItemPropertyName="Location", WFInput=attach(var("照片"))))
+A.append(act("is.workflow.actions.properties.images", UUID=ploc, WFContentItemPropertyName="Location", WFInput=attach(out(first, "清單中的項目"))))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(ploc, "位置"))))
+ptime = U()
+A.append(act("is.workflow.actions.properties.images", UUID=ptime, WFContentItemPropertyName="Date Taken", WFInput=attach(out(first, "清單中的項目"))))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="拍照日期", WFInput=attach(out(ptime, "拍攝日期"))))
+# 照片沒有位置（截圖、LINE 存下來的、關了定位）→ 先用目前位置，下一步再讓使用者確認
 gi = U()
 A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gi, WFControlFlowMode=0, WFCondition=101,
              WFInput={"Type": "Variable", "Variable": attach(var("位置"))}))
@@ -66,13 +72,38 @@ cur = U()
 A.append(act("is.workflow.actions.getcurrentlocation", UUID=cur))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(cur, "目前位置"))))
 A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gi, WFControlFlowMode=2, UUID=U()))
+
+# 送出前確認位置：對／用現在位置／搜尋地點
+gm = U()
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=0,
+             WFMenuPrompt=tstr("位置：", var("位置"), "，對嗎？"), WFMenuItems=["對", "用現在位置", "搜尋地點"]))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=1, WFMenuItemTitle="對"))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=1, WFMenuItemTitle="用現在位置"))
+cur2 = U()
+A.append(act("is.workflow.actions.getcurrentlocation", UUID=cur2))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(cur2, "目前位置"))))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=1, WFMenuItemTitle="搜尋地點"))
+q = U()
+A.append(act("is.workflow.actions.ask", UUID=q, WFAskActionPrompt="搜尋地點（店名、地標或地址，例如：台中新光三越、逢甲夜市）", WFInputType="Text"))
+# 用 Apple 地圖搜尋（認得店名與分店），以目前判斷的位置為中心、範圍涵蓋全台，列出結果讓使用者挑
+found = U()
+A.append(act("is.workflow.actions.searchlocalbusinesses", UUID=found, WFSearchQuery=tstr(out(q, "提供的輸入")),
+             WFInput=attach(var("位置")), WFSearchRadius=400))
+pick = U()
+A.append(act("is.workflow.actions.choosefromlist", UUID=pick, WFInput=attach(out(found, "本地商家")),
+             WFChooseFromListActionPrompt="選一個地點"))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(pick, "選取的項目"))))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="地點名稱", WFInput=attach(out(pick, "選取的項目"))))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=2, UUID=U()))
+
 lat = U(); lng = U()
 A.append(act("is.workflow.actions.properties.locations", UUID=lat, WFContentItemPropertyName="Latitude", WFInput=attach(var("位置"))))
 A.append(act("is.workflow.actions.properties.locations", UUID=lng, WFContentItemPropertyName="Longitude", WFInput=attach(var("位置"))))
 
 # 3. 名稱、分類、一句話
 name = U()
-A.append(act("is.workflow.actions.ask", UUID=name, WFAskActionPrompt="這裡是哪裡？（地圖上顯示的名稱）", WFInputType="Text"))
+A.append(act("is.workflow.actions.ask", UUID=name, WFAskActionPrompt="這裡是哪裡？（地圖上顯示的名稱）", WFInputType="Text",
+             WFAskActionDefaultAnswer=tstr(var("地點名稱"))))
 catl = U()
 A.append(act("is.workflow.actions.list", UUID=catl, WFItems=["旅行", "生活", "出差", "野外"]))
 catc = U()
@@ -89,9 +120,15 @@ A.append(act("is.workflow.actions.ask", UUID=note, WFAskActionPrompt="一句話�
 # 「格式化日期」一定要明確接「目前日期」：沒給輸入時不會自己用現在時間，會輸出空字串
 now = U()
 A.append(act("is.workflow.actions.date", UUID=now, WFDateActionMode="Current Date"))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="日期", WFInput=attach(out(now, "日期"))))
+gd = U()
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gd, WFControlFlowMode=0, WFCondition=100,
+             WFInput={"Type": "Variable", "Variable": attach(var("拍照日期"))}))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="日期", WFInput=attach(var("拍照日期"))))
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gd, WFControlFlowMode=2, UUID=U()))
 day = U()
 A.append(act("is.workflow.actions.format.date", UUID=day, WFDateFormatStyle="Custom", WFDateFormat="yyyy-MM-dd",
-             WFDate=tstr(out(now, "日期"))))
+             WFDate=tstr(var("日期"))))
 pid = U()
 A.append(act("is.workflow.actions.format.date", UUID=pid, WFDateFormatStyle="Custom", WFDateFormat="yyyy-MM-dd-HHmmss",
              WFDate=tstr(out(now, "日期"))))
@@ -114,7 +151,7 @@ A.append(act("is.workflow.actions.base64encode", UUID=b64, WFEncodeMode="Encode"
 A.append(act("is.workflow.actions.downloadurl", UUID=U(), ShowHeaders=True, WFHTTPMethod="PUT", WFHTTPBodyType="JSON",
              WFURL=tstr(f"https://api.github.com/repos/{REPO}/contents/public/img/places/", var("代號"), "/", var("Repeat Index"), ".jpg"),
              WFHTTPHeaders=headers,
-             WFJSONValues=dictfield([("message", tstr("足跡打卡照片 ", var("代號")), 0),
+             WFJSONValues=dictfield([("message", tstr("足跡打卡照片 ", var("代號"), " [CF-Pages-Skip]"), 0),
                                      ("content", tstr(out(b64, "Base64 編碼的結果")), 0),
                                      ("branch", BRANCH, 0)])))
 A.append(act("is.workflow.actions.repeat.each", GroupingIdentifier=gr, WFControlFlowMode=2, UUID=U()))
