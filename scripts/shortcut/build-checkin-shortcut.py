@@ -151,7 +151,7 @@ A.append(act("is.workflow.actions.base64encode", UUID=b64, WFEncodeMode="Encode"
 A.append(act("is.workflow.actions.downloadurl", UUID=U(), ShowHeaders=True, WFHTTPMethod="PUT", WFHTTPBodyType="JSON",
              WFURL=tstr(f"https://api.github.com/repos/{REPO}/contents/public/img/places/", var("代號"), "/", var("Repeat Index"), ".jpg"),
              WFHTTPHeaders=headers,
-             WFJSONValues=dictfield([("message", tstr("足跡打卡照片 ", var("代號")), 0),
+             WFJSONValues=dictfield([("message", tstr("足跡打卡照片 ", var("代號"), " [CF-Pages-Skip]"), 0),
                                      ("content", tstr(out(b64, "Base64 編碼的結果")), 0),
                                      ("branch", BRANCH, 0)])))
 A.append(act("is.workflow.actions.repeat.each", GroupingIdentifier=gr, WFControlFlowMode=2, UUID=U()))
