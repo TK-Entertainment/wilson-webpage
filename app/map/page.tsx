@@ -33,6 +33,8 @@ export default function MapPage() {
     county: p.countyName,
     text: p.text,
     photos: (p.photos as string[] | undefined) ?? [],
+    videos: (p.videos as string[] | undefined) ?? [],
+    youtube: p.youtubeId || undefined,
     link: linkOf(p),
   }));
 

@@ -113,7 +113,7 @@ function CheckinAlbumPage({ album }: { album: CheckinAlbum }) {
             ← 回到生活影像
           </Link>
           <p className="mt-4 font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
-            CHECK-IN {"//"} {album.photos.length} 張 {"//"}{" "}
+            CHECK-IN {"//"} {album.photos.length} 則 {"//"}{" "}
             {album.counties.join("・")}
           </p>
           <h1 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">
@@ -131,12 +131,31 @@ function CheckinAlbumPage({ album }: { album: CheckinAlbum }) {
           <div className="photos checkin-photos nd-not-prose">
             {album.photos.map((p) => (
               <figure key={p.src} className="m-0 flex flex-col gap-1.5">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.src}
-                  alt={`${p.place}（${p.county}）`}
-                  loading="lazy"
-                />
+                {p.kind === "video" ? (
+                  <video
+                    src={p.src}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="aspect-square w-full border-2 border-foreground bg-bh-ink object-cover"
+                  />
+                ) : p.kind === "youtube" ? (
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${p.src}`}
+                    title={`${p.place}（YouTube）`}
+                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                    className="aspect-square w-full border-2 border-foreground bg-bh-ink"
+                  />
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={p.src}
+                    alt={`${p.place}（${p.county}）`}
+                    loading="lazy"
+                  />
+                )}
                 <figcaption className="flex flex-col gap-0.5">
                   <span className="font-mono-label text-[11px] font-bold opacity-70">
                     {formatDate(p.date)} {"//"} {p.county} {"//"}{" "}

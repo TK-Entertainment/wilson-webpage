@@ -29,8 +29,8 @@ export default function GalleryPage() {
       slug: a.slug,
       title: a.title,
       date: a.date,
-      location: `${a.photos.length} 張 // ${a.counties.join("・")}`,
-      cover: a.cover,
+      location: `${a.photos.length} 則 // ${a.counties.join("・")}`,
+      cover: a.cover || undefined,
       checkin: true,
     })),
   ].sort((a, b) => b.date.localeCompare(a.date));

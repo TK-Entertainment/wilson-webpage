@@ -239,6 +239,14 @@
   height: 100%;
   object-fit: cover;
 }
+.fm-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: 12px;
+  border: 2px solid var(--cream);
+  background: #000;
+}
 .fm-card .where {
   font-size: 12px;
   font-weight: 700;
