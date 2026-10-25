@@ -84,9 +84,16 @@ A.append(act("is.workflow.actions.getcurrentlocation", UUID=cur2))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(cur2, "目前位置"))))
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=1, WFMenuItemTitle="搜尋地點"))
 q = U()
-A.append(act("is.workflow.actions.ask", UUID=q, WFAskActionPrompt="輸入地名或地址（例如：龜山島、台北市大安區和平東路一段 162 號）", WFInputType="Text"))
-# 文字交給「取得位置詳細資訊」時，捷徑會自動查成座標
-A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(q, "提供的輸入"))))
+A.append(act("is.workflow.actions.ask", UUID=q, WFAskActionPrompt="搜尋地點（店名、地標或地址，例如：台中新光三越、逢甲夜市）", WFInputType="Text"))
+# 用 Apple 地圖搜尋（認得店名與分店），以目前判斷的位置為中心、範圍涵蓋全台，列出結果讓使用者挑
+found = U()
+A.append(act("is.workflow.actions.searchlocalbusinesses", UUID=found, WFSearchQuery=tstr(out(q, "提供的輸入")),
+             WFInput=attach(var("位置")), WFSearchRadius=400))
+pick = U()
+A.append(act("is.workflow.actions.choosefromlist", UUID=pick, WFInput=attach(out(found, "本地商家")),
+             WFChooseFromListActionPrompt="選一個地點"))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(pick, "選取的項目"))))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="地點名稱", WFInput=attach(out(pick, "選取的項目"))))
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=2, UUID=U()))
 
 lat = U(); lng = U()
@@ -95,7 +102,8 @@ A.append(act("is.workflow.actions.properties.locations", UUID=lng, WFContentItem
 
 # 3. 名稱、分類、一句話
 name = U()
-A.append(act("is.workflow.actions.ask", UUID=name, WFAskActionPrompt="這裡是哪裡？（地圖上顯示的名稱）", WFInputType="Text"))
+A.append(act("is.workflow.actions.ask", UUID=name, WFAskActionPrompt="這裡是哪裡？（地圖上顯示的名稱）", WFInputType="Text",
+             WFAskActionDefaultAnswer=tstr(var("地點名稱"))))
 catl = U()
 A.append(act("is.workflow.actions.list", UUID=catl, WFItems=["旅行", "生活", "出差", "野外"]))
 catc = U()
