@@ -7,7 +7,7 @@ description: pure／simple shear、應變量、Flinn 圖與應變分析方法
 
 1. 變形 = 剛體平移 + 剛體旋轉 + **應變（形變）** + 體積變化。
 2. **Pure shear** 共軸、無內部渦度；**simple shear** 非共軸、剪動面不變長也不旋轉；介於兩者之間的叫 subsimple（general）shear。
-3. Flinn 圖 **k = (X/Y − 1)/(Y/Z − 1)**：k=1 平面應變，k\>1 雪茄狀（L），k\<1 鬆餅狀（S）。
+3. Flinn 圖 $k = \frac{X/Y - 1}{Y/Z - 1}$：k=1 平面應變，k\>1 雪茄狀（L），k\<1 鬆餅狀（S）。
 
 **Pure shear 與 simple shear：同一個圓，兩種走法**
 
@@ -17,12 +17,18 @@ Pure shear：橢圓長軸永遠水平（共軸），兩條 flow apophyses 互相
 
 ## 應變量
 
-> 伸長率 e = (l − l₀)/l₀ （縮短為負，e = −0.2 即縮短 20%）  
-> 拉伸比 s = l/l₀ = 1 + e （裂谷用 β factor）  
-> 二次伸長比 λ = s² = (1 + e)² → X = √λ₁ = s₁，Y = s₂，Z = s₃（應變橢球半軸）  
-> 自然應變 ē = ln(l/l₀) （投影片寫 ln(e)，應為 ln(1+e)）  
-> 角剪動 ψ（兩條原本垂直的線夾角改變量）；剪應變 **γ = tan ψ**  
-> 應變比 R = X/Y = (1+e₁)/(1+e₂)；體積變化 Δ = (V − V₀)/V₀
+$$
+\begin{aligned}
+\text{伸長率}\quad & e = \frac{l - l_0}{l_0} \quad (\text{縮短為負，}e = -0.2 \text{ 即縮短 } 20\%) \\
+\text{拉伸比}\quad & s = \frac{l}{l_0} = 1 + e \quad (\text{裂谷用 }\beta\text{ factor}) \\
+\text{二次伸長比}\quad & \lambda = s^2 = (1+e)^2 \;\Rightarrow\; X = \sqrt{\lambda_1} = s_1,\ Y = s_2,\ Z = s_3 \\
+\text{自然應變}\quad & \bar e = \ln\frac{l}{l_0} = \ln(1+e) \\
+\text{剪應變}\quad & \gamma = \tan\psi \quad (\psi\text{：角剪動}) \\
+\text{應變比}\quad & R = \frac{X}{Y} = \frac{1+e_1}{1+e_2}, \qquad \text{體積變化 } \Delta = \frac{V - V_0}{V_0}
+\end{aligned}
+$$
+
+投影片的自然應變寫成 ln(e)，應為 ln(1+e)。
 
 <details>
 <summary>【例題】l₀ = 100、l = 200</summary>
@@ -44,6 +50,26 @@ e = 1（100%）、s = 2、λ = 4、ē = ln2 = 0.69。
 - 斷層切穿的岩體，在大尺度下仍可視為均質（不連續面相對很小）。北海裂谷：局部是 simple shear，大尺度當 pure shear。
 
 ## 流動參數（Hw01 必畫）
+
+<img src="/img/notes/structural-geology/ch02-03-strain/slide-p17.webp" alt="simple shear 應變橢圓與次生構造的方位" width="640" height="577" />
+
+*圖：simple shear 應變橢圓與次生構造的方位。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch2 p.17。*
+
+
+<img src="/img/notes/structural-geology/ch02-03-strain/slide-p39.webp" alt="漸進變形中 c、e、c,e 扇區的發展" width="640" height="942" />
+
+*圖：漸進變形中 c、e、c,e 扇區的發展。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch2 p.39。*
+
+
+<img src="/img/notes/structural-geology/ch02-03-strain/slide-p31.webp" alt="三種剪切的扇區與 flow apophyses（α = 90°、60°、0°）" width="640" height="502" />
+
+*圖：三種剪切的扇區與 flow apophyses（α = 90°、60°、0°）。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch2 p.31。*
+
+
+<img src="/img/notes/structural-geology/ch02-03-strain/slide-p3.webp" alt="simple、subsimple、pure shear 的位移場與質點路徑" width="640" height="281" />
+
+*圖：simple、subsimple、pure shear 的位移場與質點路徑。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch2 p.3。*
+
 
 |  | Pure shear | Subsimple shear | Simple shear |
 |---|---|---|---|
@@ -67,6 +93,16 @@ e = 1（100%）、s = 2、λ = 4、ē = ln2 = 0.69。
 橫軸 b = Y/Z，縱軸 a = X/Y，只用到 X ≥ Y ≥ Z 的區域。k = 1 的線是平面應變（無體積變化時）。L-tectonite（線理發達）在上方，S-tectonite（葉理發達）在下方。
 
 ## 應變分析方法（Ch3）
+
+<img src="/img/notes/structural-geology/ch02-03-strain/slide-p56.webp" alt="Rf/φ 法" width="640" height="547" />
+
+*圖：R<sub>f</sub>/φ 法。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch3 p.56。*
+
+
+<img src="/img/notes/structural-geology/ch02-03-strain/slide-p23.webp" alt="Ramsay 圖（對數 Flinn 圖）：prolate 與 oblate" width="640" height="583" />
+
+*圖：Ramsay 圖（對數 Flinn 圖）：prolate 與 oblate。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch2 p.23。*
+
 
 - **應變標誌**：鮞石、退色斑（Fe³⁺ 被細菌還原為 Fe²⁺，原本球形）、腕足類、菊石、箭石（斷開後計算伸長）、岩脈、串腸構造、繩狀熔岩。
 - 1D：串腸化岩脈、箭石、褶皺層縮短、斷層錯動的參考層。2D：已知原形狀的物體或多方向線狀標誌。3D：由兩個以上剖面的 2D 結果組合。

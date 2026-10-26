@@ -5,7 +5,7 @@ description: 滯留時間、全球碳循環、三種 CO₂ 緩衝與時間尺度
 
 **本章重點**
 
-1. **τ = 儲庫大小 / 通量**（穩態時流入 = 流出）。
+1. $\tau = \dfrac{\text{儲庫大小}}{\text{通量}}$（穩態時流入 = 流出）。
 2. 人為 CO₂ 的緩衝由快到慢：**溶解碳酸鹽 → 海床 CaCO₃ → 矽酸鹽風化**。
 3. 瓶頸是**海洋環流（數百年）**，不是海氣交換（約半年）。
 
@@ -25,8 +25,11 @@ description: 滯留時間、全球碳循環、三種 CO₂ 緩衝與時間尺度
 
 ## 滯留時間（Residence time）
 
-> **τ = \[A\]<sub>reservoir</sub> / Flux(A)<sub>in or out</sub>**  
-> 嚴格來說只適用於穩態（流入 = 流出，儲庫大小固定），但在非穩態下也很有用。
+$$
+\tau = \frac{[\mathrm{A}]_{\text{reservoir}}}{\text{Flux(A)}_{\text{in or out}}}
+$$
+
+嚴格來說只適用於穩態（流入 = 流出，儲庫大小固定），但在非穩態下也很有用。
 
 <details>
 <summary>【例題】Lake Clearandfresh（體積 1000 M-L）</summary>
@@ -40,6 +43,11 @@ description: 滯留時間、全球碳循環、三種 CO₂ 緩衝與時間尺度
 </details>
 
 ## 全球碳循環（IPCC 圖，單位 PgC、PgC/yr）
+
+<img src="/img/notes/geochemistry/l6-carbon-cycle/slide-p4.webp" alt="全球碳循環（儲庫 PgC、通量 PgC/yr）" width="640" height="561" />
+
+*圖：全球碳循環（儲庫 PgC、通量 PgC/yr）。來源：IPCC AR5 WG1；Abby Ren〈地球化學〉課程投影片 L6 p.4。*
+
 
 | 儲庫 | 大小 (PgC) |
 |---|---|
@@ -59,6 +67,11 @@ description: 滯留時間、全球碳循環、三種 CO₂ 緩衝與時間尺度
 - 風化產物取決於原岩、T、P、水的組成、有機質、pH。**Bowen 反應系列**：形成時 T、P 越高（pE 越低）的礦物越容易風化（橄欖石最容易，石英最穩定）。
 
 ## 動力學考量
+
+<img src="/img/notes/geochemistry/l6-carbon-cycle/slide-p22.webp" alt="人為 CO₂ 的柱積量：北大西洋與南大洋最高" width="640" height="417" />
+
+*圖：人為 CO₂ 的柱積量：北大西洋與南大洋最高。來源：Sabine et al. (2004) *Science*；Abby Ren〈地球化學〉課程投影片 L6 p.22。*
+
 
 - 速率限制步驟：**海–氣交換約 6 個月**就能平衡表層；**海洋環流需要數百年**（這是真正的瓶頸）。
 - 人為 CO₂ 主要在上層海洋；北大西洋和南大洋的柱積量（column inventory）最高，因為那裡有深層水形成，把 CO₂ 帶到深處。
@@ -94,8 +107,17 @@ F = M/τ = 38,000 / 380 = **100 PgC/yr**。也可以反過來，給 M 和 F 求 
 
 #### 海洋中的 CaCO₃ 溶解度 （p.11–14）
 
-> CO₂\* + CaCO₃ + H₂O ⇌ Ca²⁺ + 2HCO₃⁻  
-> CaCO₃(s) ⇌ Ca²⁺ + CO₃²⁻
+<img src="/img/notes/geochemistry/l6-carbon-cycle/slide-p13.webp" alt="CaCO₃ 越深越容易溶解：方解石球實驗、溶躍面與 CCD" width="640" height="485" />
+
+*圖：CaCO₃ 越深越容易溶解：方解石球實驗、溶躍面與 CCD。來源：Abby Ren〈地球化學〉課程投影片 L6 p.13。*
+
+
+$$
+\begin{aligned}
+& \mathrm{CO_2^* + CaCO_3 + H_2O \rightleftharpoons Ca^{2+} + 2HCO_3^-} \\
+& \mathrm{CaCO_3(s) \rightleftharpoons Ca^{2+} + CO_3^{2-}}
+\end{aligned}
+$$
 
 - p.11 圖：浮游生物的 CaCO₃ 殼（球石藻、有孔蟲）。生物產生 CaCO₃ 會降低海水的 ΣCO₂。
 - **K<sub>sp</sub>(CaCO₃) 隨溫度降低而增加、隨壓力升高而增加**，這跟大多數離子固體**相反**。深海又冷、壓力又大 → **CaCO₃ 越深越容易溶解**。
@@ -114,9 +136,19 @@ Broecker Table 2-2；100 atm 約等於 1000 m 水深。aragonite 每一列都比
 
 #### Bowen 反應系列 （p.17）
 
+<img src="/img/notes/geochemistry/l6-carbon-cycle/slide-p17.webp" alt="Bowen 反應系列：越早結晶的礦物越容易風化" width="640" height="345" />
+
+*圖：Bowen 反應系列：越早結晶的礦物越容易風化。來源：Abby Ren〈地球化學〉課程投影片 L6 p.17。*
+
+
 不連續系列：olivine → pyroxene → amphibole → biotite；連續系列：Ca 斜長石（anorthite）→ Na 斜長石（oligoclase）；最後結晶的殘餘相：K-spar、muscovite、quartz。從超基性、基性、中性到長英質，SiO₂、Na、Al、K 增加，Fe、Mg、Ca 減少。**越早（越高溫）結晶的礦物越容易風化**（橄欖石最不穩定，石英最穩定）。
 
 #### 人為碳匯的分配 （p.24）
+
+<img src="/img/notes/geochemistry/l6-carbon-cycle/slide-p24.webp" alt="人為碳匯隨化石燃料釋放量的分配" width="640" height="611" />
+
+*圖：人為碳匯隨化石燃料釋放量的分配。來源：Abby Ren〈地球化學〉課程投影片 L6 p.24。*
+
 
 | 碳匯 | 時間尺度 | 分擔（隨化石燃料釋放量 1000–4500 PgC 變化） |
 |---|---|---|

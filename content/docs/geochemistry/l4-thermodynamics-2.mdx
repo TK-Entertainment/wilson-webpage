@@ -5,9 +5,9 @@ description: 化學勢、平衡常數、地質溫度壓力計、反應速率
 
 **本章重點**
 
-1. **ΔG° = −RT ln K**；Q \< K 往右，Q \> K 往左。
-2. ln K 對 1/T 的斜率 = **−ΔH°/R** → 溫度計要 ΔH 大、ΔV 小；壓力計要 ΔV 大。
-3. 熱力學決定**方向**，動力學決定**速度**；一階反應 **t½ = ln2/k**。
+1. $\Delta G^\circ = -RT\ln K$；Q \< K 往右，Q \> K 往左。
+2. ln K 對 1/T 的斜率 = $-\Delta H^\circ/R$ → 溫度計要 ΔH 大、ΔV 小；壓力計要 ΔV 大。
+3. 熱力學決定**方向**，動力學決定**速度**；一階反應 $t_{1/2} = \ln 2/k$。
 
 **熱力學 vs 動力學：同一張圖上的兩個問題**
 
@@ -23,25 +23,37 @@ description: 化學勢、平衡常數、地質溫度壓力計、反應速率
 
 ## 化學勢 μ
 
-> μᵢ = (∂G/∂nᵢ)<sub>T,P,nⱼ</sub> （partial molar Gibbs free energy）  
-> dG = VdP − SdT + Σ μᵢ dnᵢ
+$$
+\begin{aligned}
+\mu_i &= \left(\frac{\partial G}{\partial n_i}\right)_{T,P,n_{j\neq i}} \quad \text{（partial molar Gibbs free energy）} \\
+dG &= V\,dP - S\,dT + \sum_i \mu_i\,dn_i
+\end{aligned}
+$$
 
 - 性質 I：平衡時，**每個成分在所有相中的 μ 相等**（冰水共存：μ<sub>H₂O,冰</sub> = μ<sub>H₂O,水</sub>）。
 - 性質 II：自發過程中，成分會在各相間重新分配，使化學勢最小化。
 
 ## 溶液
 
-> 理想溶液：μᵢ = μᵢ° + RT ln Xᵢ  
-> 真實溶液：μᵢ = μᵢ° + RT ln aᵢ，aᵢ = λᵢXᵢ（λ 為活度係數）
+$$
+\begin{aligned}
+\text{理想溶液：}\ \mu_i &= \mu_i^\circ + RT\ln X_i \\
+\text{真實溶液：}\ \mu_i &= \mu_i^\circ + RT\ln a_i, \qquad a_i = \lambda_i X_i\ (\lambda\ \text{為活度係數})
+\end{aligned}
+$$
 
 - **Ideal solution**：不同分子之間的作用力和同種分子之間一樣。
 - **Fugacity（逸度）**：真實氣體從溶液「逃逸」的傾向；**activity（活度）**：有效濃度。理想溶液中 a = X。
 
 ## 平衡常數
 
-> aA + bB ⇌ cC + dD  
-> ΔG<sub>r</sub> = Σνᵢμᵢ = ΔG°<sub>r</sub> + RT ln Q 平衡時 ΔG<sub>r</sub> = 0  
-> **K = Πaᵢ^νᵢ = (a<sub>C</sub>ᶜ a<sub>D</sub>ᵈ)/(a<sub>A</sub>ᵃ a<sub>B</sub>ᵇ)** **ΔG°<sub>r</sub> = −RT ln K**
+$$
+\begin{aligned}
+& a\mathrm{A} + b\mathrm{B} \rightleftharpoons c\mathrm{C} + d\mathrm{D} \\
+& \Delta G_r = \sum \nu_i\mu_i = \Delta G_r^\circ + RT\ln Q, \qquad \text{平衡時 } \Delta G_r = 0 \\
+& K = \prod a_i^{\nu_i} = \frac{a_C^{\,c}\,a_D^{\,d}}{a_A^{\,a}\,a_B^{\,b}}, \qquad \Delta G_r^\circ = -RT\ln K
+\end{aligned}
+$$
 
 - Q \< K → 往右（產物方向）進行；Q \> K → 往左。（補充）
 - **Law of mass action**：改變某物種的濃度，反應會往減少這個改變的方向移動（例如加 H⁺ 到碳酸溶液，平衡往 H₂CO₃ 移動）。
@@ -59,9 +71,13 @@ K<sub>sp</sub> = \[Ca²⁺\]\[F⁻\]² → \[Ca²⁺\] = 3.9×10⁻¹¹ / (10⁻
 
 ## K 的溫度、壓力依存性（van't Hoff）
 
-> ΔG° = ΔH° − TΔS° = −RT ln K  
-> **ln K = −ΔH°/(RT) + ΔS°/R** （形式為 ln K = a/T + b）  
-> (∂ln K/∂P)<sub>T</sub> = −ΔV°/(RT) （補充）
+$$
+\begin{aligned}
+\Delta G^\circ &= \Delta H^\circ - T\Delta S^\circ = -RT\ln K \\
+\ln K &= -\frac{\Delta H^\circ}{RT} + \frac{\Delta S^\circ}{R} \quad (\text{形式為 } \ln K = a/T + b) \\
+\left(\frac{\partial \ln K}{\partial P}\right)_T &= -\frac{\Delta V^\circ}{RT} \quad \text{（補充）}
+\end{aligned}
+$$
 
 - ln K 對 1/T 作圖：**斜率 = −ΔH°/R**，**截距 = ΔS°/R**。
 
@@ -95,10 +111,14 @@ T = 1473 K：log K<sub>D</sub> = 0.116 − 0.63 = −0.514 → **K<sub>D</sub> �
 - 低溫系統常常不平衡：地表的鑽石、生物殼的 aragonite、有機物與 O₂ 共存、海水對 calcite 過飽和。高溫（岩漿）較接近平衡，但仍有例外：火山玻璃、環帶結晶。
 - 控制速率的因素：**活化能障壁 E<sub>B</sub>**（只有能量 \> E<sub>B</sub> 的碰撞才會反應）、**組成**（碰撞頻率 ∝ 濃度）、**溫度**。
 
-> ℜ = −(1/a)·d\[A\]/dt = (1/c)·d\[C\]/dt  
-> 一般式：ℜ = k·a<sub>A</sub>^nA·a<sub>B</sub>^nB… 基本反應：ℜ = k·a<sub>A</sub>ᵃ·a<sub>B</sub>ᵇ  
-> 一階：−d\[A\]/dt = k\[A\] → **\[A\] = \[A\]₀·e^(−kt)**，**t<sub>1/2</sub> = ln2 / k**  
-> Arrhenius：k = A·e^(−E<sub>a</sub>/RT) （補充（投影片只有 log k–T 圖））
+$$
+\begin{aligned}
+\Re &= -\frac{1}{a}\frac{d[\mathrm{A}]}{dt} = \frac{1}{c}\frac{d[\mathrm{C}]}{dt} \\
+\text{一般式：}\ \Re &= k\,a_A^{n_A}a_B^{n_B}\cdots, \qquad \text{基本反應：}\ \Re = k\,a_A^{a}a_B^{b} \\
+\text{一階：}\ -\frac{d[\mathrm{A}]}{dt} &= k[\mathrm{A}] \;\Rightarrow\; [\mathrm{A}] = [\mathrm{A}]_0\,e^{-kt}, \qquad t_{1/2} = \frac{\ln 2}{k} \\
+\text{Arrhenius（補充）：}\ k &= A\,e^{-E_a/RT}
+\end{aligned}
+$$
 
 <details>
 <summary>【例題】CO₂(aq) 水合：k\* = 0.014 s⁻¹，畫出 \[CO₂\] 對時間</summary>
@@ -114,45 +134,81 @@ T = 1473 K：log K<sub>D</sub> = 0.116 − 0.63 = −0.514 → **K<sub>D</sub> �
 
 #### 化學勢的完整式子 （p.5, p.6）
 
-> G = Σ nᵢ(∂G/∂nᵢ) = **Σ nᵢμᵢ**  
-> 兩相平衡：dG = μᵢ<sup>α</sup>dnᵢ<sup>α</sup> + μᵢ<sup>β</sup>dnᵢ<sup>β</sup> = 0，且 −dnᵢ<sup>α</sup> = dnᵢ<sup>β</sup> → **μᵢ<sup>α</sup> = μᵢ<sup>β</sup>**
+$$
+\begin{aligned}
+G &= \sum_i n_i\left(\frac{\partial G}{\partial n_i}\right) = \sum_i n_i\mu_i \\
+\text{兩相平衡：}\ dG &= \mu_i^\alpha\,dn_i^\alpha + \mu_i^\beta\,dn_i^\beta = 0,\quad -dn_i^\alpha = dn_i^\beta \;\Rightarrow\; \mu_i^\alpha = \mu_i^\beta
+\end{aligned}
+$$
 
 （投影片手寫註解：冰水系統中，冰融化成水，H₂O 在固相減少的量 = 在液相增加的量。）
 
 #### 理想溶液與真實溶液的推導 （p.9, p.10）
 
-> (∂G/∂P)<sub>T</sub> = V (∂μ/∂P)<sub>T</sub> = v̄（莫耳體積） 理想氣體：(∂μ/∂P)<sub>T</sub> = RT/P  
-> 積分：μ<sup>P</sup> − μ<sup>P°</sup> = RT ln(P/P°) → **μ<sub>i,ideal</sub> = μᵢ° + RT ln Xᵢ**  
-> 真實：μᵢ = μᵢ° + RT ln(fᵢ/fᵢ°) **aᵢ = fᵢ/fᵢ°** μᵢ = μᵢ° + RT ln aᵢ
+$$
+\begin{aligned}
+\left(\frac{\partial G}{\partial P}\right)_T &= V, \quad \left(\frac{\partial \mu}{\partial P}\right)_T = \bar v\ \text{（莫耳體積）}, \quad \text{理想氣體 } \left(\frac{\partial \mu}{\partial P}\right)_T = \frac{RT}{P} \\
+\mu^{P} - \mu^{P^\circ} &= RT\ln\frac{P}{P^\circ} \;\Rightarrow\; \mu_{i,\text{ideal}} = \mu_i^\circ + RT\ln X_i \\
+\text{真實：}\ \mu_i &= \mu_i^\circ + RT\ln\frac{f_i}{f_i^\circ}, \quad a_i = \frac{f_i}{f_i^\circ}, \quad \mu_i = \mu_i^\circ + RT\ln a_i
+\end{aligned}
+$$
 
 p.10 的圖：理想情況下，液相中 A:B = 1:2，氣相中的比例也是 1:2。
 
 #### Le Chatelier 的定量式 （p.14）
 
-> (∂ΔG<sub>r</sub>/∂P)<sub>T</sub> = ΔV (∂ΔG/∂T)<sub>P</sub> = −ΔS
+$$
+\left(\frac{\partial \Delta G_r}{\partial P}\right)_T = \Delta V, \qquad \left(\frac{\partial \Delta G}{\partial T}\right)_P = -\Delta S
+$$
 
 冰 → 水：ΔV \< 0，所以加壓使 ΔG 變小，有利於融化（冰的熔點隨壓力增加而下降）。
 
 #### van't Hoff 圖 （p.17）
 
+<img src="/img/notes/geochemistry/l4-thermodynamics-2/slide-p17.webp" alt="重晶石溶解常數 log K 對 1/T，切線斜率 = −ΔH/R" width="622" height="884" />
+
+*圖：重晶石溶解常數 log K 對 1/T，切線斜率 = −ΔH/R。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 3.17（after Blount 1977）；Abby Ren〈地球化學〉課程投影片 L4 p.17。*
+
+
 Barite 溶解常數 log K 對 1/T（×10³）：曲線在不同壓力（1 bar、500 bar、1000 bar）下都呈弧形；在某一點畫切線，**斜率 = −ΔH/R**，**截距（1/T = 0 處）= ΔS/R**。壓力越高，log K 越大。
 
 #### Al₂SiO₅ 相圖（Holdaway 1971） （p.23）
+
+<img src="/img/notes/geochemistry/l4-thermodynamics-2/slide-p23.webp" alt="Al₂SiO₅（藍晶石–矽線石–紅柱石）相圖" width="640" height="656" />
+
+*圖：Al₂SiO₅（藍晶石–矽線石–紅柱石）相圖。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 4.14（Holdaway 1971）；Abby Ren〈地球化學〉課程投影片 L4 p.23。*
+
 
 Ky（藍晶石）在高 P、低 T；And（紅柱石）在低 P；Sil（矽線石）在高 T。**三相點約 500 °C、380 MPa**。Ky–Sil 線斜率為正、陡；And–Sil 線斜率為負。
 
 #### Displaced equilibria 圖 （p.25）
 
+<img src="/img/notes/geochemistry/l4-thermodynamics-2/slide-p25.webp" alt="與鎂橄欖石共存的斜方輝石 Al 含量等值線" width="640" height="530" />
+
+*圖：與鎂橄欖石共存的斜方輝石 Al 含量等值線。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 4.15（after Gasparik 1984）；Abby Ren〈地球化學〉課程投影片 L4 p.25。*
+
+
 CMAS 系統（Gasparik 1984）：與 forsterite 和一個含 Al 相（spinel、anorthite 或 garnet）共存的 opx 中 Al 含量（wt%，1–18）的等值線。不同的含 Al 相各有一個穩定區（Fo + Sp、Fo + An、Fo + Ga），各區的等值線方向不同，所以量 opx 的 Al 含量可以估算 P–T。
 
 #### 反應速率的定義與一般式 （p.31, p.34）
 
-> aA + bB → cC + dD  
-> ℜ ≡ −(1/a)d\[A\]/dt = −(1/b)d\[B\]/dt = (1/c)d\[C\]/dt = (1/d)d\[D\]/dt  
-> 一般式：ℜ = k·a<sub>A</sub><sup>nA</sup>·a<sub>B</sub><sup>nB</sup>·a<sub>C</sub><sup>nC</sup>·a<sub>D</sub><sup>nD</sup> 基本反應：ℜ = k·a<sub>A</sub><sup>a</sup>·a<sub>B</sub><sup>b</sup>  
-> CO₂ + H₂O → H₂CO₃：−d\[CO₂\]/dt = k\[CO₂\]\[H₂O\] → H₂O 大量、濃度幾乎不變 → **−d\[CO₂\]/dt = k\*\[CO₂\]**（擬一階）
+$$
+\begin{aligned}
+& a\mathrm{A} + b\mathrm{B} \rightarrow c\mathrm{C} + d\mathrm{D} \\
+& \Re \equiv -\frac{1}{a}\frac{d[\mathrm{A}]}{dt} = -\frac{1}{b}\frac{d[\mathrm{B}]}{dt} = \frac{1}{c}\frac{d[\mathrm{C}]}{dt} = \frac{1}{d}\frac{d[\mathrm{D}]}{dt} \\
+& \text{一般式：}\ \Re = k\,a_A^{n_A}a_B^{n_B}a_C^{n_C}a_D^{n_D}, \qquad \text{基本反應：}\ \Re = k\,a_A^{a}a_B^{b} \\
+& \mathrm{CO_2 + H_2O \rightarrow H_2CO_3}:\ -\frac{d[\mathrm{CO_2}]}{dt} = k[\mathrm{CO_2}][\mathrm{H_2O}] \;\Rightarrow\; -\frac{d[\mathrm{CO_2}]}{dt} = k^*[\mathrm{CO_2}]\ \text{（擬一階）}
+\end{aligned}
+$$
+
+H₂O 大量存在，濃度幾乎不變，所以可以併入速率常數 k*。
 
 #### 速率的控制因素 （p.32, p.33, p.35）
+
+<img src="/img/notes/geochemistry/l4-thermodynamics-2/slide-p33.webp" alt="碰撞截面：只有在圓柱內的分子會被撞到" width="640" height="405" />
+
+*圖：碰撞截面：只有在圓柱內的分子會被撞到。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L4 p.33。*
+
 
 - **能量障壁**：N + O₂ → NO + O，只有碰撞能量 E \> E<sub>B</sub> 時才會反應；E \< E<sub>B</sub> 時會彈開。
 - **組成（碰撞截面）**：分子在時間 t 內掃過半徑 r = r<sub>N</sub> + r<sub>O₂</sub>、長度 v·t 的圓柱，圓柱內的分子才會被撞到 → 碰撞頻率 ∝ 濃度。
@@ -160,6 +216,8 @@ CMAS 系統（Gasparik 1984）：與 forsterite 和一個含 Al 相（spinel、a
 
 #### 動力學與熱力學的關係 （p.38）
 
-> A ⇌ B k₊\[A\]<sub>eq</sub> = k₋\[B\]<sub>eq</sub> → **k₊/k₋ = \[B\]<sub>eq</sub>/\[A\]<sub>eq</sub> = K<sup>app</sup>**
+$$
+\mathrm{A} \rightleftharpoons \mathrm{B}:\quad k_+[\mathrm{A}]_{eq} = k_-[\mathrm{B}]_{eq} \;\Rightarrow\; \frac{k_+}{k_-} = \frac{[\mathrm{B}]_{eq}}{[\mathrm{A}]_{eq}} = K^{\text{app}}
+$$
 
 這對整體反應和基本反應都成立。p.39 總結：元素在宇宙和地球中的豐度與分異；熱力學預測反應方向和平衡狀態；動力學描述反應速度。

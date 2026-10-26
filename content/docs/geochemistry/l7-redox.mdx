@@ -5,8 +5,8 @@ description: 氧化數、Nernst 方程式、pε–pH 圖與 redox ladder
 
 **本章重點**
 
-1. **pε = −log a<sub>e⁻</sub> = E/0.0592**，數值越大越氧化。
-2. 水的穩定範圍：**pε = 20.75 − pH**（上界）到 **pε = −pH**（下界）。
+1. $p\varepsilon = -\log a_{e^-} = E/0.0592$，數值越大越氧化。
+2. 水的穩定範圍：$p\varepsilon = 20.75 - \mathrm{pH}$（上界）到 $p\varepsilon = -\mathrm{pH}$（下界）。
 3. 缺氧時微生物依能量高低輪流用：**O₂ → NO₃⁻ → MnO₂ → Fe(III) → SO₄²⁻ → CH₄**。
 
 **pε–pH 圖：水的穩定範圍 ＋ 硫系統**
@@ -47,18 +47,27 @@ description: 氧化數、Nernst 方程式、pε–pH 圖與 redox ladder
 
 每個氧化還原反應 = 一個氧化半反應 + 一個還原半反應。平衡步驟：電子 → O（加 H₂O）→ H（加 H⁺）。
 
-> NO + ClO⁻ ⇌ NO₂ + Cl⁻  
-> = NO + H₂O ⇌ NO₂ + 2e⁻ + 2H⁺ ＋ ClO⁻ + 2H⁺ + 2e⁻ ⇌ Cl⁻ + H₂O
+$$
+\begin{aligned}
+&\mathrm{NO + ClO^- \rightleftharpoons NO_2 + Cl^-} \\
+=\ &\mathrm{NO + H_2O \rightleftharpoons NO_2 + 2e^- + 2H^+} \quad + \quad \mathrm{ClO^- + 2H^+ + 2e^- \rightleftharpoons Cl^- + H_2O}
+\end{aligned}
+$$
 
 ## 電位 E<sub>H</sub> 與 Nernst 方程式
 
 - 標準氫電極：½H₂(g) ⇌ H⁺ + e⁻，定義 E = 0。
 - 符號規則：**E<sub>H</sub> \> 0** → 金屬離子會被 H₂ 還原成金屬（強氧化劑，例如 Au³⁺、O₂）；**E<sub>H</sub> \< 0** → 金屬被氧化成離子、H⁺ 被還原（例如 Zn²⁺/Zn = −0.763 V）。
 
-> **ΔG = −zFE** ΔG = ΔG° + RT ln Πaᵢ^νᵢ  
-> **E = E° − (RT/zF)·ln Πaᵢ^νᵢ** 25 °C：E = E° − (0.0592/z)·log Πaᵢ^νᵢ  
-> 平衡時：E° = (RT/zF)·ln K = **(0.0592/z)·log K**  
-> ⚠ 投影片寫「E° = 0.0592/z × lnK」，0.0592 已經包含 ln10 的換算，所以應該配 **log K**。F = 96,485 C/mol。
+$$
+\begin{aligned}
+\Delta G &= -zFE, \qquad \Delta G = \Delta G^\circ + RT\ln\prod a_i^{\nu_i} \\
+E &= E^\circ - \frac{RT}{zF}\ln\prod a_i^{\nu_i} \quad \xrightarrow{\;25^\circ\mathrm{C}\;} \quad E = E^\circ - \frac{0.0592}{z}\log\prod a_i^{\nu_i} \\
+\text{平衡時：}\ E^\circ &= \frac{RT}{zF}\ln K = \frac{0.0592}{z}\log K
+\end{aligned}
+$$
+
+⚠ 投影片寫「E° = 0.0592/z × ln K」，但 0.0592 已經包含 ln10 的換算，所以應該配 **log K**。F = 96,485 C/mol。
 
 <details>
 <summary>【例題】求 Fe³⁺ + 3e⁻ ⇌ Fe 的 E<sub>H</sub>（已知 Fe³⁺/Fe²⁺ = 0.77 V，Fe²⁺/Fe = −0.44 V）</summary>
@@ -73,17 +82,30 @@ E = −ΔG/(3F) = −0.11/3 ≈ **−0.037 V**
 
 ## pε（電子活度）
 
-> **pε ≡ −log a<sub>e⁻</sub>** **pε = F·E / (2.303RT) = E / 0.0592**（25 °C）  
-> pε° = (1/n)·log K  
-> Fe³⁺ + e⁻ ⇌ Fe²⁺：K = a<sub>Fe²⁺</sub>/(a<sub>Fe³⁺</sub>·a<sub>e⁻</sub>) → **pε = log K − log(a<sub>Fe²⁺</sub>/a<sub>Fe³⁺</sub>)**，pε° = 0.77/0.0592 ≈ 13.0
+$$
+\begin{aligned}
+p\varepsilon &\equiv -\log a_{e^-}, \qquad p\varepsilon = \frac{FE}{2.303RT} = \frac{E}{0.0592}\ (25^\circ\mathrm{C}) \\
+p\varepsilon^\circ &= \frac{1}{n}\log K \\
+\mathrm{Fe^{3+} + e^- \rightleftharpoons Fe^{2+}}:\ K &= \frac{a_{\mathrm{Fe^{2+}}}}{a_{\mathrm{Fe^{3+}}}\,a_{e^-}} \;\Rightarrow\; p\varepsilon = \log K - \log\frac{a_{\mathrm{Fe^{2+}}}}{a_{\mathrm{Fe^{3+}}}}, \quad p\varepsilon^\circ = \frac{0.77}{0.0592} \approx 13.0
+\end{aligned}
+$$
 
 - **pε 越高 → 越氧化**（電子越少）；−pε 可以看成電子的可得性。pε 是一個為了方便放進平衡常數框架而定義的「假想單位」，天然系統中很難直接測量。
 
 ## pε–pH 圖
 
-> 水的上界（氧化）：2H₂O → O₂ + 4H⁺ + 4e⁻，E° = 1.23 V → **pε = 20.75 − pH**（P<sub>O₂</sub> = 1 atm）  
-> 水的下界（還原）：2H⁺ + 2e⁻ → H₂，E° = 0 → **pε = −pH**（P<sub>H₂</sub> = 1 atm）  
-> 用 E 表示：E = 1.23 − 0.059pH；E = −0.059pH
+<img src="/img/notes/geochemistry/l7-redox/slide-p16.webp" alt="Fe 系統的 pε–pH 圖" width="640" height="812" />
+
+*圖：Fe 系統的 pε–pH 圖。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L7 p.16。*
+
+
+$$
+\begin{aligned}
+\text{上界（氧化）：}\ & \mathrm{2H_2O \rightarrow O_2 + 4H^+ + 4e^-}, \ E^\circ = 1.23\ \mathrm{V} \;\Rightarrow\; p\varepsilon = 20.75 - \mathrm{pH}\quad (P_{\mathrm{O_2}} = 1\ \mathrm{atm}) \\
+\text{下界（還原）：}\ & \mathrm{2H^+ + 2e^- \rightarrow H_2}, \ E^\circ = 0 \;\Rightarrow\; p\varepsilon = -\mathrm{pH}\quad (P_{\mathrm{H_2}} = 1\ \mathrm{atm}) \\
+\text{用 } E \text{ 表示：}\ & E = 1.23 - 0.059\,\mathrm{pH}; \quad E = -0.059\,\mathrm{pH}
+\end{aligned}
+$$
 
 - 邊界線的形狀：純酸鹼反應 → **垂直線**（pH = pK）；氧化還原反應不含 H⁺ → **水平線**；氧化還原反應含 H⁺ → **斜線**（斜率 = −m/n，m 是 H⁺ 數，n 是電子數）。
 - Fe 圖：Fe³⁺ 在低 pH、高 pε；Fe²⁺ 的範圍很大；Fe(OH)₃ 在中高 pH；強還原、高 pH 時出現 Fe(OH)⁺ 等。
@@ -105,7 +127,9 @@ pH \< 7 時改用 H₂S（再加 H₂S ⇌ HS⁻ + H⁺，log K = −7）：log 
 
 ## 生物控制與 Redox ladder
 
-> H₂O + CO₂ ⇌ \{CH₂O\} + O₂ （光合 →，呼吸 ←）
+$$
+\mathrm{H_2O + CO_2 \rightleftharpoons \{CH_2O\} + O_2} \quad \text{（光合 }\rightarrow\text{，呼吸 }\leftarrow\text{）}
+$$
 
 - 光合作用旺盛 → O₂ 累積、pε 上升（較氧化），而且消耗 CO₂ 使 pH 上升。呼吸作用旺盛則相反。**植物是碳的主要「還原者」，呼吸的生物是「氧化者」**。
 - 在缺氧（suboxic／anoxic）環境中，微生物依照**能量產率由高到低**的順序使用電子接受者：
@@ -125,9 +149,15 @@ pH \< 7 時改用 H₂S（再加 H₂S ⇌ HS⁻ + H⁺，log K = −7）：log 
 
 ### 酸性礦山排水（AMD）
 
-> 4FeS₂ + 14O₂ + 4H₂O → 4Fe²⁺ + 8SO₄²⁻ + 8H⁺ （Thiobacillus ferrooxidans 催化；無機反應很慢）  
-> 4Fe²⁺ + O₂ + 4H⁺ → 4Fe³⁺ + 2H₂O （Gallionella 從中獲取能量）  
-> 4Fe³⁺ + 12H₂O → 4Fe(OH)₃(s) + 12H⁺ （更多酸；鐵鏽色沉澱）
+$$
+\begin{aligned}
+\mathrm{4FeS_2 + 14O_2 + 4H_2O} &\rightarrow \mathrm{4Fe^{2+} + 8SO_4^{2-} + 8H^+} \\
+\mathrm{4Fe^{2+} + O_2 + 4H^+} &\rightarrow \mathrm{4Fe^{3+} + 2H_2O} \\
+\mathrm{4Fe^{3+} + 12H_2O} &\rightarrow \mathrm{4Fe(OH)_3(s) + 12H^+}
+\end{aligned}
+$$
+
+第一式由 *Thiobacillus ferrooxidans* 催化（無機反應很慢）；第二式 *Gallionella* 從中獲取能量；第三式放出更多酸，產生鐵鏽色沉澱。
 
 低 pH 使水具有腐蝕性，整治的目標就是消除這一點。
 
@@ -158,18 +188,46 @@ Zn 片（anode，陽極，−）：Zn → Zn²⁺ + 2e⁻（氧化）；Cu 片�
 
 #### 硫系統 pε–pH 圖的組合方式 （p.22）
 
+<img src="/img/notes/geochemistry/l7-redox/slide-p22.webp" alt="硫系統 pε–pH 圖的組合：水的穩定區 + 酸鹼平衡 + 氧化還原邊界" width="640" height="465" />
+
+*圖：硫系統 pε–pH 圖的組合：水的穩定區 + 酸鹼平衡 + 氧化還原邊界。來源：Abby Ren〈地球化學〉課程投影片 L7 p.22。*
+
+
 (A) 水的穩定區 ＋ (B) 酸鹼平衡（垂直線 pH = 1.98、7、12.9，來自下面的 α 分率曲線：HSO₄⁻/SO₄²⁻、H₂S/HS⁻、HS⁻/S²⁻ 的交叉點）＋ 氧化還原邊界（**非垂直線**）＝ (C) 完整的硫 pε–pH 圖：上方 SO₄²⁻（及低 pH 的 HSO₄⁻），下方 H₂S、HS⁻、S²⁻。
 
 #### 光合–呼吸反應的寫法 （p.23）
 
-> \[H⁺\] + H₂O + CO₂ ⇌ \{CH₂O\} + O₂  
-> 酸 + 「還原態」O + 「氧化態」C ⇌ 「還原態」C + 「氧化態」O （往右 = 光合作用，往左 = 呼吸作用）
+$$
+[\mathrm{H^+}] + \mathrm{H_2O + CO_2 \rightleftharpoons \{CH_2O\} + O_2}
+$$
+
+酸 + 「還原態」O + 「氧化態」C ⇌ 「還原態」C + 「氧化態」O（往右 = 光合作用，往左 = 呼吸作用）
 
 #### Redox ladder 的 E<sub>h</sub> 尺度（pH 7） （p.25）
+
+<img src="/img/notes/geochemistry/l7-redox/slide-p26.webp" alt="Redox ladder：pε 隨有機物分解量階梯下降" width="640" height="266" />
+
+*圖：Redox ladder：pε 隨有機物分解量階梯下降。來源：Abby Ren〈地球化學〉課程投影片 L7 p.26。*
+
 
 O₂/H₂O 約 +0.8 V → NO₃⁻/NO₂⁻、NO₂⁻/NH₄⁺、Mn⁴⁺/Mn²⁺ 約 +0.4–0.5 V → FeOOH/Fe²⁺ 約 0 V → SO₄²⁻/HS⁻、CO₂/CH₄ 約 −0.2 V → H⁺/H₂、HCOO⁻/CH₂O 約 −0.4 V。（÷ 0.0592 就可以換算成 pε。）
 
 #### 沉積物、土壤、地下水的例子 （p.27–30）
+
+<img src="/img/notes/geochemistry/l7-redox/slide-p30.webp" alt="掩埋場下游地下水的氧化還原分帶" width="640" height="812" />
+
+*圖：掩埋場下游地下水的氧化還原分帶。來源：Langmuir *Aqueous Environmental Geochemistry* Fig. 11.16；Abby Ren〈地球化學〉課程投影片 L7 p.30。*
+
+
+<img src="/img/notes/geochemistry/l7-redox/slide-p29.webp" alt="淹水土壤中 O₂、NO₃⁻、Mn(IV)、Fe²⁺ 與 pE 隨時間的變化" width="640" height="519" />
+
+*圖：淹水土壤中 O₂、NO₃⁻、Mn(IV)、Fe²⁺ 與 pE 隨時間的變化。來源：Sposito (1989) *The Chemistry of Soils*，via Langmuir *Aqueous Environmental Geochemistry* Fig. 11.13；Abby Ren〈地球化學〉課程投影片 L7 p.29。*
+
+
+<img src="/img/notes/geochemistry/l7-redox/slide-p28.webp" alt="沉積物孔隙水中 NO₃⁻、Mn²⁺、Fe²⁺ 隨深度的變化" width="640" height="468" />
+
+*圖：沉積物孔隙水中 NO₃⁻、Mn²⁺、Fe²⁺ 隨深度的變化。來源：Abby Ren〈地球化學〉課程投影片 L7 p.28。*
+
 
 - **沉積物**（p.27）：落下的有機物提供還原力，驅動一系列微生物媒介的氧化還原反應 → 孔隙水組成隨深度改變，常常造成**顏色分層**（上層棕色，往下變成橄欖綠、灰色）和氣味變化。p.28：往深處 NO₃⁻（~40 μM）在 ~40 cm 內耗盡，Mn²⁺ 從 ~20 cm 開始上升，Fe²⁺ 在更深處上升。
 - **淹水的土壤**（p.29，Sposito 1989）：O₂ 在約 1 天內耗盡 → NO₃⁻ 約 2.5 天耗盡 → Mn(IV) 固體逐漸減少 → Fe²⁺ 在約 4 天後開始大量出現；pE 從約 +7 一路降到約 −2。

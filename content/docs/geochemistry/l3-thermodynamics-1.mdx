@@ -5,9 +5,9 @@ description: 熱力學定律、焓與熵、Gibbs 自由能、相律與 Clapeyron
 
 **本章重點**
 
-1. **G = H − TS**；定溫定壓下，反應往 G 降低的方向走，兩邊 G 相等就是平衡。
-2. **dG = VdP − SdT**：加壓有利體積小的相，升溫有利熵大的相。
-3. 相律 **f = c − φ + 2**；相界斜率 **dP/dT = ΔS/ΔV**（Clapeyron）。
+1. $G = H - TS$；定溫定壓下，反應往 G 降低的方向走，兩邊 G 相等就是平衡。
+2. $dG = V\,dP - S\,dT$：加壓有利體積小的相，升溫有利熵大的相。
+3. 相律 $f = c - \varphi + 2$；相界斜率 $dP/dT = \Delta S/\Delta V$（Clapeyron）。
 
 **誰穩定？看誰的 G 比較低**
 
@@ -43,15 +43,22 @@ description: 熱力學定律、焓與熵、Gibbs 自由能、相律與 Clapeyron
 - 熵 S = k ln Ω（Ω 是可能的微觀排列數）。熵增加，代表我們對系統的知識減少。系統的熵可以減少（例如生命），但周遭的熵必須增加更多。
 - 真實物質在 0 K 仍有 **configurational（residual）entropy**，來自不同原子混在相同晶格位置，例如長石、角閃石。
 
-> dU = TdS − PdV （可逆）  
-> 定容時，U 隨 S 增加而增加；定熵時，U 隨 V 增加而減少
+$$
+dU = T\,dS - P\,dV \quad \text{（可逆）}
+$$
+
+定容時，U 隨 S 增加而增加；定熵時，U 隨 V 增加而減少。
 
 ## 焓 H、熱容 C<sub>p</sub>
 
-> H = U + PV dH = TdS + VdP 定壓時 dH = dQ<sub>p</sub>  
-> ΔH = ∫ C<sub>p</sub> dT C<sub>p</sub> = a + bT − cT⁻²（Maier–Kelley）  
-> ΔH (P 變化，定溫) = ∫ V(1 − αT) dP  
-> dS = dH / T（定壓可逆） → ΔS = ∫ (C<sub>p</sub> / T) dT
+$$
+\begin{aligned}
+H &= U + PV, \qquad dH = T\,dS + V\,dP, \qquad dH = dQ_P\ \text{（定壓）} \\
+\Delta H &= \int C_P\,dT, \qquad C_P = a + bT - cT^{-2}\ \text{（Maier–Kelley）} \\
+\Delta H\big|_T &= \int V(1-\alpha T)\,dP \\
+dS &= \frac{dH}{T}\ \text{（定壓可逆）} \;\Rightarrow\; \Delta S = \int \frac{C_P}{T}\,dT
+\end{aligned}
+$$
 
 - 元素在 298.15 K、0.1 MPa（25 °C、1 bar）的標準狀態下 H = 0。化合物的 **ΔH°<sub>f</sub>** 是由元素生成它時放出的熱。
 - ΔH \< 0 是放熱（exothermic），例如 H₂ + ½O₂ → H₂O(l)，ΔH° = −285.83 kJ/mol。
@@ -72,7 +79,9 @@ description: 熱力學定律、焓與熵、Gibbs 自由能、相律與 Clapeyron
 <details>
 <summary>【例題】1 mol 石英從 25 °C 加熱到 300 °C 的 ΔH（a = 46.94, b = 0.0343, c = 1,129,680）</summary>
 
-> ΔH = ∫(a + bT − cT⁻²)dT = a(T₂ − T₁) + (b/2)(T₂² − T₁²) + c(1/T₂ − 1/T₁)
+$$
+\Delta H = \int (a + bT - cT^{-2})\,dT = a(T_2-T_1) + \frac{b}{2}(T_2^2-T_1^2) + c\left(\frac{1}{T_2}-\frac{1}{T_1}\right)
+$$
 
 T₁ = 298.15 K，T₂ = 573.15 K（**一定要換成 K**）
 
@@ -87,10 +96,14 @@ T₁ = 298.15 K，T₂ = 573.15 K（**一定要換成 K**）
 
 ## Gibbs 自由能（最重要）
 
-> **G = H − TS** **dG = VdP − SdT**  
-> (∂ΔG/∂P)<sub>T</sub> = ΔV (∂ΔG/∂T)<sub>P</sub> = −ΔS  
-> ΔG<sub>T,P</sub> = ΔG<sub>ref</sub> + ∫ΔV dP − ∫ΔS dT  
-> 熔點：ΔG<sub>m</sub> = 0 → ΔH<sub>m</sub> = T<sub>m</sub>ΔS<sub>m</sub>
+$$
+\begin{aligned}
+G &= H - TS, \qquad dG = V\,dP - S\,dT \\
+\left(\frac{\partial \Delta G}{\partial P}\right)_T &= \Delta V, \qquad \left(\frac{\partial \Delta G}{\partial T}\right)_P = -\Delta S \\
+\Delta G_{T,P} &= \Delta G_{\text{ref}} + \int \Delta V\,dP - \int \Delta S\,dT \\
+\text{熔點：}\ \Delta G_m &= 0 \;\Rightarrow\; \Delta H_m = T_m \Delta S_m
+\end{aligned}
+$$
 
 - 定溫定壓下，反應往 **G 降低的方向**進行（ΔG<sub>r</sub> \< 0 自發）。**平衡時產物和反應物的 G 相等**（ΔG = 0）。
 - 直覺：G 同時考慮了「能量傾向降低」（H）和「熵傾向增加」（S）。
@@ -102,7 +115,9 @@ T₁ = 298.15 K，T₂ = 573.15 K（**一定要換成 K**）
 - **Species（物種）**：實際存在的化學實體，例如水中的 H₂O、H₂CO₃、HCO₃⁻、CO₃²⁻、H⁺、OH⁻。
 - **Component（成分）**：描述每個相組成所需的最少獨立變數，是代數上的項，可以自己定義。
 
-> c = n − r （n = 物種數，r = 獨立反應數）
+$$
+c = n - r \quad (n = \text{物種數},\ r = \text{獨立反應數})
+$$
 
 <details>
 <summary>【例題】H₂O、H₂CO₃、HCO₃⁻、CO₃²⁻、H⁺、OH⁻ 系統的 c = ?</summary>
@@ -115,15 +130,25 @@ c = 6 − 3 = **3**（例如選 H₂O、H⁺、CO₃²⁻）。如果再加上�
 
 ## Gibbs 相律
 
-> **f = c − φ + 2** （f = 自由度，c = 成分數，φ = 相數）
+$$
+f = c - \varphi + 2 \quad (f = \text{自由度},\ c = \text{成分數},\ \varphi = \text{相數})
+$$
 
 - 純 H₂O：一相 → f = 2（divariant，一塊面積）；水 + 蒸氣兩相 → f = 1（univariant，一條線）；三相點 → f = 0（invariant，273.16 K、0.006 bar）。
 - Al₂SiO₅（c = 1）：藍晶石（kyanite，高壓）、紅柱石（andalusite，低壓）、矽線石（sillimanite，高溫）。三相共存 → invariant，P、T 都固定（約 500 °C、0.4 GPa）。
 
 ## Clapeyron 方程式
 
-> **dP/dT = ΔS / ΔV = ΔH / (TΔV)**  
-> 相界線在 P–T 圖上的斜率。大部分斜率為正，代表體積大的相通常熵也大。
+<img src="/img/notes/geochemistry/l3-thermodynamics-1/slide-p44.webp" alt="石墨–鑽石相界" width="640" height="637" />
+
+*圖：石墨–鑽石相界。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L3 p.44。*
+
+
+$$
+\frac{dP}{dT} = \frac{\Delta S}{\Delta V} = \frac{\Delta H}{T\,\Delta V}
+$$
+
+相界線在 P–T 圖上的斜率。大部分斜率為正，代表體積大的相通常熵也大。
 
 <details>
 <summary>【例題】石墨 → 鑽石 的相界（Table 2.2 數據）</summary>
@@ -144,6 +169,11 @@ c = 6 − 3 = **3**（例如選 H₂O、H⁺、CO₃²⁻）。如果再加上�
 
 #### 系統的四種類型（Fig 2.1） （p.4）
 
+<img src="/img/notes/geochemistry/l3-thermodynamics-1/slide-p4.webp" alt="孤立、絕熱、封閉、開放系統" width="640" height="676" />
+
+*圖：孤立、絕熱、封閉、開放系統。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 2.1；Abby Ren〈地球化學〉課程投影片 L3 p.4。*
+
+
 | 類型 | 質量交換 | 能量交換 |
 |---|---|---|
 | Isolated（孤立） | ✗ | ✗ |
@@ -153,6 +183,11 @@ c = 6 − 3 = **3**（例如選 H₂O、H⁺、CO₃²⁻）。如果再加上�
 
 #### 系統的三種狀態（Fig 2.2） （p.5）
 
+<img src="/img/notes/geochemistry/l3-thermodynamics-1/slide-p5.webp" alt="平衡、介穩與不穩定狀態" width="640" height="477" />
+
+*圖：平衡、介穩與不穩定狀態。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 2.2；Abby Ren〈地球化學〉課程投影片 L3 p.5。*
+
+
 用山谷中的球比喻：**Equilibrium**（最低點，不隨時間變化）；**Metastable**（較高的小凹槽，也不隨時間變化，但不是最低能量，例如地表的鑽石、aragonite）；**Unstable / transient**（斜坡上，會自發改變）。
 
 #### 狀態函數圖 （p.7）
@@ -161,7 +196,9 @@ c = 6 − 3 = **3**（例如選 H₂O、H⁺、CO₃²⁻）。如果再加上�
 
 #### 理想氣體的熱膨脹係數推導 （p.8）
 
-> (∂V/∂T)<sub>P</sub> = ∂(NRT/P)/∂T = NR/P → α = (1/V)(∂V/∂T)<sub>P</sub> = NR/(PV) = **1/T**
+$$
+\left(\frac{\partial V}{\partial T}\right)_P = \frac{\partial}{\partial T}\left(\frac{NRT}{P}\right) = \frac{NR}{P} \;\Rightarrow\; \alpha = \frac{1}{V}\left(\frac{\partial V}{\partial T}\right)_P = \frac{NR}{PV} = \frac{1}{T}
+$$
 
 #### 溫度計與第一定律 （p.10, p.11）
 
@@ -173,16 +210,27 @@ c = 6 − 3 = **3**（例如選 H₂O、H⁺、CO₃²⁻）。如果再加上�
 
 #### 焓、熱容、G、熔點的完整式子 （p.19, p.21, p.28, p.30）
 
-> dH = dU + VdP + PdV 代入 dU = TdS − PdV → **dH = TdS + VdP**  
-> C = dQ/dT **C<sub>P</sub> = (∂H/∂T)<sub>P</sub>**  
-> ΔG = ΔH − TΔS  
-> **T<sub>m</sub> = ΔH<sub>m</sub> / ΔS<sub>m</sub>**
+$$
+\begin{aligned}
+dH &= dU + V\,dP + P\,dV, \quad dU = T\,dS - P\,dV \;\Rightarrow\; dH = T\,dS + V\,dP \\
+C &= \frac{dQ}{dT}, \qquad C_P = \left(\frac{\partial H}{\partial T}\right)_P \\
+\Delta G &= \Delta H - T\Delta S \\
+T_m &= \frac{\Delta H_m}{\Delta S_m}
+\end{aligned}
+$$
 
 #### Clapeyron 的推導 （p.45）
 
-> 相界上 d(ΔG<sub>r</sub>) = ΔV<sub>r</sub>dP − ΔS<sub>r</sub>dT = 0 → **dT/dP = ΔV<sub>r</sub>/ΔS<sub>r</sub>**（等同 dP/dT = ΔS/ΔV）
+$$
+d(\Delta G_r) = \Delta V_r\,dP - \Delta S_r\,dT = 0 \;\Rightarrow\; \frac{dT}{dP} = \frac{\Delta V_r}{\Delta S_r} \quad \left(\text{即 } \frac{dP}{dT} = \frac{\Delta S}{\Delta V}\right)
+$$
 
 #### 成分的圖解 （p.39）
+
+<img src="/img/notes/geochemistry/l3-thermodynamics-1/slide-p39.webp" alt="Al₂O₃–H₂O 二元與 Al₂O₃–SiO₂–H₂O 三元系統的成分圖" width="640" height="479" />
+
+*圖：Al₂O₃–H₂O 二元與 Al₂O₃–SiO₂–H₂O 三元系統的成分圖。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L3 p.39。*
+
 
 - **二元系統 Al₂O₃–H₂O**：AlO(OH)（boehmite／diaspore）、Al(OH)₃（gibbsite）都在 Al₂O₃ 和 H₂O 的連線上，所以這些相都可以用 2 個成分描述。
 - **三元系統 Al₂O₃–SiO₂–H₂O**：c = corundum、q = quartz、w = water；a, k, s（andalusite、kyanite、sillimanite，Al₂SiO₅）在 Al₂O₃–SiO₂ 邊上；ka, ha, di, na（kaolinite 等，Al₂Si₂O₅(OH)₄）、p（pyrophyllite）在三角形內。重點：選對成分，就能用最少的成分描述所有相。
