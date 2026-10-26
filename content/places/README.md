@@ -13,6 +13,7 @@ text: 高中小琉球旅遊。      # 選填：一兩句話
 album: xiaoliuqiu-2026      # 選填：連到「生活影像」的相簿（content/gallery 的檔名）
 post: self-introduction     # 選填：連到「日常碎念」的文章（content/blog 的檔名）
 url: https://example.com    # 選填：其他連結
+youtube: https://youtu.be/…  # 選填：長影片放 YouTube，貼網址或影片 id
 ```
 
 座標可以在 Google 地圖對地點按右鍵複製，或用 OpenStreetMap 查。
@@ -27,4 +28,5 @@ url: https://example.com    # 選填：其他連結
 - 代號是打卡時間，例如 `2026-10-26-153012`
 - 照片會自動出現在地圖卡片，以及「生活影像」的月份打卡相簿（/gallery/checkins-2026-10）
 - 資料有缺（例如沒抓到位置）只會跳過那一筆，不會讓網站建置失敗
+- 短片放在同一個資料夾的 `video.mp4`（捷徑會先剪輯再壓成 720p）；單檔超過 24MB 會在建置時略過
 - 照片的 commit 訊息帶 `[CF-Pages-Skip]`，不觸發 Cloudflare 建置；只有最後的打卡資料建置一次（約 3～4 分鐘上線）

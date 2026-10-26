@@ -40,24 +40,40 @@ token_uid = U()
 A.append(act("is.workflow.actions.gettext", UUID=token_uid, WFTextActionText=""))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="token", WFInput=attach(out(token_uid, "文字"))))
 
-# 1. 拍照或從相簿選
+# 1. 照片／短片／YouTube（「媒體」用來讀位置與日期，照片和短片分開上傳）
 g = U()
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=0,
-             WFMenuPrompt="足跡打卡：照片從哪來？", WFMenuItems=["拍照", "從相簿選", "不放照片"]))
+             WFMenuPrompt="足跡打卡：要放什麼？", WFMenuItems=["拍照", "從相簿選照片", "傳短片", "貼 YouTube 連結", "不放照片"]))
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=1, WFMenuItemTitle="拍照"))
 take = U()
 A.append(act("is.workflow.actions.takephoto", UUID=take, WFCameraCaptureShowPreview=True))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="照片", WFInput=attach(out(take, "照片"))))
-A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=1, WFMenuItemTitle="從相簿選"))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="媒體", WFInput=attach(out(take, "照片"))))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=1, WFMenuItemTitle="從相簿選照片"))
 sel = U()
-A.append(act("is.workflow.actions.selectphoto", UUID=sel, WFSelectMultiplePhotos=True))
+A.append(act("is.workflow.actions.selectphoto", UUID=sel, WFSelectMultiplePhotos=True, WFPhotoPickerTypes=["Images"]))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="照片", WFInput=attach(out(sel, "照片"))))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="媒體", WFInput=attach(out(sel, "照片"))))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=1, WFMenuItemTitle="傳短片"))
+vsel = U()
+A.append(act("is.workflow.actions.selectphoto", UUID=vsel, WFSelectMultiplePhotos=False, WFPhotoPickerTypes=["Videos"]))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="媒體", WFInput=attach(out(vsel, "照片"))))
+# 先剪成想要的長度（建議 30 秒內），再壓成 720p；網站單檔上限 25MB，超過的建置時會被略過
+trim = U()
+A.append(act("is.workflow.actions.trimvideo", UUID=trim, WFInput=attach(out(vsel, "照片"))))
+enc = U()
+A.append(act("is.workflow.actions.encodemedia", UUID=enc, WFMediaSize="1280x720", WFInput=attach(out(trim, "已修剪的媒體"))))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="影片", WFInput=attach(out(enc, "已編碼的媒體"))))
+A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=1, WFMenuItemTitle="貼 YouTube 連結"))
+yt = U()
+A.append(act("is.workflow.actions.ask", UUID=yt, WFAskActionPrompt="貼上 YouTube 影片連結（不公開的影片也可以）", WFInputType="URL"))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="YouTube", WFInput=attach(out(yt, "提供的輸入"))))
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=1, WFMenuItemTitle="不放照片"))
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=g, WFControlFlowMode=2, UUID=U()))
 
 # 2. 位置與日期都以第一張照片為準（先拍照、事後換地方上傳也對）
 first = U()
-A.append(act("is.workflow.actions.getitemfromlist", UUID=first, WFItemSpecifier="First Item", WFInput=attach(var("照片"))))
+A.append(act("is.workflow.actions.getitemfromlist", UUID=first, WFItemSpecifier="First Item", WFInput=attach(var("媒體"))))
 ploc = U()
 A.append(act("is.workflow.actions.properties.images", UUID=ploc, WFContentItemPropertyName="Location", WFInput=attach(out(first, "清單中的項目"))))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(ploc, "位置"))))
@@ -156,6 +172,21 @@ A.append(act("is.workflow.actions.downloadurl", UUID=U(), ShowHeaders=True, WFHT
                                      ("branch", BRANCH, 0)])))
 A.append(act("is.workflow.actions.repeat.each", GroupingIdentifier=gr, WFControlFlowMode=2, UUID=U()))
 
+# 5b. 短片：有的話上傳成 video.mp4（一樣不觸發建置）
+gv = U()
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gv, WFControlFlowMode=0, WFCondition=100,
+             WFInput={"Type": "Variable", "Variable": attach(var("影片"))}))
+vb64 = U()
+A.append(act("is.workflow.actions.base64encode", UUID=vb64, WFEncodeMode="Encode", WFBase64LineBreakMode="None",
+             WFInput=attach(var("影片"))))
+A.append(act("is.workflow.actions.downloadurl", UUID=U(), ShowHeaders=True, WFHTTPMethod="PUT", WFHTTPBodyType="JSON",
+             WFURL=tstr(f"https://api.github.com/repos/{REPO}/contents/public/img/places/", var("代號"), "/video.mp4"),
+             WFHTTPHeaders=headers,
+             WFJSONValues=dictfield([("message", tstr("足跡打卡短片 ", var("代號"), " [CF-Pages-Skip]"), 0),
+                                     ("content", tstr(out(vb64, "Base64 編碼的結果")), 0),
+                                     ("branch", BRANCH, 0)])))
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gv, WFControlFlowMode=2, UUID=U()))
+
 # 6. 打卡資料（JSON）：最後才上傳，這次建置就會包含照片
 data = U()
 A.append(act("is.workflow.actions.dictionary", UUID=data, WFItems=dictfield([
@@ -165,6 +196,7 @@ A.append(act("is.workflow.actions.dictionary", UUID=data, WFItems=dictfield([
     ("lat", tstr(out(lat, "緯度")), 3),
     ("lng", tstr(out(lng, "經度")), 3),
     ("text", tstr(out(note, "提供的輸入")), 0),
+    ("youtube", tstr(var("YouTube")), 0),
 ])))
 djson = U()
 A.append(act("is.workflow.actions.gettext", UUID=djson, WFTextActionText=tstr(out(data, "辭典"))))

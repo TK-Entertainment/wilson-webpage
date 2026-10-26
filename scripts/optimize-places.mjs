@@ -23,7 +23,21 @@ async function walk(d) {
   return out;
 }
 
+// Cloudflare Pages 單一檔案上限 25MB：超過的（多半是影片）從這次建置移除，免得整個部署失敗
+const LIMIT = 24 * 1024 * 1024;
+async function dropOversized(d) {
+  for (const e of await fs.readdir(d, { withFileTypes: true }).catch(() => [])) {
+    const p = path.join(d, e.name);
+    if (e.isDirectory()) await dropOversized(p);
+    else if ((await fs.stat(p)).size > LIMIT) {
+      await fs.rm(p);
+      console.warn(`[places] ${path.relative(root, p)} 超過 24MB，這次建置略過（影片請剪短，或改放 YouTube）`);
+    }
+  }
+}
+
 async function main() {
+  await dropOversized(dir);
   const { default: sharp } = await import("sharp");
   const files = await walk(dir);
   let done = 0, saved = 0;

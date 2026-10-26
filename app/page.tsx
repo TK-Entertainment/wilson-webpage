@@ -84,7 +84,7 @@ export default function HomePage() {
       href: `/gallery/${album.slug}`,
       title: album.title,
       date: dot(album.date).slice(5),
-      cover: album.cover as string | undefined,
+      cover: album.cover || undefined,
     })),
   ]
     .sort((a, b) => b.sort.localeCompare(a.sort))

@@ -1,6 +1,6 @@
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
 import { createConfig } from "next-docs-zeta/contentlayer/configuration";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { imageSize } from "image-size";
 import rehypeKatex from "rehype-katex";
@@ -135,6 +135,17 @@ function countyOf(lng: number, lat: number) {
   return best.name;
 }
 
+// 建置時超過 24MB 的檔案會被 scripts/optimize-places.mjs 移除（Cloudflare 單檔上限 25MB），這裡也一併略過
+function mediaOf(flattenedPath: string, ext: RegExp) {
+  const id = flattenedPath.split("/").pop() ?? "";
+  const dir = path.join("public", "img", "places", id);
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => ext.test(f) && statSync(path.join(dir, f)).size <= 24 * 1024 * 1024)
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .map((f) => `/img/places/${id}/${f}`);
+}
+
 const Place = defineDocumentType(() => ({
   name: "Place",
   // 手動加的用 yaml；iPhone 捷徑打卡送來的是 json（名稱裡的引號、冒號不用另外處理）
@@ -153,6 +164,8 @@ const Place = defineDocumentType(() => ({
     album: { type: "string", required: false },
     post: { type: "string", required: false },
     url: { type: "string", required: false },
+    // 長影片：YouTube 網址或影片 id（短片直接放在照片資料夾）
+    youtube: { type: "string", required: false },
   },
   computedFields: {
     id: {
@@ -163,17 +176,23 @@ const Place = defineDocumentType(() => ({
       type: "string",
       resolve: (doc) => doc.county || countyOf(doc.lng, doc.lat),
     },
-    // 照片：public/img/places/<代號>/ 裡的圖檔，依檔名排序（捷徑上傳成 1.jpg、2.jpg…）
+    // 照片與短片：public/img/places/<代號>/ 裡的檔案，依檔名排序（捷徑上傳成 1.jpg、2.jpg、video.mp4…）
     photos: {
       type: "list",
+      resolve: (doc) => mediaOf(doc._raw.flattenedPath, /\.(jpe?g|png|webp)$/i),
+    },
+    videos: {
+      type: "list",
+      resolve: (doc) => mediaOf(doc._raw.flattenedPath, /\.(mp4|m4v|mov)$/i),
+    },
+    // YouTube 影片 id（網址或 id 都接受）
+    youtubeId: {
+      type: "string",
       resolve: (doc) => {
-        const id = doc._raw.flattenedPath.split("/").pop() ?? "";
-        const dir = path.join("public", "img", "places", id);
-        if (!existsSync(dir)) return [];
-        return readdirSync(dir)
-          .filter((f) => /\.(jpe?g|png|webp)$/i.test(f))
-          .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-          .map((f) => `/img/places/${id}/${f}`);
+        const y = doc.youtube?.trim();
+        if (!y) return "";
+        const m = y.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/);
+        return m ? m[1] : /^[\w-]{11}$/.test(y) ? y : "";
       },
     },
   },

@@ -18,6 +18,10 @@ export type CheckIn = {
   text?: string;
   /** 打卡照片（/img/places/<代號>/1.jpg…） */
   photos?: string[];
+  /** 短片（/img/places/<代號>/video.mp4） */
+  videos?: string[];
+  /** YouTube 影片 id */
+  youtube?: string;
   link?: { label: string; href: string };
 };
 
@@ -490,6 +494,26 @@ export default function FootprintMap({
         }
         cardBody.append(m, fig, h, where);
       } else cardBody.append(m, h, where);
+      // 短片與 YouTube：放在名稱下面
+      for (const src of ci.videos ?? []) {
+        const v = document.createElement("video");
+        v.className = "fm-video";
+        v.src = src;
+        v.controls = true;
+        v.playsInline = true;
+        v.preload = "metadata";
+        cardBody.appendChild(v);
+      }
+      if (ci.youtube) {
+        const f = document.createElement("iframe");
+        f.className = "fm-video";
+        f.src = `https://www.youtube-nocookie.com/embed/${ci.youtube}`;
+        f.title = `${ci.name}（YouTube）`;
+        f.allow = "accelerometer; encrypted-media; gyroscope; picture-in-picture";
+        f.allowFullscreen = true;
+        f.loading = "lazy";
+        cardBody.appendChild(f);
+      }
       if (ci.text) {
         const p = document.createElement("p");
         p.textContent = ci.text;

@@ -11,6 +11,8 @@ export const CATEGORY_ZH = {
 } as const;
 
 export type CheckinPhoto = {
+  /** photo：照片、video：短片、youtube：src 是影片 id */
+  kind: "photo" | "video" | "youtube";
   src: string;
   place: string;
   placeId: string;
@@ -34,11 +36,17 @@ export type CheckinAlbum = {
 export function getCheckinAlbums(): CheckinAlbum[] {
   const byMonth = new Map<string, CheckinPhoto[]>();
   for (const p of allPlaces) {
-    if (!p.date || p.date.length < 7 || !p.photos?.length) continue;
+    const media: [CheckinPhoto["kind"], string][] = [
+      ...((p.photos as string[] | undefined) ?? []).map((src) => ["photo", src] as [CheckinPhoto["kind"], string]),
+      ...((p.videos as string[] | undefined) ?? []).map((src) => ["video", src] as [CheckinPhoto["kind"], string]),
+      ...(p.youtubeId ? [["youtube", p.youtubeId] as [CheckinPhoto["kind"], string]] : []),
+    ];
+    if (!p.date || p.date.length < 7 || !media.length) continue;
     const month = p.date.slice(0, 7);
     const list = byMonth.get(month) ?? [];
-    for (const src of p.photos as string[]) {
+    for (const [kind, src] of media) {
       list.push({
+        kind,
         src,
         place: p.name,
         placeId: p.id,
@@ -61,7 +69,8 @@ export function getCheckinAlbums(): CheckinAlbum[] {
         month,
         title: `打卡相簿・${month.replace("-", ".")}`,
         date: photos[0].date,
-        cover: photos[0].src,
+        // 封面：第一張照片；只有影片的月份沒有封面
+        cover: photos.find((x) => x.kind === "photo")?.src ?? "",
         photos,
         counties: [...new Set(photos.map((p) => p.county))],
       };
