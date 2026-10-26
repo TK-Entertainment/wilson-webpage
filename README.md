@@ -13,7 +13,11 @@
 | --- | --- | --- |
 | 來杯好茶の日常碎念 | `/blog` | `content/blog/*.mdx` |
 | 來杯咖啡の學習日常 | `/docs` | `content/docs/**` |
-| 來杯果汁の生活影像 | `/gallery` | `content/gallery/*.mdx` |
+| 來杯果汁の生活影像 | `/gallery` | `content/gallery/*.mdx`（另有依月份自動產生的打卡相簿） |
+| 帶著飲料出門の足跡地圖 | `/map` | `content/places/*.yaml`、`*.json` |
+| 喝完茶の來抽一張牌（彩蛋） | `/tarot` | `utils/tarot.ts`、`utils/tarotMinor.ts` |
+
+網站首頁的羅盤是抽牌頁的入口；抽牌頁沒有出現在導覽列。
 
 ## 如何新增內容
 
@@ -117,6 +121,34 @@ $$
 - 公式太長時會在框內左右捲動，不會撐開整頁
 - 公式裡的 `{`、`}` 不會被當成 MDX 語法；但公式「以外」的文字若要寫大括號，仍要寫成 `\{`、`\}`
 
+### 足跡地圖（`content/places/`）
+
+一個打卡點一個檔案，縣市會依座標自動判斷，完整格式見 [`content/places/README.md`](content/places/README.md)：
+
+```yaml
+name: 龜山島
+category: wild        # trip 旅行／life 生活／work 出差／wild 野外
+date: "2025-07"       # 可以只寫年份或年月，不寫就顯示「日期待補」
+lat: 24.8431
+lng: 121.9516
+text: 一兩句話（選填）
+album: 相簿檔名（選填）
+youtube: https://youtu.be/…（選填）
+```
+
+照片和短片放在 `public/img/places/<檔名>/`（`1.jpg`、`2.jpg`、`video.mp4`），會自動出現在地圖卡片、
+「生活影像」的月份打卡相簿（`/gallery/checkins-2026-10`），以及首頁的照片輪播。
+
+#### 用 iPhone 捷徑即時打卡
+
+`scripts/shortcut/build-checkin-shortcut.py` 會產生「足跡打卡」捷徑（在 macOS 上用 `shortcuts sign --mode anyone` 簽署後 AirDrop 到手機）：
+拍照／選照片／傳短片／貼 YouTube 連結 → 讀照片的拍攝位置與日期（沒有就用目前位置，送出前可改成搜尋地點）→ 名稱、分類、一句話 →
+直接寫進 `Release` 分支，約 3～4 分鐘後上線。
+
+- 需要一把 GitHub token：TK-Entertainment 沒開放 fine-grained token，所以用 classic token，**只勾 `public_repo`**，貼進捷徑（只存在手機上）
+- 照片在建置時由 `scripts/optimize-places.mjs` 壓成長邊 1600、JPEG 品質 80；單檔超過 24MB 的會被略過，不會讓部署失敗
+- 照片的 commit 訊息帶 `[CF-Pages-Skip]`，一次打卡只觸發一次 Cloudflare 建置
+
 ## 留言區、分享卡片與 RSS
 
 ### 留言區（giscus）
@@ -155,42 +187,38 @@ export const commentsConfig = {
 
 ## 專案原理
 
-此專案建置於非常好用且好看的 [Next Docs](https://github.com/fuma-nama/next-docs) 框架 (shoutout to [@fuma-nama](https://github.com/fuma-nama))  
-並自行建置 Blog 的部件，並為手機使用者設計相關導覽邏輯，讓使用者能更方便的瀏覽文章
+- **Next.js 15＋React 19**（App Router），筆記區使用 [Next Docs](https://github.com/fuma-nama/next-docs)（shoutout to [@fuma-nama](https://github.com/fuma-nama)），文章、相簿、打卡點由 **contentlayer2** 讀取
+- **Cloudflare Pages** 透過 `@cloudflare/next-on-pages` 部署：push 到 `Release` 會自動建置並上線；其他分支會產生預覽網址
+- Node 版本寫在 `.nvmrc`（22）；`.github/workflows/cf-build-check.yml` 會在 push 到 `redesign-life-notes` 時用同樣的流程建置一次，沒有 Cloudflare 權限也能看到錯誤紀錄
+- 整站都是建置時產生的靜態頁面（標籤頁是 `/blog/tags?tag=…` 單一靜態頁），沒有伺服器端程式
 
-此專案利用 **Cloudflare Pages** 進行自動部署，在 push 時就會自動建置並部署到 **Cloudflare edge network**
+### 分支
 
-## 相關截圖
+| 分支 | 用途 |
+| --- | --- |
+| `Release` | 正式站（wilson.trygong.uk），iPhone 打卡也直接寫在這裡 |
+| `redesign-life-notes` | 預覽用，確認沒問題再合併到 `Release` |
+| `feat/…`、`fix/…`、`chore/…` | 開發中的功能，合併後刪除 |
 
-### 電腦版網站
-
-<img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/bd4d2172-d4fb-46a8-8fa6-a34ead15e318" width=400></img>
-<img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/54b1ed42-3ebf-4ce4-b028-6b6a5c3a6af4" width=400></img>
-<img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/4f677426-c6e3-49c9-a41f-aea0e714d925" width=400></img>
-
-### 手機版網站
-
-<img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/53672f4b-c20e-460b-9c5d-2519ae000ad6" width=250></img>
-<img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/d2eae6df-f51a-46bd-a815-603fd3c64f89" width=250></img>
-<img src="https://github.com/TK-Entertainment/wilson-webpage/assets/52964758/13cca01b-65e0-4894-b8fd-b03b42e84d7f" width=250></img>
+> [!NOTE]
+> 預覽網址請看 commit 的「Cloudflare Pages」檢查結果；同一個 commit 推到兩個分支時，Cloudflare 只會在先推的那個分支建置。
 
 ## 使用技術
 
-- Tailwind CSS
-- FontAwesome Icon
-- Next Docs (by [@fuma-nama](https://github.com/fuma-nama))
-- Next.js
-- TypeScript
+- Next.js 15、React 19、TypeScript
+- Tailwind CSS、Next Docs、contentlayer2
+- KaTeX（數學公式）、giscus（留言區）
+- 台灣縣市界線：內政部國土測繪中心（政府資料開放授權），via [taiwan-atlas](https://github.com/dkaoster/taiwan-atlas)，以 mapshaper 簡化
 
 ## 如何對專案貢獻
 
 **若遇到了些什麼問題**  
-歡迎 [提交 Issue](https://github.com/TK-Entertainment/tkablent_music/issues) 來跟我們分享你遇到的問題
+歡迎 [提交 Issue](https://github.com/TK-Entertainment/wilson-webpage/issues) 來跟我們分享你遇到的問題
 
 **若有修改的建議**  
 可以運用 Fork 來建立分支或點擊此 Repo 右上角 Code 中的 Download ZIP 來下載原始碼  
 並依照下方步驟進行測試
-修改完畢後也歡迎開 [Pull Request](https://github.com/TK-Entertainment/tkablent_music/pulls)，來與我們交流
+修改完畢後也歡迎開 [Pull Request](https://github.com/TK-Entertainment/wilson-webpage/pulls)，來與我們交流
 
 **1. 複製本倉庫到你的本地環境 (亦可點擊此 Repo 右上角 Code 中的 Download ZIP 來下載原始碼)**
 
@@ -233,5 +261,5 @@ pnpm run dev
 
 ## 作者
 
-Website design by Kevinowo @ TK Entertainment  
-Articles written by @Wilsonsonsonsonson (Wilson Chen)
+Original design by Kevinowo @ TK Entertainment  
+Redesign 2026 & articles by @Wilsonsonsonsonson (Wilson Chen)

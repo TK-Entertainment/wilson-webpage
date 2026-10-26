@@ -150,9 +150,6 @@ html body {
     calc(var(--v, 0) * -3px) 0 var(--glitch-a),
     calc(var(--v, 0) * 3px) 0 var(--glitch-b);
 }
-.vshape {
-  /* 形狀不再做捲動錯位，保持乾淨 */
-}
 /* next-docs-ui 在手機文章頁內建的回到頂端按鈕：網站已有 BackToTop，避免重複 */
 button[aria-label="Scroll to Top"] {
   display: none !important;
@@ -174,45 +171,6 @@ button[aria-label="Scroll to Top"] {
   }
 }
 
-/* 跑馬燈 */
-.ticker-track {
-  display: flex;
-  width: max-content;
-  animation: ticker 26s linear infinite;
-}
-@keyframes ticker {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-/* 首頁幾何構圖 */
-.bh-art .circle {
-  animation: tear 4.5s steps(1) infinite;
-}
-.bh-art .ghost {
-  opacity: 0;
-  mix-blend-mode: multiply;
-  animation: ghost 4.5s steps(1) infinite;
-}
-.bh-art .bar {
-  animation: slide-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-.bh-art .quarter {
-  transform-origin: top right;
-  animation: pop-in 0.9s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-.bh-art .tri {
-  animation: spin 9s linear infinite;
-}
-.bh-art .scan {
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(20, 20, 20, 0.18) 0 2px,
-    transparent 2px 5px
-  );
-  animation: sweep 5s linear infinite;
-}
 @keyframes tear {
   0%,
   88%,
@@ -230,43 +188,6 @@ button[aria-label="Scroll to Top"] {
   }
   93% {
     transform: translateX(6px);
-  }
-}
-@keyframes ghost {
-  0%,
-  88%,
-  95%,
-  100% {
-    opacity: 0;
-    transform: none;
-  }
-  89%,
-  93% {
-    opacity: 1;
-    transform: translate(-12px, 4px);
-  }
-}
-@keyframes sweep {
-  from {
-    top: -20%;
-  }
-  to {
-    top: 110%;
-  }
-}
-@keyframes slide-in {
-  from {
-    transform: translateX(-100%);
-  }
-}
-@keyframes pop-in {
-  from {
-    transform: scale(0);
-  }
-}
-@keyframes spin {
-  to {
-    transform: rotate(-360deg);
   }
 }
 
@@ -472,45 +393,6 @@ button[aria-label="Scroll to Top"] {
   70% {
     translate: 8px 0;
   }
-}
-.nf-slab,
-.nf-stripe,
-.nf-stripe2 {
-  transform: skewX(-12deg);
-  transform-origin: bottom;
-  animation: nf-slide 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-.nf-stripe {
-  animation-delay: 0.08s;
-}
-.nf-stripe2 {
-  animation-delay: 0.16s;
-}
-@keyframes nf-slide {
-  0% {
-    translate: 40vw 0;
-  }
-  60% {
-    translate: -12px 0;
-  }
-  70% {
-    translate: 8px 0;
-  }
-}
-.nf-link {
-  box-shadow: 5px 5px 0 hsl(var(--foreground));
-  transition:
-    transform 0.1s,
-    box-shadow 0.1s;
-}
-.nf-link:hover,
-.nf-link:focus-visible {
-  transform: translate(3px, 3px);
-  box-shadow: 2px 2px 0 hsl(var(--foreground));
-}
-.nf-link:focus-visible {
-  outline: 4px solid #d6a53c;
-  outline-offset: 3px;
 }
 
 /* ---------- 抽牌頁的穿越轉場（components/tarot/portal.ts） ---------- */
