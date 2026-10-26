@@ -5,8 +5,8 @@ description: 破壞準則、Griffith 裂隙、孔隙壓、Byerlee 定律與變�
 
 **本章重點**
 
-1. Coulomb：**σs = C + σn tanφ**；剪裂面 **θ = 45° + φ/2**（θ 是 σ1 與**法線**的夾角），所以剪裂面與 σ1 夾約 30°，共軛裂面夾 60°。
-2. Griffith：微裂隙尖端**應力集中** σ<sub>tip</sub> = σ<sub>r</sub>(1 + 2a/c)；C = 2T，單壓強度 ≈ 8T。
+1. Coulomb：$\sigma_s = C + \sigma_n\tan\varphi$；剪裂面 $\theta = 45^\circ + \varphi/2$（θ 是 σ1 與**法線**的夾角），所以剪裂面與 σ1 夾約 30°，共軛裂面夾 60°。
+2. Griffith：微裂隙尖端**應力集中** $\sigma_{\text{tip}} = \sigma_r(1 + 2a/c)$；C = 2T，單壓強度 ≈ 8T。
 3. 孔隙壓讓 Mohr 圓**往左移、半徑不變**，可以造成水力破裂。
 
 **破裂類型與主應力的方位**
@@ -23,6 +23,16 @@ description: 破壞準則、Griffith 裂隙、孔隙壓、Byerlee 定律與變�
 
 ## 四個環境因子對應力–應變曲線的影響（考古題）
 
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p10.webp" alt="溫度與應變率對應力–應變曲線的影響" width="640" height="380" />
+
+*圖：溫度與應變率對應力–應變曲線的影響。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.10。*
+
+
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p8.webp" alt="實驗變形構造：從張裂、剪裂、剪力帶到塑性流動" width="640" height="498" />
+
+*圖：實驗變形構造：從張裂、剪裂、剪力帶到塑性流動。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.8。*
+
+
 | 因子增加 | 強度 | 延展性 | 曲線變化 |
 |---|---|---|---|
 | 圍壓 P<sub>c</sub> | ↑ | ↑ | Marble：0–14 MPa 破裂後應力下降；21 MPa 以上持續塑性流動 |
@@ -34,12 +44,26 @@ description: 破壞準則、Griffith 裂隙、孔隙壓、Byerlee 定律與變�
 
 ## 破壞準則
 
-> Coulomb：σs = C + σn tanφ = C + μσn 2θ = 90° + φ θ = 45° + φ/2  
-> Griffith：σs² + 4Tσn − 4T² = 0（張為正的寫法）；C = 2T；單壓強度 = 8T  
-> Griffith–Coulomb 組合：σs = 2T + μσn（壓縮區）＋ 拋物線（張力區）  
-> von Mises：剪應力為常數（韌性區，水平線）  
-> 既有斷層再活動：μ<sub>f</sub> = σs/σn（無內聚力）；新斷層 μ<sub>f</sub> = (σs − C<sub>f</sub>)/σn  
-> 有效應力：σs = C + μ(σn − p<sub>f</sub>)，σ = σ̄ + p<sub>f</sub>
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p17.webp" alt="組合破壞包絡線與各段對應的破裂型態" width="640" height="543" />
+
+*圖：組合破壞包絡線與各段對應的破裂型態。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.17。*
+
+
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p12.webp" alt="Griffith（GC）與 Coulomb（CC）組合破壞包絡線" width="640" height="691" />
+
+*圖：Griffith（GC）與 Coulomb（CC）組合破壞包絡線。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.12。*
+
+
+$$
+\begin{aligned}
+\text{Coulomb：}\ & \sigma_s = C + \sigma_n\tan\varphi = C + \mu\sigma_n, \quad 2\theta = 90^\circ + \varphi, \quad \theta = 45^\circ + \varphi/2 \\
+\text{Griffith：}\ & \sigma_s^2 + 4T\sigma_n - 4T^2 = 0\ \text{（張為正）}; \quad C = 2T; \quad \text{單壓強度} = 8T \\
+\text{Griffith–Coulomb：}\ & \sigma_s = 2T + \mu\sigma_n\ \text{（壓縮區）}+\text{拋物線（張力區）} \\
+\text{von Mises：}\ & \text{剪應力為常數（韌性區）} \\
+\text{再活動：}\ & \mu_f = \sigma_s/\sigma_n\ \text{（既有斷層）}; \quad \mu_f = (\sigma_s - C_f)/\sigma_n\ \text{（新斷層）} \\
+\text{有效應力：}\ & \sigma_s = C + \mu(\sigma_n - p_f), \quad \sigma = \bar\sigma + p_f
+\end{aligned}
+$$
 
 - 穩定（圓在包絡線內）、臨界（相切）、不穩定（不可能達到，早就破了）。
 - Coulomb 直線只適用有限圍壓範圍：低圍壓時包絡線較陡、高圍壓時較緩 → 整體像**躺著的拋物線**。
@@ -66,12 +90,22 @@ description: 破壞準則、Griffith 裂隙、孔隙壓、Byerlee 定律與變�
 
 ## 裂隙成長
 
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p24.webp" alt="剪裂尖端長出的翼裂隙" width="640" height="1139" />
+
+*圖：剪裂尖端長出的翼裂隙。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.24。*
+
+
 - **破裂推進區（process zone）**：裂隙尖端前方微裂隙擴張、連接。
-- **應力集中**：σ<sub>tip</sub> = σ<sub>r</sub>(1 + 2a/c)；圓形 3 倍，3:1 橢圓 7 倍，1:100 約 **200 倍**。所以晶體實際強度遠低於理論值（Griffith 裂隙：先天的微裂隙、瑕疵、顆粒邊界）。大樣本比小樣本弱（含有大裂隙的機率較高）。
+- **應力集中**：$\sigma_{\text{tip}} = \sigma_r(1 + 2a/c)$；圓形 3 倍，3:1 橢圓 7 倍，1:100 約 **200 倍**。所以晶體實際強度遠低於理論值（Griffith 裂隙：先天的微裂隙、瑕疵、顆粒邊界）。大樣本比小樣本弱（含有大裂隙的機率較高）。
 - 總體受壓時，Griffith 裂隙尖端仍有張應力，裂隙轉向平行 σ1 成長 → **翼裂隙（wing cracks）**。Mode II 裂隙不會沿自己的面成長。
 - 斷層末端：翼裂隙、馬尾狀（horsetailing）、分枝（splaying）、反向剪裂。Riedel：R（R1）同向（synthetic），R′（R2）反向（antithetic）。（投影片 p.25 標示反了，以 Ch10 和教科書為準：R 同向、R′ 反向）
 
 ## 孔隙壓、Byerlee、變形帶
+
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p33.webp" alt="破裂與變形帶的運動學分類（T：厚度、D：位移）" width="640" height="510" />
+
+*圖：破裂與變形帶的運動學分類（T：厚度、D：位移）。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.33。*
+
 
 - **Byerlee 定律**（考古題）：摩擦與岩性無關（例外：富水黏土礦物伊萊石、蛭石、蒙脫石，以及蛇紋岩），可用來估計天然斷層強度。
 - 孔隙壓的效果：Δσn = φp<sub>f</sub> + (1−φ)αp<sub>f</sub>（α：Biot 參數）。提高孔隙壓的作用：快速沉積造成超壓、逆衝負載、孔隙流體熱膨脹、含水礦物脫水（伊萊石、石膏、蛋白石）、油母質轉化為烴。

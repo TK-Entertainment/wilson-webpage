@@ -6,8 +6,8 @@ description: 離子半徑與電荷、Goldschmidt 法則與分類、分配係數�
 **本章重點**
 
 1. **半徑、電荷相近**就能互相取代（Goldschmidt 規則）；半徑小、電荷高的優先進入晶格。
-2. **D = C<sub>s</sub>/C<sub>L</sub>**：D \< 1 的不相容元素在熔融時跑進熔體 → 累積在地殼。
-3. Batch melting：**C<sub>L</sub>/C₀ = 1/\[D(1−F) + F\]**，F 越小、D 越小，富集越多（最多 1/D 倍）。
+2. $D = C_s/C_L$：D \< 1 的不相容元素在熔融時跑進熔體 → 累積在地殼。
+3. Batch melting：$C_L/C_0 = 1/[D(1-F)+F]$，F 越小、D 越小，富集越多（最多 1/D 倍）。
 
 **分異之後，元素住在哪裡**
 
@@ -41,8 +41,12 @@ description: 離子半徑與電荷、Goldschmidt 法則與分類、分配係數�
 
 ## 分配係數與相容性
 
-> D = C<sub>solid</sub> / C<sub>melt</sub> D \> 1 compatible（相容） D \< 1 incompatible（不相容）  
-> Bulk D = Σ xᵢ·Dᵢ （xᵢ = 礦物 i 在岩石中的比例）
+$$
+\begin{aligned}
+D &= \frac{C_{\text{solid}}}{C_{\text{melt}}}, \qquad D > 1\ \text{相容},\quad D < 1\ \text{不相容} \\
+\bar D &= \sum_i x_i D_i \quad (x_i = \text{礦物 } i \text{ 在岩石中的比例})
+\end{aligned}
+$$
 
 - D 受三個因素控制：(1) 溫度、壓力；(2) 離子大小與電荷；(3) 主要元素組成。
 - 大小、電荷跟主要元素接近 → 相容。大部分微量元素比主要元素大 → 不相容。
@@ -74,9 +78,14 @@ description: 離子半徑與電荷、Goldschmidt 法則與分類、分配係數�
 
 假設：熔體在離開前與殘餘固體完全平衡。
 
-> C₀ = C<sub>s</sub>(1 − F) + C<sub>L</sub>·F （質量平衡）  
-> **C<sub>L</sub> / C₀ = 1 / \[ D(1 − F) + F \]** C<sub>s</sub> / C₀ = D / \[ D(1 − F) + F \]  
-> C₀ 是原始地函濃度（通常假設等於原始地函或球粒隕石）；C<sub>L</sub> 是熔體濃度（量噴發的岩漿）；F 是熔融比例；D 是 bulk 分配係數（實驗數據）
+$$
+\begin{aligned}
+C_0 &= C_s(1-F) + C_L F \quad \text{（質量平衡）} \\
+\frac{C_L}{C_0} &= \frac{1}{D(1-F)+F}, \qquad \frac{C_s}{C_0} = \frac{D}{D(1-F)+F}
+\end{aligned}
+$$
+
+C₀ 是原始地函濃度（通常假設等於原始地函或球粒隕石）；C_L 是熔體濃度（量噴發的岩漿）；F 是熔融比例；D 是 bulk 分配係數（實驗數據）
 
 - **F → 0：C<sub>L</sub>/C₀ → 1/D**（最大富集）。F → 1：C<sub>L</sub>/C₀ → 1。
 - D ≪ 1（高度不相容）時，C<sub>L</sub>/C₀ ≈ 1/F，所以**不相容元素濃度可以用來估算熔融程度 F**。
@@ -128,16 +137,28 @@ p.8 的示意圖：中洋脊擴張、隱沒帶、地函對流、加熱熔融，�
 
 #### 第一游離能 （p.22）
 
+<img src="/img/notes/geochemistry/l2-differentiation/slide-p22.webp" alt="第一游離能：同週期往右遞增、同族往上遞增" width="640" height="468" />
+
+*圖：第一游離能：同週期往右遞增、同族往上遞增。來源：Abby Ren〈地球化學〉課程投影片 L2 p.22。*
+
+
 3D 柱狀圖：同週期往右遞增，同族往上遞增；惰性氣體最高，鹼金屬最低。s 區最低，p 區較高，d、f 區在中間。
 
 #### 分配係數的一般式與兩類微量元素 （p.26, p.27）
 
-> D<sub>i</sub><sup>α−β</sup> = C<sub>i</sub><sup>α</sup> / C<sub>i</sub><sup>β</sup>
+$$
+D_i^{\alpha-\beta} = \frac{C_i^{\alpha}}{C_i^{\beta}}
+$$
 
 - **Incompatible**：在現有礦物的晶格位置中找不到合適的配位，通常是因為太大或價數太高 → 偏好進入液相，K = C<sub>xyl</sub>/C<sub>liq</sub> \< 1。
 - **Compatible**：可以取代價數、半徑相近的主要元素 → 偏好留在固相，K \> 1。
 
 #### 單斜輝石 Onuma 圖 （p.28）
+
+<img src="/img/notes/geochemistry/l2-differentiation/slide-p28.webp" alt="單斜輝石的 Onuma 圖：橢圓等值線是分配係數 D" width="640" height="408" />
+
+*圖：單斜輝石的 Onuma 圖：橢圓等值線是分配係數 D。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L2 p.28。*
+
 
 - 主要元素（＊）：Ca（~100 pm）、Mg、Fe（~72–78 pm），電荷 2。等值線 D = \>1、0.5、0.2、0.1、0.01 是圍繞 Mg/Fe 位置的橢圓。
 - **D \> 1**（最內圈）：Ni、Co、Mn、V、Cr、Sc 附近。
@@ -146,10 +167,20 @@ p.8 的示意圖：中洋脊擴張、隱沒帶、地函對流、加熱熔融，�
 
 #### Case I：為什麼 REE 要用球粒隕石標準化 （p.34）
 
+<img src="/img/notes/geochemistry/l2-differentiation/slide-p34.webp" alt="左：Orgueil 隕石 REE 原始濃度的鋸齒；右：球粒隕石標準化後" width="640" height="273" />
+
+*圖：左：Orgueil 隕石 REE 原始濃度的鋸齒；右：球粒隕石標準化後。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 7.6–7.7；Abby Ren〈地球化學〉課程投影片 L2 p.34。*
+
+
 - Orgueil 隕石的 REE 原始濃度（ppm）呈**鋸齒狀**（偶數 Z 的元素比相鄰奇數 Z 的多，就是 L1 的 Oddo–Harkins 效應）。除以球粒隕石的值之後，鋸齒消失，變成平滑曲線，才看得出地質過程造成的分異。
 - 標準化後：上部大陸地殼和平均頁岩 **LREE 富集**（La ~100×、Lu ~10×，往右下斜）；MORB 大約平坦在 ~10×，LREE 略為虧損；Orgueil 本身約 1×。
 
 #### Case II（HW1）：OIB 與 MORB 的 REE 型態 （p.35–37）
+
+<img src="/img/notes/geochemistry/l2-differentiation/slide-p35.webp" alt="MORB（紅）與 OIB（黑）的 REE 型態" width="640" height="623" />
+
+*圖：MORB（紅）與 OIB（黑）的 REE 型態。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 11.15；Abby Ren〈地球化學〉課程投影片 L2 p.35。*
+
 
 - 黑色 OIB（Hawaii、St. Helena、Tristan、Samoa、Reunion、Azores）：**強烈 LREE 富集**，La 約 100–400×，Lu 約 8–10×，斜線往右下。
 - 紅色 MORB：**LREE 虧損**（La 只有 ~3–20×，往左下彎），HREE 平坦在 ~10–20×。
