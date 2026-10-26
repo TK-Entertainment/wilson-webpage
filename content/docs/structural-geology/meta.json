@@ -1,0 +1,16 @@
+{
+  "title": "地球構造",
+  "pages": [
+    "ch01-structural-analysis",
+    "ch02-03-strain",
+    "ch04-05-stress",
+    "ch06-rheology",
+    "ch07-fracture",
+    "ch08-joints-veins",
+    "ch09-faults",
+    "ch10-paleostress",
+    "stereonet",
+    "glossary",
+    "formula-sheet"
+  ]
+}

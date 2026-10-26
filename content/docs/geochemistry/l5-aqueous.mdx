@@ -1,0 +1,236 @@
+---
+title: 第 5 講　水溶液地球化學
+description: 酸鹼、碳酸系統、鹼度、錯合與溶解沉澱
+---
+
+**本章重點**
+
+1. pH 是 master variable；解題就是 **TOTH／電荷平衡／質量平衡 ＋ K**，未知數和方程式數目一樣就能解。
+2. 碳酸系統：**pK₁ = 6.35、pK₂ = 10.33**；和大氣平衡的雨水 pH ≈ 5.6。
+3. **鹼度 = 保守陽離子 − 保守陰離子**，CO₂ 進出不會改變鹼度。
+
+**碳酸物種隨 pH 的變化（C<sub>T</sub> = 10 mM，封閉系統）**
+
+<img src="/img/notes/geochemistry/l5-aqueous/01.png" alt="碳酸物種隨 pH 的變化（C<sub>T</sub> = 10 mM，封閉系統）" width="691" height="422" />
+
+這就是 L5 p.16 的圖，這裡用 K₁、K₂ 直接算出來。曲線交叉在 pH = pK：6.35（H₂CO₃ = HCO₃⁻）、10.33（HCO₃⁻ = CO₃²⁻）。H⁺ 線碰到 HCO₃⁻ 線的地方是 CO₂ 當量點（pH ≈ 4.2）。天然水 pH 6–9 以 HCO₃⁻ 為主。
+
+**鹼度從哪裡來：電荷平衡的「缺口」**
+
+<img src="/img/notes/geochemistry/l5-aqueous/02.png" alt="鹼度從哪裡來：電荷平衡的「缺口」" width="626" height="382" />
+
+示意圖，不按比例（海水中鹼度約 2.3 meq/L，只占總電荷約 0.4%）。CO₂ 溶進來或跑出去，只會改變缺口裡 HCO₃⁻、CO₃²⁻ 的比例和 pH，缺口大小不變，所以鹼度是保守的。要改變鹼度，必須改變保守離子，例如 CaCO₃ 沉澱帶走 Ca²⁺。
+
+## 水的特殊性質
+
+液體和固體中熱容最高（僅次於氨）、汽化潛熱最高、表面張力最高、密度最大值在 4 °C、冰比水輕、溶解力最強。
+
+## 四類反應
+
+| 類型 | 例子 |
+|---|---|
+| Acid–base | H₂CO₃ = H⁺ + HCO₃⁻ |
+| Dissolution / precipitation | KAlSi₃O₈ + H⁺ + 7H₂O = Al(OH)₃ + K⁺ + 3H₄SiO₄ |
+| Complexation | Hg²⁺ + H₂O = Hg(OH)⁺ + H⁺ |
+| Adsorption / desorption | ≡S + Mn²⁺ = ≡S–Mn |
+
+- **pH 是 master variable**（主控變數），因為 H⁺／OH⁻ 幾乎參與所有反應。Brønsted 定義：酸是質子提供者，鹼是質子接受者；兩者皆可的物質稱為 amphoteric（兩性）。
+
+## 解水溶液問題的三個方程式 + K
+
+1. **Proton balance（TOTH）**：H⁺ 和 H₂O 一定是 component，OH⁻ 不是（OH⁻ = H₂O − H⁺）。含有 component H⁺ 的物種對 TOTH 貢獻 +，扣掉 H⁺ 形成的物種貢獻 −。純水：TOTH = \[H⁺\] − \[OH⁻\]。
+2. **Charge balance**：Σ陽離子當量 = Σ陰離子當量，永遠成立。
+3. **Mass conservation**：酸鹼反應不改變某物質的總濃度（但沉澱、氧化還原、吸附會改變，所以通常寫元素的總量）。
+
+> 以 CO₂ 為 component：H₂CO₃ = H₂O + CO₂；HCO₃⁻ = H₂O + CO₂ − H⁺；CO₃²⁻ = H₂O + CO₂ − 2H⁺  
+> TOTH = \[H⁺\] − \[HCO₃⁻\] − 2\[CO₃²⁻\] − \[OH⁻\]
+
+<details>
+<summary>【例題】Na₂CO₃ 溶液（封閉系統、完全解離）的 TOTH、電荷平衡、碳守恆</summary>
+
+Components 選 Na⁺、CO₃²⁻、H⁺、H₂O。配方中沒有加任何 H⁺，所以：
+
+> TOTH = \[H⁺\] + \[HCO₃⁻\] + 2\[H₂CO₃\] − \[OH⁻\] = 0  
+> Charge: \[Na⁺\] + \[H⁺\] = \[HCO₃⁻\] + 2\[CO₃²⁻\] + \[OH⁻\]  
+> Mass: C<sub>T</sub> = \[H₂CO₃\] + \[HCO₃⁻\] + \[CO₃²⁻\] = \[Na⁺\]/2
+
+「還能寫什麼方程式？」→ 三個平衡常數式 K₁、K₂、K<sub>w</sub>。共 6 個未知數（H⁺、OH⁻、H₂CO₃、HCO₃⁻、CO₃²⁻、Na⁺），6 個方程式，所以可以解。
+
+</details>
+
+## 碳酸系統
+
+> CO₂(g) ⇌ CO₂(aq)；CO₂(aq) + H₂O ⇌ H₂CO₃ K<sub>CO₂</sub> = a<sub>H₂CO₃</sub>/P<sub>CO₂</sub> = 10⁻¹·⁴⁷  
+> H₂CO₃ ⇌ H⁺ + HCO₃⁻ K₁ = 10⁻⁶·³⁵  
+> HCO₃⁻ ⇌ H⁺ + CO₃²⁻ K₂ = 10⁻¹⁰·³³  
+> H₂O ⇌ H⁺ + OH⁻ K<sub>w</sub> = 10⁻¹⁴  
+> 25 °C 的值（White 教科書）。考試若有給數值，以考卷為準。
+
+<details>
+<summary>【例題 I】與大氣平衡的純水 pH（P<sub>CO₂</sub> = 3.7×10⁻⁴）</summary>
+
+1. \[H₂CO₃\] = K<sub>CO₂</sub>·P<sub>CO₂</sub> = 10⁻¹·⁴⁷ × 10⁻³·⁴³ = 10⁻⁴·⁹⁰
+2. 電荷平衡 \[H⁺\] = \[HCO₃⁻\] + 2\[CO₃²⁻\] + \[OH⁻\]；在酸性條件下 CO₃²⁻ 和 OH⁻ 可以忽略 → \[H⁺\] ≈ \[HCO₃⁻\]
+3. K₁ = \[H⁺\]\[HCO₃⁻\]/\[H₂CO₃\] → \[H⁺\]² = K₁\[H₂CO₃\] = 10⁻⁶·³⁵⁻⁴·⁹⁰ = 10⁻¹¹·²⁵
+4. **pH ≈ 5.6**（所以「酸雨」的定義是 pH \< 5.6）
+
+</details>
+
+<details>
+<summary>【例題 II】封閉系統 C<sub>T</sub> = 10 mM：log a–pH 圖怎麼讀</summary>
+
+- pH \< 6.35：H₂CO₃ 為主；6.35–10.33：HCO₃⁻ 為主；\> 10.33：CO₃²⁻ 為主。
+- 交叉點：**pH = pK₁ = 6.35**（\[H₂CO₃\] = \[HCO₃⁻\]），**pH = pK₂ = 10.33**（\[HCO₃⁻\] = \[CO₃²⁻\]）。
+- CO₂ equivalence point（純 H₂CO₃ 溶液）：\[H⁺\] = \[HCO₃⁻\] → \[H⁺\]² = K₁ × 0.01 → **pH ≈ 4.2**（圖上的 EP）。
+- 天然水常見 pH 範圍約 6–9，HCO₃⁻ 為主。
+
+</details>
+
+## 當量點（Equivalence points）
+
+| 名稱 | 條件 | 等於什麼溶液 | 約略 pH |
+|---|---|---|---|
+| CO₂ EP | \[H⁺\] = \[HCO₃⁻\] | 純 H₂CO₃（CO₂ 溶在水中） | ~4–5 |
+| Bicarbonate EP | \[H₂CO₃\] = \[CO₃²⁻\] | 純 NaHCO₃ | ~8.3 = (pK₁+pK₂)/2 |
+| Carbonate EP | \[HCO₃⁻\] = \[OH⁻\] | 純 Na₂CO₃ | ~10–11 |
+
+## 鹼度（Alkalinity）
+
+- 定義：溶液**中和酸的能力**，等於可被強酸滴定的鹼的總當量。數學上，Alk = 以 CO₂ EP 的主要物種為 component 時的 **−TOTH**。分析上，Alk = 把 pH 滴定到 CO₂ EP 所需的酸量。
+- 當量 = 莫耳數 × 電荷：1 當量 CO₃²⁻ = 0.5 mol；1 當量 Cl⁻ = 1 mol。
+
+> **Carbonate Alk = \[HCO₃⁻\] + 2\[CO₃²⁻\] + \[OH⁻\] − \[H⁺\]**  
+> Alk = Σconservative cations − Σconservative anions（當量）  
+> = −Σnon-conservative cations + Σnon-conservative anions
+
+- **Conservative ions**（不受 pH、T、P 影響，在天然水 pH 範圍內完全解離）：Na⁺、K⁺、Ca²⁺、Mg²⁺、Cl⁻、SO₄²⁻、NO₃⁻。
+- **Non-conservative**：H⁺、OH⁻、碳酸物種、B(OH)₄⁻、H₃SiO₄⁻、HS⁻、NH₄OH、磷酸、有機酸根。除了 H⁺、NH₄⁺ 之外幾乎都是陰離子。
+- 結論：**總鹼度是 conservative 的**，即使個別物種濃度不是（例如 CO₂ 脫氣不改變鹼度）。
+- Na₂CO₃ 用 HCl 滴定：滴定前 Alk = \[Na⁺\]（TOTH = −\[Na⁺\]）；滴定中電荷平衡加入 \[Cl⁻\]；**終點時 \[Na⁺\] = \[Cl⁻\]**。假設：理想行為、封閉系統、不稀釋、完全解離。
+- **Tableau 法**（Morel & Hering）：component 寫在上方、物種寫在左邊。在 CO₂ EP 選 H₄SiO₄、B(OH)₃、H₂S、H₂PO₄⁻、H₂CO₃（用 CO₂，因為 H₂CO₃ 含有 H₂O，不獨立）。
+
+## 緩衝強度（Buffer intensity）
+
+> β = dC<sub>B</sub>/dpH = −dC<sub>A</sub>/dpH  
+> 開放系統（固定 P<sub>CO₂</sub>）：β = 2.303(\[H⁺\] + \[OH⁻\] + \[HCO₃⁻\] + 4\[CO₃²⁻\]) （補充）
+
+- β 越大，加酸或加鹼時 pH 變化越小。封閉系統中 β 在 **pH = pK₁、pK₂** 時最大，在當量點時最小。
+
+## 錯合（Complexation）
+
+- 中心離子（通常是金屬）＋ 配位基（ligand）。錯合會改變離子的溶解度和反應性，有時大幅**增加溶解度**。
+- 水合錯合物可以當弱酸：Fe(H₂O)₆³⁺ ⇌ Fe(H₂O)₅OH²⁺ + H⁺（中心正電荷排斥 H）。
+
+<details>
+<summary>【例題】Pb²⁺ + H₂O = PbOH⁺ + H⁺，K = 10⁻⁷·⁷，pH 6–9 的 PbOH⁺ 分率</summary>
+
+α<sub>PbOH⁺</sub> = \[PbOH⁺\]/(Pb²⁺ + PbOH⁺) = K / (K + \[H⁺\])（總 Pb 濃度 10⁻⁸ M 不影響分率）
+
+| pH | 6 | 7 | 7.7 | 8 | 9 |
+|---|---|---|---|---|---|
+| α | 0.02 | 0.17 | 0.50 | 0.67 | 0.95 |
+
+規律：**pH = pK（7.7）時剛好各占一半**。
+
+</details>
+
+## 溶解與沉澱
+
+- **Ionic potential（Z/r）與溶解度**： → 周期表兩側的元素易溶，中間的元素難溶（但其他溶質可以提高溶解度）。
+  - 低 IP（Na⁺、K⁺、Ca²⁺）：以水合陽離子存在，**易溶**
+  - 中間 IP（約 4–10，例如 Al³⁺、Fe³⁺、Ti⁴⁺、Zr⁴⁺）：形成氫氧化物，**最難溶**
+  - 高 IP（C、N、S、P 等）：跟 O 共價鍵結形成含氧陰離子（CO₃²⁻、NO₃⁻、SO₄²⁻），**易溶**
+- **TDS**：所有溶質的乾重。海水密度約 1.034 kg/L → TDS ≈ 34–35 g/L。TDS 會影響密度、溶解度、可用性。控制因素：降水與蒸發、風化、溫度、pH、氣體溶解度、生物作用。
+- Solubility 是平衡時能溶解的量；saturation 是最大溶質濃度；單位有 molarity（mol/L）、molality（mol/kg）、ppm（mg/kg）。
+- **Congruent** 溶解：全部溶解，例如 NaCl、calcite。**Incongruent** 溶解：留下新的固體，例如 K-長石 → 高嶺石。
+- 三類溶質：離子固體解離（NaCl）；共價物質直接溶解（葡萄糖）；和水反應的物質（CO₂ → HCO₃⁻；MgSiO₃ + H₂O → Mg²⁺ + SiO₂ + 2OH⁻）。
+
+> NaCl：x = \[Na⁺\] = \[Cl⁻\]，K<sub>sp</sub> = x² → x = √K<sub>sp</sub>  
+> CaF₂：x = \[Ca²⁺\]，\[F⁻\] = 2x，K<sub>sp</sub> = x(2x)² = 4x³ → x = (K<sub>sp</sub>/4)^(1/3)
+
+<details>
+<summary>【例題】純水中螢石的溶解度（K<sub>sp</sub> = 3.9×10⁻¹¹）</summary>
+
+x = (3.9×10⁻¹¹ / 4)^(1/3) = **2.1×10⁻⁴ M**。跟前面 \[F⁻\] = 0.1 mM 時 \[Ca²⁺\] = 3.9 mM 比較：F⁻ 少，Ca 可以溶得更多。
+
+</details>
+
+### 礦物穩定圖（Mineral stability diagram）
+
+> 2KAlSi₃O₈ + 2H⁺ + 9H₂O = Al₂Si₂O₅(OH)₄ + 2K⁺ + 4H₄SiO₄  
+> log K = 2·log(a<sub>K⁺</sub>/a<sub>H⁺</sub>) + 4·log a<sub>H₄SiO₄</sub>  
+> → log(a<sub>K⁺</sub>/a<sub>H⁺</sub>) = ½ log K − 2·log a<sub>H₄SiO₄</sub> （斜率 −2 的直線）
+
+高 a<sub>K⁺</sub>/a<sub>H⁺</sub>、高矽 → K-長石穩定；低 → 高嶺石，再低 → gibbsite。強烈風化（多雨、低 pH）會往 kaolinite／gibbsite 走。（gibbsite 部分是補充）
+
+## 投影片圖表重點
+
+#### 強酸、弱酸、兩性 （p.5）
+
+> HCl ⇌ H⁺ + Cl⁻ K<sub>HCl</sub> = 10³（強酸，幾乎完全解離）  
+> H₂S ⇌ H⁺ + HS⁻ K<sub>H₂S</sub> = 10⁻⁷·¹（弱酸）  
+> 兩性：Al(OH)₂⁺ + H⁺ ⇌ Al(OH)²⁺ + H₂O；Al(OH)₂⁺ + OH⁻ ⇌ Al(OH)₃⁰ + H₂O
+
+#### Component 的選擇 （p.8）
+
+H₂CO₃ ⇌ H⁺ + HCO₃⁻：選 CO₂ 為 component 時，HCO₃⁻ = H₂O + CO₂ − H⁺（對 TOTH 貢獻 −1）；改選 CO₃²⁻ 時，HCO₃⁻ = CO₃²⁻ + H⁺（貢獻 +1）。同一個溶液，選的 component 不同，TOTH 的寫法就不同。
+
+#### 質量平衡要寫元素的總量 （p.10）
+
+> Pb²⁺ + S²⁻ ⇌ PbS<sub>aq</sub> → ΣS = \[H₂S\] + \[HS⁻\] + \[S²⁻\] + \[PbS<sub>aq</sub>\] + …
+
+#### 穩定常數（逐步與累積） （p.30）
+
+> Zn²⁺ + OH⁻ ⇌ ZnOH⁺ β₁ = K₁ = a<sub>ZnOH⁺</sub>/(a<sub>Zn²⁺</sub>a<sub>OH⁻</sub>)  
+> ZnOH⁺ + OH⁻ ⇌ Zn(OH)₂ K₂ = a<sub>Zn(OH)₂</sub>/(a<sub>ZnOH⁺</sub>a<sub>OH⁻</sub>)  
+> Zn²⁺ + 2OH⁻ ⇌ Zn(OH)₂ **β₂ = a<sub>Zn(OH)₂</sub>/(a<sub>Zn²⁺</sub>a²<sub>OH⁻</sub>) = K₁K₂**
+
+#### Fe³⁺ 水合錯合物的逐步水解 （p.31）
+
+> Fe(H₂O)₆³⁺ ⇌ Fe(H₂O)₅(OH)²⁺ + H⁺ ⇌ Fe(H₂O)₄(OH)₂⁺ + 2H⁺ ⇌ Fe(H₂O)₃(OH)₃⁰ + 3H⁺ ⇌ Fe(H₂O)₂(OH)₄⁻ + 4H⁺
+
+#### 離子勢表（Table 6.3，Z/r） （p.34）
+
+| 分類 | 離子（IP） | 水中行為 |
+|---|---|---|
+| **Lo**（\< ~3） | Cs⁺ 0.60、Rb⁺ 0.68、K⁺ 0.75、Na⁺ 1.0、Li⁺ 1.5、Ba²⁺ 1.5、Sr²⁺ 1.8、Ca²⁺ 2.0、Mn²⁺ 2.5、La³⁺ 2.6、Fe²⁺ 2.7、Co²⁺ 2.8、Mg²⁺ 3.0 | 水合陽離子，易溶 |
+| **Med**（~3–10） | Y³⁺ 3.3、Lu³⁺ 3.5、Sc³⁺ 3.7、Th⁴⁺ 3.9、Ce⁴⁺ 4.3、Fe³⁺ 4.7、Zr⁴⁺ 5.1、Be²⁺ 5.7、Al³⁺ 5.9、Ti⁴⁺ 5.9、Mn⁴⁺ 6.7、Nb⁵⁺ 7.5 | 水解成氫氧化物，**最難溶** |
+| **Hi**（\> ~9） | Si⁴⁺ 9.5、Mo⁶⁺ 9.7、B³⁺ 13、P⁵⁺ 14、S⁶⁺ 20、C⁴⁺ 25、N⁵⁺ 38 | 含氧陰離子，易溶 |
+
+#### 周期表的溶解度型態 （p.35, p.36）
+
+海水組成的 3D 圖（White Fig 15.5，log μM）：周期表左右兩側（鹼金屬、鹼土、鹵素、含氧陰離子形成元素）濃度最高，中間的過渡金屬最低，呈 U 形。p.36 把元素分成 **A-metals**（鹼金屬、鹼土、REE 等）、**transition metals**、**B metals**（Cu、Zn、Ag、Cd、Hg、Pb 等）、**ligand formers**（B、C、N、O、F、P、S、Cl、As、Se、Br、I 等）。
+
+#### TDS 分類 （p.40）
+
+| 水的類型 | TDS (mg/L) | 例子 |
+|---|---|---|
+| Fresh | \< 1,000 | 雨水、河水、大部分湖泊、飲用水 |
+| Brackish | 1,000–10,000 | 河口、潟湖、近岸含水層、部分內陸海 |
+| Saline | 10,000–100,000 | 海洋（~35,000）、部分內陸海、部分地熱水 |
+| Brine | \> 100,000 | 淺潮間盆地、地熱水 |
+
+#### 三類固體的溶解度定義 （p.47–49）
+
+> 共價固體（葡萄糖）：C₆H₁₂O₆(s) ⇌ C₆H₁₂O₆(aq) K = \[C₆H₁₂O₆\] → **x = K**  
+> 頑輝石（**congruent**）：MgSiO₃ + 3H₂O ⇌ Mg²⁺ + H₄SiO₄ + 2OH⁻  
+> x = \[Mg²⁺\] = \[SiO₂\] = ½\[OH⁻\]，K = x·x·(2x)² = 4x⁴ → **x = (K/4)^(1/4)**  
+> K-長石（**incongruent**）：2KAlSi₃O₈ + 2H⁺ + H₂O ⇌ Al₂Si₂O₅(OH)₄ + 2K⁺ + 4SiO₂(aq)  
+> x = \[K⁺\] = ½\[SiO₂(aq)\] = −Δ\[H⁺\]（消耗的 H⁺）
+
+incongruent 溶解要用一個容易對應回原物質的溶質（這裡是 K⁺）來定義溶解度：1 mol K-長石產生 1 mol K⁺。
+
+#### 礦物穩定圖的直線 （p.51）
+
+> log(\[K⁺\]/\[H⁺\]) = −2·log\[H₄SiO₄\] + ½·log K<sub>eq</sub>  
+> y = log(\[K⁺\]/\[H⁺\])，x = log\[H₄SiO₄\]，**斜率 m = −2**，截距 b = ½ log K<sub>eq</sub>（25 °C、1 atm）  
+> 非晶質矽的上限：SiO₂(s, amorph) + 2H₂O ⇌ H₄SiO₄(aq)，K<sub>eq</sub> = a<sub>H₄SiO₄</sub> = **10⁻²·⁷⁴**（25 °C）
+
+直線上方（高 K⁺/H⁺）是 K-長石穩定區，下方是高嶺石穩定區。log\[H₄SiO₄\] 不能超過 −2.74，否則非晶質矽會沉澱。
+
+<details>
+<summary>【練習 補充】某地下水 pH 6、\[K⁺\] = 10⁻⁴ M，log\[H₄SiO₄\] = −4，若 ½ log K<sub>eq</sub> ≈ −2，哪個礦物穩定？</summary>
+
+y = log(10⁻⁴/10⁻⁶) = 2；直線在 x = −4 時 y = −2(−4) − 2 = 6。實際 y = 2 \< 6，落在直線**下方 → kaolinite 穩定**，K-長石會被風化成高嶺石。（K<sub>eq</sub> 的數值是假設的，考試時用題目給的值。）
+
+</details>

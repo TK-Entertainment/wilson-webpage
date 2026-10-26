@@ -1,0 +1,165 @@
+---
+title: 第 4 講　熱力學 II 與動力學
+description: 化學勢、平衡常數、地質溫度壓力計、反應速率
+---
+
+**本章重點**
+
+1. **ΔG° = −RT ln K**；Q \< K 往右，Q \> K 往左。
+2. ln K 對 1/T 的斜率 = **−ΔH°/R** → 溫度計要 ΔH 大、ΔV 小；壓力計要 ΔV 大。
+3. 熱力學決定**方向**，動力學決定**速度**；一階反應 **t½ = ln2/k**。
+
+**熱力學 vs 動力學：同一張圖上的兩個問題**
+
+<img src="/img/notes/geochemistry/l4-thermodynamics-2/01.png" alt="熱力學 vs 動力學：同一張圖上的兩個問題" width="719" height="330" />
+
+熱力學只看起點和終點的高低差（ΔG），動力學看中間的山有多高（Eₐ）。溫度越高，越多分子翻得過山，所以低溫系統常常不平衡，地質溫度計也才能「凍結」形成時的溫度。
+
+**一階反應：CO₂(aq) 水合（k\* = 0.014 s⁻¹）**
+
+<img src="/img/notes/geochemistry/l4-thermodynamics-2/02.png" alt="一階反應：CO₂(aq) 水合（k = 0.014 s⁻¹）" width="732" height="390" />
+
+\[CO₂\]/\[CO₂\]₀ = e<sup>−kt</sup>。每過一個半衰期（≈ 50 s）就剩一半：50 s 剩 50%、99 s 剩 25%、149 s 剩 12.5%。
+
+## 化學勢 μ
+
+> μᵢ = (∂G/∂nᵢ)<sub>T,P,nⱼ</sub> （partial molar Gibbs free energy）  
+> dG = VdP − SdT + Σ μᵢ dnᵢ
+
+- 性質 I：平衡時，**每個成分在所有相中的 μ 相等**（冰水共存：μ<sub>H₂O,冰</sub> = μ<sub>H₂O,水</sub>）。
+- 性質 II：自發過程中，成分會在各相間重新分配，使化學勢最小化。
+
+## 溶液
+
+> 理想溶液：μᵢ = μᵢ° + RT ln Xᵢ  
+> 真實溶液：μᵢ = μᵢ° + RT ln aᵢ，aᵢ = λᵢXᵢ（λ 為活度係數）
+
+- **Ideal solution**：不同分子之間的作用力和同種分子之間一樣。
+- **Fugacity（逸度）**：真實氣體從溶液「逃逸」的傾向；**activity（活度）**：有效濃度。理想溶液中 a = X。
+
+## 平衡常數
+
+> aA + bB ⇌ cC + dD  
+> ΔG<sub>r</sub> = Σνᵢμᵢ = ΔG°<sub>r</sub> + RT ln Q 平衡時 ΔG<sub>r</sub> = 0  
+> **K = Πaᵢ^νᵢ = (a<sub>C</sub>ᶜ a<sub>D</sub>ᵈ)/(a<sub>A</sub>ᵃ a<sub>B</sub>ᵇ)** **ΔG°<sub>r</sub> = −RT ln K**
+
+- Q \< K → 往右（產物方向）進行；Q \> K → 往左。（補充）
+- **Law of mass action**：改變某物種的濃度，反應會往減少這個改變的方向移動（例如加 H⁺ 到碳酸溶液，平衡往 H₂CO₃ 移動）。
+- **Le Chatelier**：系統受擾動時，會反應來減少擾動的影響（例如加壓時冰 → 水，因為水的體積較小）。
+- 用濃度代替活度的三種「常數」：distribution coefficient K<sub>D</sub> = ΠXᵢ^νᵢ；apparent K<sup>app</sup> = Πmᵢ^νᵢ；solubility product K<sub>sp</sub>（固體活度 = 1，例如 K<sub>sp</sub> = a<sub>Na⁺</sub>·a<sub>Cl⁻</sub>）。
+
+<details>
+<summary>【例題】螢石 CaF₂ K<sub>sp</sub> = 3.9×10⁻¹¹，\[F⁻\] = 0.1 mM，求 \[Ca²⁺\]</summary>
+
+K<sub>sp</sub> = \[Ca²⁺\]\[F⁻\]² → \[Ca²⁺\] = 3.9×10⁻¹¹ / (10⁻⁴)² = 3.9×10⁻¹¹ / 10⁻⁸ = **3.9×10⁻³ M（3.9 mM）**
+
+陷阱：\[F⁻\] 要**平方**；0.1 mM = 10⁻⁴ M。
+
+</details>
+
+## K 的溫度、壓力依存性（van't Hoff）
+
+> ΔG° = ΔH° − TΔS° = −RT ln K  
+> **ln K = −ΔH°/(RT) + ΔS°/R** （形式為 ln K = a/T + b）  
+> (∂ln K/∂P)<sub>T</sub> = −ΔV°/(RT) （補充）
+
+- ln K 對 1/T 作圖：**斜率 = −ΔH°/R**，**截距 = ΔS°/R**。
+
+## 地質溫度計與壓力計
+
+- 兩個看似矛盾的假設：(1) 礦物組合處於平衡；(2) 抬升到地表的過程中**沒有重新平衡**。這兩者能同時成立，是因為反應速率隨溫度**指數**下降，降溫後就「凍結」了。
+- **好的溫度計**：K 對 T 很敏感、對 P 不敏感 → **ΔH 大、ΔV 小**。橄欖石–輝石 Fe–Mg 交換因為 ΔH 太小而被放棄。
+- **好的壓力計**：**ΔV 大**（一般要 \> 2 cm³/mol）。rhodonite → pyroxmangite 的 ΔV 只有 0.2 cm³/mol，不能當壓力計。
+
+| 類型 | 說明 | 例子 |
+|---|---|---|
+| I. Univariant reaction | 相的組成固定；ΔV 常常很大 → 好的壓力計；但只有一相時，只能給 P–T 範圍 | 石墨–鑽石、SiO₂ 同質異形體、Al₂SiO₅、calcite–aragonite |
+| Ia. Displaced equilibria | 固溶體使平衡線「移動」，等值線（isopleth）可以讀出 P、T | 與 forsterite 共存的 opx 中的 Al 含量；garnet–plagioclase–Al₂SiO₅–quartz（GASP） |
+| II. Exchange reactions | 兩個物種在兩相之間交換；ΔV 小 → 溫度計 | garnet–biotite Fe–Mg、olivine–liquid Fe–Mg |
+| Solvus | 兩相互溶度隨 T 改變 | calcite–dolomite |
+
+<details>
+<summary>【例題】Olivine–liquid Fe–Mg 交換，求 1200 °C 的 K<sub>D</sub></summary>
+
+log(X<sub>MgO</sub><sup>ol</sup>/X<sub>MgO</sub><sup>liq</sup>) = 3740/T − 1.87；log(X<sub>FeO</sub><sup>ol</sup>/X<sub>FeO</sub><sup>liq</sup>) = 3911/T − 2.50
+
+對反應 MgO<sub>ol</sub> + FeO<sub>liq</sub> ⇌ MgO<sub>liq</sub> + FeO<sub>ol</sub>：log K<sub>D</sub> = (3911 − 3740)/T + (−2.50 + 1.87) = 171/T − 0.63
+
+T = 1473 K：log K<sub>D</sub> = 0.116 − 0.63 = −0.514 → **K<sub>D</sub> ≈ 0.31**（就是著名的橄欖石–熔體 K<sub>D</sub> ≈ 0.3）。171/T 很小，表示 K<sub>D</sub> 對溫度不太敏感。
+
+</details>
+
+## 動力學（Kinetics）
+
+- 熱力學告訴你**終點**（平衡狀態）；動力學告訴你**路徑與速度**。
+- 低溫系統常常不平衡：地表的鑽石、生物殼的 aragonite、有機物與 O₂ 共存、海水對 calcite 過飽和。高溫（岩漿）較接近平衡，但仍有例外：火山玻璃、環帶結晶。
+- 控制速率的因素：**活化能障壁 E<sub>B</sub>**（只有能量 \> E<sub>B</sub> 的碰撞才會反應）、**組成**（碰撞頻率 ∝ 濃度）、**溫度**。
+
+> ℜ = −(1/a)·d\[A\]/dt = (1/c)·d\[C\]/dt  
+> 一般式：ℜ = k·a<sub>A</sub>^nA·a<sub>B</sub>^nB… 基本反應：ℜ = k·a<sub>A</sub>ᵃ·a<sub>B</sub>ᵇ  
+> 一階：−d\[A\]/dt = k\[A\] → **\[A\] = \[A\]₀·e^(−kt)**，**t<sub>1/2</sub> = ln2 / k**  
+> Arrhenius：k = A·e^(−E<sub>a</sub>/RT) （補充（投影片只有 log k–T 圖））
+
+<details>
+<summary>【例題】CO₂(aq) 水合：k\* = 0.014 s⁻¹，畫出 \[CO₂\] 對時間</summary>
+
+\[CO₂\] = \[CO₂\]₀·e^(−0.014t)，是指數衰減曲線。半衰期 t<sub>1/2</sub> = 0.693/0.014 ≈ **50 s**；約 5 個半衰期（~4 分鐘）後剩下約 3%。
+
+</details>
+
+- **Steady state ≠ equilibrium**：平衡一定是穩態，但穩態不一定是平衡。穩態是平衡的**必要條件，但不是充分條件**（例如流入 = 流出的湖）。
+- 平衡時正反應速率 = 逆反應速率 → k<sub>f</sub>/k<sub>b</sub> = K。
+
+## 投影片圖表重點
+
+#### 化學勢的完整式子 （p.5, p.6）
+
+> G = Σ nᵢ(∂G/∂nᵢ) = **Σ nᵢμᵢ**  
+> 兩相平衡：dG = μᵢ<sup>α</sup>dnᵢ<sup>α</sup> + μᵢ<sup>β</sup>dnᵢ<sup>β</sup> = 0，且 −dnᵢ<sup>α</sup> = dnᵢ<sup>β</sup> → **μᵢ<sup>α</sup> = μᵢ<sup>β</sup>**
+
+（投影片手寫註解：冰水系統中，冰融化成水，H₂O 在固相減少的量 = 在液相增加的量。）
+
+#### 理想溶液與真實溶液的推導 （p.9, p.10）
+
+> (∂G/∂P)<sub>T</sub> = V (∂μ/∂P)<sub>T</sub> = v̄（莫耳體積） 理想氣體：(∂μ/∂P)<sub>T</sub> = RT/P  
+> 積分：μ<sup>P</sup> − μ<sup>P°</sup> = RT ln(P/P°) → **μ<sub>i,ideal</sub> = μᵢ° + RT ln Xᵢ**  
+> 真實：μᵢ = μᵢ° + RT ln(fᵢ/fᵢ°) **aᵢ = fᵢ/fᵢ°** μᵢ = μᵢ° + RT ln aᵢ
+
+p.10 的圖：理想情況下，液相中 A:B = 1:2，氣相中的比例也是 1:2。
+
+#### Le Chatelier 的定量式 （p.14）
+
+> (∂ΔG<sub>r</sub>/∂P)<sub>T</sub> = ΔV (∂ΔG/∂T)<sub>P</sub> = −ΔS
+
+冰 → 水：ΔV \< 0，所以加壓使 ΔG 變小，有利於融化（冰的熔點隨壓力增加而下降）。
+
+#### van't Hoff 圖 （p.17）
+
+Barite 溶解常數 log K 對 1/T（×10³）：曲線在不同壓力（1 bar、500 bar、1000 bar）下都呈弧形；在某一點畫切線，**斜率 = −ΔH/R**，**截距（1/T = 0 處）= ΔS/R**。壓力越高，log K 越大。
+
+#### Al₂SiO₅ 相圖（Holdaway 1971） （p.23）
+
+Ky（藍晶石）在高 P、低 T；And（紅柱石）在低 P；Sil（矽線石）在高 T。**三相點約 500 °C、380 MPa**。Ky–Sil 線斜率為正、陡；And–Sil 線斜率為負。
+
+#### Displaced equilibria 圖 （p.25）
+
+CMAS 系統（Gasparik 1984）：與 forsterite 和一個含 Al 相（spinel、anorthite 或 garnet）共存的 opx 中 Al 含量（wt%，1–18）的等值線。不同的含 Al 相各有一個穩定區（Fo + Sp、Fo + An、Fo + Ga），各區的等值線方向不同，所以量 opx 的 Al 含量可以估算 P–T。
+
+#### 反應速率的定義與一般式 （p.31, p.34）
+
+> aA + bB → cC + dD  
+> ℜ ≡ −(1/a)d\[A\]/dt = −(1/b)d\[B\]/dt = (1/c)d\[C\]/dt = (1/d)d\[D\]/dt  
+> 一般式：ℜ = k·a<sub>A</sub><sup>nA</sup>·a<sub>B</sub><sup>nB</sup>·a<sub>C</sub><sup>nC</sup>·a<sub>D</sub><sup>nD</sup> 基本反應：ℜ = k·a<sub>A</sub><sup>a</sup>·a<sub>B</sub><sup>b</sup>  
+> CO₂ + H₂O → H₂CO₃：−d\[CO₂\]/dt = k\[CO₂\]\[H₂O\] → H₂O 大量、濃度幾乎不變 → **−d\[CO₂\]/dt = k\*\[CO₂\]**（擬一階）
+
+#### 速率的控制因素 （p.32, p.33, p.35）
+
+- **能量障壁**：N + O₂ → NO + O，只有碰撞能量 E \> E<sub>B</sub> 時才會反應；E \< E<sub>B</sub> 時會彈開。
+- **組成（碰撞截面）**：分子在時間 t 內掃過半徑 r = r<sub>N</sub> + r<sub>O₂</sub>、長度 v·t 的圓柱，圓柱內的分子才會被撞到 → 碰撞頻率 ∝ 濃度。
+- **溫度**：log k 隨 T 上升而增加（300 K 到 500 K 之間 log k 從約 5 升到 7.5）。
+
+#### 動力學與熱力學的關係 （p.38）
+
+> A ⇌ B k₊\[A\]<sub>eq</sub> = k₋\[B\]<sub>eq</sub> → **k₊/k₋ = \[B\]<sub>eq</sub>/\[A\]<sub>eq</sub> = K<sup>app</sup>**
+
+這對整體反應和基本反應都成立。p.39 總結：元素在宇宙和地球中的豐度與分異；熱力學預測反應方向和平衡狀態；動力學描述反應速度。
