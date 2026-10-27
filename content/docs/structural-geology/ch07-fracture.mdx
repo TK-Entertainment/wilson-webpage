@@ -3,111 +3,179 @@ title: 第 7 章　破裂與脆性變形
 description: 破壞準則、Griffith 裂隙、孔隙壓、Byerlee 定律與變形帶
 ---
 
-**本章重點**
+**這章在回答**：岩石在什麼應力下會破？破裂面會朝哪個方向？為什麼岩石比理論上弱很多？
+
+**考前 30 秒**
 
 1. Coulomb：$\sigma_s = C + \sigma_n\tan\varphi$；剪裂面 $\theta = 45^\circ + \varphi/2$（θ 是 σ1 與**法線**的夾角），所以剪裂面與 σ1 夾約 30°，共軛裂面夾 60°。
 2. Griffith：微裂隙尖端**應力集中** $\sigma_{\text{tip}} = \sigma_r(1 + 2a/c)$；C = 2T，單壓強度 ≈ 8T。
 3. 孔隙壓讓 Mohr 圓**往左移、半徑不變**，可以造成水力破裂。
 
-**破裂類型與主應力的方位**
+**主線**：破裂有哪幾種、和主應力的方位關係 → 環境（圍壓、孔隙壓、溫度、應變率）決定岩石會脆還是韌 → 破壞準則：在 Mohr 圖上，圓碰到包絡線就破 → 為什麼剪裂不在 45°？→ 為什麼實際強度遠低於理論：Griffith 微裂隙的應力集中 → 孔隙壓、Byerlee 摩擦 → 高孔隙岩石裡的變形帶。
+
+★ = 考試重點。
+
+## 1. 破裂的種類與方位 ★
 
 <img src="/img/notes/structural-geology/ch07-fracture/01.png" alt="破裂類型與主應力的方位" width="626" height="420" />
 
-張裂（節理、脈、裂縫）⊥ σ3、平行 σ1；縫合線（Mode IV，壓溶、閉合）⊥ σ1；共軛剪裂交線平行 σ2，σ1 平分銳角（約 60°）。
+| 破裂 | 模式 | 方位 |
+|---|---|---|
+| 張裂：節理（窄）、裂縫（寬）、脈（充填礦物） | Mode I 張開 | **⊥ σ3**、平行 σ1 |
+| 剪裂（mm–dm 小位移） | Mode II 滑動、III 撕裂 | 共軛一對，各與 σ1 夾約 30°；交線平行 σ2；σ1 平分銳角（約 60°） |
+| 閉合：縫合線（壓溶） | Mode IV | **⊥ σ1** |
+| 混合型（hybrid） | 剪 + 張 | 介於兩者之間 |
 
-## 脆性變形機制
+**脆性變形的機制**
 
-- 脆性變形：破裂、摩擦滑動。**脆性流**：**顆粒流<strong>（顆粒轉動和摩擦滑動，孔隙多的岩石與沉積物）、</strong>碎裂流<strong>（再加上顆粒破碎，在中尺度上看起來是韌性的）。</strong>塑性流**：擴散、晶體塑性（雙晶、差排潛變）。
-- 粉碎化（pulverization）：強烈破碎但沒有剪位移，應變率 \> 100 s⁻¹，與大地震相關。
-- 破裂三型：剪裂（mm–dm 小位移）、張裂（節理＝窄、裂縫＝寬、脈＝充填礦物）、閉合（縫合線）。Mode I 張開、II 滑動、III 撕裂、IV 閉合；混合型（hybrid）＝ 剪 + 張。
+- 脆性變形：破裂、摩擦滑動。
+- **脆性流**：
+  - **顆粒流**：顆粒轉動和摩擦滑動（孔隙多的岩石與沉積物）；
+  - **碎裂流**：再加上顆粒破碎，在中尺度上看起來是韌性的。
+- **塑性流**：擴散、晶體塑性（雙晶、差排潛變），見 Ch6。
+- **粉碎化**（pulverization）：強烈破碎但沒有剪位移，應變率 \> 100 s⁻¹，與大地震相關。
 
-## 四個環境因子對應力–應變曲線的影響（考古題）
+## 2. 四個環境因子 ★（考古題）
 
 <img src="/img/notes/structural-geology/ch07-fracture/slide-p10.webp" alt="溫度與應變率對應力–應變曲線的影響" width="640" height="362" />
 
 *圖：溫度與應變率對應力–應變曲線的影響。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.10。*
 
-
-<img src="/img/notes/structural-geology/ch07-fracture/slide-p8.webp" alt="實驗變形構造：從張裂、剪裂、剪力帶到塑性流動" width="640" height="498" />
-
-*圖：實驗變形構造：從張裂、剪裂、剪力帶到塑性流動。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.8。*
-
-
-| 因子增加 | 強度 | 延展性 | 曲線變化 |
+| 因子增加 | 強度 | 延展性 | 曲線怎麼變 |
 |---|---|---|---|
 | 圍壓 P<sub>c</sub> | ↑ | ↑ | Marble：0–14 MPa 破裂後應力下降；21 MPa 以上持續塑性流動 |
 | 孔隙壓 P<sub>f</sub> | ↓ | ↓ | 效果和降低圍壓一樣（有效應力降低） |
-| 溫度 T | ↓ | ↑ | 300 °C 到 800 °C，降伏強度從 \> 240 MPa 降到 ~20 MPa |
+| 溫度 T | ↓ | ↑ | 300 °C → 800 °C，降伏強度從 \> 240 MPa 降到 ~20 MPa |
 | 應變率 ė | ↑ | ↓ | 快（4×10⁻¹ s⁻¹）強而脆；慢（3.3×10⁻⁸ s⁻¹）弱 |
 
-- 實驗結構（p.8）：隨 T、P<sub>c</sub> 增加，從張裂 → 剪裂 → 剪力帶（脆韌性）→ 塑性流動（桶狀）。脆塑轉換在伸張狀態下比壓縮狀態需要**更高的圍壓**。
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p8.webp" alt="實驗變形構造：從張裂、剪裂、剪力帶到塑性流動" width="640" height="498" />
 
-## 破壞準則
+*圖：實驗變形構造。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.8。*
 
-<img src="/img/notes/structural-geology/ch07-fracture/slide-p17.webp" alt="組合破壞包絡線與各段對應的破裂型態" width="640" height="906" />
+隨 T、P<sub>c</sub> 增加：張裂 → 剪裂 → 剪力帶（脆韌性）→ 塑性流動（桶狀）。脆塑轉換在伸張狀態下比壓縮狀態需要**更高的圍壓**。
 
-*圖：組合破壞包絡線與各段對應的破裂型態。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.17。*
-
-
-<img src="/img/notes/structural-geology/ch07-fracture/slide-p12.webp" alt="Griffith（GC）與 Coulomb（CC）組合破壞包絡線" width="640" height="728" />
-
-*圖：Griffith（GC）與 Coulomb（CC）組合破壞包絡線。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.12。*
-
+## 3. 破壞準則：Mohr 圓碰到包絡線就破 ★
 
 $$
 \begin{aligned}
 \text{Coulomb：}\ & \sigma_s = C + \sigma_n\tan\varphi = C + \mu\sigma_n, \quad 2\theta = 90^\circ + \varphi, \quad \theta = 45^\circ + \varphi/2 \\
 \text{Griffith：}\ & \sigma_s^2 + 4T\sigma_n - 4T^2 = 0\ \text{（張為正）}; \quad C = 2T; \quad \text{單壓強度} = 8T \\
 \text{Griffith–Coulomb：}\ & \sigma_s = 2T + \mu\sigma_n\ \text{（壓縮區）}+\text{拋物線（張力區）} \\
-\text{von Mises：}\ & \text{剪應力為常數（韌性區）} \\
-\text{再活動：}\ & \mu_f = \sigma_s/\sigma_n\ \text{（既有斷層）}; \quad \mu_f = (\sigma_s - C_f)/\sigma_n\ \text{（新斷層）} \\
-\text{有效應力：}\ & \sigma_s = C + \mu(\sigma_n - p_f), \quad \sigma = \bar\sigma + p_f
+\text{von Mises：}\ & \text{剪應力為常數（韌性區）}
 \end{aligned}
 $$
 
-- 穩定（圓在包絡線內）、臨界（相切）、不穩定（不可能達到，早就破了）。
-- Coulomb 直線只適用有限圍壓範圍：低圍壓時包絡線較陡、高圍壓時較緩 → 整體像**躺著的拋物線**。
-- 大多數岩石 φ ≈ 30°（μ ≈ 0.6）。實驗單壓強度約為抗張強度的 10–50 倍。非孔隙岩石用 Griffith 合理；孔隙岩石（砂岩）用 Griffith–Coulomb 組合較合理。
-- 預存葉理：在某些方位範圍內，會沿葉理破壞而不是切穿葉理。
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p12.webp" alt="Griffith（GC）與 Coulomb（CC）組合破壞包絡線" width="640" height="728" />
+
+*圖：Griffith（GC）與 Coulomb（CC）組合破壞包絡線。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.12。*
+
+- 圓在包絡線內：**穩定**；相切：**臨界**（破裂）；穿出去：不可能，早就破了。
+- 大多數岩石 φ ≈ 30°（μ ≈ 0.6）。實驗單壓強度約為抗張強度的 10–50 倍。
+- Coulomb 直線只適用有限圍壓範圍：低圍壓時包絡線較陡、高圍壓時較緩，整體像**躺著的拋物線**。
+- 非孔隙岩石用 Griffith 合理；孔隙岩石（砂岩）用 Griffith–Coulomb 組合較合理。
+
+**圓碰到包絡線的哪一段，就形成哪種破裂**：
+
+<img src="/img/notes/structural-geology/ch07-fracture/slide-p17.webp" alt="組合破壞包絡線與各段對應的破裂型態" width="640" height="906" />
+
+*圖：組合破壞包絡線與各段對應的破裂型態。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.17。*
+
+| 圍壓 | 碰到哪段 | 破裂 |
+|---|---|---|
+| 很低，σ3 為張應力、圓小 | −T 點（Griffith） | 張裂（節理、脈），⊥ σ3 |
+| 低，σ3 \< 0 但圓較大 | Griffith 拋物線段 | 混合型破裂，與 σ1 夾角 \< 30° |
+| 中等，σ3 \> 0 | Coulomb 直線 | 共軛剪裂，與 σ1 夾約 30° |
+| 高 | 包絡線變平 | 剪力帶、分散的變形帶（脆–塑轉換） |
+| 很高 | von Mises | 塑性流動，剪切帶與 σ1 夾約 45° |
 
 <details>
-<summary>【考古題】為什麼剪裂面不在 45°（剪應力最大）的地方？</summary>
+<summary>【考古題 ★】為什麼剪裂面不在 45°（剪應力最大）的地方？</summary>
 
-破裂取決於**剪應力與正應力的組合**：σs − μσn 最大的面最先破，而不是 σs 最大的面。45° 面上的剪應力雖然最大，但正應力也大（摩擦阻力大）。在 Mohr 圖上，圓與包絡線相切的點在 2θ = 90° + φ，也就是 θ = 45° + φ/2 ≈ 60°（法線與 σ1 夾角），所以**裂面與 σ1 夾約 30°**。投影片的 σn、σs 對 θ 曲線也顯示，從 45° 移到 30° 時 σn 降得比 σs 多。
+破裂取決於**剪應力與正應力的組合**：σs − μσn 最大的面最先破，不是 σs 最大的面。
+
+1. 45° 面上剪應力雖然最大，但正應力也大，摩擦阻力大。
+2. 在 Mohr 圖上，圓與包絡線相切的點在 2θ = 90° + φ，也就是 θ = 45° + φ/2 ≈ 60°（法線與 σ1 夾角）。
+3. 所以**裂面與 σ1 夾約 30°**。
+
+投影片的 σn、σs 對 θ 曲線也顯示：從 45° 移到 30° 時，σn 降得比 σs 多。
 
 </details>
 
 <details>
-<summary>【考古題 Hw02】Rohan Tuff 四組實驗：(σc, σa) = (14, 87)、(42, 164)、(70, 242)、(99, 321) MPa</summary>
+<summary>【考古題 Hw02 ★】Rohan Tuff 四組實驗：(σc, σa) = (14, 87)、(42, 164)、(70, 242)、(99, 321) MPa，求 μ、C、破裂角</summary>
 
-每組畫圓：圓心 (σa+σc)/2、半徑 (σa−σc)/2 → (50.5, 36.5)、(103, 61)、(156, 86)、(210, 111)。
-
-畫公切線（最小平方擬合）：**μ ≈ 0.53（φ ≈ 28°）、C ≈ 15 MPa**。只用兩組（109 學年考題是第 3、4 組）：sinφ = Δr/Δc = 25/54 → φ ≈ 27.6°，μ ≈ 0.52。
-
-θ = 45° + φ/2 ≈ 59°（σ1 與法線），所以裂面和 σ1 夾 **~31°**、和 σ3 夾 **~59°**。
+1. 每組畫圓：圓心 (σa+σc)/2、半徑 (σa−σc)/2 → (50.5, 36.5)、(103, 61)、(156, 86)、(210, 111)。
+2. 畫公切線（最小平方擬合）：**μ ≈ 0.53（φ ≈ 28°）、C ≈ 15 MPa**。
+3. 只用兩組也可以（109 學年考題用第 3、4 組）：sinφ = Δ半徑/Δ圓心 = 25/54 → φ ≈ 27.6°，μ ≈ 0.52。
+4. θ = 45° + φ/2 ≈ 59°（σ1 與法線）→ 裂面和 σ1 夾 **~31°**、和 σ3 夾 **~59°**。
 
 </details>
 
-## 裂隙成長
+**既有斷層再活動**：
+
+$$
+\mu_f = \sigma_s/\sigma_n\ \text{（既有斷層，沒有內聚力）}; \qquad \mu_f = (\sigma_s - C_f)/\sigma_n\ \text{（新斷層）}
+$$
+
+既有弱面不需要克服內聚力，比較容易滑（這就是 Ch1 Anderson 的限制之一）。預存葉理也一樣：在某些方位範圍內，會沿葉理破壞，而不是切穿葉理。
+
+## 4. 為什麼岩石比理論弱：Griffith 裂隙 ★
+
+岩石裡本來就有微裂隙、瑕疵、顆粒邊界（Griffith 裂隙）。裂隙尖端的應力會被放大：
+
+$$
+\sigma_{\text{tip}} = \sigma_r\left(1 + \frac{2a}{c}\right)
+$$
+
+- 圓形孔洞 3 倍，3:1 橢圓 7 倍，1:100 約 **200 倍**。
+- 所以晶體實際強度遠低於理論值；大樣本比小樣本弱（含有大裂隙的機率較高）。
+- **破裂推進區（process zone）**：裂隙尖端前方微裂隙擴張、連接。
 
 <img src="/img/notes/structural-geology/ch07-fracture/slide-p24.webp" alt="剪裂尖端長出的翼裂隙" width="640" height="1139" />
 
 *圖：剪裂尖端長出的翼裂隙。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.24。*
 
+- 即使總體受壓，Griffith 裂隙尖端仍有張應力 → 裂隙轉向、**平行 σ1** 成長 → **翼裂隙（wing cracks）**。Mode II 裂隙不會沿自己的面成長。
+- 斷層末端：翼裂隙、馬尾狀（horsetailing）、分枝（splaying）、反向剪裂。
+- Riedel 剪裂：**R（R1）同向**（synthetic），**R′（R2）反向**（antithetic），詳見 Ch10。
 
-- **破裂推進區（process zone）**：裂隙尖端前方微裂隙擴張、連接。
-- **應力集中**：$\sigma_{\text{tip}} = \sigma_r(1 + 2a/c)$；圓形 3 倍，3:1 橢圓 7 倍，1:100 約 **200 倍**。所以晶體實際強度遠低於理論值（Griffith 裂隙：先天的微裂隙、瑕疵、顆粒邊界）。大樣本比小樣本弱（含有大裂隙的機率較高）。
-- 總體受壓時，Griffith 裂隙尖端仍有張應力，裂隙轉向平行 σ1 成長 → **翼裂隙（wing cracks）**。Mode II 裂隙不會沿自己的面成長。
-- 斷層末端：翼裂隙、馬尾狀（horsetailing）、分枝（splaying）、反向剪裂。Riedel：R（R1）同向（synthetic），R′（R2）反向（antithetic）。（投影片 p.25 標示反了，以 Ch10 和教科書為準：R 同向、R′ 反向）
+> **易錯**：投影片 p.25 把 R、R′ 標反了，以 Ch10 和教科書為準：R 同向、R′ 反向。
 
-## 孔隙壓、Byerlee、變形帶
+## 5. 孔隙壓與 Byerlee 摩擦 ★
+
+**有效應力**：
+
+$$
+\sigma_s = C + \mu(\sigma_n - p_f), \qquad \sigma = \bar\sigma + p_f
+$$
+
+孔隙壓讓 Mohr 圓**往左移、半徑不變**。移到碰到張力段 → **水力破裂**（條件 P<sub>f</sub> \> σ3 + T，自然界中裂隙尖端液壓 \> σ3）。
+
+- 孔隙壓的精確效果：Δσn = φp<sub>f</sub> + (1−φ)αp<sub>f</sub>（α：Biot 參數）。
+- **什麼會提高孔隙壓**：快速沉積造成超壓、逆衝負載、孔隙流體熱膨脹、含水礦物脫水（伊萊石、石膏、蛋白石）、油母質轉化成烴。
+
+**Byerlee 定律 ★**（考古題）：σs = 0.85σn（σn \< 200 MPa）；σs = 50 + 0.6σn（σn \> 200 MPa）。
+
+- 摩擦**跟岩性幾乎無關**，所以可以用來估計天然斷層的強度。
+- 例外：富水黏土礦物（伊萊石、蛭石、蒙脫石）以及蛇紋岩，摩擦係數較低。
+
+## 6. 變形帶 ★（考古題）
+
+- 只出現在**高孔隙顆粒介質**（孔隙砂岩）。
+- 和同位移的剪裂相比：更寬、位移更小。
+- 通常降低孔隙率與滲透率。
 
 <img src="/img/notes/structural-geology/ch07-fracture/slide-p33.webp" alt="破裂與變形帶的運動學分類（T：厚度、D：位移）" width="640" height="510" />
 
 *圖：破裂與變形帶的運動學分類（T：厚度、D：位移）。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch7 p.33。*
 
+- **運動學分類**：膨裂帶、剪力帶、壓密帶。
+- **依機制分類**：
 
-- **Byerlee 定律**（考古題）：摩擦與岩性無關（例外：富水黏土礦物伊萊石、蛭石、蒙脫石，以及蛇紋岩），可用來估計天然斷層強度。
-- 孔隙壓的效果：Δσn = φp<sub>f</sub> + (1−φ)αp<sub>f</sub>（α：Biot 參數）。提高孔隙壓的作用：快速沉積造成超壓、逆衝負載、孔隙流體熱膨脹、含水礦物脫水（伊萊石、石膏、蛋白石）、油母質轉化為烴。
-- 自然水力破裂：裂隙尖端液壓 \> σ3，張開應力 σ₀ \> σ<sub>cp</sub> + σ<sub>cg</sub>。
-- **變形帶**（考古題）：只出現在高孔隙顆粒介質（孔隙砂岩），比同位移的剪裂寬、位移小。運動學分類：膨裂帶、剪力帶、壓密帶。機制：崩解帶（未固結砂）、頁矽酸鹽帶（片狀礦物 \> 10–15%）、黏土塗抹（黏土 \> ~40%）、碎裂帶（1.5–3 km）、溶解再膠結帶（\> 2–3 km、\> 90 °C）。
+| 類型 | 條件 |
+|---|---|
+| 崩解帶 | 未固結砂 |
+| 頁矽酸鹽帶 | 片狀礦物 \> 10–15% |
+| 黏土塗抹 | 黏土 \> ~40% |
+| 碎裂帶 | 埋深 1.5–3 km |
+| 溶解再膠結帶 | \> 2–3 km、\> 90 °C |
