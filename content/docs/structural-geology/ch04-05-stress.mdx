@@ -3,96 +3,160 @@ title: 第 4–5 章　應力
 description: Mohr 圓、偏差應力、現地應力量測、參考應力狀態與板塊力
 ---
 
-**本章重點**
+**這章在回答**：岩石裡的應力怎麼描述？一個面上受多少正應力、剪應力？地殼裡的應力從哪裡來、怎麼量？
+
+**考前 30 秒**
 
 1. Mohr 圓：$\sigma_n = \frac{\sigma_1+\sigma_3}{2} + \frac{\sigma_1-\sigma_3}{2}\cos 2\theta$，$\sigma_s = \frac{\sigma_1-\sigma_3}{2}\sin 2\theta$（θ 是 σ1 與**面的法線**的夾角）。
 2. **平均應力**只改體積；**偏差應力**才改形狀。**差應力** σ1−σ3 = Mohr 圓直徑。
 3. 單軸應變參考態 $\sigma_H = \frac{\nu}{1-\nu}\sigma_V$；抬升冷卻讓砂岩進入張應力 → 節理。
 
-**Mohr 圓與破壞包絡線（作業 Hw05 的應力狀態）**
+**主線**：應力的定義和單位 → 一點的應力用三個主應力描述 → 任意一個面上的 σn、σs 用 Mohr 圓求 → 把應力拆成平均（改體積）和偏差（改形狀）→ 地殼裡的應力：先有一個「參考狀態」（重力 + 側限），再加上熱、抬升、構造力 → 怎麼量現地應力 → 板塊力造成區域應力場。
 
-<img src="/img/notes/structural-geology/ch04-05-stress/01.png" alt="Mohr 圓與破壞包絡線" width="759" height="438" />
+★ = 考試重點。
 
-預設值是作業 Hw05（σ1 = 50 MPa 垂直、σ3 = 22 MPa、斷層傾角 60° → θ = 60°）。破壞包絡線：σn \< 0 用 Griffith 拋物線 σs² = 4T(σn + T)，σn ≥ 0 用 Coulomb 直線 σs = 2T + μσn。增加孔隙壓 p<sub>f</sub> 會把圓**往左推、半徑不變**：圓先碰到左側就是張裂（節理），碰到直線就是剪裂。
-
-## 定義與單位
-
-<img src="/img/notes/structural-geology/ch04-05-stress/slide-p20.webp" alt="各種應力狀態的 3D Mohr 圖" width="640" height="332" />
-
-*圖：各種應力狀態的 3D Mohr 圖。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch4 p.20。*
-
-
-<img src="/img/notes/structural-geology/ch04-05-stress/slide-p18.webp" alt="Mohr 圓：面上的 σn、σs 與 2θ" width="640" height="366" />
-
-*圖：Mohr 圓：面上的 σn、σs 與 2θ。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch4 p.18。*
-
+## 1. 定義與單位
 
 <img src="/img/notes/structural-geology/ch04-05-stress/slide-p7.webp" alt="力與應力分解成正向與剪切分量" width="490" height="1184" />
 
 *圖：力與應力分解成正向與剪切分量。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press Fig. 4.1；胡植慶〈地球構造〉課程投影片 Ch4 p.7。*
 
+- **力**：體力（重力、磁力，與質量成正比）；面力（與面積成正比）。應力 = 力 / 面積，可以分解成正應力 σn 和剪應力 σs。
+- **單位**：1 Pa = 1 N/m²；1 bar = 10⁵ Pa；1 MPa = 10 bar；1 kbar = 100 MPa；1 GPa = 10 kbar。
+- 地質慣例**壓為正**（工程相反）。
+- **靜岩壓** σ<sub>V</sub> = ρgz：1 km、ρ = 2650 → **26 MPa**；梯度約 **30 MPa/km（0.3 kbar/km）**。靜水壓 = ρ<sub>w</sub>gz。
+- **應力張量**：二階張量，3² = 9 個分量（σ<sub>xy</sub>：作用在垂直 x 軸的面上、方向平行 y）。選適當座標可以讓剪應力全為 0，對角線就是**主應力** σ1 ≥ σ2 ≥ σ3。
 
-- 力：體力（重力、磁力，與質量成正比）、面力（與面積成正比）。水平應力主要來自板塊（地函對流、板塊力），垂直應力來自上覆岩層重量。
-- 1 Pa = 1 N/m²；1 bar = 10⁵ Pa；1 MPa = 10 bar；1 kbar = 100 MPa；1 GPa = 10 kbar。地質慣例**壓為正**（工程相反）。
-- 靜岩壓 σ<sub>V</sub> = ρgz：1 km、ρ = 2650 → **26 MPa**；梯度約 **30 MPa/km（0.3 kbar/km）**。靜水壓 = ρ<sub>w</sub>gz。
-- 應力張量（二階張量，3² = 9 個分量；σ<sub>xy</sub>：作用在垂直 x 軸的面上、方向平行 y）。適當選座標可讓剪應力全為 0 → 對角線 = 主應力 σ1 ≥ σ2 ≥ σ3。
+## 2. 一個面上的應力：Mohr 圓 ★
+
+給定 σ1、σ3，任意一個面（法線與 σ1 夾 θ）上的應力：
+
+$$
+\sigma_n = \frac{\sigma_1+\sigma_3}{2} + \frac{\sigma_1-\sigma_3}{2}\cos 2\theta, \qquad \sigma_s = \frac{\sigma_1-\sigma_3}{2}\sin 2\theta
+$$
+
+在 σn–σs 圖上，這是一個**圓心 (σ1+σ3)/2、半徑 (σ1−σ3)/2** 的圓。面上的 (σn, σs) 就是從圓心轉 2θ 的那一點。
+
+<img src="/img/notes/structural-geology/ch04-05-stress/slide-p18.webp" alt="Mohr 圓：面上的 σn、σs 與 2θ" width="640" height="366" />
+
+*圖：Mohr 圓：面上的 σn、σs 與 2θ。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch4 p.18。*
+
+- θ = 45° 時剪應力最大，等於半徑。
 - 剪應力符號：Mohr 慣例順時針為負；張量慣例另計。
+- 推導（考古題）：取一個三角形元素，斜面面積 A，σ1、σ3 分別作用在面積 A cosθ、A sinθ 的面上；力平衡分解到斜面的法向、切向，再用倍角公式就得到上面兩式。兩式平方相加消去 2θ，就是圓的方程式。
+
+<details>
+<summary>【作業 Hw05 ★】σ1 = 50 MPa（垂直）、σ3 = 22 MPa（東西向），南北走向、向東傾 60° 的斷層上 σn、σs = ?</summary>
+
+1. 斷層傾 60° → 法線傾 30° → 法線與垂直的 σ1 夾 **θ = 60°**，2θ = 120°。
+2. 圓心 = (50 + 22)/2 = 36，半徑 = (50 − 22)/2 = 14。
+3. σn = 36 + 14·cos 120° = 36 − 7 = **29 MPa**
+4. σs = 14·sin 120° = **12.1 MPa**
+
+</details>
+
+<img src="/img/notes/structural-geology/ch04-05-stress/01.png" alt="Mohr 圓與破壞包絡線" width="759" height="438" />
+
+這是 Hw05 的應力狀態畫成 Mohr 圓，加上破壞包絡線（Ch7）：σn \< 0 用 Griffith 拋物線 σs² = 4T(σn + T)，σn ≥ 0 用 Coulomb 直線 σs = 2T + μσn。增加孔隙壓 p<sub>f</sub> 會把圓**往左推、半徑不變**：先碰到左側就是張裂（節理），先碰到直線就是剪裂。
+
+**3D 的情況**：三個主應力畫成三個圓，常見的應力狀態長這樣：
+
+<img src="/img/notes/structural-geology/ch04-05-stress/slide-p20.webp" alt="各種應力狀態的 3D Mohr 圖" width="640" height="332" />
+
+*圖：各種應力狀態的 3D Mohr 圖。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch4 p.20。*
+
+## 3. 平均應力、偏差應力、差應力 ★
 
 $$
 \begin{aligned}
 \sigma_m &= \frac{\sigma_{11} + \sigma_{22} + \sigma_{33}}{3}, \qquad \text{總應力} = \text{平均應力（等向）} + \text{偏差應力（非等向）} \\
-\sigma_d &= \sigma_1 - \sigma_3 = 2\sigma_{s,\max} \quad (\theta = 45^\circ\ \text{時剪應力最大})
+\sigma_d &= \sigma_1 - \sigma_3 = 2\sigma_{s,\max}
 \end{aligned}
 $$
 
-> **易錯**：**偏差應力<strong>（deviatoric）是張量的一部分（σ<sub>ij</sub> − σ<sub>m</sub>δ<sub>ij</sub>）；</strong>差應力**（differential）是一個數 σ1 − σ3。即使偏差應力的 σ3 − σ<sub>m</sub> \< 0，總應力在岩石圈中通常仍全為壓應力（p.52）。完美靜岩狀態下差應力 = 0。
+- **平均應力**：等向，只改變體積。在 Mohr 圖上是圓心的位置。
+- **偏差應力**：非等向，改變形狀。
+- **差應力**：σ1 − σ3，就是 Mohr 圓的直徑。完美靜岩狀態下差應力 = 0。
 
-<details>
-<summary>【作業 Hw05】σ1 = 50 MPa（垂直）、σ3 = 22 MPa（東西向），南北走向、向東傾 60° 的斷層上 σn、σs = ?</summary>
+> **易錯**：**偏差應力**（deviatoric）是張量的一部分（σ<sub>ij</sub> − σ<sub>m</sub>δ<sub>ij</sub>）；**差應力**（differential）是一個數 σ1 − σ3。即使偏差應力的 σ3 − σ<sub>m</sub> \< 0，岩石圈中的總應力通常仍全是壓應力（p.52）。
 
-斷層法線與垂直（σ1）夾角 θ = 60°（法線傾角 30°）→ 2θ = 120°。
+## 4. 地殼裡的應力：從參考狀態出發 ★
 
-σn = 36 + 14·cos120° = 36 − 7 = **29 MPa**；σs = 14·sin120° = **12.1 MPa**。
+實際的應力 = 參考狀態 + 各種修正。先算參考狀態，再看偏離多少。
 
-</details>
+**(1) 靜岩／靜水參考態**：σ1 = σ2 = σ3，沒有差應力。
 
-## 現地應力量測
+- **有效應力** = 總應力 − 孔隙壓。
+- **超額孔隙壓**：被不透水頁岩包住的砂岩，埋藏時流體排不出去。
 
-<img src="/img/notes/structural-geology/ch04-05-stress/slide-p23.webp" alt="裸孔崩落：剝落方向平行 σh" width="640" height="256" />
+**(2) 單軸應變參考態**（沉積盆地壓密）：側向不能動（應變單軸），但應力不是單軸：
 
-*圖：裸孔崩落：剝落方向平行 σh。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch5 p.23。*
+$$
+\sigma_H = \frac{\nu}{1-\nu}\,\sigma_V
+$$
 
+- ν = 0.25 → σ<sub>H</sub> = σ<sub>V</sub>/3。
+- ν = 0.3 → σ<sub>diff</sub> = (1−2ν)/(1−ν)·σ<sub>V</sub> = 0.57σ<sub>V</sub>，約 13 MPa/km。
+- p–q 圖：埋藏時平均應力和差應力都增加。
 
-- **裸孔崩落（borehole breakouts）**：井壁破裂剝落方向**平行 σ<sub>h</sub>（最小水平應力）**、垂直 σ<sub>H</sub>。
-- **套鑽法（overcoring）**：應變鬆弛法，最大膨脹方向 = σ<sub>H</sub>，至少 6 個應力計才能求 3D。
-- **水力劈裂法**：加壓到產生張裂，維持裂隙張開的壓力 ≈ σ<sub>h</sub>；知道抗張強度可算 σ<sub>H</sub>。
-- 地質構造（新的斷層崖、褶皺軸、張裂、火山口排列）、震源機制。地表是**主應力面**（自由面剪應力為零）；地形、斷層帶會使應力場偏轉。
+**(3) 熱效應**：
 
-## 參考應力狀態
+$$
+\Delta\sigma_H = \frac{E\alpha\Delta T}{1-\nu}
+$$
+
+例：ΔT = 100 °C、ν = 0.25、E = 100 GPa、α = 7×10⁻⁶ → **水平應力降低 93 MPa**。
+
+**(4) 埋藏與抬升**：把 (2)、(3) 合起來：
+
+$$
+\Delta\sigma_H = \frac{\nu}{1-\nu}\Delta\sigma_V + \frac{E}{1-\nu}\alpha\Delta T
+$$
 
 <img src="/img/notes/structural-geology/ch04-05-stress/slide-p36.webp" alt="埋藏與抬升時砂岩與頁岩的水平應力路徑" width="640" height="616" />
 
 *圖：埋藏與抬升時砂岩與頁岩的水平應力路徑。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch5 p.36。*
 
+抬升時上覆岩層被侵蝕（σ<sub>V</sub> 減少）、溫度下降，兩項都讓 σ<sub>H</sub> 下降。**頁岩一直在壓縮區；砂岩抬升時進入張應力區** → E 高、ν 低的硬層（砂岩、石灰岩）先產生節理。砂岩產生張裂所需的臨界孔隙壓也比頁岩低。（考古題，見 Ch8）
 
-- 靜岩／靜水參考態：σ1 = σ2 = σ3。**有效應力** = 總應力 − 孔隙壓。**超額孔隙壓**：被不透水頁岩包住的砂岩，埋藏時流體排不出去。
-- **單軸應變參考態**（應變單軸、應力不是）：沉積盆地壓密。ν = 0.25 → σ<sub>H</sub> = σ<sub>V</sub>/3。ν = 0.3 → σ<sub>diff</sub> = (1−2ν)/(1−ν)·σ<sub>V</sub> = 0.57σ<sub>V</sub>，約 13 MPa/km。p–q 圖：埋藏時平均與差應力都增加。
-- **熱效應**：$\Delta\sigma_H = E\alpha\Delta T/(1-\nu)$。例：ΔT = 100 °C、ν = 0.25、E = 100 GPa、α = 7×10⁻⁶ → **水平應力降低 93 MPa**。
-- 埋藏與抬升：σ<sub>H</sub> = \[ν/(1−ν)\]Δσ<sub>V</sub> + \[E/(1−ν)\]αΔT。**頁岩永遠在壓縮區，砂岩抬升時進入張應力區** → 楊氏模數高、泊松比低的硬層（砂岩、石灰岩）先產生節理；砂岩產生張裂所需的臨界孔隙壓也比頁岩低。（考古題）
-- **殘留應力**：埋藏時顆粒接觸處累積應力，膠結後抬升，部分應力被鎖在顆粒內。**構造應力** = 總應力 −（參考態 + 殘留 + 熱 + 地球潮汐等）。
+**(5) 殘留應力**：埋藏時顆粒接觸處累積應力，膠結後抬升，部分應力被鎖在顆粒內。
 
-## 板塊力與應力場
+**構造應力** = 總應力 −（參考態 + 殘留 + 熱 + 地球潮汐等）。
+
+## 5. 怎麼量現地應力
+
+| 方法 | 原理 | 得到什麼 |
+|---|---|---|
+| **裸孔崩落**（borehole breakouts） | 井壁破裂剝落 | 剝落方向**平行 σ<sub>h</sub>**（最小水平應力）、垂直 σ<sub>H</sub> |
+| **套鑽法**（overcoring） | 應變鬆弛 | 最大膨脹方向 = σ<sub>H</sub>；至少 6 個應力計才能求 3D |
+| **水力劈裂法** | 加壓到產生張裂 | 維持裂隙張開的壓力 ≈ σ<sub>h</sub>；知道抗張強度可算 σ<sub>H</sub> |
+| 地質構造 | 新的斷層崖、褶皺軸、張裂、火山口排列 | 應力方向 |
+| 震源機制 | P、T 軸（見 Ch10） | 應力方向（近似） |
+
+<img src="/img/notes/structural-geology/ch04-05-stress/slide-p23.webp" alt="裸孔崩落：剝落方向平行 σh" width="640" height="256" />
+
+*圖：裸孔崩落。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch5 p.23。*
+
+地表是**主應力面**（自由面剪應力為零）；地形、斷層帶會讓應力場偏轉。
+
+## 6. 板塊力與區域應力場
+
+水平應力主要來自板塊，垂直應力來自上覆岩層重量。
+
+- **Slab pull**：老、冷的海洋板塊最大。
+- **Ridge push**：中洋脊高處是正斷層，遠處是逆斷層。
+- **Basal drag**：可以驅動，也可以阻擋。
+- **Collisional resistance**：陸–陸碰撞最大。
+
+<img src="/img/notes/structural-geology/ch04-05-stress/slide-p43.webp" alt="水平擠壓增加：正斷層 → 平移 → 逆斷層（應力軸交換）" width="640" height="382" />
+
+*圖：水平擠壓增加時的應力軸交換。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch5 p.43。*
+
+水平擠壓漸增：正斷層 → **平移** → 逆斷層（中間經過應力軸交換，對應 Ch1 的 Anderson）。
 
 <img src="/img/notes/structural-geology/ch04-05-stress/slide-p48.webp" alt="喜馬拉雅–西藏的應力資料" width="640" height="651" />
 
 *圖：喜馬拉雅–西藏的應力資料。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch5 p.48。*
 
-
-<img src="/img/notes/structural-geology/ch04-05-stress/slide-p43.webp" alt="水平擠壓增加：正斷層 → 平移 → 逆斷層（應力軸交換）" width="640" height="382" />
-
-*圖：水平擠壓增加：正斷層 → 平移 → 逆斷層（應力軸交換）。來源：Fossen, H. (2016) *Structural Geology*, 2nd ed., Cambridge University Press；胡植慶〈地球構造〉課程投影片 Ch5 p.43。*
-
-
-- Slab pull（老冷海洋板塊最大）、ridge push（高處正斷層、遠處逆斷層）、basal drag（可驅動或阻擋）、collisional resistance（陸–陸碰撞最大）。
-- 水平擠壓漸增：正斷層 → **平移** → 逆斷層（中間會經過應力軸交換）。喜馬拉雅：南側山麓逆斷層、高原正斷層、東部平移（側向擠出）。
-- 台灣最大主應力軌跡呈**扇形**，北台灣順時針旋轉（聚合加上琉球海溝後退、張裂）。
+- **喜馬拉雅**：南側山麓逆斷層、高原正斷層、東部平移（側向擠出）。（考古題：判讀震源機制）
+- **台灣**：最大主應力軌跡呈**扇形**，北台灣順時針旋轉（聚合，加上琉球海溝後退、張裂）。
