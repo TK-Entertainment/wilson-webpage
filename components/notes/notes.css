@@ -364,3 +364,24 @@
     margin-right: 0.4rem;
   }
 }
+
+/* ───────── 自繪示意圖 ───────── */
+.fg-wrap {
+  margin: 1.5rem 0;
+  border: 2px solid hsl(var(--foreground));
+  background: hsl(var(--card));
+  padding: 0.75rem 0.75rem 0;
+}
+.fg-cap {
+  margin: 0.5rem -0.75rem 0;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid hsl(var(--foreground) / 0.25);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.fg-src {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}

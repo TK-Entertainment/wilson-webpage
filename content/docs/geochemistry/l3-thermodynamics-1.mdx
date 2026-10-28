@@ -66,22 +66,11 @@ description: 熱力學定律、焓與熵、Gibbs 自由能、相律與 Clapeyron
 
 要講平衡，先要劃清楚「系統」的邊界，看它跟外界交換什麼。依照能不能交換質量和能量，系統分成四種：
 
-<img src="/img/notes/geochemistry/l3-thermodynamics-1/slide-p4.webp" alt="孤立、絕熱、封閉、開放系統" width="640" height="676" />
-
-*圖：孤立、絕熱、封閉、開放系統。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 2.1；Abby Ren〈地球化學〉課程投影片 L3 p.4。*
-
-| 類型 | 質量交換 | 能量交換 |
-|---|---|---|
-| Isolated（孤立） | ✗ | ✗ |
-| Adiabatic（絕熱） | ✗ | 不能傳熱，但可以作功 |
-| Closed（封閉） | ✗ | ✓ |
-| Open（開放） | ✓ | ✓ |
+<SystemTypesFig />
 
 「平衡」也要說清楚。投影片用山谷裡的球來比喻：球在谷底時不再變化，這是**平衡**；球卡在半山腰的小凹槽裡，也不會動，但它不是最低點，只要有人推一下，它就會繼續往下滾，這叫**介穩態**（metastable），地表的鑽石、貝殼裡的霰石（aragonite）都是；球在斜坡上，會自己滾下去，這是**不穩定**。
 
-<img src="/img/notes/geochemistry/l3-thermodynamics-1/slide-p5.webp" alt="平衡、介穩與不穩定狀態" width="640" height="477" />
-
-*圖：山谷中的球。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 2.2；Abby Ren〈地球化學〉課程投影片 L3 p.5。*
+<StabilityFig />
 
 平衡有三種等價的說法：宏觀上不隨時間變化；正反應和逆反應的速率相等；系統在沒有限制時會自然趨向的狀態。
 
@@ -371,11 +360,7 @@ $$
 
 <GraphiteDiamondDemo />
 
-投影片 p.46 的實驗相界長得一樣；高溫時虛線往上彎，是因為 ΔS、ΔV 其實會隨溫度變，直線只是近似。
-
-<img src="/img/notes/geochemistry/l3-thermodynamics-1/slide-p44.webp" alt="石墨–鑽石相界" width="640" height="637" />
-
-*圖：石墨–鑽石相界。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L3 p.44。*
+投影片 p.46 有實驗測得的相界，低溫段跟這條直線幾乎重合；高溫時實驗曲線往上彎，因為 ΔS、ΔV 其實會隨溫度變，直線只是近似。
 
 <details>
 <summary>【換你算】25 °C、1 bar 下 calcite 和 aragonite 哪個穩定？要加多少壓力才換成另一個？</summary>
@@ -418,9 +403,7 @@ $$
 
 </details>
 
-<img src="/img/notes/geochemistry/l3-thermodynamics-1/slide-p39.webp" alt="Al₂O₃–H₂O 二元與 Al₂O₃–SiO₂–H₂O 三元系統的成分圖" width="640" height="479" />
-
-*圖：選對成分，就能用最少的成分描述所有相。二元圖中 boehmite、gibbsite 都落在 Al₂O₃–H₂O 連線上；三元圖中 Al₂SiO₅ 三相落在 Al₂O₃–SiO₂ 邊上。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L3 p.39。*
+<ComponentsFig />
 
 有了成分數，就能回答「溫度壓力還能自由調多少」。**自由度** f 是可以獨立改變、又不會讓任何一個相消失的變數個數（p.41）。Gibbs 相律是：
 

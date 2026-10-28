@@ -8,6 +8,7 @@ import "./math.css";
 import { Zoomable } from "@/components/lightbox";
 import { MindMap } from "@/components/notes/MindMap";
 import { LogicMap } from "@/components/notes/LogicMap";
+import * as Figs from "@/components/notes/Figs";
 import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
 
 const components = {
@@ -17,6 +18,7 @@ const components = {
   YouTube,
   MindMap,
   LogicMap,
+  ...Figs,
   StateFunctionDemo,
   MeltingGDemo,
   GraphiteDiamondDemo,
