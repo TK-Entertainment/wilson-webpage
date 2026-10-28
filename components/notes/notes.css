@@ -1,0 +1,235 @@
+/* 筆記互動元件（心智圖、互動圖）共用樣式，配色沿用網站的 Meridian 變數 */
+
+/* ───────── 心智圖（由上往下：根 → 分支欄 → 子項） ───────── */
+.mm-wrap {
+  margin: 1.75rem 0;
+  border: 2px solid hsl(var(--foreground));
+  background: hsl(var(--card));
+}
+.mm-inner {
+  padding: 1.25rem 1rem 1.1rem;
+}
+.mm-caption {
+  border-top: 1px solid hsl(var(--foreground) / 0.25);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.78rem;
+  color: hsl(var(--muted-foreground));
+}
+.mm-root {
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.55rem 1.1rem;
+  background: var(--navy);
+  color: var(--cream);
+  text-align: center;
+  font-weight: 900;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+.dark .mm-root {
+  background: var(--cream);
+  color: var(--navy);
+}
+.mm-root::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1rem;
+  height: 1rem;
+  border-left: 2px solid hsl(var(--foreground));
+}
+.mm-cols {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 1.5rem 0.9rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid hsl(var(--foreground));
+}
+.mm-col {
+  position: relative;
+  min-width: 0;
+}
+.mm-col::before {
+  content: "";
+  position: absolute;
+  top: -1rem;
+  left: 0.9rem;
+  height: 1rem;
+  border-left: 2px solid var(--mm-c);
+}
+.mm-col[data-wrapped]::before {
+  display: none;
+}
+.mm-head {
+  position: relative;
+  padding: 0.4rem 1.9rem 0.4rem 0.6rem;
+  background: var(--mm-c);
+  color: #1c2135;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.mm-label a,
+.mm-link {
+  color: inherit;
+  text-decoration: none;
+}
+.mm-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.mm-sub {
+  margin-top: 0.1rem;
+  font-size: 0.74rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+.mm-toggle {
+  position: absolute;
+  right: 0.35rem;
+  top: 0.4rem;
+  min-width: 1.3rem;
+  height: 1.3rem;
+  padding: 0 0.2rem;
+  border: 1.5px solid #1c2135;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  color: #1c2135;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+.mm-leaves {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  list-style: none;
+  margin: 0.4rem 0 0 0.9rem;
+  padding: 0 0 0 0.7rem;
+  border-left: 2px solid var(--mm-c);
+}
+.mm-leaf {
+  position: relative;
+  margin: 0;
+}
+.mm-leaf::before {
+  content: "";
+  position: absolute;
+  left: -0.7rem;
+  top: 0.95rem;
+  width: 0.6rem;
+  border-top: 2px solid var(--mm-c);
+}
+.mm-leaf-box {
+  padding: 0.25rem 0.5rem;
+  border: 1.5px solid var(--mm-c);
+  background: hsl(var(--background));
+  font-size: 0.86rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.mm-ld3 .mm-leaf-box {
+  border-style: dashed;
+  font-weight: 500;
+}
+
+/* ───────── 互動圖 ───────── */
+.ix-wrap {
+  margin: 1.75rem 0;
+  border: 2px solid hsl(var(--foreground));
+  background: hsl(var(--card));
+}
+.ix-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  padding: 0.55rem 0.85rem;
+  background: var(--navy);
+  color: var(--cream);
+}
+.ix-head b {
+  font-weight: 900;
+}
+.ix-head span {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+.ix-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+@media (max-width: 760px) {
+  .ix-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.ix-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  color: hsl(var(--foreground));
+}
+.ix-svg text {
+  fill: currentColor;
+  font-size: 13px;
+}
+.ix-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  font-size: 0.92rem;
+}
+.ix-row label {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.ix-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--orange);
+}
+.ix-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ix-btn {
+  padding: 0.25rem 0.65rem;
+  border: 2px solid hsl(var(--foreground));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.ix-btn[aria-pressed="true"] {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #1c2135;
+}
+.ix-readout {
+  border-left: 4px solid var(--gold);
+  padding: 0.4rem 0.7rem;
+  background: hsl(var(--background));
+  font-variant-numeric: tabular-nums;
+  line-height: 1.6;
+}
+.ix-readout b {
+  font-weight: 800;
+}
+.ix-verdict {
+  font-weight: 900;
+  font-size: 1rem;
+}
+.ix-note {
+  font-size: 0.8rem;
+  color: hsl(var(--muted-foreground));
+}

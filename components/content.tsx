@@ -6,12 +6,18 @@ import { Photos, Video, YouTube } from "@/components/media";
 import "katex/dist/katex.min.css";
 import "./math.css";
 import { Zoomable } from "@/components/lightbox";
+import { MindMap } from "@/components/notes/MindMap";
+import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
 
 const components = {
   ...defaultComponents,
   Photos,
   Video,
   YouTube,
+  MindMap,
+  StateFunctionDemo,
+  MeltingGDemo,
+  GraphiteDiamondDemo,
 };
 
 export function Content({ code }: { code: string }) {
