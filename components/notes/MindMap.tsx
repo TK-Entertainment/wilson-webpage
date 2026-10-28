@@ -11,12 +11,39 @@ export type MindNode = {
   label: string;
   sub?: string;
   href?: string;
+  // to：章節標題的開頭文字（例如 "3."），點了會捲到那個標題，不用自己算錨點
+  to?: string;
   children?: MindNode[];
 };
+
+function goTo(text: string) {
+  const hs = Array.from(document.querySelectorAll("[data-reading-body] h2, [data-reading-body] h3")) as HTMLElement[];
+  const norm = (s: string) => s.replace(/\s+/g, "");
+  const key = norm(text);
+  const h = hs.find((x) => norm(x.textContent ?? "").startsWith(key)) ?? hs.find((x) => norm(x.textContent ?? "").includes(key));
+  if (!h) return;
+  h.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (h.id) history.replaceState(null, "", `#${h.id}`);
+}
 
 const BRANCH_COLORS = ["var(--orange)", "var(--teal)", "var(--gold)", "#8a6fd1", "#d0567a", "#5b8bd9"];
 
 function Label({ node }: { node: MindNode }) {
+  if (node.to) {
+    const to = node.to;
+    return (
+      <a
+        href="#"
+        className="mm-link"
+        onClick={(e) => {
+          e.preventDefault();
+          goTo(to);
+        }}
+      >
+        {node.label}
+      </a>
+    );
+  }
   return node.href ? (
     <a href={node.href} className="mm-link">
       {node.label}

@@ -233,3 +233,134 @@
   font-size: 0.8rem;
   color: hsl(var(--muted-foreground));
 }
+
+/* ───────── 邏輯心智圖 ───────── */
+.lm-wrap {
+  margin: 1.75rem 0;
+  border: 2px solid hsl(var(--foreground));
+  background: hsl(var(--card));
+}
+.lm-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid hsl(var(--foreground) / 0.25);
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+.lm-scroll {
+  overflow-x: auto;
+}
+.lm-canvas {
+  position: relative;
+  padding: 1.1rem 1rem 0.4rem;
+}
+.lm-svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.lm-row {
+  position: relative;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 3.6rem;
+}
+.lm-row:last-child {
+  margin-bottom: 0.9rem;
+}
+.lm-node {
+  position: relative;
+  z-index: 1;
+  flex: 0 1 13.5rem;
+  min-width: 0;
+  padding: 0.45rem 0.65rem 0.5rem;
+  border: 2px solid var(--lm-c, hsl(var(--foreground)));
+  border-top-width: 5px;
+  background: hsl(var(--background));
+  line-height: 1.4;
+}
+.lm-core {
+  flex: 0 1 26rem;
+  border: none;
+  background: var(--navy);
+  color: var(--cream);
+  text-align: center;
+  padding: 0.6rem 1rem;
+}
+.dark .lm-core {
+  background: var(--cream);
+  color: var(--navy);
+}
+.lm-label {
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+.lm-core .lm-label {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+.lm-sub {
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+.lm-hidden {
+  font-style: italic;
+  opacity: 0.55;
+}
+.lm-clickable {
+  cursor: pointer;
+}
+.lm-go {
+  position: absolute;
+  right: 0.2rem;
+  bottom: 0.1rem;
+  border: none;
+  background: none;
+  color: inherit;
+  font-weight: 900;
+  font-size: 0.8rem;
+  opacity: 0.55;
+  cursor: pointer;
+}
+.lm-go:hover {
+  opacity: 1;
+}
+.lm-edge {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  max-width: 11rem;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid hsl(var(--foreground) / 0.4);
+  background: hsl(var(--card));
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  white-space: normal;
+}
+.lm-note {
+  border-top: 1px solid hsl(var(--foreground) / 0.25);
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8rem;
+  color: hsl(var(--muted-foreground));
+}
+.lm-swipe {
+  display: none;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+}
+@media (max-width: 640px) {
+  .lm-swipe {
+    display: inline;
+    margin-right: 0.4rem;
+  }
+}

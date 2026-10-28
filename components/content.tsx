@@ -7,6 +7,7 @@ import "katex/dist/katex.min.css";
 import "./math.css";
 import { Zoomable } from "@/components/lightbox";
 import { MindMap } from "@/components/notes/MindMap";
+import { LogicMap } from "@/components/notes/LogicMap";
 import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
 
 const components = {
@@ -15,6 +16,7 @@ const components = {
   Video,
   YouTube,
   MindMap,
+  LogicMap,
   StateFunctionDemo,
   MeltingGDemo,
   GraphiteDiamondDemo,
