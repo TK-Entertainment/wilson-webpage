@@ -298,8 +298,8 @@ export function StarLifeFig() {
         {box(120, 98, 80, "原恆星", C.gold)}
         {arr(200, 108, 236, 58)}
         {arr(200, 122, 236, 172)}
-        <text x={206} y={78} style={{ fontSize: 11 }}>低質量</text>
-        <text x={206} y={162} style={{ fontSize: 11 }}>大質量</text>
+        <text x={214} y={66} textAnchor="end" style={{ fontSize: 11 }}>低質量</text>
+        <text x={214} y={176} textAnchor="end" style={{ fontSize: 11 }}>大質量</text>
         {box(238, 40, 80, "主序星", C.gold)}
         {arr(318, 57, 336, 57)}
         {box(338, 40, 80, "紅巨星", C.orange)}
@@ -318,7 +318,7 @@ export function StarLifeFig() {
           <text x={600} y={168} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>中子星</text>
           <text x={600} y={186} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>或黑洞</text>
         </g>
-        <text x={594} y={96} textAnchor="middle" style={{ fontSize: 11 }}>雙星吸積到 1.4 M☉</text>
+        <text x={586} y={94} textAnchor="end" style={{ fontSize: 11 }}>雙星吸積到 1.4 M☉</text>
         {arr(594, 76, 594, 104)}
         <text x={594} y={122} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>Type Ia 超新星</text>
       </svg>
@@ -364,6 +364,198 @@ export function HRFig() {
         <text x={(L + W) / 2} y={H - 6} textAnchor="middle" style={{ fontSize: 12 }}>表面溫度（K）← 熱　冷 →</text>
         <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>光度（太陽 = 1）</text>
       </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L2：第一游離能（實際數據，eV） ───────────── */
+
+const IE: [number, string, number][] = [
+  [1, "H", 13.6], [2, "He", 24.59], [3, "Li", 5.39], [4, "Be", 9.32], [5, "B", 8.3], [6, "C", 11.26], [7, "N", 14.53], [8, "O", 13.62], [9, "F", 17.42], [10, "Ne", 21.56],
+  [11, "Na", 5.14], [12, "Mg", 7.65], [13, "Al", 5.99], [14, "Si", 8.15], [15, "P", 10.49], [16, "S", 10.36], [17, "Cl", 12.97], [18, "Ar", 15.76], [19, "K", 4.34], [20, "Ca", 6.11],
+  [21, "Sc", 6.56], [22, "Ti", 6.83], [23, "V", 6.75], [24, "Cr", 6.77], [25, "Mn", 7.43], [26, "Fe", 7.9], [27, "Co", 7.88], [28, "Ni", 7.64], [29, "Cu", 7.73], [30, "Zn", 9.39],
+  [31, "Ga", 6.0], [32, "Ge", 7.9], [33, "As", 9.79], [34, "Se", 9.75], [35, "Br", 11.81], [36, "Kr", 14.0], [37, "Rb", 4.18], [38, "Sr", 5.69], [39, "Y", 6.22], [40, "Zr", 6.63],
+  [41, "Nb", 6.76], [42, "Mo", 7.09], [43, "Tc", 7.28], [44, "Ru", 7.36], [45, "Rh", 7.46], [46, "Pd", 8.34], [47, "Ag", 7.58], [48, "Cd", 8.99], [49, "In", 5.79], [50, "Sn", 7.34],
+  [51, "Sb", 8.61], [52, "Te", 9.01], [53, "I", 10.45], [54, "Xe", 12.13], [55, "Cs", 3.89], [56, "Ba", 5.21],
+];
+
+export function IonizationFig() {
+  const W = 640, H = 270, L = 46, R = 14, T = 14, B = 36;
+  const x = (z: number) => L + ((z - 0.5) / 56) * (W - L - R);
+  const y = (e: number) => T + ((26 - e) / 26) * (H - T - B);
+  const noble = [2, 10, 18, 36, 54], alkali = [3, 11, 19, 37, 55];
+  return (
+    <Fig
+      caption="第一游離能（拿走最外層一個電子所需的能量）對原子序。每一週期從左到右遞增，到惰性氣體（藍）最高，下一個鹼金屬（橘）突然掉到最低；同一族往下（例如 Li → Na → K → Rb → Cs）逐漸變小。游離能低的鹼金屬容易失去電子，是電子提供者；右邊的鹵素和氧則是電子接受者。"
+      source="數據：NIST 原子游離能；課堂投影片 L2 p.22"
+    >
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="第一游離能對原子序">
+        {[0, 5, 10, 15, 20, 25].map((e) => (
+          <g key={e}>
+            <line x1={L} x2={W - R} y1={y(e)} y2={y(e)} stroke={INK} strokeOpacity={0.12} />
+            <text x={L - 6} y={y(e) + 4} textAnchor="end" style={{ fontSize: 11 }}>{e}</text>
+          </g>
+        ))}
+        <polyline points={IE.map(([z, , e]) => `${x(z)},${y(e)}`).join(" ")} fill="none" stroke={INK} strokeOpacity={0.5} strokeWidth={1.5} />
+        {IE.map(([z, s, e]) => {
+          const col = noble.includes(z) ? C.blue : alkali.includes(z) ? C.orange : C.teal;
+          const lab = noble.includes(z) || alkali.includes(z);
+          return (
+            <g key={z}>
+              <circle cx={x(z)} cy={y(e)} r={lab ? 4 : 2.6} fill={col} />
+              {lab ? (
+                <text x={x(z)} y={noble.includes(z) ? y(e) - 8 : y(e) + 16} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>{s}</text>
+              ) : null}
+            </g>
+          );
+        })}
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[10, 20, 30, 40, 50].map((z) => (
+          <text key={z} x={x(z)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{z}</text>
+        ))}
+        <text x={(L + W) / 2} y={H - 4} textAnchor="middle" style={{ fontSize: 12 }}>原子序 Z</text>
+        <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>第一游離能（eV）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L2：Onuma 圖（示意） ───────────── */
+
+export function OnumaFig() {
+  const W = 560, H = 330, L = 50, R = 20, T = 18, B = 44;
+  const x = (r: number) => L + ((r - 0.3) / (1.7 - 0.3)) * (W - L - R);
+  const y = (q: number) => T + ((5.6 - q) / 5.2) * (H - T - B);
+  const cx = x(0.8), cy = y(2.4);
+  const rings: [number, number, string][] = [
+    [0.11, 0.55, "D > 1"],
+    [0.2, 0.95, "0.5"],
+    [0.3, 1.35, "0.2"],
+    [0.42, 1.8, "0.1"],
+    [0.62, 2.7, "0.01"],
+  ];
+  const el: [string, number, number][] = [
+    ["Ni²⁺", 0.69, 2], ["Co²⁺", 0.745, 2], ["Mn²⁺", 0.83, 2], ["Mg²⁺", 0.72, 2], ["Fe²⁺", 0.78, 2], ["Ca²⁺", 1.0, 2],
+    ["Cr³⁺", 0.615, 3], ["Sc³⁺", 0.745, 3], ["Lu³⁺", 0.86, 3], ["La³⁺", 1.03, 3],
+    ["Zr⁴⁺", 0.72, 4], ["Th⁴⁺", 0.94, 4], ["Nb⁵⁺", 0.64, 5], ["Ta⁵⁺", 0.64, 5.25],
+    ["K⁺", 1.38, 1], ["Rb⁺", 1.52, 1], ["Ba²⁺", 1.35, 2],
+  ];
+  const main = ["Mg²⁺", "Fe²⁺", "Ca²⁺"];
+  // +2 那排太擠：標籤往下扇開、用引線連回點
+  const fan: Record<string, number> = { "Ni²⁺": 0.56, "Mg²⁺": 0.655, "Co²⁺": 0.75, "Fe²⁺": 0.845, "Mn²⁺": 0.94 };
+  return (
+    <Fig
+      caption="單斜輝石（cpx）的 Onuma 圖：橫軸是離子半徑，縱軸是電荷，橢圓是分配係數 D 的等值線，中心是 cpx 晶格位置原本放的主要元素（Mg、Fe、Ca）。越靠近中心越容易進入晶格（D 大，相容）：Ni、Co、Cr、Sc 在最內圈；半徑大的 K、Rb、Ba 和電荷高的 Nb、Ta、Th、Zr 都在外圈（D 很小，不相容）。REE 都是 +3，La 半徑大、離中心遠，Lu 比較小、比較近，所以 HREE 比 LREE 相容。"
+      source="離子半徑依 Shannon (1976)；White (2013)；課堂投影片 L2 p.28"
+    >
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="單斜輝石的 Onuma 圖" style={{ maxWidth: 600, margin: "0 auto" }}>
+        {rings.slice().reverse().map(([rx, ry, lab], i) => (
+          <g key={lab}>
+            <ellipse cx={cx} cy={cy} rx={(rx * (W - L - R)) / 1.4} ry={(ry * (H - T - B)) / 5.2} fill={C.teal} fillOpacity={0.06 + i * 0.03} stroke={C.teal} strokeWidth={1.5} />
+            <text x={cx + (rx * (W - L - R)) / 1.4 - 4} y={cy - 4} textAnchor="end" style={{ fontSize: 10.5, fontWeight: 700 }}>{lab}</text>
+          </g>
+        ))}
+        {el.map(([s, r, q]) => (
+          <g key={s}>
+            <circle cx={x(r)} cy={y(q)} r={main.includes(s) ? 5 : 3.5} fill={main.includes(s) ? C.orange : INK} />
+            {fan[s] === undefined ? (
+              <text x={x(r) + 6} y={y(q) - 5} style={{ fontSize: 11, fontWeight: main.includes(s) ? 800 : 600 }}>{s}</text>
+            ) : (
+              <>
+                <line x1={x(r)} y1={y(q) + 4} x2={x(fan[s])} y2={y(q) + 19} stroke={INK} strokeOpacity={0.45} strokeWidth={0.8} />
+                <text x={x(fan[s])} y={y(q) + 30} textAnchor="middle" style={{ fontSize: 11, fontWeight: main.includes(s) ? 800 : 600 }}>{s}</text>
+              </>
+            )}
+          </g>
+        ))}
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6].map((r) => (
+          <text key={r} x={x(r)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{r.toFixed(1)}</text>
+        ))}
+        {[1, 2, 3, 4, 5].map((q) => (
+          <text key={q} x={L - 8} y={y(q) + 4} textAnchor="end" style={{ fontSize: 11 }}>+{q}</text>
+        ))}
+        <text x={(L + W) / 2} y={H - 8} textAnchor="middle" style={{ fontSize: 12 }}>離子半徑（Å）</text>
+        <text x={14} y={(T + H - B) / 2} transform={`rotate(-90 14 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>電荷</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L2：REE（Sun & McDonough 1989 等標準值，ppm） ───────────── */
+
+const REE = ["La", "Ce", "Pr", "Nd", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu"];
+const REE_Z = [57, 58, 59, 60, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71];
+const CI_REE = [0.237, 0.613, 0.0928, 0.457, 0.148, 0.0563, 0.199, 0.0361, 0.246, 0.0546, 0.16, 0.0247, 0.161, 0.0246];
+const NMORB = [2.5, 7.5, 1.32, 7.3, 2.63, 1.02, 3.68, 0.67, 4.55, 1.01, 2.97, 0.456, 3.05, 0.455];
+const OIB = [37, 80, 9.7, 38.5, 10, 3.0, 7.62, 1.05, 5.6, 1.06, 2.62, 0.35, 2.16, 0.3];
+const UCC = [30, 64, 7.1, 26, 4.5, 0.88, 3.8, 0.64, 3.5, 0.8, 2.3, 0.33, 2.2, 0.32];
+
+function REEPlot({ series, lo, hi, ylab, w = 300 }: { series: { name: string; v: number[]; col: string }[]; lo: number; hi: number; ylab: string; w?: number }) {
+  const W = w, H = 250, L = 46, R = 10, T = 12, B = 34;
+  const x = (z: number) => L + ((z - 56.5) / 15) * (W - L - R);
+  const y = (v: number) => T + ((Math.log10(hi) - Math.log10(v)) / (Math.log10(hi) - Math.log10(lo))) * (H - T - B);
+  const ticks: number[] = [];
+  for (let e = Math.ceil(Math.log10(lo)); e <= Math.floor(Math.log10(hi)); e++) ticks.push(Math.pow(10, e));
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label={ylab}>
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={L} x2={W - R} y1={y(t)} y2={y(t)} stroke={INK} strokeOpacity={0.12} />
+          <text x={L - 5} y={y(t) + 4} textAnchor="end" style={{ fontSize: 10.5 }}>{t >= 1 ? t : t.toString()}</text>
+        </g>
+      ))}
+      {series.map((s) => (
+        <g key={s.name}>
+          <polyline points={s.v.map((v, i) => `${x(REE_Z[i])},${y(v)}`).join(" ")} fill="none" stroke={s.col} strokeWidth={2.4} />
+          {s.v.map((v, i) => (
+            <circle key={i} cx={x(REE_Z[i])} cy={y(v)} r={2.8} fill={s.col} />
+          ))}
+        </g>
+      ))}
+      <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+      <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+      {REE.map((s, i) => (
+        <text key={s} x={x(REE_Z[i])} y={H - B + 14} textAnchor="middle" style={{ fontSize: 9.5 }}>{s}</text>
+      ))}
+      <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 11 }}>{ylab}</text>
+      {series.map((s, i) => (
+        <g key={s.name}>
+          <line x1={W - R - 104} x2={W - R - 88} y1={T + 10 + i * 15} y2={T + 10 + i * 15} stroke={s.col} strokeWidth={3} />
+          <text x={W - R - 84} y={T + 14 + i * 15} style={{ fontSize: 10.5, fontWeight: 700 }}>{s.name}</text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+export function REENormFig() {
+  const norm = (v: number[]) => v.map((a, i) => a / CI_REE[i]);
+  return (
+    <Fig
+      caption="第一張：CI 球粒隕石和上部大陸地殼的 REE 原始濃度（ppm），兩條線都是鋸齒狀，因為偶數原子序的元素本來就比相鄰的奇數多（L1 的 Oddo–Harkins 效應）。第二張：每個元素除以球粒隕石的值之後，鋸齒消失，球粒隕石自己變成一條水平線（= 1），地殼則是一條往右下斜的平滑線（LREE 富集），這才是地質過程造成的差異。"
+      source="數據：Sun & McDonough (1989)、Taylor & McLennan (1985)；課堂投影片 L2 p.34"
+    >
+      <div className="fg-pair">
+        <REEPlot lo={0.01} hi={100} ylab="濃度（ppm）" series={[{ name: "上部地殼", v: UCC, col: C.orange }, { name: "CI 球粒隕石", v: CI_REE, col: C.teal }]} />
+        <REEPlot lo={0.5} hi={300} ylab="樣品 / 球粒隕石" series={[{ name: "上部地殼", v: norm(UCC), col: C.orange }, { name: "CI 球粒隕石", v: norm(CI_REE), col: C.teal }]} />
+      </div>
+    </Fig>
+  );
+}
+
+export function MorbOibFig() {
+  const norm = (v: number[]) => v.map((a, i) => a / CI_REE[i]);
+  return (
+    <Fig
+      caption="球粒隕石標準化的 REE 型態。OIB（熱點玄武岩，例如夏威夷）強烈 LREE 富集：La 約 150 倍、Lu 約 12 倍，整條往右下斜。N-MORB（中洋脊玄武岩）LREE 虧損：La 只有約 10 倍，比 HREE（約 18 倍）還低，往左下彎。"
+      source="數據：Sun & McDonough (1989) 的平均 OIB 與 N-MORB；課堂投影片 L2 p.35（HW1）"
+    >
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <REEPlot w={420} lo={1} hi={300} ylab="樣品 / 球粒隕石" series={[{ name: "OIB", v: norm(OIB), col: C.orange }, { name: "N-MORB", v: norm(NMORB), col: C.blue }]} />
+      </div>
     </Fig>
   );
 }

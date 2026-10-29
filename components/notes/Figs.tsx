@@ -136,11 +136,11 @@ export function ComponentsFig() {
     ["高嶺石 kaolinite", tp(1, 2, 2), C.teal, 2],
     ["葉蠟石 pyrophyllite", tp(1, 4, 1), C.rose, -1],
     ["軟水鋁石 boehmite", tp(1, 0, 1), C.gold, 1],
-    ["三水鋁石 gibbsite", tp(1, 0, 3), C.gold, -1],
+    ["三水鋁石 gibbsite", tp(1, 0, 3), C.gold, 1],
   ];
   return (
     <Fig caption="選對成分，就能用最少的成分描述所有相。左：Al₂O₃–H₂O 二元系統，軟水鋁石／硬水鋁石（boehmite／diaspore，Al₂O₃·H₂O）和三水鋁石（gibbsite，Al₂O₃·3H₂O）都落在兩端點的連線上，2 個成分就夠。右：Al₂O₃–SiO₂–H₂O 三元系統，每個礦物的位置由化學式的比例決定；Al₂SiO₅（藍晶石、紅柱石、矽線石三種同質異形體）都落在 Al₂O₃–SiO₂ 邊上的同一點。" source="White (2013)；課堂投影片 L3 p.39">
-      <svg viewBox="0 0 640 290" className="ix-svg" role="img" aria-label="二元與三元成分圖">
+      <svg viewBox="0 0 690 290" className="ix-svg" role="img" aria-label="二元與三元成分圖">
         {/* 二元 */}
         <line x1={bx(0)} y1={140} x2={bx(1)} y2={140} stroke={INK} strokeWidth={3} />
         <circle cx={bx(0)} cy={140} r={6} fill={C.navy} stroke={INK} />
