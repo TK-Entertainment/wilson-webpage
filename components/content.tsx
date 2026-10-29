@@ -15,6 +15,7 @@ import * as FigsSG from "@/components/notes/FigsSG";
 import * as SGDemos from "@/components/notes/SGDemos";
 import * as FigsMin from "@/components/notes/FigsMin";
 import * as MinDemos from "@/components/notes/MinDemos";
+import { DailyReview } from "@/components/notes/DailyReview";
 import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
 
 const components = {
@@ -31,6 +32,7 @@ const components = {
   ...SGDemos,
   ...FigsMin,
   ...MinDemos,
+  DailyReview,
   StateFunctionDemo,
   MeltingGDemo,
   GraphiteDiamondDemo,
