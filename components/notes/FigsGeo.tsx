@@ -1283,3 +1283,113 @@ export function CellFig() {
     </Fig>
   );
 }
+
+/* ───────────── L1：核合成的流程 ───────────── */
+
+export function NucleoFlowFig() {
+  const box = (x: number, y: number, t: string, a: string, b: string, col: string) => (
+    <g>
+      <rect x={x} y={y} width={108} height={64} rx={6} fill={col} fillOpacity={0.18} stroke={col} strokeWidth={2} />
+      <text x={x + 54} y={y + 20} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{t}</text>
+      <text x={x + 54} y={y + 38} textAnchor="middle" style={{ fontSize: 11 }}>{a}</text>
+      <text x={x + 54} y={y + 55} textAnchor="middle" style={{ fontSize: 10.5, opacity: 0.8 }}>{b}</text>
+    </g>
+  );
+  return (
+    <Fig caption="元素是怎麼做出來的。大霹靂只做出 H、He（和微量 Li）；恆星依序把 H 融合成 He、He 融合成 C，大質量星再用 α process 一次加一個 He 做出 O、Ne、Mg、Si，最後 e process 在統計平衡下做出 Fe 附近的元素，那裡結合能最大，融合到此為止。比 Fe 重的元素只能靠捕獲中子再 β⁻ 衰變：慢的 s process（沿著穩定谷走，在 AGB 紅巨星）和快的 r process（富中子環境，超新星、中子星合併）。" source="課堂投影片 L1 p.24–38（B²FH 1957）">
+      <svg viewBox="0 0 640 230" className="ix-svg" role="img" aria-label="核合成流程">
+        <Marks />
+        {box(8, 20, "大霹靂", "H、He", "（微量 Li）", C.blue)}
+        {box(134, 20, "H burning", "4 H → He", "主序星", C.gold)}
+        {box(260, 20, "He burning", "3 He → C", "紅巨星", C.orange)}
+        {box(386, 20, "α process", "C → O → … → Si", "每次 + ⁴He", C.rose)}
+        {box(512, 20, "e process", "Si + Si → Fe", "結合能最大", C.teal)}
+        {[116, 242, 368, 494].map((x) => <line key={x} x1={x} x2={x + 16} y1={52} y2={52} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" />)}
+        <line x1={540} y1={86} x2={430} y2={140} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" />
+        <line x1={580} y1={86} x2={580} y2={140} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" />
+        <text x={440} y={104} style={{ fontSize: 11, fontWeight: 800, fill: C.teal }}>+ 中子</text>
+        {box(370, 142, "s process（慢）", "沿穩定谷", "AGB 紅巨星", C.violet)}
+        {box(520, 142, "r process（快）", "富中子", "超新星", C.violet)}
+        <text x={20} y={150} style={{ fontSize: 12, fontWeight: 800, fill: C.orange }}>融合只能做到 Fe：</text>
+        <text x={20} y={172} style={{ fontSize: 11 }}>再往上融合會吸收能量，</text>
+        <text x={20} y={190} style={{ fontSize: 11 }}>重元素只能靠捕獲中子 + β⁻ 衰變</text>
+        <text x={20} y={208} style={{ fontSize: 11 }}>（Sr、Ba、Pb、U…）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L1：每核子結合能 ───────────── */
+
+const BE: [number, number, string?][] = [
+  [1, 0], [2, 1.11], [3, 2.57], [4, 7.07, "⁴He"], [6, 5.33], [7, 5.61], [9, 6.46], [10, 6.48], [11, 6.93], [12, 7.68], [14, 7.48], [16, 7.98],
+  [20, 8.03], [24, 8.26], [28, 8.45], [32, 8.49], [40, 8.55], [56, 8.79, "⁵⁶Fe"], [62, 8.79], [84, 8.72], [120, 8.5], [138, 8.39], [184, 8.0], [208, 7.87], [238, 7.57, "²³⁸U"],
+];
+
+export function BindingEnergyFig() {
+  const W = 560, H = 260, L = 50, R = 16, T = 18, B = 40;
+  const x = (a: number) => L + (a / 240) * (W - L - R);
+  const y = (b: number) => T + ((9.5 - b) / 9.5) * (H - T - B);
+  return (
+    <Fig caption="每核子結合能對質量數。越高越穩定，最高點在 ⁵⁶Fe 附近（⁶²Ni 幾乎一樣高）。比 Fe 輕的核融合時往曲線高處走、放出能量（恆星發光）；比 Fe 重的核分裂時也往高處走（核能）；但融合到比 Fe 更重會吸收能量，所以恆星燒到 Fe 就停。⁴He 特別穩定，在曲線上突出一個尖峰，這也是 α process 一次加一個 ⁴He 的原因。" source="核子結合能數據（AME）；課堂投影片 L1 p.31–33">
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="結合能曲線" style={{ maxWidth: 620, margin: "0 auto" }}>
+        <Marks />
+        {[0, 2, 4, 6, 8].map((b) => (
+          <g key={b}>
+            <line x1={L} x2={W - R} y1={y(b)} y2={y(b)} stroke={INK} strokeOpacity={0.1} />
+            <text x={L - 6} y={y(b) + 4} textAnchor="end" style={{ fontSize: 11 }}>{b}</text>
+          </g>
+        ))}
+        <polyline points={BE.map(([a, b]) => `${x(a)},${y(b)}`).join(" ")} fill="none" stroke={C.blue} strokeWidth={2.4} />
+        {BE.map(([a, b, l]) => (
+          <g key={a}>
+            <circle cx={x(a)} cy={y(b)} r={l ? 5 : 3} fill={l ? C.orange : C.blue} />
+            {l && <text x={x(a) + (a === 238 ? -6 : 8)} y={y(b) + (a === 4 ? 16 : -8)} textAnchor={a === 238 ? "end" : "start"} style={{ fontSize: 11.5, fontWeight: 800 }}>{l}</text>}
+          </g>
+        ))}
+        <line x1={x(70)} y1={y(4.6)} x2={x(30)} y2={y(4.6)} stroke={C.teal} strokeWidth={2.5} markerStart="url(#gm-t)" />
+        <text x={x(32)} y={y(4.6) - 8} style={{ fontSize: 11.5, fontWeight: 800, fill: C.teal }}>融合（放能）</text>
+        <line x1={x(150)} y1={y(6.2)} x2={x(210)} y2={y(6.2)} stroke={C.rose} strokeWidth={2.5} markerStart="url(#gm-r)" />
+        <text x={x(150)} y={y(6.2) - 8} style={{ fontSize: 11.5, fontWeight: 800, fill: C.rose }}>分裂（放能）</text>
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[0, 40, 80, 120, 160, 200, 240].map((a) => (
+          <text key={a} x={x(a)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{a}</text>
+        ))}
+        <text x={(L + W) / 2} y={H - 6} textAnchor="middle" style={{ fontSize: 12 }}>質量數 A</text>
+        <text x={16} y={(T + H - B) / 2} transform={`rotate(-90 16 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>每核子結合能（MeV）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L2：分異後元素住在哪裡 ───────────── */
+
+export function DifferentiationFig() {
+  const layers: [string, number, number, string, string, string][] = [
+    ["大氣 + 海洋", 10, 30, "親氣：N、H、惰性氣體", "不形成礦物", C.blue],
+    ["地殼", 44, 30, "親石 + 不相容：Si、Al、K、Na、Rb、Ba、REE", "親硫礦床：Cu、Zn、Pb", C.gold],
+    ["地函", 78, 62, "親石 + 相容：Mg、Ni、Cr、Co", "D > 1，熔融時留在殘餘固體", C.teal],
+    ["地核", 144, 50, "親鐵：Fe、Ni、Au、Pt 族", "金屬 Fe⁰ 下沉", C.orange],
+  ];
+  return (
+    <Fig caption="分異之後，元素住在哪裡。金屬鐵下沉時，把親鐵元素一起帶進地核；地函部分熔融時，不相容的親石元素（K、Rb、Ba、REE）進入熔體、上升形成地殼，相容的（Mg、Ni、Cr、Co）留在地函；親硫元素集中在硫化物礦床；親氣元素在大氣和海洋。" source="課堂投影片 L2 p.9–11">
+      <svg viewBox="0 0 640 205" className="ix-svg" role="img" aria-label="地球分異">
+        <Marks />
+        {layers.map(([n, y, h, a, b, c]) => (
+          <g key={n}>
+            <rect x={150} y={y} width={150} height={h} rx={4} fill={c} fillOpacity={0.22} stroke={c} strokeWidth={1.5} />
+            <text x={225} y={y + h / 2 + 5} textAnchor="middle" style={{ fontSize: 13, fontWeight: 800 }}>{n}</text>
+            <text x={315} y={y + h / 2 - 2} style={{ fontSize: 11.5, fontWeight: 700 }}>{a}</text>
+            <text x={315} y={y + h / 2 + 14} style={{ fontSize: 10.5, opacity: 0.8 }}>{b}</text>
+          </g>
+        ))}
+        <path d="M130,130 C100,110 100,80 130,60" fill="none" stroke={C.teal} strokeWidth={2.4} markerEnd="url(#gm-t)" />
+        <text x={92} y={88} textAnchor="end" style={{ fontSize: 11.5, fontWeight: 800, fill: C.teal }}>部分熔融</text>
+        <text x={92} y={104} textAnchor="end" style={{ fontSize: 11, fill: C.teal }}>不相容 ↑</text>
+        <path d="M130,140 C100,155 100,175 130,185" fill="none" stroke={INK} strokeWidth={2.4} markerEnd="url(#gm-k)" />
+        <text x={92} y={170} textAnchor="end" style={{ fontSize: 11.5, fontWeight: 800 }}>金屬下沉</text>
+      </svg>
+    </Fig>
+  );
+}
