@@ -3,55 +3,140 @@ title: 第 7 講　氧化還原
 description: 氧化數、Nernst 方程式、pε–pH 圖與 redox ladder
 ---
 
-**這講在回答**：一個環境有多「氧化」或多「還原」？在那種環境下，Fe、S、Mn 會以什麼形式存在？為什麼沉積物越往下，孔隙水的成分一層一層改變？
+**這講在回答**：一個環境有多「氧化」或多「還原」？在那種環境下，Fe、S、Mn 會以什麼形式存在？為什麼沉積物越往下，孔隙水的成分一層一層改變？L5 說天然水有兩個 master variables，pH 是其中之一；這講處理另一個：**氧化還原狀態**。
 
 **考前 30 秒**
 
-1. $p\varepsilon = -\log a_{e^-} = E/0.0592$，數值越大越氧化。
-2. 水的穩定範圍：$p\varepsilon = 20.75 - \mathrm{pH}$（上界）到 $p\varepsilon = -\mathrm{pH}$（下界）。
-3. 缺氧時微生物依能量高低輪流用：**O₂ → NO₃⁻ → MnO₂ → Fe(III) → SO₄²⁻ → CH₄**。
+1. $\Delta G = -zFE$；Nernst：$E = E^\circ - \dfrac{0.0592}{z}\log Q$（25 °C）。E 不能直接相加，要先換成 ΔG。
+2. $p\varepsilon = -\log a_{e^-} = E/0.0592$，數值越大越氧化。
+3. 水的穩定範圍：$p\varepsilon = 20.75 - \mathrm{pH}$（上界）到 $p\varepsilon = -\mathrm{pH}$（下界）。
+4. pε–pH 圖：純酸鹼 = 垂直線；沒有 H⁺ 的 redox = 水平線；有 H⁺ 的 redox = 斜線（斜率 −m/n）。
+5. 缺氧時微生物依能量高低輪流用：**O₂ → NO₃⁻ → MnO₂ → Fe(III) → SO₄²⁻ → CH₄**。
 
-**主線**：水有兩個 master variables：L5 的 pH，和這講的 redox → 先用氧化數判斷誰得失電子 → 把反應拆成半反應 → 用電位 E（Nernst）量化氧化還原的傾向 → 把 E 換成跟 pH 很像的 pε → 畫 pε–pH 圖，看各物種在哪裡穩定 → 自然界的 pε 主要由生物控制：有機物越多，pε 一階一階往下（redox ladder）。
+### 先認識的名詞
 
-★ = 考試重點。
+| 名詞 | 一句話 |
+|---|---|
+| 氧化／還原 | 失去電子（氧化數上升）／得到電子（氧化數下降） |
+| 氧化劑／還原劑 | 拿走別人電子的（自己被還原）／給出電子的（自己被氧化） |
+| 半反應 | 只寫一邊（氧化或還原）、電子寫出來的反應 |
+| 電位 E<sub>H</sub> | 半反應和標準氫電極比較的電位；越正越想拿電子 |
+| pε | 電子活度的負對數，和 pH 對應；越大越氧化 |
+| 電子接受者 | 微生物分解有機物時用來「丟電子」的物質（O₂、NO₃⁻、MnO₂…） |
+| BOD | 生物需氧量，可被微生物分解的有機物有多少 |
+
+### 這一講的邏輯地圖
+
+<LogicMap
+  core={{ label: "這個環境有多氧化？元素以什麼形式存在？", sub: "redox 是 pH 之外的第二個主控變數" }}
+  rows={[
+    [{ id: "ox", label: "誰得到、誰失去電子？", sub: "氧化數；半反應與配平", to: "1.", tone: 5 }],
+    [{ id: "e", label: "氧化還原的傾向怎麼量化？", sub: "電位 E；ΔG = −zFE；Nernst", to: "3.", tone: 0 }],
+    [{ id: "pe", label: "能不能像 pH 一樣使用？", sub: "pε = E/0.0592；越大越氧化", to: "4.", tone: 1 }],
+    [
+      { id: "diag", label: "哪個物種在哪裡穩定？", sub: "pε–pH 圖：水的範圍 + 垂直、水平、斜線", to: "5.", tone: 2 },
+      { id: "bio", label: "自然界的 pε 由誰決定？", sub: "生物：光合 vs 呼吸；redox ladder", to: "6.", tone: 3 },
+    ],
+    [{ id: "app", label: "實際會看到什麼？", sub: "沉積物、淹水土壤、掩埋場、酸性礦山排水", to: "7.", tone: 4 }],
+  ]}
+  links={[
+    { from: "core", to: "ox", label: "先數電子" },
+    { from: "ox", to: "e", label: "每個半反應有電位" },
+    { from: "e", to: "pe", label: "換成對數尺度" },
+    { from: "pe", to: "diag", label: "加上 pH 畫成圖" },
+    { from: "pe", to: "bio", label: "實際的 pε 哪來" },
+    { from: "diag", to: "app", label: "判讀物種" },
+    { from: "bio", to: "app", label: "一階一階往下" },
+  ]}
+  note="讀法：前三層是工具鏈：氧化數 → 電位 → pε，和 L5 的「pH → K」平行（pε 就是電子的 pH）。左下用工具畫 pε–pH 圖，回答「給定條件下是什麼物種」；右下回答「條件本身怎麼來」：自然界的 pε 由微生物分解有機物決定。兩者合起來，就能解釋沉積物、地下水裡看到的分層。"
+/>
+
+★ = 考試重點。每一節最後有「自我檢測」，先自己回答再打開。
 
 ## 1. 氧化數 ★
 
-1. 化合物中各原子氧化數總和 = 該化合物的電荷（SO₄²⁻：O = −2，S = +6）
+氧化還原就是電子的轉移。要追蹤電子跑到哪裡，先要能替每個原子記帳，這個帳就是**氧化數**：原子序減掉它目前擁有的電子數。單原子離子的氧化數就是它的電荷（Fe³⁺ 是 +3，Cl⁻ 是 −1）；分子或錯離子裡的原子，用六條規則算：
+
+1. 化合物中各原子氧化數的總和 = 該化合物的電荷（SO₄²⁻：O = −2，所以 S = +6）
 2. 只和自己鍵結的原子 = 0（O₂、N₂、H₂）
 3. O 一律 −2；過氧化物（H₂O₂、Na₂O₂）例外，為 −1
 4. H 一律 +1；例外：H₂ 為 0、金屬氫化物為 −1
 5. 鹵素 −1；例外：跟自己或跟 O 鍵結時
 6. 鹼金屬 +1、鹼土金屬 +2
 
+氧化數只是電荷分布的**近似**。離子鍵（NaCl）裡電子真的轉移了，Na +1、Cl −1 接近真實；共價鍵（例如 N–O，週期表上相鄰的元素）的電子是共用的，算出 N +2、O −2 並不代表 N 真的給了 O 兩個電子。但這套記帳仍然很有用：它保證氧化還原反應中失去的電子數 = 得到的電子數。
+
 <details>
-<summary>【練習 ★】算出這些物種中的氧化數</summary>
+<summary>【例題 ★ 完整解】算出 SO₄²⁻、NH₄⁺、CH₂O、Fe₃O₄、FeS₂ 中各元素的氧化數</summary>
+
+- **SO₄²⁻**：4 個 O 共 −8，總和要等於 −2，所以 S = **+6**。
+- **NH₄⁺**：4 個 H 共 +4，總和 +1，所以 N = **−3**。
+- **CH₂O**（有機物的簡寫）：H 共 +2、O −2，總和 0，所以 C = **0**。
+- **Fe₃O₄**：O 共 −8，3 個 Fe 共 +8，平均 **+8/3**（其實是 1 個 Fe²⁺ + 2 個 Fe³⁺）。
+- **FeS₂**（黃鐵礦）：裡面是 S₂²⁻ 雙硫離子，S–S 鍵結，兩個 S 平分 −2，各 **−1**；Fe = **+2**。
 
 | 物種 | H₂S | SO₄²⁻ | NO₃⁻ | NH₄⁺ | CH₄ | CH₂O | CO₂ | MnO₂ | Fe₃O₄ | FeS₂ |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 氧化數 | S −2 | S +6 | N +5 | N −3 | C −4 | C 0 | C +4 | Mn +4 | Fe +8/3 | Fe +2, S −1 |
+| 氧化數 | S −2 | S +6 | N +5 | N −3 | C −4 | C 0 | C +4 | Mn +4 | Fe +8/3 | Fe +2、S −1 |
 
-氧化數只是電荷分布的近似：離子鍵（NaCl）接近真實，共價鍵（N–O）不真實，但拿來追蹤電子流很好用。
+注意 S 從 −2 到 +6、N 從 −3 到 +5、C 從 −4 到 +4，跨度都是 8 個電子，這就是它們在環境中能被微生物大量利用的原因。
+
+</details>
+
+<details>
+<summary>【換你算】NO₂⁻ 的 N、S₂O₃²⁻ 的 S（平均）、CH₃COOH 的 C（平均）各是多少？</summary>
+
+**答案**：NO₂⁻：N = −1 + 4 = **+3**；S₂O₃²⁻：O 共 −6，兩個 S 共 +4，平均 **+2**；CH₃COOH（C₂H₄O₂）：H +4、O −4，兩個 C 共 0，平均 **0**（和 CH₂O 一樣，所以有機物常簡寫成 CH₂O）。
+
+</details>
+
+<details>
+<summary>自我檢測 1</summary>
+
+1. 為什麼說氧化數只是「近似」？那為什麼還要用？
+2. CH₄ → CO₂，C 失去幾個電子？
+
+**答案**：(1) 共價鍵的電子是共用的，並沒有真的轉移；但它能保證電子收支平衡，方便配平和追蹤電子流向。(2) −4 → +4，失去 8 個電子。
 
 </details>
 
 ## 2. 半反應
 
-每個氧化還原反應 = 一個氧化半反應 + 一個還原半反應。配平順序：**電子 → O（加 H₂O）→ H（加 H⁺）**。
+每個氧化還原反應都可以拆成一個**氧化半反應**和一個**還原半反應**，電子寫出來。例如：
 
 $$
-\begin{aligned}
-&\mathrm{NO + ClO^- \rightleftharpoons NO_2 + Cl^-} \\
-=\ &\underbrace{\mathrm{NO + H_2O \rightleftharpoons NO_2 + 2e^- + 2H^+}}_{\text{氧化}} \quad + \quad \underbrace{\mathrm{ClO^- + 2H^+ + 2e^- \rightleftharpoons Cl^- + H_2O}}_{\text{還原}}
-\end{aligned}
+\mathrm{NO + ClO^- \rightleftharpoons NO_2 + Cl^-}
 $$
+
+拆成 NO → NO₂ + 2e⁻ 和 ClO⁻ + 2e⁻ → Cl⁻。這樣電子平衡了，但原子沒有平衡（每邊各少一個 O）。水溶液裡用 H₂O 補 O、用 H⁺ 補 H，**配平順序：電子 → O（加 H₂O）→ H（加 H⁺）**：
+
+$$
+\underbrace{\mathrm{NO + H_2O \rightleftharpoons NO_2 + 2e^- + 2H^+}}_{\text{氧化}} \qquad \underbrace{\mathrm{ClO^- + 2H^+ + 2e^- \rightleftharpoons Cl^- + H_2O}}_{\text{還原}}
+$$
+
+兩式相加，電子、H⁺、H₂O 都消掉，就回到原本的反應。拆成半反應的好處是：每個半反應可以單獨查表、單獨算電位，再組合成任何反應。
+
+<details>
+<summary>【換你算】寫出 MnO₂ 被還原成 Mn²⁺ 的半反應（酸性溶液）</summary>
+
+**提示**：Mn 從 +4 到 +2，要 2 個電子；再補 O、H。
+
+**答案**：MnO₂ + 4H⁺ + 2e⁻ → Mn²⁺ + 2H₂O。注意這個半反應消耗 H⁺，所以 MnO₂ 還原會讓 pH 上升（第 6 節會用到）。
+
+</details>
 
 ## 3. 電位 E 與 Nernst 方程式 ★
 
-把每個半反應跟標準氫電極（½H₂ ⇌ H⁺ + e⁻，定義 E = 0）比較，得到電位 E<sub>H</sub>：
+**怎麼量氧化還原的傾向？** 把 Zn 片放進 Zn²⁺ 溶液、Cu 片放進 Cu²⁺ 溶液，用導線和鹽橋連起來：
 
-- **E<sub>H</sub> \> 0**：比 H⁺ 更想拿電子 → 強氧化劑（O₂、Au³⁺）。
-- **E<sub>H</sub> \< 0**：金屬容易被氧化成離子（Zn²⁺/Zn = −0.76 V）。
+<CellFig />
+
+施加一個反向電壓，剛好讓電子停止流動，這個電壓就是兩個半反應的**電位差**。單一個半反應的電位無法單獨量，所以約定一個基準：**標準氫電極** ½H₂ ⇌ H⁺ + e⁻ 定義為 E = 0，其他半反應都和它比，得到 E<sub>H</sub>（hydrogen scale potential）。例如 Zn²⁺ + 2e⁻ ⇌ Zn 的 E<sub>H</sub> = −0.763 V。
+
+**符號的意思**：半反應都寫成還原方向（離子 + e⁻ → 金屬）。
+
+- **E<sub>H</sub> \> 0**：這個離子比 H⁺ 更想拿電子，H₂ 就能把它還原成金屬（Au³⁺、Ag⁺）。是強氧化劑。
+- **E<sub>H</sub> \< 0**：金屬比 H₂ 更想給出電子，會被氧化成離子，同時把 H⁺ 還原（Zn、Fe 會溶在酸裡）。
 
 | 半反應 | E<sub>H</sub>° (V) | 半反應 | E<sub>H</sub>° (V) |
 |---|---|---|---|
@@ -64,118 +149,181 @@ $$
 | 2H⁺/H₂ | 0 | MnO₄⁻/Mn²⁺ | 1.51 |
 | N₂/NH₃ | 0.093 | Au⁺/Au | 1.69 |
 
-*Table 3.3，投影片 p.11, p.13。E 越正越容易被還原（越強的氧化劑）；E 越負的金屬越容易被氧化。*
+*Table 3.3，投影片 p.11、p.13。*
 
-E 和 L4 的 ΔG 連在一起，就得到 Nernst 方程式：
+**E 和 ΔG 的關係**。電位是「每個電子」的能量，乘上電子數 z 和法拉第常數 F（96,485 C/mol，1 mol 電子的電量）就是能量：
 
 $$
-\begin{aligned}
-\Delta G &= -zFE, \qquad \Delta G = \Delta G^\circ + RT\ln Q \\
-E &= E^\circ - \frac{RT}{zF}\ln Q \quad \xrightarrow{\;25^\circ\mathrm{C}\;} \quad E = E^\circ - \frac{0.0592}{z}\log Q \\
-\text{平衡時：}\ E^\circ &= \frac{0.0592}{z}\log K
-\end{aligned}
+\Delta G = -zFE
 $$
 
-F = 96,485 C/mol；z 是轉移的電子數。
+負號表示 E \> 0 的反應 ΔG \< 0，會自發進行。把 L4 的 ΔG = ΔG° + RT ln Q 兩邊除以 −zF，就得到 **Nernst 方程式**：
+
+$$
+E = E^\circ - \frac{RT}{zF}\ln Q \quad \xrightarrow{\;25^\circ\mathrm{C}\;} \quad E = E^\circ - \frac{0.0592}{z}\log Q
+$$
+
+0.0592 = 2.303RT/F，已經把 ln 換成 log。平衡時 E = 0、Q = K，所以 $E^\circ = \dfrac{0.0592}{z}\log K$。
 
 > **易錯**：投影片寫「E° = 0.0592/z × ln K」，但 0.0592 已經包含 ln 10 的換算，應該配 **log K**。
 
 <details>
-<summary>【例題 ★】求 Fe³⁺ + 3e⁻ ⇌ Fe 的 E<sub>H</sub>（已知 Fe³⁺/Fe²⁺ = 0.77 V，Fe²⁺/Fe = −0.44 V）</summary>
+<summary>【例題 ★ 完整解】求 Fe³⁺ + 3e⁻ ⇌ Fe 的 E<sub>H</sub>（已知 Fe³⁺/Fe²⁺ = 0.77 V，Fe²⁺/Fe = −0.44 V）</summary>
 
-**E 不能直接相加**（它是每個電子的能量），要先換成 ΔG，ΔG 才能相加：
+**關鍵：E 不能直接相加**。E 是每個電子的能量，兩個半反應的電子數不同（1 個和 2 個），直接相加沒有意義。能量（ΔG）才能相加。
 
-1. ΔG₁ = −1·F·(0.77) = −0.77F
-2. ΔG₂ = −2·F·(−0.44) = +0.88F
-3. ΔG = −0.77F + 0.88F = +0.11F
-4. E = −ΔG/(3F) = −0.11/3 ≈ **−0.037 V**
+**第一步：各換成 ΔG。** Fe³⁺ + e⁻ → Fe²⁺：ΔG₁ = −1·F·0.77 = −0.77F。Fe²⁺ + 2e⁻ → Fe：ΔG₂ = −2·F·(−0.44) = +0.88F。
+
+**第二步：相加。** 兩式相加就是 Fe³⁺ + 3e⁻ → Fe：ΔG = −0.77F + 0.88F = +0.11F。
+
+**第三步：換回 E，z = 3。** E = −ΔG/(3F) = −0.11/3 ≈ **−0.037 V**。
+
+**檢查**：如果直接相加會得到 0.77 − 0.44 = 0.33 V，完全錯。
+
+</details>
+
+<details>
+<summary>【換你算】一個溶液裡 \[Fe²⁺\]/\[Fe³⁺\] = 100，E 是多少？</summary>
+
+**提示**：Fe³⁺ + e⁻ ⇌ Fe²⁺，Q = \[Fe²⁺\]/\[Fe³⁺\]，z = 1。
+
+**答案**：E = 0.77 − 0.0592 × log 100 = 0.77 − 0.118 = **0.65 V**。Fe²⁺ 越多，E 越低（越還原），合理。
+
+</details>
+
+<details>
+<summary>自我檢測 3</summary>
+
+1. 為什麼要用標準氫電極當基準？
+2. E<sub>H</sub> 為正和為負各代表什麼？
+3. 從 ΔG = ΔG° + RT ln Q 推出 Nernst 方程式。
+4. 為什麼 E 不能直接相加？
+
+**答案**：(1) 單一半反應的電位無法單獨量，只能量電位差，所以約定一個零點。(2) 正：比 H⁺ 更想拿電子（強氧化劑，離子會被 H₂ 還原）；負：金屬會被氧化成離子。(3) 代入 ΔG = −zFE、ΔG° = −zFE°，兩邊除以 −zF。(4) E 是每個電子的能量，電子數不同時要先乘 z 換成 ΔG 才能相加。
 
 </details>
 
 ## 4. pε：跟 pH 對應的電子尺度 ★
 
-pH 是 H⁺ 活度的負對數；pε 照樣定義成電子活度的負對數：
+L5 用 pH 描述 H⁺ 的多寡。同樣的想法套到電子上：
 
 $$
-\begin{aligned}
-p\varepsilon &\equiv -\log a_{e^-}, \qquad p\varepsilon = \frac{FE}{2.303RT} = \frac{E}{0.0592}\ (25^\circ\mathrm{C}), \qquad p\varepsilon^\circ = \frac{1}{n}\log K
-\end{aligned}
+p\varepsilon \equiv -\log a_{e^-}
 $$
 
-- **pε 越高 → 電子越少 → 越氧化**。
-- pε 是為了方便放進平衡常數框架而定義的，天然系統中很難直接測量。
+**pε 越大 → 可以轉移的電子越少 → 越氧化**。可以把 −pε 想成「電子有多容易取得」。
 
-例：Fe³⁺ + e⁻ ⇌ Fe²⁺，K = a<sub>Fe²⁺</sub>/(a<sub>Fe³⁺</sub>·a<sub>e⁻</sub>) → pε = pε° − log(a<sub>Fe²⁺</sub>/a<sub>Fe³⁺</sub>)，pε° = 0.77/0.0592 ≈ 13.0。
-
-## 5. pε–pH 圖：哪個物種在哪裡穩定 ★
-
-**第一步：水自己的穩定範圍**
+pε 和 E 只差一個常數。把半反應寫成 Ox + ne⁻ ⇌ Red，平衡常數 $K = a_{Red}/(a_{Ox}\,a_{e^-}^n)$，取 log 整理：
 
 $$
-\begin{aligned}
-\text{上界（水被氧化）：}\ & \mathrm{2H_2O \rightarrow O_2 + 4H^+ + 4e^-}, \ E^\circ = 1.23\ \mathrm{V} \;\Rightarrow\; p\varepsilon = 20.75 - \mathrm{pH}\quad (P_{\mathrm{O_2}} = 1\ \mathrm{atm}) \\
-\text{下界（水被還原）：}\ & \mathrm{2H^+ + 2e^- \rightarrow H_2}, \ E^\circ = 0 \;\Rightarrow\; p\varepsilon = -\mathrm{pH}\quad (P_{\mathrm{H_2}} = 1\ \mathrm{atm})
-\end{aligned}
+p\varepsilon = \frac{1}{n}\log K - \frac{1}{n}\log\frac{a_{Red}}{a_{Ox}} = p\varepsilon^\circ - \frac{1}{n}\log\frac{a_{Red}}{a_{Ox}}, \qquad p\varepsilon = \frac{FE}{2.303RT} = \frac{E}{0.0592}
 $$
 
-用 E 表示：E = 1.23 − 0.059 pH；E = −0.059 pH。兩條平行線（斜率 −1）把圖分成三區：上方對水來說太氧化、中間水穩定、下方對水來說太還原。天然水一定落在中間。
+和 Nernst 方程式逐項對照，就是把 E 除以 0.0592。例如 Fe³⁺ + e⁻ ⇌ Fe²⁺：pε° = 0.77/0.0592 ≈ 13.0，所以 pε = 13.0 − log(a<sub>Fe²⁺</sub>/a<sub>Fe³⁺</sub>)。
 
-**第二步：邊界線的形狀**
-
-| 反應類型 | 邊界線 |
-|---|---|
-| 純酸鹼（沒有電子） | **垂直線**（pH = pK） |
-| 氧化還原，沒有 H⁺ 參與 | **水平線** |
-| 氧化還原，有 H⁺ 參與 | **斜線**，斜率 = −m/n（m 是 H⁺ 數，n 是電子數） |
-
-**第三步：疊起來。以硫為例**
-
-<img src="/img/notes/geochemistry/l7-redox/slide-p22.webp" alt="硫系統 pε–pH 圖的組合：水的穩定區 + 酸鹼平衡 + 氧化還原邊界" width="640" height="465" />
-
-*圖：(A) 水的穩定區 ＋ (B) 酸鹼平衡 ＋ 氧化還原邊界 ＝ (C) 完整的硫 pε–pH 圖。來源：Abby Ren〈地球化學〉課程投影片 L7 p.22。*
-
-<img src="/img/notes/geochemistry/l7-redox/01.png" alt="pε–pH 圖：水的穩定範圍 ＋ 硫系統" width="733" height="479" />
-
-用 log K 重畫的結果：灰色虛線是水的上下界。垂直線是酸鹼平衡（pH 1.98、7、12.9）；斜線是氧化還原邊界。上方是 SO₄²⁻（低 pH 時是 HSO₄⁻），下方是 H₂S、HS⁻、S²⁻。
+為什麼要多發明一個 pε？因為它能直接放進 L4、L5 的平衡常數框架：電子就像 H⁺ 一樣是一個「物種」，log K 式子裡 pH 和 pε 並排出現，下一節畫圖時非常方便。代價是 pε 是**假想的量**，天然系統中很難直接量到。
 
 <details>
-<summary>【例題 ★】推導 SO₄²⁻ / HS⁻ 邊界（7 \< pH \< 12.9）</summary>
+<summary>自我檢測 4</summary>
 
-已知：SO₄²⁻ + 8H⁺ + 8e⁻ ⇌ S²⁻ + 4H₂O（log K = 20.74）；HS⁻ ⇌ S²⁻ + H⁺（log K = −12.9）
+1. pε 大代表氧化還是還原？
+2. pε 和 E 怎麼換算？
+3. 為什麼說 pε 是「假想的」？
 
-1. 第一式加上第二式的逆反應（S²⁻ + H⁺ → HS⁻）：SO₄²⁻ + 9H⁺ + 8e⁻ ⇌ HS⁻ + 4H₂O，log K = 20.74 + 12.9 = 33.64
-2. 寫開：log K = log a<sub>HS⁻</sub> − log a<sub>SO₄</sub> + 9pH + 8pε
-3. 邊界上 a<sub>HS⁻</sub> = a<sub>SO₄</sub>：33.64 = 9pH + 8pε → **pε = 4.21 − 1.125 pH**（斜率 −9/8）
-4. pH 7 時 pε ≈ −3.7，跟第 6 節 redox ladder 的 SO₄²⁻ 那一階吻合。
-
-pH \< 7 時改用 H₂S（再加 H₂S ⇌ HS⁻ + H⁺，log K = −7）：log K = 40.64 → pε = 5.08 − 1.25 pH。
+**答案**：(1) 氧化。(2) pε = E/0.0592（25 °C）。(3) 水溶液裡幾乎沒有自由電子，pε 是為了方便放進平衡常數框架定義的，很難直接測量。
 
 </details>
 
-**Fe 系統**
+## 5. pε–pH 圖：哪個物種在哪裡穩定 ★
 
-<img src="/img/notes/geochemistry/l7-redox/slide-p16.webp" alt="Fe 系統的 pε–pH 圖" width="640" height="812" />
+有了 pH 和 pε 兩個主控變數，就能畫一張圖：橫軸 pH、縱軸 pε，每一區標出穩定的物種。畫法分三步。
 
-*圖：Fe 系統的 pε–pH 圖。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L7 p.16。*
+**第一步：水自己的穩定範圍**。天然水不能比「把水氧化成 O₂」更氧化，也不能比「把水還原成 H₂」更還原。
 
-Fe³⁺ 只在低 pH、高 pε；Fe²⁺ 的範圍很大；中高 pH 時是 Fe(OH)₃ 固體。
+上界（水被氧化）：$\mathrm{2H_2O \rightarrow O_2 + 4H^+ + 4e^-}$，E° = 1.23 V（pε° = 20.75）。用 Nernst，n = 4、P<sub>O₂</sub> = 1 atm：
+
+$$
+E = E^\circ + \frac{0.059}{4}\log\left(P_{\mathrm{O_2}}[\mathrm{H^+}]^4\right) = 1.23 - 0.059\,\mathrm{pH} \quad\Rightarrow\quad p\varepsilon = 20.75 - \mathrm{pH}
+$$
+
+下界（水被還原）：$\mathrm{4H^+ + 4e^- \rightarrow 2H_2}$，E° = 0，P<sub>H₂</sub> = 1 atm：
+
+$$
+E = -0.059\,\mathrm{pH} \quad\Rightarrow\quad p\varepsilon = -\mathrm{pH}
+$$
+
+兩條平行線（斜率都是 −1，因為每個電子配一個 H⁺）把圖分成三區：上方對水來說太氧化、中間水穩定、下方對水來說太還原。**天然水一定落在中間**。
+
+**第二步：邊界線的形狀**。任何兩個物種的邊界，都是「兩者活度相等」時的 log K 式子。式子裡有沒有 H⁺、有沒有電子，決定線的方向：
+
+| 反應類型 | log K 式子裡有… | 邊界線 |
+|---|---|---|
+| 純酸鹼（例如 H₂S ⇌ HS⁻ + H⁺） | 只有 pH | **垂直線**（pH = pK） |
+| 氧化還原，沒有 H⁺（例如 Fe³⁺ + e⁻ ⇌ Fe²⁺） | 只有 pε | **水平線** |
+| 氧化還原，有 H⁺（例如 SO₄²⁻ + 9H⁺ + 8e⁻ ⇌ HS⁻ + 4H₂O） | m·pH + n·pε | **斜線**，斜率 = −m/n |
+
+**第三步：疊起來**。先畫水的範圍，再加酸鹼的垂直線，再加氧化還原的斜線，就是完整的圖（投影片 p.22 的組合過程）。
+
+<details>
+<summary>【例題 ★ 完整解】推導 SO₄²⁻ / HS⁻ 的邊界（7 \< pH \< 12.9）</summary>
+
+已知：SO₄²⁻ + 8H⁺ + 8e⁻ ⇌ S²⁻ + 4H₂O（log K = 20.74）；HS⁻ ⇌ S²⁻ + H⁺（log K = −12.9）。
+
+**第一步：組出要的反應。** 這個 pH 範圍內還原態是 HS⁻，所以第一式加上第二式的逆反應（S²⁻ + H⁺ → HS⁻，log K = +12.9）：
+
+$$
+\mathrm{SO_4^{2-} + 9H^+ + 8e^- \rightleftharpoons HS^- + 4H_2O}, \qquad \log K = 20.74 + 12.9 = 33.64
+$$
+
+**第二步：寫開 log K。** 水的活度 = 1，−log a<sub>H⁺</sub> = pH，−log a<sub>e⁻</sub> = pε：
+
+$$
+\log K = \log a_{\mathrm{HS^-}} - \log a_{\mathrm{SO_4^{2-}}} + 9\,\mathrm{pH} + 8\,p\varepsilon
+$$
+
+**第三步：邊界上兩者活度相等**，前兩項消掉：33.64 = 9pH + 8pε → **pε = 4.21 − 1.125 pH**（斜率 −9/8）。
+
+**第四步：檢查。** pH 7 時 pε ≈ −3.7，和第 6 節 redox ladder 的 SO₄²⁻ 那一階吻合。pH \< 7 時還原態是 H₂S，再加 H₂S ⇌ HS⁻ + H⁺ 的逆反應（+7），log K = 40.64 → pε = 5.08 − 1.25 pH，斜率 −10/8。兩條線在 pH 7 接起來。
+
+</details>
+
+**先預測**：pH 7、pε = −2 的水裡，硫是 SO₄²⁻ 還是 HS⁻？鐵呢？先想，再到圖上確認。
+
+<PePhDemo />
+
+讀鐵系統的圖：Fe³⁺ 只在很酸、很氧化的角落（pH \< 3、pε \> 13）；Fe²⁺ 的範圍很大，在中性但還原的水裡（例如地下水）很常見；中高 pH、氧化的條件下是 Fe(OH)₃ 固體，這就是 L5 說「Fe³⁺ 離子勢中等、難溶」在圖上的樣子。金屬 Fe 的穩定區完全在水的下界之下，所以天然水裡不會有金屬鐵，鐵管一定會生鏽。
+
+<details>
+<summary>【換你算】(a) pH 7 時水的上下界 pε 各是多少？(b) 鐵圖上 Fe(OH)₃/Fe²⁺ 的邊界是 pε = 22 − 3pH，pH 7 時是多少？斜率 −3 代表什麼？</summary>
+
+**答案**：(a) 上界 20.75 − 7 = **13.75**，下界 **−7**。(b) 22 − 21 = **1**；斜率 −3 表示每轉移 1 個電子要配 3 個 H⁺（Fe(OH)₃ + 3H⁺ + e⁻ → Fe²⁺ + 3H₂O）。
+
+</details>
+
+<details>
+<summary>自我檢測 5</summary>
+
+1. 推出水的上下界。為什麼兩條線平行？
+2. 什麼樣的反應在圖上是垂直線、水平線、斜線？
+3. 為什麼天然水裡不會有金屬鐵？
+
+**答案**：(1) 上界 2H₂O → O₂ + 4H⁺ + 4e⁻，代 Nernst 得 pε = 20.75 − pH；下界 4H⁺ + 4e⁻ → 2H₂，pε = −pH；兩者都是一個電子配一個 H⁺，斜率都 −1。(2) 純酸鹼垂直；沒有 H⁺ 的 redox 水平；有 H⁺ 的 redox 斜線。(3) Fe 的穩定區在水的下界之下，水會把 Fe 氧化。
+
+</details>
 
 ## 6. 生物控制 pε：Redox ladder ★
 
-自然界的 pε 主要由生物決定：
+pε–pH 圖告訴我們「給定 pε，是什麼物種」，但沒說「pε 本身由什麼決定」。在自然界，答案主要是**生物**。光合作用和呼吸作用其實是一個氧化還原反應的正反兩個方向：
 
 $$
 \mathrm{H_2O + CO_2 \rightleftharpoons \{CH_2O\} + O_2} \quad \text{（往右 = 光合作用，往左 = 呼吸作用）}
 $$
 
-- 光合作用旺盛 → O₂ 累積、pε 上升；同時消耗 CO₂，pH 上升。呼吸作用相反。
-- 植物是碳的「還原者」，呼吸的生物是「氧化者」。
+光合作用把 C 從 +4 還原成 0、把 O 從 −2 氧化成 0，所以植物是碳的「還原者」，製造有機物和 O₂，讓環境 pε 上升，同時消耗 CO₂ 讓 pH 上升。呼吸作用相反，消耗有機物和 O₂，讓 pε 和 pH 下降。
 
-有機物很多時，O₂ 會先被用完。之後微生物依照**能量產率由高到低**輪流使用其他電子接受者：
+**有機物很多、O₂ 補充不及時**（例如湖底、沉積物、被污染的地下水），O₂ 很快就被用完。微生物還要繼續分解有機物，就改用其他的電子接受者，而且順序是固定的：**能量產率越高的越先用**，用完了才換下一個。每換一種，環境的 pε 就往下掉一階，這就是 **redox ladder**：
 
-<img src="/img/notes/geochemistry/l7-redox/02.png" alt="Redox ladder：有機物越多，pε 一階一階往下走" width="724" height="392" />
-
-依 L7 p.26 重畫（pH 7）。每一階都是一種電子接受者用完了，才換下一種。
+<RedoxLadderFig />
 
 | 順序 | 反應 | 溶解度變化 | pε (pH 7) |
 |---|---|---|---|
@@ -186,33 +334,44 @@ $$
 | 5 | SO₄²⁻ → H₂S | 可溶 → 可溶 | ~−3.7 |
 | 6 | CO₂ / CH₂O → CH₄（產甲烷）；發酵 | — | ~−4 |
 
-MnO₂ 和 Fe(III) 是不溶的固體，被還原後變成可溶的 Mn²⁺、Fe²⁺，所以**孔隙水的 Mn、Fe 會在對應深度突然增加**。
+為什麼順序是這樣？回到第 3 節：E（或 pε°）越高的半反應，和有機物氧化配對時 ΔG = −zFE 越負，微生物能得到越多能量。O₂ 的 pε 最高，所以最先被用；CO₂ 最低，最後才輪到。
 
-**對 pH 的影響**：O₂ 呼吸產生 CO₂ → pH 下降；脫氮、Mn、Fe 還原**消耗 H⁺** → pH 上升。Langmuir 的模擬：pH 從約 7.0 降到 6.6，再升到約 7.4。
+因為各階的物種溶解度不同，每一階會造成看得到的化學變化：MnO₂ 和 Fe(OH)₃ 是不溶的固體，被還原後變成可溶的 Mn²⁺、Fe²⁺，所以**孔隙水的 Mn、Fe 會在對應的深度突然增加**；SO₄²⁻ 被還原成 H₂S，會有臭雞蛋味，也會和 Fe²⁺ 沉澱成黑色的硫化鐵。
 
-**三個實際例子，都是同一張 ladder**：
+**對 pH 的影響**（p.31）：有氧呼吸產生 CO₂，pH 下降；脫氮、MnO₂ 還原、Fe(OH)₃ 還原都**消耗 H⁺**（看第 2 節的 MnO₂ 半反應），pH 上升。Langmuir 用一杯含 8 mg/L 溶氧、各 0.1 mM 的 NO₃⁻、SO₄²⁻、Fe(OH)₃、MnO₂ 的水模擬，pH 從約 7.0 先降到 6.6，再升到約 7.4。
 
-<img src="/img/notes/geochemistry/l7-redox/slide-p28.webp" alt="沉積物孔隙水中 NO₃⁻、Mn²⁺、Fe²⁺ 隨深度的變化" width="640" height="468" />
+<details>
+<summary>【換你算】某湖底的水 pH 7、pε ≈ 0。用 redox ladder 判斷：NO₃⁻、Mn、Fe、SO₄²⁻ 各以什麼形式存在？</summary>
 
-*圖：沉積物孔隙水隨深度的變化。來源：Abby Ren〈地球化學〉課程投影片 L7 p.28。*
+**提示**：pε = 0 在 Mn 那一階（+8）之下、Fe 那一階（−1）之上。
 
-- **沉積物**（看深度）：往下 O₂ 先耗盡 → NO₃⁻ 在 ~40 cm 內耗盡 → Mn²⁺ 從 ~20 cm 開始上升 → Fe²⁺ 更深處上升 → SO₄²⁻ 下降 → CH₄ 出現。常造成顏色分層（上層棕色，往下橄欖綠、灰色）。
+**答案**：NO₃⁻ 已經被用完（脫氮）；Mn 已被還原成溶解的 **Mn²⁺**；Fe 還是 **Fe(OH)₃ 固體**（還沒到 Fe 那一階）；硫還是 **SO₄²⁻**。
 
-<img src="/img/notes/geochemistry/l7-redox/slide-p29.webp" alt="淹水土壤中 O₂、NO₃⁻、Mn(IV)、Fe²⁺ 與 pE 隨時間的變化" width="640" height="519" />
+</details>
 
-*圖：淹水土壤隨時間的變化。來源：Sposito (1989) *The Chemistry of Soils*，via Langmuir Fig. 11.13；Abby Ren〈地球化學〉課程投影片 L7 p.29。*
+<details>
+<summary>自我檢測 6</summary>
 
-- **淹水的土壤**（看時間）：O₂ 約 1 天耗盡 → NO₃⁻ 約 2.5 天 → Mn(IV) 逐漸減少 → Fe²⁺ 約 4 天後大量出現；pE 從約 +7 降到約 −2。
+1. 光合作用和呼吸作用對 pε、pH 各有什麼影響？
+2. 寫出 redox ladder 的順序。為什麼是這個順序？
+3. 為什麼孔隙水的 Mn²⁺、Fe²⁺ 會在某個深度突然增加？
+4. 哪些步驟讓 pH 上升？
 
-<img src="/img/notes/geochemistry/l7-redox/slide-p30.webp" alt="掩埋場下游地下水的氧化還原分帶" width="640" height="812" />
+**答案**：(1) 光合作用：pε 上升、pH 上升；呼吸作用：兩者都下降。(2) O₂ → NO₃⁻ → MnO₂ → Fe(OH)₃ → SO₄²⁻ → CH₄；pε 越高的電子接受者，配對有機物氧化時釋放的能量越多，微生物先用。(3) 固體 MnO₂、Fe(OH)₃ 在那個深度被還原成可溶的離子。(4) 脫氮、MnO₂ 還原、Fe(OH)₃ 還原（消耗 H⁺）。
 
-*圖：掩埋場下游地下水的分帶。來源：Langmuir *Aqueous Environmental Geochemistry* Fig. 11.16；Abby Ren〈地球化學〉課程投影片 L7 p.30。*
+</details>
 
-- **垃圾掩埋場下游的地下水**（看距離）：污染源附近 pE 最低，往下游依序是 methanogenic → sulfate-reducing → Fe(III)-reducing → nitrate／Mn(IV)-reducing → oxic。
+## 7. 應用：同一張 ladder 的三個場景，與酸性礦山排水
 
-## 7. 應用：酸性礦山排水（AMD）
+redox ladder 會在任何「有機物多、O₂ 不夠」的地方出現，只是用來排列的「軸」不同：
 
-黃鐵礦（FeS₂）接觸空氣和水後一路產生酸：
+<RedoxZonesFig />
+
+- **沉積物**（軸是深度，p.28）：往下 O₂ 先耗盡 → NO₃⁻ 在約 40 cm 內耗盡 → Mn²⁺ 從約 20 cm 開始上升 → Fe²⁺ 在更深處上升 → SO₄²⁻ 下降 → CH₄ 出現。常造成顏色分層：上層棕色（Fe(III)），往下橄欖綠、灰色（Fe(II)、硫化物）。
+- **淹水的土壤**（軸是時間，p.29）：水填滿孔隙、擋住 O₂，加上土壤顆粒的高 BOD，O₂ 約 1 天耗盡 → NO₃⁻ 約 2.5 天 → Mn(IV) 逐漸減少 → Fe²⁺ 約 4 天後大量出現；pE 從約 +7 降到約 −2。
+- **垃圾掩埋場下游的地下水**（軸是距離，p.30）：污染源附近 BOD 最高、pE 最低；順著地下水流往下游，依序是產甲烷 → 硫酸鹽還原 → Fe(III) 還原 → 硝酸鹽／Mn(IV) 還原 → 有氧，直到和含氧、低有機碳的水混合才恢復正常。
+
+**酸性礦山排水（AMD）**：反過來，這是把**還原態**的礦物丟進**氧化**環境。黃鐵礦（FeS₂，S 為 −1、Fe 為 +2）原本埋在地下的還原環境，採礦讓它接觸空氣和水，S 和 Fe 都被氧化，一路產生酸：
 
 $$
 \begin{aligned}
@@ -222,24 +381,68 @@ $$
 \end{aligned}
 $$
 
-- 第一式由 *Thiobacillus ferrooxidans* 催化（無機反應很慢）；第二式 *Gallionella* 從中獲取能量；第三式放出更多酸，產生鐵鏽色沉澱。
-- 低 pH 使水具有腐蝕性，整治的目標就是消除這一點。
+第一式 S 從 −1 氧化到 +6，由 *Thiobacillus ferrooxidans* 催化（無機反應很慢，這是 L4 動力學的例子）；第二式 *Gallionella* 從 Fe²⁺ 的氧化取得能量；第三式 Fe³⁺ 水解（L5 的中離子勢），放出更多酸，產生鐵鏽色的 Fe(OH)₃ 沉澱。三式相加，每 4 mol 黃鐵礦淨產生 16 mol H⁺。低 pH 使水具有腐蝕性、能溶出重金屬，整治的目標就是中和這些酸。
+
+<details>
+<summary>自我檢測 7</summary>
+
+1. 沉積物、淹水土壤、掩埋場地下水，各用什麼「軸」排列 redox ladder？
+2. 為什麼掩埋場正下方最還原？
+3. AMD 的酸從哪裡來？為什麼需要細菌？
+
+**答案**：(1) 深度、時間、距離。(2) 有機物（BOD）最多，電子接受者消耗最快。(3) 黃鐵礦的 S 被氧化成硫酸、Fe²⁺ 氧化後 Fe³⁺ 水解；無機反應很慢，細菌催化讓它變快。
+
+</details>
+
+## 容易混淆的地方
+
+| 容易搞混 | 正確理解 |
+|---|---|
+| pε 大 = 電子多？ | pε 大 = 電子**少** = 越氧化（像 pH 大 = H⁺ 少） |
+| E 可以直接相加？ | 不行，先乘 z 換成 ΔG 再相加 |
+| E° = (0.0592/z) ln K？ | 是 **log** K；0.0592 已經含 ln 10 |
+| E<sub>H</sub> 為負的金屬很穩定？ | 相反，E 為負的金屬容易被氧化成離子（Zn、Fe 溶於酸） |
+| pε–pH 圖上所有線都是斜的？ | 純酸鹼垂直；沒有 H⁺ 的 redox 水平；兩者都有才斜 |
+| Redox ladder 順序隨便？ | 依能量產率由高到低：O₂ → NO₃⁻ → MnO₂ → Fe(III) → SO₄²⁻ → CH₄ |
+| 還原一定讓 pH 下降？ | 脫氮、Mn、Fe 還原消耗 H⁺，pH 上升；有氧呼吸產生 CO₂ 才讓 pH 下降 |
+
+## 章末綜合題
+
+<details>
+<summary>1.（觀念）用「氧化數 → E → pε → pε–pH 圖 → redox ladder」這條鏈，解釋為什麼湖底沉積物的孔隙水在某個深度 Fe²⁺ 突然變多。</summary>
+
+Fe 在氧化的表層是 +3 價的 Fe(OH)₃ 固體（pε–pH 圖上中性、高 pε 的區域）。微生物分解有機物，依 redox ladder 依序用掉 O₂、NO₃⁻、MnO₂，pε 一階一階往下；到了某個深度，pε 降到 Fe(OH)₃/Fe²⁺ 邊界以下（pH 7 時約 pε 0 附近），進入 Fe²⁺ 的穩定區，固體被還原成可溶的 Fe²⁺（Fe(OH)₃ + 3H⁺ + e⁻ → Fe²⁺ + 3H₂O），孔隙水的 Fe²⁺ 就在這個深度突然增加。
+
+</details>
+
+<details>
+<summary>2.（計算）Cu²⁺/Cu 的 E° = 0.34 V，Zn²⁺/Zn = −0.76 V。(a) Zn–Cu 電池的標準電位差多少？(b) 反應 Zn + Cu²⁺ → Zn²⁺ + Cu 的 ΔG°？(c) log K？</summary>
+
+(a) 0.34 − (−0.76) = **1.10 V**（兩個半反應都是 2 個電子，這裡相減是可以的，因為 z 相同；保險的做法還是換成 ΔG）。(b) ΔG° = −zFE = −2 × 96,485 × 1.10 ≈ **−212 kJ/mol**。(c) log K = zE°/0.0592 = 2 × 1.10 / 0.0592 ≈ **37**，反應幾乎完全往右。
+
+</details>
+
+<details>
+<summary>3.（圖形）在 pε–pH 圖上，SO₄²⁻/HS⁻ 的邊界斜率為什麼是 −9/8？如果某反應有 2 個 H⁺、2 個電子，斜率是多少？</summary>
+
+邊界式 m·pH + n·pε = log K，pε = log K/n − (m/n)pH；SO₄²⁻ → HS⁻ 用了 9 個 H⁺、8 個電子，所以斜率 −9/8。2 個 H⁺、2 個電子：斜率 **−1**（和水的上下界平行）。
+
+</details>
+
+<details>
+<summary>4.（應用）一口井的水有臭雞蛋味，同時 Fe²⁺ 很低。用 redox ladder 解釋。</summary>
+
+臭雞蛋味是 H₂S，表示已經到了硫酸鹽還原那一階，pε 很低，Fe 應該早已被還原成 Fe²⁺。Fe²⁺ 卻很低，是因為 Fe²⁺ 和 H₂S（HS⁻）沉澱成硫化鐵（FeS、黃鐵礦），從水中移除了。
+
+</details>
 
 <details>
 <summary>延伸：看過就好</summary>
 
-**電化學電池（p.9）**：Zn 片（陽極，−）：Zn → Zn²⁺ + 2e⁻（氧化）；Cu 片（陰極，+）：Cu²⁺ + 2e⁻ → Cu（還原）。電子經外電路從 Zn 流到 Cu。施加剛好讓電子停止流動的電壓，就是電極電位 E。
-
 **Redox ladder 的 E<sub>h</sub> 尺度（pH 7，p.25）**：O₂/H₂O 約 +0.8 V → NO₃⁻、Mn⁴⁺/Mn²⁺ 約 +0.4–0.5 V → FeOOH/Fe²⁺ 約 0 V → SO₄²⁻/HS⁻、CO₂/CH₄ 約 −0.2 V → H⁺/H₂ 約 −0.4 V。÷ 0.0592 就換成 pε。
-
-<img src="/img/notes/geochemistry/l7-redox/slide-p26.webp" alt="Redox ladder：pε 隨有機物分解量階梯下降" width="640" height="266" />
-
-*圖：投影片原圖。來源：Abby Ren〈地球化學〉課程投影片 L7 p.26。*
 
 **光合–呼吸的完整寫法（p.23）**：\[H⁺\] + H₂O + CO₂ ⇌ \{CH₂O\} + O₂，即 酸 + 「還原態」O + 「氧化態」C ⇌ 「還原態」C + 「氧化態」O。
 
-**Langmuir 模擬滴定的初始條件（p.31）**：8 mg/L DO、0.1 mM NO₃⁻、0.1 mM SO₄²⁻、0.1 mM Fe(OH)₃、0.1 mM MnO₂、Alk 0.83 mM。
-
-**Gallionella 與鐵管腐蝕（p.33, p.34）**：Gallionella 催化 Fe²⁺ 氧化取得能量，分泌 Fe(OH)₃ 細絲排除廢棄的 Fe(III)。鐵管上的「瘤」：外層好氧區由 Gallionella 把 Fe²⁺ 氧化成 Fe(OH)₃；內層厭氧區 Fe(s) + 2H⁺ → Fe²⁺ + H₂，鐵持續被腐蝕。
+**Gallionella 與鐵管腐蝕（p.33–34）**：Gallionella 催化 Fe²⁺ 氧化取得能量，分泌 Fe(OH)₃ 細絲排除廢棄的 Fe(III)。鐵管上的「瘤」：外層好氧區由 Gallionella 把 Fe²⁺ 氧化成 Fe(OH)₃；內層厭氧區 Fe(s) + 2H⁺ → Fe²⁺ + H₂，鐵持續被腐蝕。
 
 </details>

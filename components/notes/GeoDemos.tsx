@@ -721,3 +721,227 @@ export function MineralStabilityDemo() {
     </figure>
   );
 }
+
+/* ───────────── L6：人為 CO₂ 留在大氣多久（示意模型） ───────────── */
+
+export function AirborneDemo() {
+  const [rel, setRel] = useState(1000); // PgC
+  const [lt, setLt] = useState(3); // log10 年
+  const s = (rel - 1000) / 3500;
+  const f = [0.8 - 0.1 * s, 0.12 + 0.06 * s, 0.01 + 0.03 * s];
+  const fr = [...f, 1 - f[0] - f[1] - f[2]];
+  const tau = [300, 4000, 10000, 200000];
+  const names = ["海洋吸收（溶解碳酸鹽）", "海床 CaCO₃ 溶解", "陸地 CaCO₃ 風化", "矽酸鹽風化"];
+  const cols = ["var(--teal)", "#5b8bd9", "var(--gold)", "var(--orange)"];
+  // 每個過程到時間 t 已吸收的比例
+  const took = (t: number) => fr.map((a, i) => a * (1 - Math.exp(-t / tau[i])));
+  const air = (t: number) => 1 - took(t).reduce((p, c) => p + c, 0);
+  const W = 360, H = 250, L = 42, R = 12, T = 12, B = 40;
+  const x = (l: number) => L + (l / 6) * (W - L - R);
+  const y = (v: number) => T + (1 - v) * (H - T - B);
+  // 疊圖：由下往上 大氣、海洋、海床、陸地、矽酸鹽
+  const N = 120;
+  const layers: string[] = [];
+  const cum = (l: number) => {
+    const t = Math.pow(10, l);
+    const k = took(t);
+    return [air(t), air(t) + k[0], air(t) + k[0] + k[1], air(t) + k[0] + k[1] + k[2], 1];
+  };
+  for (let j = 0; j < 5; j++) {
+    const top: string[] = [], bot: string[] = [];
+    for (let i = 0; i <= N; i++) {
+      const l = (6 * i) / N;
+      const c = cum(l);
+      top.push(`${x(l)},${y(c[j])}`);
+      bot.push(`${x(l)},${y(j === 0 ? 0 : c[j - 1])}`);
+    }
+    layers.push([...top, ...bot.reverse()].join(" "));
+  }
+  const t = Math.pow(10, lt);
+  const k = took(t);
+  const tLabel = t >= 1000 ? `${fmt(t / 1000, t < 10000 ? 1 : 0)} kyr` : `${fmt(t)} 年`;
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：人為 CO₂ 去了哪裡？</b>
+        <span>拉時間（對數）和排放量，看還有多少留在大氣</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="人為 CO2 的去處對時間">
+          {layers.map((p, j) => (
+            <polygon key={j} points={p} fill={j === 0 ? "currentColor" : cols[j - 1]} fillOpacity={j === 0 ? 0.55 : 0.5} />
+          ))}
+          <line x1={x(lt)} x2={x(lt)} y1={T} y2={H - B} stroke={INK} strokeWidth={2} />
+          <circle cx={x(lt)} cy={y(air(t))} r={5} fill="var(--orange)" stroke={INK} />
+          <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          {["1", "10", "100", "1k", "10k", "100k", "1M"].map((s2, i) => (
+            <text key={s2} x={x(i)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{s2}</text>
+          ))}
+          {[0, 0.25, 0.5, 0.75, 1].map((v) => (
+            <text key={v} x={L - 5} y={y(v) + 4} textAnchor="end" style={{ fontSize: 11 }}>{v * 100}%</text>
+          ))}
+          <text x={(L + W) / 2} y={H - 5} textAnchor="middle" style={{ fontSize: 12 }}>排放後經過的時間（年）</text>
+          <text x={x(0.15)} y={y(0.5)} style={{ fontSize: 11, fontWeight: 800, fill: "hsl(var(--card))" }}>還在大氣</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>經過時間</span>
+              <span>{tLabel}</span>
+            </label>
+            <input type="range" min={0} max={6} step={0.02} value={lt} onChange={(e) => setLt(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>化石燃料排放總量</span>
+              <span>{rel} PgC</span>
+            </label>
+            <input type="range" min={1000} max={4500} step={100} value={rel} onChange={(e) => setRel(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            還在大氣：<b>{fmt(air(t) * 100, 1)}%</b>
+            {names.map((n, i) => (
+              <span key={n}>
+                <br />
+                <span style={{ color: cols[i] }}>■</span> {n}：{fmt(k[i] * 100, 1)}%（τ ≈ {tau[i] >= 1000 ? `${tau[i] / 1000} kyr` : `${tau[i]} yr`}，最多 {fmt(fr[i] * 100)}%）
+              </span>
+            ))}
+          </div>
+          <div className="ix-note">
+            示意模型：四個過程各以自己的時間尺度吸收一部分，比例依投影片 p.23–24。排得越多，碳酸根被用掉越多，海洋吸收的比例越低（80% → 70%），剩下的要靠更慢的過程。4 萬年後仍有約 7% 在大氣。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── L7：pε–pH 圖（水、硫、鐵） ───────────── */
+
+type Sys = "water" | "S" | "Fe";
+
+const sSpecies = (pH: number, pe: number) => {
+  // 依 log K 推出的邊界（等活度）
+  let ox: number;
+  if (pH < 1.98) ox = 4.83 - 1.125 * pH;
+  else if (pH < 7) ox = 5.08 - 1.25 * pH;
+  else if (pH < 12.9) ox = 4.21 - 1.125 * pH;
+  else ox = 2.59 - pH;
+  if (pe > ox) return pH < 1.98 ? "HSO₄⁻" : "SO₄²⁻";
+  return pH < 7 ? "H₂S" : pH < 12.9 ? "HS⁻" : "S²⁻";
+};
+
+const feSpecies = (pH: number, pe: number) => {
+  // 溶解 Fe 取 10⁻⁶ M；Fe(OH)₃ 取非晶質（log *K ≈ 3）
+  if (pH < 3) return pe > 13 ? "Fe³⁺" : "Fe²⁺";
+  if (pH < 9.45) return pe > 22 - 3 * pH ? "Fe(OH)₃(s)" : "Fe²⁺";
+  return pe > 3.1 - pH ? "Fe(OH)₃(s)" : "Fe(OH)₂(s)";
+};
+
+export function PePhDemo() {
+  const [sys, setSys] = useState<Sys>("S");
+  const [pH, setPH] = useState(7);
+  const [pe, setPe] = useState(-2);
+  const W = 360, H = 300, L = 40, R = 12, T = 12, B = 36;
+  const x = (p: number) => L + (p / 14) * (W - L - R);
+  const y = (e: number) => T + ((22 - e) / 34) * (H - T - B); // pε 22 .. −12
+  const pl = (pts: [number, number][]) => pts.map(([p, e]) => `${x(p)},${y(Math.max(-12, Math.min(22, e)))}`).join(" ");
+  const waterOK = pe <= 20.75 - pH && pe >= -pH;
+  const sp = sys === "S" ? sSpecies(pH, pe) : sys === "Fe" ? feSpecies(pH, pe) : waterOK ? "H₂O" : pe > 20.75 - pH ? "O₂" : "H₂";
+  const ink = { stroke: INK, strokeWidth: 2.2, fill: "none" } as const;
+  const lab = (p: number, e: number, t: string, a: "start" | "middle" | "end" = "middle") => (
+    <text x={x(p)} y={y(e)} textAnchor={a} style={{ fontSize: 11.5, fontWeight: 800 }}>{t}</text>
+  );
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：pε–pH 圖</b>
+        <span>先看水的穩定範圍，再疊上硫或鐵；拉 pH、pε 看哪個物種穩定</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="pε–pH 圖">
+          <polygon points={pl([[0, 20.75], [14, 6.75], [14, 22], [0, 22]])} fill="var(--orange)" fillOpacity={0.12} />
+          <polygon points={pl([[0, 0], [14, -14], [0, -14]])} fill="#5b8bd9" fillOpacity={0.14} />
+          <polyline points={pl([[0, 20.75], [14, 6.75]])} stroke={INK} strokeDasharray="6 4" strokeWidth={1.6} fill="none" />
+          <polyline points={pl([[0, 0], [12, -12]])} stroke={INK} strokeDasharray="6 4" strokeWidth={1.6} fill="none" />
+          <text x={x(1)} y={y(21.2)} style={{ fontSize: 10.5 }}>O₂ 穩定（水被氧化）</text>
+          <text x={x(0.3)} y={y(-10.8)} style={{ fontSize: 10.5 }}>H₂ 穩定（水被還原）</text>
+          {sys === "water" && (
+            <>
+              {lab(6, 9, "水穩定")}
+              <text x={x(9.4)} y={y(13.6)} style={{ fontSize: 10 }}>pε = 20.75 − pH</text>
+              <text x={x(4.6)} y={y(-6.4)} style={{ fontSize: 10 }}>pε = −pH</text>
+            </>
+          )}
+          {sys === "S" && (
+            <>
+              <polyline points={pl([[0, 4.83], [1.98, 2.6], [7, -3.67], [12.9, -10.3], [14, -11.41]])} {...ink} />
+              <polyline points={pl([[1.98, 22], [1.98, 2.6]])} {...ink} strokeWidth={1.4} />
+              <polyline points={pl([[7, -3.67], [7, -12]])} {...ink} strokeWidth={1.4} />
+              <polyline points={pl([[12.9, -10.3], [12.9, -12]])} {...ink} strokeWidth={1.4} />
+              {lab(1, 9, "HSO₄⁻")}
+              {lab(8, 9, "SO₄²⁻")}
+              {lab(4.2, -1.9, "H₂S")}
+              {lab(10, -8.2, "HS⁻")}
+              <text x={x(13.45)} y={y(-11.6)} textAnchor="middle" style={{ fontSize: 9.5, fontWeight: 800 }}>S²⁻</text>
+            </>
+          )}
+          {sys === "Fe" && (
+            <>
+              <polyline points={pl([[0, 13], [3, 13]])} {...ink} />
+              <polyline points={pl([[3, 22], [3, 13], [9.45, -6.35], [14, -10.9]])} {...ink} />
+              <polyline points={pl([[9.45, -6.35], [9.45, -12]])} {...ink} />
+              {lab(1.5, 17, "Fe³⁺")}
+              {lab(4.2, 2, "Fe²⁺")}
+              {lab(10, 6, "Fe(OH)₃(s)")}
+              {lab(11.8, -10.4, "Fe(OH)₂(s)")}
+            </>
+          )}
+          <circle cx={x(pH)} cy={y(pe)} r={6} fill="var(--gold)" stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          {[0, 2, 4, 6, 8, 10, 12, 14].map((p) => (
+            <text key={p} x={x(p)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{p}</text>
+          ))}
+          {[20, 10, 0, -10].map((e) => (
+            <text key={e} x={L - 5} y={y(e) + 4} textAnchor="end" style={{ fontSize: 11 }}>{e}</text>
+          ))}
+          <text x={(L + W) / 2} y={H - 4} textAnchor="middle" style={{ fontSize: 12 }}>pH</text>
+          <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>pε（越上越氧化）</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-btns">
+            {([["water", "只有水"], ["S", "硫系統"], ["Fe", "鐵系統"]] as [Sys, string][]).map(([k, t]) => (
+              <button key={k} type="button" className="ix-btn" aria-pressed={sys === k} onClick={() => setSys(k)}>
+                {t}
+              </button>
+            ))}
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>pH</span>
+              <span>{fmt(pH, 1)}</span>
+            </label>
+            <input type="range" min={0} max={14} step={0.1} value={pH} onChange={(e) => setPH(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>pε</span>
+              <span>{fmt(pe, 1)}</span>
+            </label>
+            <input type="range" min={-12} max={22} step={0.1} value={pe} onChange={(e) => setPe(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            穩定的物種：<b>{sp}</b>
+            <br />E<sub>H</sub> = 0.0592 × pε = <b>{fmt(0.0592 * pe, 2)} V</b>
+          </div>
+          <div className="ix-verdict">{waterOK ? "在水的穩定範圍內" : "超出水的穩定範圍：天然水到不了"}</div>
+          <div className="ix-note">
+            垂直線是純酸鹼（沒有電子，只看 pH）；水平線是沒有 H⁺ 參與的氧化還原；斜線兩者都有，斜率 = −(H⁺ 數)/(電子數)。鐵系統假設溶解 Fe = 10⁻⁶ M、Fe(OH)₃ 為非晶質，只是代表性的畫法。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}

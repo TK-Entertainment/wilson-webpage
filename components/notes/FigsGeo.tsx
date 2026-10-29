@@ -938,3 +938,348 @@ export function SeawaterTableFig() {
     </Fig>
   );
 }
+
+/* ───────────── L6：簡化碳循環（投影片 p.7 的數字） ───────────── */
+
+export function CarbonCycleFig() {
+  const box = (x: number, y: number, w: number, h: number, t: string, v: string, col: string) => (
+    <g>
+      <rect x={x} y={y} width={w} height={h} rx={6} fill={col} fillOpacity={0.16} stroke={col} strokeWidth={2} />
+      <text x={x + w / 2} y={y + 22} textAnchor="middle" style={{ fontSize: 13, fontWeight: 800 }}>{t}</text>
+      <text x={x + w / 2} y={y + 40} textAnchor="middle" style={{ fontSize: 11.5 }}>{v}</text>
+    </g>
+  );
+  return (
+    <Fig caption="簡化的全球碳循環。方框是儲庫（PgC），旁邊的 τ 是滯留時間，箭頭上是通量（PgC/yr）。大氣、表層海洋、陸地生物圈之間的交換只要幾年到幾十年；深海要幾百年；地殼要上億年。人為 CO₂ 最後要進到下面那幾個大儲庫，才算真正離開大氣。" source="課堂投影片 L6 p.7">
+      <svg viewBox="0 0 640 330" className="ix-svg" role="img" aria-label="簡化碳循環">
+        <Marks />
+        {box(20, 14, 230, 54, "大氣 CO₂", "600（τ 到海 7 yr、到陸 12 yr）", C.teal)}
+        {box(400, 14, 220, 54, "陸地有機碳", "2,100（τ 42 yr）", C.gold)}
+        {box(20, 118, 230, 54, "表層海洋 DIC", "700（τ 到深海 7 yr）", C.blue)}
+        {box(20, 250, 230, 54, "深層海洋 DIC", "38,000（τ 380 yr）", C.navy)}
+        {box(400, 196, 220, 54, "地殼碳酸鹽 (Ca,Mg)CO₃", "4.8×10⁷（風化 240 Myr）", C.orange)}
+        {box(400, 266, 220, 54, "地殼有機碳", "1.5×10⁷（風化 300 Myr）", C.rose)}
+        <line x1={252} y1={41} x2={396} y2={41} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" markerStart="url(#gm-k)" />
+        <text x={324} y={34} textAnchor="middle" style={{ fontSize: 11 }}>光合／呼吸</text>
+        <line x1={110} y1={70} x2={110} y2={114} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" markerStart="url(#gm-k)" />
+        <text x={118} y={96} style={{ fontSize: 11 }}>海–氣交換</text>
+        <line x1={80} y1={174} x2={80} y2={246} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" markerStart="url(#gm-k)" />
+        <text x={88} y={196} style={{ fontSize: 11 }}>環流交換</text>
+        <line x1={170} y1={174} x2={170} y2={246} stroke={C.orange} strokeWidth={2} markerEnd="url(#gm-o)" />
+        <text x={178} y={208} style={{ fontSize: 10.5 }}>沉降：CaCO₃ 1</text>
+        <text x={178} y={222} style={{ fontSize: 10.5 }}>有機碳 10</text>
+        <line x1={252} y1={286} x2={396} y2={226} stroke={C.orange} strokeWidth={2} markerEnd="url(#gm-o)" />
+        <text x={300} y={246} textAnchor="middle" style={{ fontSize: 10.5 }}>埋藏 CaCO₃ 0.25</text>
+        <line x1={252} y1={296} x2={396} y2={296} stroke={C.rose} strokeWidth={2} markerEnd="url(#gm-r)" />
+        <text x={324} y={312} textAnchor="middle" style={{ fontSize: 10.5 }}>埋藏有機碳 0.05</text>
+        <path d="M430,194 C400,150 330,150 254,146" fill="none" stroke={C.teal} strokeWidth={2} strokeDasharray="5 4" markerEnd="url(#gm-t)" />
+        <text x={360} y={140} textAnchor="middle" style={{ fontSize: 10.5 }}>河流帶入溶解 CaCO₃ 0.2</text>
+        <path d="M560,194 C560,110 330,100 254,62" fill="none" stroke={INK} strokeWidth={1.6} strokeDasharray="5 4" markerEnd="url(#gm-k)" />
+        <text x={470} y={88} textAnchor="middle" style={{ fontSize: 10.5 }}>變質 CaCO₃ + SiO₂ → CaSiO₃ + CO₂：0.05（回到大氣）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L6：CaCO₃ 越深越容易溶（Broecker Table 2-2） ───────────── */
+
+export function LysoclineFig() {
+  const W = 300, H = 300, L = 50, R = 12, T = 30, B = 36;
+  const x = (c: number) => L + (c / 300) * (W - L - R);
+  const y = (d: number) => T + (d / 6000) * (H - T - B);
+  // 飽和 CO₃²⁻：0 m 用 24 °C；冷水之後依壓力（100 atm ≈ 1000 m）
+  const cal: [number, number][] = [[0, 53], [700, 72], [2500, 97], [5000, 130], [6000, 143]];
+  const ara: [number, number][] = [[0, 90], [700, 110], [2500, 144], [5000, 190], [6000, 208]];
+  const sea: [number, number][] = [[0, 230], [300, 200], [800, 120], [1200, 95], [6000, 90]];
+  const pl = (a: [number, number][]) => a.map(([d, c]) => `${x(c)},${y(d)}`).join(" ");
+  return (
+    <Fig caption="第一張：飽和所需的 CO₃²⁻（虛線）隨深度增加，因為深海冷、壓力大，CaCO₃ 的 K_sp 變大；海水實際的 CO₃²⁻（實線，示意）表層多、深層少。實線跑到虛線左邊（不足）的深度以下，CaCO₃ 就會溶解；aragonite 比 calcite 更淺就開始溶。第二張：海底剖面。溶躍面（lysocline）以下溶解速率急增，CCD 以下幾乎沒有 CaCO₃，所以淺的洋脊頂有白色的碳酸鹽軟泥，深海盆沒有。" source="飽和濃度依 Broecker Table 2-2；課堂投影片 L6 p.12–13（Peterson 1966 方解石球實驗）">
+      <div className="fg-pair">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="飽和 CO3 對深度">
+          <polyline points={pl(sea)} fill="none" stroke={C.teal} strokeWidth={3} />
+          <polyline points={pl(cal)} fill="none" stroke={C.orange} strokeWidth={2.4} strokeDasharray="6 4" />
+          <polyline points={pl(ara)} fill="none" stroke={C.violet} strokeWidth={2.4} strokeDasharray="6 4" />
+          {([["海水實際", C.teal, ""], ["calcite 飽和", C.orange, "6 4"], ["aragonite 飽和", C.violet, "6 4"]] as [string, string, string][]).map(([n, c, d], i) => (
+            <g key={n}>
+              <line x1={x(205)} x2={x(222)} y1={y(3300 + i * 450)} y2={y(3300 + i * 450)} stroke={c} strokeWidth={2.6} strokeDasharray={d} />
+              <text x={x(226)} y={y(3300 + i * 450) + 4} style={{ fontSize: 10, fontWeight: 700 }}>{n}</text>
+            </g>
+          ))}
+          <line x1={L} x2={W - R} y1={y(2280)} y2={y(2280)} stroke={C.orange} strokeOpacity={0.6} />
+          <text x={W - R - 2} y={y(2280) - 4} textAnchor="end" style={{ fontSize: 10 }}>以下 calcite 不飽和</text>
+          <line x1={L} x2={W - R} y1={T} y2={T} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          {[0, 100, 200].map((c) => (
+            <text key={c} x={x(c)} y={T - 6} textAnchor="middle" style={{ fontSize: 10.5 }}>{c}</text>
+          ))}
+          <text x={(L + W) / 2} y={12} textAnchor="middle" style={{ fontSize: 11 }}>CO₃²⁻（μmol/kg）</text>
+          {[0, 1000, 2000, 3000, 4000, 5000, 6000].map((d) => (
+            <text key={d} x={L - 5} y={y(d) + 4} textAnchor="end" style={{ fontSize: 10.5 }}>{d}</text>
+          ))}
+          <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 11 }}>深度（m）</text>
+        </svg>
+        <svg viewBox="0 0 300 300" className="ix-svg" role="img" aria-label="海底剖面、溶躍面與 CCD">
+          <rect x={0} y={20} width={300} height={250} fill={C.blue} fillOpacity={0.12} />
+          <path d="M0,270 L0,230 C40,225 70,130 110,110 C140,100 160,100 190,120 C230,150 260,230 300,240 L300,270 Z" fill={INK} fillOpacity={0.25} />
+          <path d="M70,170 C85,140 100,118 110,112 C140,100 160,100 190,120 C205,132 215,150 222,165 L215,168 C205,150 195,136 185,128 C160,110 140,110 118,120 C105,128 92,148 78,172 Z" fill="#f2efe6" stroke={INK} strokeWidth={0.8} />
+          <line x1={0} x2={300} y1={160} y2={160} stroke={C.orange} strokeDasharray="6 4" strokeWidth={1.8} />
+          <text x={296} y={154} textAnchor="end" style={{ fontSize: 11, fontWeight: 800, fill: C.orange }}>溶躍面</text>
+          <line x1={0} x2={300} y1={200} y2={200} stroke={C.rose} strokeDasharray="6 4" strokeWidth={1.8} />
+          <text x={296} y={194} textAnchor="end" style={{ fontSize: 11, fontWeight: 800, fill: C.rose }}>CCD</text>
+          {[30, 60, 95, 130, 165, 200, 235, 265].map((px, i) => (
+            <g key={px}>
+              <circle cx={px} cy={40 + (i % 3) * 22} r={4} fill="#f2efe6" stroke={INK} strokeWidth={0.8} />
+              <line x1={px} x2={px} y1={48 + (i % 3) * 22} y2={70 + (i % 3) * 22} stroke={INK} strokeOpacity={0.35} strokeDasharray="2 3" />
+            </g>
+          ))}
+          <text x={150} y={15} textAnchor="middle" style={{ fontSize: 11 }}>表層：浮游生物製造 CaCO₃ 殼，往下沉</text>
+          <text x={150} y={96} textAnchor="middle" style={{ fontSize: 10.5, fontWeight: 700 }}>洋脊</text>
+          <text x={150} y={140} textAnchor="middle" style={{ fontSize: 10, fontWeight: 700, fill: "#1c2135" }}>碳酸鹽軟泥</text>
+          <text x={40} y={258} textAnchor="middle" style={{ fontSize: 10.5 }}>深海盆：</text>
+          <text x={40} y={271} textAnchor="middle" style={{ fontSize: 10.5 }}>沒有 CaCO₃</text>
+          <text x={260} y={258} textAnchor="middle" style={{ fontSize: 10.5 }}>紅黏土</text>
+          <text x={150} y={292} textAnchor="middle" style={{ fontSize: 11 }}>（示意，不按比例）</text>
+        </svg>
+      </div>
+    </Fig>
+  );
+}
+
+/* ───────────── L6：Bowen 反應系列與風化穩定性 ───────────── */
+
+export function BowenFig() {
+  const b = (x: number, y: number, t: string, col: string, w = 104) => (
+    <g>
+      <rect x={x - w / 2} y={y - 15} width={w} height={30} rx={4} fill={col} fillOpacity={0.18} stroke={col} strokeWidth={2} />
+      <text x={x} y={y + 5} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>{t}</text>
+    </g>
+  );
+  return (
+    <Fig caption="Bowen 反應系列：岩漿冷卻時礦物結晶的順序。左支是不連續系列（橄欖石 → 輝石 → 角閃石 → 黑雲母），右支是連續系列（Ca 斜長石 → Na 斜長石），最後是鉀長石、白雲母、石英。在地表風化時順序剛好反過來：越早結晶的（越高溫形成，和地表條件差越遠）越不穩定、越容易風化；石英最穩定。" source="課堂投影片 L6 p.17（Goldich 風化序列）">
+      <svg viewBox="0 0 640 300" className="ix-svg" role="img" aria-label="Bowen 反應系列">
+        <Marks />
+        {b(150, 40, "橄欖石", C.rose)}
+        {b(150, 92, "輝石", C.orange)}
+        {b(150, 144, "角閃石", C.gold)}
+        {b(150, 196, "黑雲母", C.teal)}
+        {b(390, 40, "Ca 斜長石", C.rose, 120)}
+        {b(390, 118, "Ca–Na 斜長石", C.gold, 120)}
+        {b(390, 196, "Na 斜長石", C.teal, 120)}
+        {[[150, 56, 150, 76], [150, 108, 150, 128], [150, 160, 150, 180], [390, 56, 390, 102], [390, 134, 390, 180]].map(([a, b2, c, d], i) => (
+          <line key={i} x1={a} y1={b2} x2={c} y2={d} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" />
+        ))}
+        <line x1={160} y1={212} x2={250} y2={238} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" />
+        <line x1={380} y1={212} x2={300} y2={238} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" />
+        {b(275, 254, "鉀長石 → 白雲母 → 石英", C.blue, 200)}
+        <text x={150} y={14} textAnchor="middle" style={{ fontSize: 11 }}>不連續系列</text>
+        <text x={390} y={14} textAnchor="middle" style={{ fontSize: 11 }}>連續系列</text>
+        <line x1={30} y1={40} x2={30} y2={254} stroke={INK} strokeWidth={2} markerEnd="url(#gm-k)" />
+        <text x={22} y={147} transform="rotate(-90 22 147)" textAnchor="middle" style={{ fontSize: 11 }}>結晶溫度 高 → 低</text>
+        <rect x={500} y={40} width={26} height={214} fill="url(#bw-g)" stroke={INK} />
+        <defs>
+          <linearGradient id="bw-g" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#d0567a" />
+            <stop offset="1" stopColor="#5b8bd9" />
+          </linearGradient>
+        </defs>
+        <text x={536} y={52} style={{ fontSize: 12, fontWeight: 800 }}>最容易風化</text>
+        <text x={536} y={254} style={{ fontSize: 12, fontWeight: 800 }}>最穩定</text>
+        <text x={536} y={150} style={{ fontSize: 11 }}>地表風化</text>
+        <text x={536} y={165} style={{ fontSize: 11 }}>穩定性</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L6：人為 CO₂ 進入海洋的深度（示意剖面） ───────────── */
+
+export function AnthroSectionFig() {
+  const W = 640, H = 260, L = 50, R = 14, T = 30, B = 34;
+  const x = (f: number) => L + f * (W - L - R);
+  const y = (d: number) => T + (d / 5000) * (H - T - B);
+  // 沿大西洋（北→南）→ 南大洋 → 太平洋（南→北）；每個位置 [相對距離, 人為 CO₂ 穿透深度 m]
+  const pen = (lev: number): [number, number][] => [
+    [0, 2600 * lev], [0.08, 2000 * lev], [0.2, 1000 * lev], [0.3, 700 * lev], [0.42, 1000 * lev], [0.52, 1500 * lev], [0.6, 1300 * lev], [0.7, 700 * lev], [0.82, 450 * lev], [0.92, 400 * lev], [1, 350 * lev],
+  ];
+  const area = (lev: number) => {
+    const p = pen(lev);
+    return [`${x(0)},${y(0)}`, ...p.map(([f, d]) => `${x(f)},${y(d)}`), `${x(1)},${y(0)}`].join(" ");
+  };
+  return (
+    <Fig caption="人為 CO₂ 進入海洋的深度（示意剖面，顏色越濃越多）。大部分還留在上層 1000 m 以內；只有在北大西洋和南大洋，表層水變冷變重、下沉形成深層水的地方，才被帶到 2000 m 以下。所以把人為 CO₂ 送進深海的速度，由海洋環流（數百年）決定，而不是海氣交換（約半年）。" source="Sabine et al. (2004) 的 GLODAP 剖面；課堂投影片 L6 p.22。輪廓為示意">
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="人為 CO2 剖面示意">
+        <Marks />
+        <rect x={L} y={T} width={W - L - R} height={H - T - B} fill={C.navy} fillOpacity={0.25} />
+        {[1, 0.7, 0.45, 0.25].map((lev, i) => (
+          <polygon key={lev} points={area(lev)} fill={C.orange} fillOpacity={0.18 + i * 0.14} />
+        ))}
+        <line x1={x(0.03)} y1={y(300)} x2={x(0.03)} y2={y(2300)} stroke={C.teal} strokeWidth={2.4} markerEnd="url(#gm-t)" />
+        <text x={x(0.05)} y={y(2600) + 4} style={{ fontSize: 10.5, fontWeight: 700 }}>北大西洋深層水下沉</text>
+        <line x1={x(0.52)} y1={y(200)} x2={x(0.52)} y2={y(1300)} stroke={C.teal} strokeWidth={2.4} markerEnd="url(#gm-t)" />
+        <text x={x(0.54)} y={y(1700)} style={{ fontSize: 10.5, fontWeight: 700 }}>南大洋下沉</text>
+        <text x={x(0.8)} y={y(1300)} textAnchor="middle" style={{ fontSize: 10.5 }}>太平洋：只到幾百公尺</text>
+        <text x={x(0.12)} y={T - 10} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>大西洋（北）</text>
+        <text x={x(0.52)} y={T - 10} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>南大洋</text>
+        <text x={x(0.9)} y={T - 10} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>太平洋（北）</text>
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[0, 1000, 2000, 3000, 4000, 5000].map((d) => (
+          <text key={d} x={L - 5} y={y(d) + 4} textAnchor="end" style={{ fontSize: 10.5 }}>{d}</text>
+        ))}
+        <text x={14} y={(T + H - B) / 2} transform={`rotate(-90 14 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 11 }}>深度（m）</text>
+        <text x={(L + W) / 2} y={H - 10} textAnchor="middle" style={{ fontSize: 11 }}>沿剖面距離 →</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L7：Redox ladder（pH 7） ───────────── */
+
+export function RedoxLadderFig() {
+  const steps: [string, number, string][] = [
+    ["O₂ → H₂O", 13.8, C.teal],
+    ["NO₃⁻ → N₂", 12.6, C.blue],
+    ["MnO₂ → Mn²⁺", 8, C.violet],
+    ["Fe(OH)₃ → Fe²⁺", -1, C.orange],
+    ["SO₄²⁻ → HS⁻", -3.7, C.gold],
+    ["CO₂ → CH₄", -4.1, C.rose],
+  ];
+  const W = 640, H = 290, L = 50, R = 16, T = 16, B = 40;
+  const y = (e: number) => T + ((16 - e) / 22) * (H - T - B);
+  const sw = (W - L - R) / steps.length;
+  return (
+    <Fig caption="Redox ladder：把有機物丟進一杯水（或埋進沉積物），微生物先用能量最多的電子接受者 O₂；O₂ 用完了才換 NO₃⁻，再來是 MnO₂、Fe(OH)₃、SO₄²⁻，最後是產甲烷。每換一種，pε 就往下掉一階（數值為 pH 7 時的代表值）。標「不溶 → 可溶」的兩階，固體被還原後變成溶解離子，所以孔隙水的 Mn、Fe 會突然增加。" source="課堂投影片 L7 p.25–27（Stumm & Morgan；Langmuir）">
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="Redox ladder">
+        <Marks />
+        {[15, 10, 5, 0, -5].map((e) => (
+          <g key={e}>
+            <line x1={L} x2={W - R} y1={y(e)} y2={y(e)} stroke={INK} strokeOpacity={0.1} />
+            <text x={L - 6} y={y(e) + 4} textAnchor="end" style={{ fontSize: 11 }}>{e}</text>
+          </g>
+        ))}
+        {steps.map(([n, e, c], i) => (
+          <g key={n}>
+            <rect x={L + i * sw + 3} y={y(e)} width={sw - 6} height={H - B - y(e)} fill={c} fillOpacity={0.22} />
+            <line x1={L + i * sw} x2={L + (i + 1) * sw} y1={y(e)} y2={y(e)} stroke={c} strokeWidth={4} />
+            {i > 0 && <line x1={L + i * sw} x2={L + i * sw} y1={y(steps[i - 1][1])} y2={y(e)} stroke={INK} strokeWidth={1.5} strokeOpacity={0.6} />}
+            <text x={L + (i + 0.5) * sw} y={y(e) - 8} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>{n}</text>
+            <text x={L + (i + 0.5) * sw} y={Math.max(y(e) + 18, y(0) + 18)} textAnchor="middle" style={{ fontSize: 10.5 }}>pε ≈ {e > 0 ? "+" : ""}{e}</text>
+            {(i === 2 || i === 3) && (
+              <text x={L + (i + 0.5) * sw} y={H - B - 8} textAnchor="middle" style={{ fontSize: 10, fontWeight: 700, fill: c }}>不溶 → 可溶</text>
+            )}
+          </g>
+        ))}
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L + 10} x2={W - R - 10} y1={H - 14} y2={H - 14} stroke={INK} strokeWidth={1.5} markerEnd="url(#gm-k)" />
+        <text x={(L + W) / 2} y={H - 20} textAnchor="middle" style={{ fontSize: 11.5 }}>分解掉的有機物越來越多（或沉積物越來越深）</text>
+        <text x={16} y={(T + H - B) / 2} transform={`rotate(-90 16 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>pε（pH 7）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L7：同一張 ladder 在沉積物和地下水裡 ───────────── */
+
+export function RedoxZonesFig() {
+  const W = 300, H = 300, L = 40, R = 10, T = 26, B = 20;
+  const y = (d: number) => T + d * (H - T - B); // d 0..1
+  const x = (c: number) => L + c * (W - L - R);
+  const curve = (f: (d: number) => number) => {
+    const a: string[] = [];
+    for (let i = 0; i <= 60; i++) {
+      const d = i / 60;
+      a.push(`${x(f(d))},${y(d)}`);
+    }
+    return a.join(" ");
+  };
+  const sig = (d: number, c: number, w: number) => 1 / (1 + Math.exp((d - c) / w));
+  const prof: [string, string, (d: number) => number, number][] = [
+    ["O₂", C.teal, (d) => 0.9 * sig(d, 0.06, 0.02), 0.02],
+    ["NO₃⁻", C.blue, (d) => 0.6 * sig(d, 0.18, 0.03), 0.12],
+    ["Mn²⁺", C.violet, (d) => 0.45 * (1 - sig(d, 0.28, 0.03)), 0.36],
+    ["Fe²⁺", C.orange, (d) => 0.7 * (1 - sig(d, 0.45, 0.04)), 0.55],
+    ["SO₄²⁻", C.gold, (d) => 0.85 * sig(d, 0.68, 0.05), 0.6],
+    ["CH₄", C.rose, (d) => 0.8 * (1 - sig(d, 0.85, 0.04)), 0.93],
+  ];
+  const zones: [string, string][] = [["產甲烷", C.rose], ["硫酸鹽還原", C.gold], ["Fe(III) 還原", C.orange], ["硝酸鹽／Mn(IV) 還原", C.violet], ["有氧", C.teal]];
+  return (
+    <Fig caption="同一張 redox ladder，在不同地方以不同的「軸」出現。第一張：沉積物孔隙水隨深度（示意）。O₂ 最先耗盡，接著 NO₃⁻ 減少，Mn²⁺、Fe²⁺ 依序在更深處冒出（固體 MnO₂、Fe(OH)₃ 被還原溶出），再往下 SO₄²⁻ 被用掉、CH₄ 出現。第二張：垃圾掩埋場下游的地下水（俯視）。有機物最多的污染源附近最還原，順著地下水流往下游，依序是產甲烷、硫酸鹽還原、Fe(III) 還原、硝酸鹽／Mn 還原，最後回到有氧。淹水的土壤則是同樣的順序隨時間出現。" source="課堂投影片 L7 p.28–30（Langmuir Fig. 11.13、11.16）">
+      <div className="fg-pair">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="沉積物孔隙水剖面">
+          <rect x={L} y={T} width={W - L - R} height={y(0.12) - T} fill="#a0703c" fillOpacity={0.25} />
+          <rect x={L} y={y(0.12)} width={W - L - R} height={H - B - y(0.12)} fill="#6b7a5c" fillOpacity={0.18} />
+          {prof.map(([n, c, f, dl]) => (
+            <g key={n}>
+              <polyline points={curve(f)} fill="none" stroke={c} strokeWidth={2.6} />
+              <text x={x(f(dl)) + 5} y={y(dl) + 4} style={{ fontSize: 10.5, fontWeight: 800, fill: c }}>{n}</text>
+            </g>
+          ))}
+          <line x1={L} x2={W - R} y1={T} y2={T} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          <text x={(L + W) / 2} y={14} textAnchor="middle" style={{ fontSize: 11 }}>孔隙水濃度 →</text>
+          <text x={14} y={(T + H - B) / 2} transform={`rotate(-90 14 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 11 }}>深度 →（約數十 cm）</text>
+          <text x={W - R - 4} y={y(0.11)} textAnchor="end" style={{ fontSize: 9.5 }}>棕色（氧化）</text>
+          <text x={x(0.03)} y={y(0.97)} style={{ fontSize: 9.5 }}>橄欖綠、灰（還原）</text>
+        </svg>
+        <svg viewBox="0 0 300 300" className="ix-svg" role="img" aria-label="掩埋場下游地下水分帶">
+          <defs>
+            <marker id="gm-k2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" style={{ fill: "currentColor" }} />
+            </marker>
+          </defs>
+          {zones
+            .map(([n, c], i) => {
+              const rx = 25 + i * 26, ry = 14 + i * 14;
+              return <ellipse key={n} cx={34 + rx} cy={170} rx={rx} ry={ry} fill={c} fillOpacity={0.22} stroke={c} strokeWidth={1.5} />;
+            })
+            .reverse()}
+          {zones.map(([n], i) => {
+            const r0 = i === 0 ? 0 : 25 + (i - 1) * 26, r1 = 25 + i * 26;
+            return (
+              <text key={n} x={34 + r0 + r1} y={174} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>{i + 1}</text>
+            );
+          })}
+          <rect x={12} y={160} width={22} height={20} fill={INK} fillOpacity={0.7} />
+          <text x={8} y={154} style={{ fontSize: 10, fontWeight: 800 }}>掩埋場</text>
+          {zones.map(([n, c], i) => (
+            <g key={n}>
+              <rect x={14} y={10 + i * 15} width={10} height={10} fill={c} fillOpacity={0.6} />
+              <text x={30} y={19 + i * 15} style={{ fontSize: 10.5, fontWeight: 700 }}>{i + 1}　{n}</text>
+            </g>
+          ))}
+          <line x1={40} x2={285} y1={258} y2={258} stroke={INK} strokeWidth={1.5} markerEnd="url(#gm-k2)" />
+          <text x={160} y={280} textAnchor="middle" style={{ fontSize: 11 }}>地下水流向：往下游越氧化（俯視示意）</text>
+        </svg>
+      </div>
+    </Fig>
+  );
+}
+
+/* ───────────── L7：電化學電池（Zn–Cu） ───────────── */
+
+export function CellFig() {
+  return (
+    <Fig caption="Zn–Cu 電池。Zn 比 Cu 容易失去電子（E° 較負），所以 Zn 片被氧化成 Zn²⁺（陽極），電子經導線流到 Cu 片，把溶液中的 Cu²⁺ 還原成 Cu（陰極）；鹽橋讓離子流動、維持電中性。在導線上加一個反向電壓，剛好讓電子停止流動時的電壓，就是兩個半反應的電位差。每個半反應單獨的電位，都是和標準氫電極（E = 0）比出來的。" source="課堂投影片 L7 p.9–10">
+      <svg viewBox="0 0 640 240" className="ix-svg" role="img" aria-label="Zn-Cu 電池">
+        <Marks />
+        <path d="M110,90 L110,210 L250,210 L250,90" fill={C.blue} fillOpacity={0.12} stroke={INK} strokeWidth={2} />
+        <path d="M390,90 L390,210 L530,210 L530,90" fill={C.teal} fillOpacity={0.14} stroke={INK} strokeWidth={2} />
+        <rect x={160} y={60} width={16} height={130} fill="#9aa3ad" stroke={INK} />
+        <rect x={464} y={60} width={16} height={130} fill="#c27a4a" stroke={INK} />
+        <path d="M230,110 L230,70 Q320,40 410,70 L410,110" fill="none" stroke={C.gold} strokeWidth={10} strokeOpacity={0.5} />
+        <text x={320} y={40} textAnchor="middle" style={{ fontSize: 11 }}>鹽橋</text>
+        <path d="M168,60 L168,22 L472,22 L472,60" fill="none" stroke={INK} strokeWidth={2} />
+        <line x1={240} y1={22} x2={330} y2={22} stroke={C.orange} strokeWidth={3} markerEnd="url(#gm-o)" />
+        <text x={285} y={14} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800, fill: C.orange }}>e⁻</text>
+        <text x={168} y={228} textAnchor="middle" style={{ fontSize: 11 }}>Zn²⁺ 溶液</text>
+        <text x={472} y={228} textAnchor="middle" style={{ fontSize: 11 }}>Cu²⁺ 溶液</text>
+        <text x={60} y={110} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>Zn 片（−）</text>
+        <text x={60} y={128} textAnchor="middle" style={{ fontSize: 11 }}>陽極：氧化</text>
+        <text x={60} y={146} textAnchor="middle" style={{ fontSize: 11 }}>Zn → Zn²⁺ + 2e⁻</text>
+        <text x={585} y={110} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>Cu 片（+）</text>
+        <text x={585} y={128} textAnchor="middle" style={{ fontSize: 11 }}>陰極：還原</text>
+        <text x={585} y={146} textAnchor="middle" style={{ fontSize: 11 }}>Cu²⁺ + 2e⁻ → Cu</text>
+      </svg>
+    </Fig>
+  );
+}
