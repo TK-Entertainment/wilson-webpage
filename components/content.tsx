@@ -11,6 +11,8 @@ import { LogicMap } from "@/components/notes/LogicMap";
 import * as Figs from "@/components/notes/Figs";
 import * as FigsGeo from "@/components/notes/FigsGeo";
 import * as GeoDemos from "@/components/notes/GeoDemos";
+import * as FigsSG from "@/components/notes/FigsSG";
+import * as SGDemos from "@/components/notes/SGDemos";
 import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
 
 const components = {
@@ -23,6 +25,8 @@ const components = {
   ...Figs,
   ...FigsGeo,
   ...GeoDemos,
+  ...FigsSG,
+  ...SGDemos,
   StateFunctionDemo,
   MeltingGDemo,
   GraphiteDiamondDemo,
