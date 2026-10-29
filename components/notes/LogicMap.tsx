@@ -16,7 +16,7 @@ import "./notes.css";
 // to：章節標題的開頭文字，點節點右下角的 ↗ 會捲到那一節。
 // tone：0–5，節點邊框的顏色。
 
-export type LogicNode = { id: string; label: string; sub?: string; to?: string; tone?: number };
+export type LogicNode = { id: string; label: string; sub?: string; to?: string; href?: string; tone?: number };
 export type LogicLink = { from: string; to: string; label?: string; dashed?: boolean };
 
 const TONES = ["var(--orange)", "var(--teal)", "var(--gold)", "#8a6fd1", "#d0567a", "#5b8bd9"];
@@ -110,12 +110,17 @@ export function LogicMap({
     return () => ro.disconnect();
   }, [layout, quiz, shown]);
 
-  const nodeBody = (n: { id: string; label: string; sub?: string; to?: string }) => {
+  const nodeBody = (n: { id: string; label: string; sub?: string; to?: string; href?: string }) => {
     const hidden = quiz && n.id !== "core" && n.sub && !shown[n.id];
     return (
       <>
         <div className="lm-label">{n.label}</div>
         {n.sub ? <div className={`lm-sub${hidden ? " lm-hidden" : ""}`}>{hidden ? "點一下看答案" : n.sub}</div> : null}
+        {n.href ? (
+          <a className="lm-go" href={n.href} aria-label="前往這一講" onClick={(e) => e.stopPropagation()}>
+            ↗
+          </a>
+        ) : null}
         {n.to ? (
           <button
             type="button"
