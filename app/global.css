@@ -669,3 +669,13 @@ button[aria-label="Scroll to Top"] {
 .sweep-menu a:hover .a {
   translate: 6px 0;
 }
+
+/* 筆記表格：讓長文字自動換行，不用左右捲動（next-docs-ui 預設 nowrap） */
+.nd-prose table td,
+.nd-prose table th {
+  white-space: normal;
+  vertical-align: top;
+}
+.nd-prose table td:first-child {
+  min-width: 5.5em;
+}
