@@ -226,3 +226,291 @@ export function AndersonDemo() {
     </figure>
   );
 }
+
+/* ───────────── Ch2：pure / subsimple / simple shear ───────────── */
+
+type M2 = [number, number, number, number]; // [a b; c d]
+const mul = (m: M2, p: [number, number]): [number, number] => [m[0] * p[0] + m[1] * p[1], m[2] * p[0] + m[3] * p[1]];
+// 速度梯度 L = [[a, b], [0, −a]]，exp(L t)
+const flowD = (a: number, b: number, t: number): M2 => {
+  const e = Math.exp(a * t), ei = Math.exp(-a * t);
+  const off = Math.abs(a) < 1e-9 ? b * t : (b * Math.sinh(a * t)) / a;
+  return [e, off, 0, ei];
+};
+// 2×2 矩陣的奇異值與長軸方向
+const svd = (m: M2) => {
+  const [a, b, c, d] = m;
+  // F Fᵀ 的特徵向量給出變形後橢圓的軸
+  const p = a * a + b * b, q = a * c + b * d, r = c * c + d * d;
+  const tr = p + r, det = p * r - q * q;
+  const l1 = tr / 2 + Math.sqrt(Math.max(0, (tr * tr) / 4 - det));
+  const l2 = tr / 2 - Math.sqrt(Math.max(0, (tr * tr) / 4 - det));
+  const ang = 0.5 * Math.atan2(2 * q, p - r);
+  return { X: Math.sqrt(l1), Y: Math.sqrt(Math.max(l2, 1e-12)), ang };
+};
+
+export function ShearDemo() {
+  const [wk, setWk] = useState(1);
+  const [amt, setAmt] = useState(1);
+  const a = (amt * Math.sqrt(Math.max(0, 1 - wk * wk))) / 2;
+  const b = amt * wk;
+  const D = flowD(a, b, 1);
+  const { X, Y, ang } = svd(D);
+  const S = 60, cx = 170, cy = 125;
+  const P = (p: [number, number]) => `${cx + S * p[0]},${cy - S * p[1]}`;
+  const sq: [number, number][] = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
+  const grid: [number, number][][] = [];
+  for (let i = -1; i <= 1; i += 0.5) {
+    grid.push([[i, -1], [i, 1]]);
+    grid.push([[-1, i], [1, i]]);
+  }
+  const circle: string[] = [];
+  for (let i = 0; i <= 72; i++) {
+    const t = (i / 72) * 2 * Math.PI;
+    circle.push(P(mul(D, [0.8 * Math.cos(t), 0.8 * Math.sin(t)])));
+  }
+  // 流脊：L 的特徵向量 (1,0) 與 (−b, 2a)
+  const apo2 = a < 1e-6 && b > 0 ? null : ([-b, 2 * a] as [number, number]);
+  const alpha = apo2 ? deg(Math.acos(Math.abs(apo2[0]) / Math.hypot(apo2[0], apo2[1]))) : 0;
+  // 質點路徑
+  const starts: [number, number][] = [[-0.9, 0.9], [0.3, 0.9], [-0.9, -0.5], [0.9, -0.9], [0.9, 0.4]];
+  const paths = starts.map((p0) => {
+    const pts: string[] = [];
+    for (let i = 0; i <= 30; i++) pts.push(P(mul(flowD(a, b, i / 30), p0)));
+    return pts.join(" ");
+  });
+  const name = wk > 0.98 ? "simple shear" : wk < 0.02 ? "pure shear" : "subsimple shear";
+  const L = 1.6;
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：pure、subsimple、simple shear</b>
+        <span>拉運動渦度數 W<sub>k</sub> 和變形量，看格子、應變橢圓、流脊和質點路徑</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox="0 0 340 250" className="ix-svg" role="img" aria-label="剪切變形">
+          <defs>
+            <clipPath id="sh-clip">
+              <rect x={0} y={0} width={340} height={250} />
+            </clipPath>
+          </defs>
+          <polygon points={sq.map(P).join(" ")} fill="none" stroke={INK} strokeOpacity={0.25} strokeDasharray="3 3" />
+          <g clipPath="url(#sh-clip)">
+            {grid.map((g, i) => (
+              <line key={i} x1={cx + S * mul(D, g[0])[0]} y1={cy - S * mul(D, g[0])[1]} x2={cx + S * mul(D, g[1])[0]} y2={cy - S * mul(D, g[1])[1]} stroke={INK} strokeOpacity={0.35} />
+            ))}
+            <polygon points={sq.map((p) => P(mul(D, p))).join(" ")} fill="var(--navy)" fillOpacity={0.2} stroke={INK} strokeWidth={1.5} />
+            <line x1={cx - S * L} y1={cy} x2={cx + S * L} y2={cy} stroke="var(--gold)" strokeWidth={1.6} strokeDasharray="7 4" />
+            {apo2 && <line x1={cx - (S * L * apo2[0]) / Math.hypot(...apo2)} y1={cy + (S * L * apo2[1]) / Math.hypot(...apo2)} x2={cx + (S * L * apo2[0]) / Math.hypot(...apo2)} y2={cy - (S * L * apo2[1]) / Math.hypot(...apo2)} stroke="var(--gold)" strokeWidth={1.6} strokeDasharray="7 4" />}
+            {paths.map((p, i) => (
+              <polyline key={i} points={p} fill="none" stroke="var(--teal)" strokeWidth={1.4} strokeOpacity={0.9} />
+            ))}
+            <polygon points={circle.join(" ")} fill="var(--orange)" fillOpacity={0.25} stroke="var(--orange)" strokeWidth={2.2} />
+            <line x1={cx - S * 0.8 * X * Math.cos(ang)} y1={cy + S * 0.8 * X * Math.sin(ang)} x2={cx + S * 0.8 * X * Math.cos(ang)} y2={cy - S * 0.8 * X * Math.sin(ang)} stroke="var(--orange)" strokeWidth={2.4} />
+          </g>
+          <text x={8} y={16} style={{ fontSize: 10.5 }}>虛線方框：原本的正方形；橘色：原本的圓 → 應變橢圓與 X 軸</text>
+          <text x={8} y={244} style={{ fontSize: 10.5, fill: "var(--teal)" }}>藍綠：質點路徑</text>
+          <text x={110} y={244} style={{ fontSize: 10.5, fill: "var(--gold)" }}>金色虛線：流脊（flow apophyses）</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>運動渦度數 W<sub>k</sub></span>
+              <span>{fmt(wk, 2)}</span>
+            </label>
+            <input type="range" min={0} max={1} step={0.01} value={wk} onChange={(e) => setWk(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>變形量</span>
+              <span>{fmt(amt, 2)}</span>
+            </label>
+            <input type="range" min={0} max={2} step={0.02} value={amt} onChange={(e) => setAmt(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            應變比 R = X/Y = <b>{fmt(X / Y, 2)}</b>
+            <br />X 軸與剪動方向夾角 = <b>{fmt(Math.abs(deg(ang)), 1)}°</b>
+            <br />兩條流脊的夾角 α = <b>{wk > 0.98 ? "0°（只剩一條）" : `${fmt(alpha, 0)}°`}</b>（cos α = W<sub>k</sub>）
+            <br />面積不變（det = 1）
+          </div>
+          <div className="ix-verdict">{name}</div>
+          <div className="ix-note">
+            W<sub>k</sub> = 0 是 pure shear：X 軸一直水平（共軸），兩條流脊互相垂直，質點沿雙曲線進出。W<sub>k</sub> = 1 是 simple shear：水平的剪動面長度不變，質點直線水平移動，X 軸從 45° 一路轉向剪動方向（非共軸）。中間是 subsimple shear。同一個 R 可以由不同的 W<sub>k</sub> 達成。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── Ch2：Flinn 圖 ───────────── */
+
+export function FlinnDemo() {
+  const [a, setA] = useState(2); // X/Y
+  const [bb, setB] = useState(1.5); // Y/Z
+  const k = (a - 1) / Math.max(1e-6, bb - 1);
+  const W = 260, H = 250, L = 40, R = 12, T = 12, B = 36;
+  const x = (v: number) => L + ((v - 1) / 3) * (W - L - R);
+  const y = (v: number) => T + ((4 - v) / 3) * (H - T - B);
+  const shape = Math.abs(a - bb) < 0.08 ? "平面應變（k ≈ 1）" : a > bb ? "雪茄狀 prolate（k > 1）：L-tectonite" : "鬆餅狀 oblate（k < 1）：S-tectonite";
+  // 三軸：Z = 1，Y = bb，X = a·bb，畫兩個主切面
+  const Z = 1, Yv = bb, Xv = a * bb;
+  const sc = 22 / Math.max(Xv, 1);
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：Flinn 圖</b>
+        <span>拉 X/Y 和 Y/Z，看應變橢球是雪茄還是鬆餅</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W + 120} ${H}`} className="ix-svg" role="img" aria-label="Flinn 圖">
+          <polygon points={`${x(1)},${y(1)} ${x(4)},${y(4)} ${x(1)},${y(4)}`} fill="var(--orange)" fillOpacity={0.1} />
+          <polygon points={`${x(1)},${y(1)} ${x(4)},${y(4)} ${x(4)},${y(1)}`} fill="var(--teal)" fillOpacity={0.1} />
+          <line x1={x(1)} y1={y(1)} x2={x(4)} y2={y(4)} stroke={INK} strokeWidth={1.6} strokeDasharray="6 4" />
+          <text x={x(3.35)} y={y(3.65)} textAnchor="end" style={{ fontSize: 10.5 }}>k = 1</text>
+          <text x={x(1.4)} y={y(3.5)} style={{ fontSize: 11, fontWeight: 800 }}>雪茄 k &gt; 1</text>
+          <text x={x(2.9)} y={y(1.5)} style={{ fontSize: 11, fontWeight: 800 }}>鬆餅 k &lt; 1</text>
+          <circle cx={x(Math.min(4, bb))} cy={y(Math.min(4, a))} r={6} fill="var(--gold)" stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          {[1, 2, 3, 4].map((v) => (
+            <g key={v}>
+              <text x={x(v)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{v}</text>
+              <text x={L - 5} y={y(v) + 4} textAnchor="end" style={{ fontSize: 11 }}>{v}</text>
+            </g>
+          ))}
+          <text x={(L + W) / 2} y={H - 4} textAnchor="middle" style={{ fontSize: 12 }}>b = Y/Z</text>
+          <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>a = X/Y</text>
+          {/* 兩個主切面 */}
+          <g transform={`translate(${W + 60},70)`}>
+            <ellipse cx={0} cy={0} rx={sc * Xv} ry={sc * Yv} fill="var(--orange)" fillOpacity={0.3} stroke="var(--orange)" strokeWidth={2} />
+            <text x={0} y={-sc * Yv - 6} textAnchor="middle" style={{ fontSize: 10.5 }}>XY 面</text>
+          </g>
+          <g transform={`translate(${W + 60},170)`}>
+            <ellipse cx={0} cy={0} rx={sc * Yv} ry={sc * Z} fill="var(--teal)" fillOpacity={0.3} stroke="var(--teal)" strokeWidth={2} />
+            <text x={0} y={-Math.max(sc * Z, 10) - 6} textAnchor="middle" style={{ fontSize: 10.5 }}>YZ 面</text>
+          </g>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>a = X/Y</span>
+              <span>{fmt(a, 2)}</span>
+            </label>
+            <input type="range" min={1} max={4} step={0.02} value={a} onChange={(e) => setA(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>b = Y/Z</span>
+              <span>{fmt(bb, 2)}</span>
+            </label>
+            <input type="range" min={1} max={4} step={0.02} value={bb} onChange={(e) => setB(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            k = (a − 1)/(b − 1) = <b>{bb - 1 < 0.01 ? "∞" : fmt(k, 2)}</b>
+          </div>
+          <div className="ix-verdict">{shape}</div>
+          <div className="ix-note">
+            k &gt; 1：X 特別長，像雪茄，岩石發育線理（L-tectonite）；k &lt; 1：Z 特別短，像鬆餅，發育葉理（S-tectonite）；k = 1 是沒有體積變化時的平面應變（Y = 1）。原點 (1, 1) 是沒有變形。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── Ch3：Fry 法 ───────────── */
+
+const seeded = (n: number) => {
+  // 簡單的偽亂數，讓每次畫出來一樣
+  let s = 12345;
+  const r = () => {
+    s = (s * 16807) % 2147483647;
+    return s / 2147483647;
+  };
+  const pts: [number, number][] = [];
+  let tries = 0;
+  while (pts.length < n && tries < 20000) {
+    tries++;
+    const p: [number, number] = [r() * 2 - 1, r() * 2 - 1];
+    if (pts.every((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) > 0.16)) pts.push(p);
+  }
+  return pts;
+};
+const FRY_PTS = seeded(90);
+
+export function FryDemo() {
+  const [Rs, setRs] = useState(2.2);
+  const [th, setTh] = useState(25);
+  const k = Math.sqrt(Rs);
+  const c = Math.cos(rad(th)), s = Math.sin(rad(th));
+  // 先在主軸座標拉伸，再旋轉
+  const def = (p: [number, number]): [number, number] => {
+    const u = c * p[0] + s * p[1], v = -s * p[0] + c * p[1];
+    const U = u * k, V = v / k;
+    return [c * U - s * V, s * U + c * V];
+  };
+  const pts = FRY_PTS.map(def);
+  const pairs: [number, number][] = [];
+  for (let i = 0; i < pts.length; i++)
+    for (let j = 0; j < pts.length; j++) {
+      if (i === j) continue;
+      const d: [number, number] = [pts[j][0] - pts[i][0], pts[j][1] - pts[i][1]];
+      if (Math.abs(d[0]) < 0.75 && Math.abs(d[1]) < 0.75) pairs.push(d);
+    }
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：Fry 法</b>
+        <span>原本大致均勻分布的顆粒中心被變形；把每一點輪流放到中心，疊起來看空白區</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox="0 0 340 180" className="ix-svg" role="img" aria-label="Fry 法">
+          <rect x={5} y={10} width={160} height={160} fill="none" stroke={INK} strokeOpacity={0.3} />
+          <clipPath id="fry-a">
+            <rect x={5} y={10} width={160} height={160} />
+          </clipPath>
+          <g clipPath="url(#fry-a)">
+            {pts.map((p, i) => (
+              <circle key={i} cx={85 + p[0] * 55} cy={90 - p[1] * 55} r={2.6} fill="var(--orange)" />
+            ))}
+          </g>
+          <text x={85} y={8} textAnchor="middle" style={{ fontSize: 10.5 }}>變形後的顆粒中心</text>
+          <rect x={175} y={10} width={160} height={160} fill="none" stroke={INK} strokeOpacity={0.3} />
+          <clipPath id="fry-b">
+            <rect x={175} y={10} width={160} height={160} />
+          </clipPath>
+          <g clipPath="url(#fry-b)">
+            {pairs.map((d, i) => (
+              <circle key={i} cx={255 + d[0] * 105} cy={90 - d[1] * 105} r={1.1} fill="var(--teal)" />
+            ))}
+          </g>
+          <line x1={255 - 70 * c} y1={90 + 70 * s} x2={255 + 70 * c} y2={90 - 70 * s} stroke="var(--gold)" strokeDasharray="4 3" />
+          <text x={255} y={8} textAnchor="middle" style={{ fontSize: 10.5 }}>Fry 圖：中央空白 = 應變橢圓</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>應變比 R<sub>s</sub></span>
+              <span>{fmt(Rs, 2)}</span>
+            </label>
+            <input type="range" min={1} max={4} step={0.05} value={Rs} onChange={(e) => setRs(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>長軸方向</span>
+              <span>{th}°</span>
+            </label>
+            <input type="range" min={-80} max={80} step={1} value={th} onChange={(e) => setTh(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            空白區的長短軸比 ≈ <b>{fmt(Rs, 2)}</b>，長軸方向 ≈ <b>{th}°</b>（金色虛線）
+          </div>
+          <div className="ix-note">
+            前提：變形前顆粒大小相近、中心彼此的距離大致相同（不會靠太近）。變形後，沿 X 方向的鄰居被拉遠、沿 Z 方向的被推近，所以疊圖中央那圈「不會有點」的空白區被拉成和應變橢圓一樣的形狀。R<sub>s</sub> = 1 時空白區是圓。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}

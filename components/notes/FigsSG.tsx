@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactElement } from "react";
 import { Fig } from "./Figs";
 
 // 地球構造各章的自繪圖
@@ -242,6 +243,216 @@ export function StepoverFig() {
         {half(600, 100, 550, -1, C.teal)}
         <text x={485} y={190} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>右移 + 左階 → 壓縮躍階（擠壓脊）</text>
         <text x={320} y={20} textAnchor="middle" style={{ fontSize: 11 }}>箭頭：斷層兩側塊體的相對運動（右移：對面那側往右）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch2：變形的四個成分 ───────────── */
+
+export function DeformationPartsFig() {
+  const sq = (x: number, y: number, pts: [number, number][], col: string, dash = false) => (
+    <polygon points={pts.map(([a, b]) => `${x + a},${y - b}`).join(" ")} fill={col} fillOpacity={dash ? 0 : 0.3} stroke={dash ? INK : col} strokeOpacity={dash ? 0.4 : 1} strokeDasharray={dash ? "4 3" : undefined} strokeWidth={2} />
+  );
+  const base: [number, number][] = [[-30, -30], [30, -30], [30, 30], [-30, 30]];
+  const rot = (p: [number, number], t: number): [number, number] => [p[0] * Math.cos(t) - p[1] * Math.sin(t), p[0] * Math.sin(t) + p[1] * Math.cos(t)];
+  const panels: [string, string, [number, number][], [number, number]][] = [
+    ["剛體平移", "位置變、形狀不變", base, [30, 20]],
+    ["剛體旋轉", "方向變、形狀不變", base.map((p) => rot(p, 0.5)), [0, 0]],
+    ["應變（形變）", "形狀變：圓 → 橢圓", [[-30, -30], [30, -30], [60, 30], [0, 30]], [0, 0]],
+    ["體積變化", "大小變、形狀不變", base.map(([a, b]) => [a * 0.7, b * 0.7] as [number, number]), [0, 0]],
+  ];
+  return (
+    <Fig caption="變形（deformation）是從起始到最終幾何的轉換，可以拆成四個部分：剛體平移、剛體旋轉、應變（形狀改變，distortion）和體積變化。前兩者岩石內部的質點彼此距離不變，構造地質最關心的是後兩者，尤其是應變。虛線是原本的形狀。" source="Fossen (2016) Ch2；課堂投影片 Ch2 p.2">
+      <svg viewBox="0 0 640 170" className="ix-svg" role="img" aria-label="變形的四個成分">
+        {panels.map(([t, sub, pts, [dx, dy]], i) => {
+          const x = 80 + i * 160, y = 80;
+          return (
+            <g key={t}>
+              {sq(x, y, base, INK, true)}
+              {sq(x + dx, y - dy, pts, [C.blue, C.teal, C.orange, C.violet][i])}
+              <text x={x} y={142} textAnchor="middle" style={{ fontSize: 13, fontWeight: 800 }}>{t}</text>
+              <text x={x} y={160} textAnchor="middle" style={{ fontSize: 11 }}>{sub}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch2：角剪動與應變橢圓 ───────────── */
+
+export function AngularShearFig() {
+  const g = 0.7; // γ
+  const S = 70;
+  const P = (x: number, y: number, ox: number, oy: number) => `${ox + S * (x + g * y)},${oy - S * y}`;
+  const psi = Math.atan(g);
+  return (
+    <Fig caption="左：一個正方形和裡面的圓受到 simple shear。原本互相垂直的兩條線（藍綠的垂直線和水平底邊），變形後夾角不再是 90°，偏離的角度 ψ 叫角剪動（angular shear），剪應變 γ = tan ψ。右：圓變成應變橢圓，長軸 X = 1 + e₁、短軸 Y = 1 + e₂，應變比 R = X/Y。這裡 γ = 0.7，ψ ≈ 35°。" source="Fossen (2016) §2.6–2.8；課堂投影片 Ch2 p.13–15">
+      <svg viewBox="0 0 640 210" className="ix-svg" role="img" aria-label="角剪動與應變橢圓">
+        <Marks />
+        <polygon points={[[0, 0], [1, 0], [1, 1], [0, 1]].map(([x, y]) => `${60 + S * x},${170 - S * y}`).join(" ")} fill="none" stroke={INK} strokeOpacity={0.35} strokeDasharray="4 3" />
+        <polygon points={[[0, 0], [1, 0], [1, 1], [0, 1]].map(([x, y]) => P(x, y, 60, 170)).join(" ")} fill={C.navy} fillOpacity={0.2} stroke={INK} strokeWidth={2} />
+        <line x1={60} y1={170} x2={60} y2={170 - S} stroke={C.teal} strokeOpacity={0.5} strokeDasharray="3 3" strokeWidth={2} />
+        <line x1={60} y1={170} x2={60 + S * g} y2={170 - S} stroke={C.teal} strokeWidth={3} />
+        <line x1={60} y1={170} x2={60 + S} y2={170} stroke={C.teal} strokeWidth={3} />
+        <path d={`M60,${170 - 40} A40,40 0 0,1 ${60 + 40 * Math.sin(psi)},${170 - 40 * Math.cos(psi)}`} fill="none" stroke={C.orange} strokeWidth={2} />
+        <text x={72} y={118} style={{ fontSize: 13, fontWeight: 800, fill: C.orange }}>ψ</text>
+        <line x1={60 + S} y1={170 - S - 14} x2={60 + S + S * g} y2={170 - S - 14} stroke={INK} strokeWidth={1.5} markerEnd="url(#sm-k)" />
+        <text x={60 + S + 20} y={170 - S - 20} style={{ fontSize: 11 }}>上方往右錯動</text>
+        <text x={150} y={200} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>γ = tan ψ</text>
+        {/* 應變橢圓 */}
+        {(() => {
+          // 單位圓經 simple shear 後的橢圓
+          const ox = 470, oy = 105, r = 55;
+          const pts: string[] = [];
+          for (let i = 0; i <= 72; i++) {
+            const t = (i / 72) * 2 * Math.PI;
+            const x = Math.cos(t), y = Math.sin(t);
+            pts.push(`${ox + r * (x + g * y)},${oy - r * y}`);
+          }
+          const tr = 2 + g * g, det = 1;
+          const l1 = tr / 2 + Math.sqrt((tr * tr) / 4 - det), l2 = tr / 2 - Math.sqrt((tr * tr) / 4 - det);
+          const ang = 0.5 * Math.atan2(2 * g, g * g);
+          const X = Math.sqrt(l1), Y = Math.sqrt(l2);
+          return (
+            <g>
+              <circle cx={ox} cy={oy} r={r} fill="none" stroke={INK} strokeOpacity={0.35} strokeDasharray="4 3" />
+              <polygon points={pts.join(" ")} fill={C.orange} fillOpacity={0.25} stroke={C.orange} strokeWidth={2.4} />
+              <line x1={ox - r * X * Math.cos(ang)} y1={oy + r * X * Math.sin(ang)} x2={ox + r * X * Math.cos(ang)} y2={oy - r * X * Math.sin(ang)} stroke={C.orange} strokeWidth={2} />
+              <line x1={ox + r * Y * Math.sin(ang)} y1={oy + r * Y * Math.cos(ang)} x2={ox - r * Y * Math.sin(ang)} y2={oy - r * Y * Math.cos(ang)} stroke={C.teal} strokeWidth={2} />
+              <text x={ox + r * X * Math.cos(ang) + 6} y={oy - r * X * Math.sin(ang)} style={{ fontSize: 12, fontWeight: 800, fill: C.orange }}>X = 1 + e₁</text>
+              <text x={ox - r * Y * Math.sin(ang) - 6} y={oy - r * Y * Math.cos(ang) - 4} textAnchor="end" style={{ fontSize: 12, fontWeight: 800, fill: C.teal }}>Y = 1 + e₂</text>
+              <text x={ox} y={200} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>R = X / Y = {(X / Y).toFixed(2)}</text>
+            </g>
+          );
+        })()}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch2：simple shear 下的 c、e、c/e 扇區 ───────────── */
+
+export function SectorsFig() {
+  const g = 1.2;
+  const len = (phi: number, gg: number) => Math.hypot(Math.cos(phi) + gg * Math.sin(phi), Math.sin(phi));
+  const cls = (phi: number) => {
+    const fin = len(phi, g);
+    let mn = 1;
+    for (let i = 1; i <= 40; i++) mn = Math.min(mn, len(phi, (g * i) / 40));
+    if (fin < 1) return "c";
+    return mn < 0.999 ? "ce" : "e";
+  };
+  const col: Record<string, string> = { c: C.teal, e: C.orange, ce: C.gold };
+  const ox = 200, oy = 110, r = 85;
+  const rays: ReactElement[] = [];
+  for (let i = 0; i < 180; i++) {
+    const phi = (i / 180) * Math.PI;
+    const k = cls(phi);
+    // 變形後的方向
+    const dx = Math.cos(phi) + g * Math.sin(phi), dy = Math.sin(phi);
+    const n = Math.hypot(dx, dy);
+    const a = Math.atan2(dy / n, dx / n);
+    [1, -1].forEach((sg) =>
+      rays.push(<line key={`${i}${sg}`} x1={ox} y1={oy} x2={ox + sg * r * Math.cos(a)} y2={oy - sg * r * Math.sin(a)} stroke={col[k]} strokeOpacity={0.5} strokeWidth={2.2} />),
+    );
+  }
+  return (
+    <Fig caption="右移 simple shear（γ = 1.2）之後，依線現在的方向分成三種扇區。c（縮短，藍綠）：一路都在縮短，褶皺、壓溶在這裡發育。e（伸長，橘）：一路都在伸長，串腸、張裂脈在這裡。c,e（金）：先縮短、轉過去之後又伸長，所以會有先褶皺、後串腸化的疊加構造。pure shear 的扇區是對稱的，simple shear 不對稱，這種不對稱是判斷剪切方向的依據。" source="Fossen (2016) Fig. 2.39；課堂投影片 Ch2 p.38–41">
+      <svg viewBox="0 0 640 235" className="ix-svg" role="img" aria-label="c、e、c,e 扇區">
+        {rays}
+        <circle cx={ox} cy={oy} r={r} fill="none" stroke={INK} strokeOpacity={0.4} />
+        <line x1={ox - 120} x2={ox + 120} y1={oy + r + 12} y2={oy + r + 12} stroke={INK} strokeWidth={1.5} />
+        <line x1={ox - 120} x2={ox + 120} y1={oy - r - 12} y2={oy - r - 12} stroke={INK} strokeWidth={1.5} />
+        <text x={ox + 110} y={oy - r - 16} textAnchor="end" style={{ fontSize: 11 }}>→ 上盤往右</text>
+        <text x={ox - 110} y={oy + r + 28} style={{ fontSize: 11 }}>← 下盤往左</text>
+        {[["c 扇區：一直縮短", C.teal], ["e 扇區：一直伸長", C.orange], ["c,e 扇區：先縮短後伸長", C.gold]].map(([t, c], i) => (
+          <g key={t}>
+            <rect x={380} y={60 + i * 34} width={22} height={14} fill={c} fillOpacity={0.6} />
+            <text x={410} y={72 + i * 34} style={{ fontSize: 13, fontWeight: 800 }}>{t}</text>
+          </g>
+        ))}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch2：右移剪切帶的次生構造 ───────────── */
+
+export function SubsidiaryFig() {
+  const ox = 230, oy = 115;
+  const seg = (deg: number, len: number, col: string, lab: string, w = 3) => {
+    const a = (deg * Math.PI) / 180;
+    return (
+      <g>
+        <line x1={ox - len * Math.cos(a)} y1={oy + len * Math.sin(a)} x2={ox + len * Math.cos(a)} y2={oy - len * Math.sin(a)} stroke={col} strokeWidth={w} />
+        <text x={ox + (len + 14) * Math.cos(a)} y={oy - (len + 14) * Math.sin(a) + 4} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: col }}>{lab}</text>
+      </g>
+    );
+  };
+  return (
+    <Fig caption="右移（dextral）簡單剪切帶裡的次生構造（地圖俯視，角度以剪切帶方向為 0°，逆時針為正）。瞬時的縮短方向（ISA3）和剪切帶夾 135°、伸張方向（ISA1）夾 45°。褶皺軸和逆斷層 ⊥ 縮短方向，所以沿 45° 排成雁行；張裂脈、正斷層 ⊥ 伸張方向，沿 135°。共軛的 Riedel 剪裂和縮短方向夾約 30°：R（同向、右移）和剪切帶夾約 −15°，R′（反向、左移）約 −75°（= 105°）；P 剪裂約 +15°。" source="Fossen (2016) Fig. 2.17–2.18；課堂投影片 Ch2 p.17–18；Riedel 的命名詳見 Ch10">
+      <svg viewBox="0 0 640 230" className="ix-svg" role="img" aria-label="右移剪切帶次生構造">
+        <Marks />
+        <rect x={20} y={40} width={420} height={150} fill={C.navy} fillOpacity={0.12} />
+        <line x1={20} x2={440} y1={40} y2={40} stroke={INK} strokeWidth={2} />
+        <line x1={20} x2={440} y1={190} y2={190} stroke={INK} strokeWidth={2} />
+        <line x1={300} x2={380} y1={28} y2={28} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+        <line x1={160} x2={80} y1={204} y2={204} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+        {seg(-15, 95, C.rose, "R")}
+        {seg(105, 58, C.violet, "R′")}
+        {seg(15, 95, C.blue, "P", 2)}
+        {seg(45, 60, C.gold, "褶皺軸／逆斷層", 4)}
+        {seg(135, 60, C.teal, "張裂脈／正斷層", 4)}
+        <g transform={`translate(${ox},${oy})`}>
+          <ellipse rx={30} ry={14} transform="rotate(-45)" fill={C.orange} fillOpacity={0.3} stroke={C.orange} strokeWidth={2} />
+        </g>
+        <g style={{ fontSize: 12 }}>
+          <text x={470} y={60} style={{ fontWeight: 800 }}>和剪切帶的夾角</text>
+          <text x={470} y={84}><tspan style={{ fill: C.rose, fontWeight: 800 }}>R</tspan>：−15°，同向剪裂</text>
+          <text x={470} y={106}><tspan style={{ fill: C.violet, fontWeight: 800 }}>R′</tspan>：−75°，反向剪裂</text>
+          <text x={470} y={128}><tspan style={{ fill: C.blue, fontWeight: 800 }}>P</tspan>：+15°</text>
+          <text x={470} y={150}><tspan style={{ fill: C.gold, fontWeight: 800 }}>褶皺、逆斷層</tspan>：+45°</text>
+          <text x={470} y={172}><tspan style={{ fill: C.teal, fontWeight: 800 }}>張裂、正斷層</tspan>：+135°</text>
+          <text x={470} y={196}><tspan style={{ fill: C.orange, fontWeight: 800 }}>應變橢圓</tspan>長軸 ≈ +45°</text>
+        </g>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch2：應變相容性 ───────────── */
+
+export function CompatibilityFig() {
+  return (
+    <Fig caption="變形帶和旁邊沒變形的圍岩要能接得起來（相容性）。左：simple shear 帶，剪動面方向的長度不變，所以帶的邊界和圍岩完全貼合，沒有空間問題，這是剪切帶常常接近 simple shear 的原因。右：pure shear 帶，帶內垂直方向被壓扁、水平方向伸長，但旁邊的圍岩沒有伸長，兩端的物質無處可去，必須側向擠出，產生相容性問題。" source="Fossen (2016) Fig. 2.35–2.36；課堂投影片 Ch2 p.35–36">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="simple shear 與 pure shear 的相容性">
+        <Marks />
+        {/* simple shear */}
+        <rect x={30} y={20} width={240} height={50} fill={INK} fillOpacity={0.08} stroke={INK} strokeOpacity={0.4} />
+        <rect x={30} y={130} width={240} height={50} fill={INK} fillOpacity={0.08} stroke={INK} strokeOpacity={0.4} />
+        <rect x={30} y={70} width={240} height={60} fill={C.teal} fillOpacity={0.2} stroke={C.teal} strokeWidth={2} />
+        {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+          <line key={i} x1={40 + i * 36} y1={130} x2={70 + i * 36} y2={70} stroke={C.teal} strokeWidth={1.5} />
+        ))}
+        {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+          <g key={i}>
+            {70 + i * 36 <= 270 && <line x1={70 + i * 36} y1={20} x2={70 + i * 36} y2={70} stroke={INK} strokeOpacity={0.4} />}
+            <line x1={40 + i * 36} y1={130} x2={40 + i * 36} y2={180} stroke={INK} strokeOpacity={0.4} />
+          </g>
+        ))}
+        <text x={150} y={196} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>simple shear：邊界貼合，相容</text>
+        {/* pure shear */}
+        <rect x={370} y={20} width={240} height={50} fill={INK} fillOpacity={0.08} stroke={INK} strokeOpacity={0.4} />
+        <rect x={370} y={130} width={240} height={50} fill={INK} fillOpacity={0.08} stroke={INK} strokeOpacity={0.4} />
+        <rect x={340} y={85} width={300} height={30} fill={C.orange} fillOpacity={0.25} stroke={C.orange} strokeWidth={2} />
+        <line x1={490} y1={50} x2={490} y2={80} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+        <line x1={490} y1={150} x2={490} y2={120} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+        <line x1={360} y1={100} x2={326} y2={100} stroke={C.rose} strokeWidth={2.5} markerEnd="url(#sm-r)" />
+        <line x1={620} y1={100} x2={636} y2={100} stroke={C.rose} strokeWidth={2.5} markerEnd="url(#sm-r)" />
+        <text x={490} y={196} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>pure shear：兩端要側向擠出，不相容</text>
       </svg>
     </Fig>
   );
