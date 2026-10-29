@@ -1295,3 +1295,296 @@ export function EnEchelonDemo() {
     </figure>
   );
 }
+
+/* ───────────── Ch9：三角剪切（trishear）斷層擴展褶皺 ───────────── */
+
+export function TrishearDemo() {
+  const [S, setS] = useState(2);
+  const [ps, setPs] = useState(1.5);
+  const [apical, setApical] = useState(60);
+  const [dip, setDip] = useState(35);
+  const u = [Math.cos(rad(dip)), Math.sin(rad(dip))];
+  const n = [-Math.sin(rad(dip)), Math.cos(rad(dip))];
+  const m = Math.tan(rad(apical / 2));
+  const tip0 = [-1.5, -2.6];
+  const steps = 120;
+  const layersZ = [-2.2, -1.6, -1.0, -0.4, 0.2, 0.8, 1.4];
+  const NX = 140;
+  let layers = layersZ.map((z) => Array.from({ length: NX + 1 }, (_, i) => [-6 + (12 * i) / NX, z]));
+  let tip = [...tip0];
+  const ds = S / steps;
+  const vel = (p: number[]) => {
+    const dx = p[0] - tip[0], dz = p[1] - tip[1];
+    const x = dx * u[0] + dz * u[1], y = dx * n[0] + dz * n[1];
+    let vx = 0, vy = 0;
+    if (x <= 0) {
+      if (y > 0) vx = 1;
+    } else if (y >= x * m) vx = 1;
+    else if (y > -x * m) {
+      const q = y / (x * m);
+      vx = 0.5 * (q + 1);
+      vy = (m / 4) * (q * q - 1);
+    }
+    return [vx * u[0] + vy * n[0], vx * u[1] + vy * n[1]];
+  };
+  for (let k = 0; k < steps; k++) {
+    layers = layers.map((ln) =>
+      ln.map((p) => {
+        const v = vel(p);
+        return [p[0] + v[0] * ds, p[1] + v[1] * ds];
+      }),
+    );
+    tip = [tip[0] + ps * ds * u[0], tip[1] + ps * ds * u[1]];
+  }
+  const W = 360, H = 250;
+  const X = (x: number) => W / 2 + x * 28;
+  const Z = (z: number) => H / 2 + 10 - z * 28;
+  const cols = ["var(--violet, #8a6fd1)", "#5b8bd9", "var(--teal)", "var(--gold)", "var(--orange)", "#d0567a", "var(--violet, #8a6fd1)"];
+  const faultStart = [tip0[0] - 4 * u[0], tip0[1] - 4 * u[1]];
+  const triL = 3;
+  const a1 = [tip[0] + triL * (u[0] + m * n[0]), tip[1] + triL * (u[1] + m * n[1])];
+  const a2 = [tip[0] + triL * (u[0] - m * n[0]), tip[1] + triL * (u[1] - m * n[1])];
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：三角剪切斷層擴展褶皺</b>
+        <span>逆斷層尖端前方的三角形剪動帶；拉滑移量、P/S、頂角、斷層傾角</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="trishear 模型">
+          <clipPath id="tri-clip">
+            <rect x={0} y={0} width={W} height={H} />
+          </clipPath>
+          <g clipPath="url(#tri-clip)">
+            <polygon points={`${X(tip[0])},${Z(tip[1])} ${X(a1[0])},${Z(a1[1])} ${X(a2[0])},${Z(a2[1])}`} fill="var(--gold)" fillOpacity={0.12} stroke="var(--gold)" strokeDasharray="4 3" />
+            {layers.map((ln, i) => (
+              <polyline key={i} points={ln.map((p) => `${X(p[0])},${Z(p[1])}`).join(" ")} fill="none" stroke={cols[i]} strokeWidth={2.4} />
+            ))}
+            <line x1={X(faultStart[0])} y1={Z(faultStart[1])} x2={X(tip[0])} y2={Z(tip[1])} stroke={INK} strokeWidth={3} />
+            <circle cx={X(tip[0])} cy={Z(tip[1])} r={5} fill="#d0567a" stroke={INK} />
+            <circle cx={X(tip0[0])} cy={Z(tip0[1])} r={3} fill="none" stroke={INK} strokeDasharray="2 2" />
+          </g>
+          <text x={8} y={H - 8} style={{ fontSize: 10.5 }}>紅點：現在的斷層尖端；虛線圈：起始尖端；金色：三角剪動帶</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label><span>滑移量 S</span><span>{fmt(S, 1)}</span></label>
+            <input type="range" min={0} max={4} step={0.1} value={S} onChange={(e) => setS(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>P/S（尖端擴展 ÷ 滑移）</span><span>{fmt(ps, 1)}</span></label>
+            <input type="range" min={0} max={3} step={0.1} value={ps} onChange={(e) => setPs(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>三角形頂角</span><span>{apical}°</span></label>
+            <input type="range" min={20} max={100} step={2} value={apical} onChange={(e) => setApical(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>斷層傾角</span><span>{dip}°</span></label>
+            <input type="range" min={15} max={60} step={1} value={dip} onChange={(e) => setDip(+e.target.value)} />
+          </div>
+          <div className="ix-note">
+            上盤沿斷層以速度 v₀ 往上滑，下盤不動；尖端前方的三角形裡，速度從上盤邊界的 v₀ 線性降到下盤邊界的 0，體積不變。尖端以 P/S × v₀ 往前長。結果：靠上盤形成背斜、靠下盤形成向斜，兩者共用一翼；軸面向下朝尖端收斂；同一翼越低的層越陡。P/S 小、頂角大時褶皺寬而緩；P/S 大時斷層很快切穿、褶皺較窄。（線性 trishear 速度場，依 Zehnder & Allmendinger 2000。）
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── Ch9：斷層的連接 ───────────── */
+
+export function FaultLinkDemo() {
+  const [st, setSt] = useState(0.5); // 0 孤立 → 1 硬連結
+  // 兩段斷層，往彼此方向長
+  const L = 1 + 1.2 * st; // 每段半長
+  const c1 = -1.6, c2 = 1.6;
+  const overlap = c1 + L - (c2 - L); // > 0 表示重疊
+  const linked = st > 0.85;
+  const stage = st < 0.25 ? "孤立" : overlap < 0 ? "下疊（underlap）：尖端還沒碰到" : linked ? "硬連結：斷層接起來" : "重疊（overlap）：軟連結，中間是轉換斜坡";
+  const W = 360, H = 260;
+  const X = (x: number) => W / 2 + x * 48;
+  const yA = 150, yB = 175; // 地圖上兩段的位置
+  const disp = (x: number, c: number) => {
+    const t = (x - c) / L;
+    return Math.abs(t) < 1 ? Math.sqrt(1 - t * t) * L * 0.5 : 0;
+  };
+  const prof = (fn: (x: number) => number) => {
+    const p: string[] = [];
+    for (let i = 0; i <= 200; i++) {
+      const x = -4 + (8 * i) / 200;
+      p.push(`${X(x)},${100 - fn(x) * 26}`);
+    }
+    return p.join(" ");
+  };
+  const total = (x: number) => {
+    if (linked) {
+      const Lt = c2 + L - (c1 - L);
+      const cm = (c1 + c2) / 2;
+      const t = (x - cm) / (Lt / 2);
+      return Math.abs(t) < 1 ? Math.sqrt(1 - t * t) * (Lt / 2) * 0.5 : 0;
+    }
+    return disp(x, c1) + disp(x, c2);
+  };
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：斷層怎麼長大、連接</b>
+        <span>兩段正斷層往彼此長；拉成長階段，看地圖和沿走向的位移剖面</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="斷層連接">
+          <line x1={X(-4)} x2={X(4)} y1={100} y2={100} stroke={INK} strokeWidth={1.2} />
+          <text x={X(-4)} y={16} style={{ fontSize: 11 }}>沿走向的位移</text>
+          {!linked && <polyline points={prof((x) => disp(x, c1))} fill="none" stroke="var(--teal)" strokeWidth={1.6} strokeDasharray="4 3" />}
+          {!linked && <polyline points={prof((x) => disp(x, c2))} fill="none" stroke="#5b8bd9" strokeWidth={1.6} strokeDasharray="4 3" />}
+          <polyline points={prof(total)} fill="none" stroke="var(--orange)" strokeWidth={2.8} />
+          <text x={X(3.5)} y={60} textAnchor="end" style={{ fontSize: 10.5, fill: "var(--orange)", fontWeight: 800 }}>總位移</text>
+          {/* 地圖 */}
+          <rect x={10} y={120} width={W - 20} height={85} fill="var(--navy)" fillOpacity={0.1} />
+          {overlap > 0 && !linked && (
+            <polygon points={`${X(c2 - L)},${yA} ${X(c1 + L)},${yA} ${X(c1 + L)},${yB} ${X(c2 - L)},${yB}`} fill="var(--gold)" fillOpacity={0.35} />
+          )}
+          <line x1={X(c1 - L)} x2={X(c1 + L)} y1={yA} y2={yA} stroke="var(--teal)" strokeWidth={3.5} />
+          <line x1={X(c2 - L)} x2={X(c2 + L)} y1={yB} y2={yB} stroke="#5b8bd9" strokeWidth={3.5} />
+          {linked && <line x1={X(c1 + L - 0.3)} y1={yA} x2={X(c2 - L + 0.3)} y2={yB} stroke="var(--orange)" strokeWidth={3.5} />}
+          {overlap > 0 && !linked && <text x={X((c1 + L + c2 - L) / 2)} y={yB + 20} textAnchor="middle" style={{ fontSize: 10.5, fontWeight: 800 }}>轉換斜坡</text>}
+          <text x={14} y={218} style={{ fontSize: 11 }}>地圖（俯視）：兩段斷層，上盤在下方</text>
+          <text x={14} y={236} style={{ fontSize: 10.5, opacity: 0.8 }}>虛線：各段的位移；橘：加總</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label><span>成長階段</span><span>{fmt(st * 100, 0)}%</span></label>
+            <input type="range" min={0} max={1} step={0.01} value={st} onChange={(e) => setSt(+e.target.value)} />
+          </div>
+          <div className="ix-verdict">{stage}</div>
+          <div className="ix-note">
+            每一段孤立的斷層，位移在中間最大、往尖端（尖端線）降到 0，是鐘形（橢圓形斷層模型）。兩段尖端互相越過之後，位移從一段「轉交」給另一段：中間的岩層被彎成轉換斜坡（relay ramp），裡面的變形帶比較密，總位移在重疊處仍然連續（軟連結）。斜坡最後被斷開，兩段變成一條（硬連結），總位移剖面變回一個鐘形。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── Ch10：Wallace–Bott 假設 ───────────── */
+
+type Reg3 = "normal" | "strike" | "reverse";
+
+export function WallaceBottDemo() {
+  const [reg, setReg] = useState<Reg3>("normal");
+  const [az, setAz] = useState(90); // σ3（正斷層）或 σ1（逆、平移）的水平方位
+  const [phi, setPhi] = useState(0.5);
+  const [strike, setStrike] = useState(20);
+  const [dip, setDip] = useState(60);
+  const v = (t: number, p: number): V => [Math.cos(rad(p)) * Math.sin(rad(t)), Math.cos(rad(p)) * Math.cos(rad(t)), -Math.sin(rad(p))];
+  const vert: V = [0, 0, -1];
+  const hA = v(az, 0), hB = v(az + 90, 0);
+  // 依體制指定 σ1、σ2、σ3 的方向
+  const axes: [V, V, V] = reg === "normal" ? [vert, hB, hA] : reg === "reverse" ? [hA, hB, vert] : [hA, vert, hB];
+  const mags = [1, phi, 0];
+  const S = (x: V): V => {
+    const out: V = [0, 0, 0];
+    axes.forEach((e, i) => {
+      const d = e[0] * x[0] + e[1] * x[1] + e[2] * x[2];
+      for (let k = 0; k < 3; k++) out[k] += mags[i] * d * e[k];
+    });
+    return out;
+  };
+  const dd = (strike + 90) % 360;
+  // 指向上盤的法向量（往上）
+  const nDown = v((dd + 180) % 360, 90 - dip); // 極點（往下）
+  const n: V = [-nDown[0], -nDown[1], -nDown[2]];
+  const t = S(n);
+  const tn = t[0] * n[0] + t[1] * n[1] + t[2] * n[2];
+  const tau: V = [t[0] - tn * n[0], t[1] - tn * n[1], t[2] - tn * n[2]];
+  const tm = Math.hypot(...tau);
+  const slip: V = tm < 1e-9 ? [0, 0, 0] : [-tau[0] / tm, -tau[1] / tm, -tau[2] / tm]; // 上盤的運動方向
+  const sv: V = [Math.sin(rad(strike)), Math.cos(rad(strike)), 0];
+  const dv = v(dd, dip); // 沿傾向往下
+  const a = slip[0] * sv[0] + slip[1] * sv[1] + slip[2] * sv[2];
+  const b = slip[0] * dv[0] + slip[1] * dv[1] + slip[2] * dv[2];
+  const rake = deg(Math.atan2(Math.abs(b), a));
+  const dipPart = b > 0.2 ? "正斷層" : b < -0.2 ? "逆斷層" : "";
+  const ssPart = a > 0.2 ? "左移" : a < -0.2 ? "右移" : "";
+  const kind = dipPart && ssPart ? `斜移（${dipPart} + ${ssPart}）` : dipPart || (ssPart ? `${ssPart}平移斷層` : "—");
+  // 赤平投影
+  const R = 100, cx = 120, cy = 120;
+  const proj = (x: V) => {
+    const tp = toTP(x);
+    const r = R * Math.tan(rad((90 - tp.plunge) / 2));
+    return [cx + r * Math.sin(rad(tp.trend)), cy - r * Math.cos(rad(tp.trend))];
+  };
+  const gc: string[] = [];
+  for (let i = 0; i <= 180; i++) {
+    const th = rad(i);
+    const p: V = [Math.cos(th) * sv[0] + Math.sin(th) * dv[0], Math.cos(th) * sv[1] + Math.sin(th) * dv[1], Math.cos(th) * sv[2] + Math.sin(th) * dv[2]];
+    const q = proj(p);
+    gc.push(`${q[0]},${q[1]}`);
+  }
+  const sp = proj(slip);
+  const up = slip[2] > 0;
+  const axCols = ["var(--orange)", "var(--gold)", "var(--teal)"];
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：Wallace–Bott 假設</b>
+        <span>給定應力和斷層面，滑動方向 = 面上最大分解剪應力的方向</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox="0 0 240 262" className="ix-svg" role="img" aria-label="Wallace–Bott 赤平投影">
+          <circle cx={cx} cy={cy} r={R} fill="none" stroke={INK} strokeWidth={2} />
+          <text x={cx} y={cy - R - 6} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>N</text>
+          <polyline points={gc.join(" ")} fill="none" stroke="var(--teal)" strokeWidth={2.4} />
+          {axes.map((e, i) => {
+            const q = proj(e);
+            return (
+              <g key={i}>
+                <circle cx={q[0]} cy={q[1]} r={5} fill={axCols[i]} stroke={INK} />
+                <text x={q[0] + 7} y={q[1] - 6} style={{ fontSize: 11, fontWeight: 800, fill: axCols[i] }}>σ{i + 1}</text>
+              </g>
+            );
+          })}
+          {tm > 1e-6 && (
+            <g>
+              <rect x={sp[0] - 5} y={sp[1] - 5} width={10} height={10} fill="#d0567a" stroke={INK} />
+              <text x={sp[0] + 8} y={sp[1] + 14} style={{ fontSize: 10.5, fontWeight: 800, fill: "#d0567a" }}>擦痕</text>
+            </g>
+          )}
+          <text x={cx} y={250} textAnchor="middle" style={{ fontSize: 10.5 }}>下半球等角；藍綠大圓 = 斷層面</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-btns">
+            {([["normal", "σ1 垂直"], ["strike", "σ2 垂直"], ["reverse", "σ3 垂直"]] as [Reg3, string][]).map(([k, l]) => (
+              <button key={k} type="button" className="ix-btn" aria-pressed={reg === k} onClick={() => setReg(k)}>{l}</button>
+            ))}
+          </div>
+          <div className="ix-row">
+            <label><span>{reg === "normal" ? "σ3 方位" : "σ1 方位"}</span><span>{String(az).padStart(3, "0")}°</span></label>
+            <input type="range" min={0} max={179} step={1} value={az} onChange={(e) => setAz(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>形狀比 Φ</span><span>{fmt(phi, 2)}</span></label>
+            <input type="range" min={0} max={1} step={0.01} value={phi} onChange={(e) => setPhi(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>斷層走向（右手法則）</span><span>{String(strike).padStart(3, "0")}°</span></label>
+            <input type="range" min={0} max={359} step={1} value={strike} onChange={(e) => setStrike(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>斷層傾角</span><span>{dip}°</span></label>
+            <input type="range" min={10} max={90} step={1} value={dip} onChange={(e) => setDip(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            擦痕（上盤運動）：plunge {fmt(Math.abs(toTP(slip).plunge), 0)}°、trend {String(Math.round(up ? (toTP(slip).trend + 180) % 360 : toTP(slip).trend)).padStart(3, "0")}°{up ? "（往上）" : ""}
+            <br />rake（從走向量）= <b>{fmt(rake, 0)}°</b>
+          </div>
+          <div className="ix-verdict">{kind}</div>
+          <div className="ix-note">
+            每個斷層面上，應力在面內的分量（分解剪應力）有一個方向，Wallace–Bott 假設斷層就沿這個方向滑。同一個應力場下，不同方向的斷層會有不同的擦痕；改變 Φ，σ2 和另外兩軸的相對大小改變，擦痕方向也會轉。反過來，量很多條斷層的位態和擦痕，就能反推出讓所有擦痕都對得上的應力軸方向和 Φ，這就是應力反演。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}

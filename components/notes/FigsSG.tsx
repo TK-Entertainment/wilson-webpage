@@ -1295,3 +1295,431 @@ export function VeinTypesFig() {
     </Fig>
   );
 }
+
+/* ───────────── Ch9：斷層的基本類型 ───────────── */
+
+export function FaultTypesFig() {
+  const sec = (ox: number, title: string, normal: boolean) => (
+    <g transform={`translate(${ox},10)`}>
+      <polygon points="0,30 70,30 100,130 0,130" fill={C.gold} fillOpacity={0.25} stroke={INK} />
+      <polygon points={normal ? "70,40 150,40 150,140 100,140" : "70,20 150,20 150,120 100,120"} fill={C.teal} fillOpacity={0.25} stroke={INK} />
+      {[60, 90].map((y) => <line key={y} x1={0} x2={70 + ((y - 30) * 30) / 100} y1={y} y2={y} stroke={INK} strokeOpacity={0.5} />)}
+      {[60, 90].map((y) => <line key={`r${y}`} x1={70 + ((y - 30) * 30) / 100 + 4} x2={150} y1={y + (normal ? 10 : -10)} y2={y + (normal ? 10 : -10)} stroke={INK} strokeOpacity={0.5} />)}
+      <line x1={120} y1={normal ? 60 : 90} x2={128} y2={normal ? 84 : 66} stroke={C.orange} strokeWidth={2.5} markerEnd="url(#sm-o)" />
+      <text x={75} y={160} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+      <text x={20} y={22} style={{ fontSize: 10 }}>下盤</text>
+      <text x={110} y={normal ? 34 : 14} style={{ fontSize: 10 }}>上盤</text>
+    </g>
+  );
+  const map = (ox: number, title: string, dextral: boolean) => (
+    <g transform={`translate(${ox},10)`}>
+      <rect x={0} y={20} width={150} height={110} fill={C.navy} fillOpacity={0.12} stroke={INK} />
+      <line x1={0} x2={150} y1={75} y2={75} stroke={C.rose} strokeWidth={3} />
+      <line x1={50} x2={90} y1={55} y2={55} stroke={C.orange} strokeWidth={2.5} markerEnd="url(#sm-o)" transform={dextral ? "" : "rotate(180 70 55)"} />
+      <line x1={100} x2={60} y1={95} y2={95} stroke={C.orange} strokeWidth={2.5} markerEnd="url(#sm-o)" transform={dextral ? "" : "rotate(180 80 95)"} />
+      <text x={75} y={160} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+    </g>
+  );
+  return (
+    <Fig caption="斷層的三種基本類型。正斷層：上盤相對下盤往下（伸張）；逆斷層：上盤往上（縮短），低角度（< 30°）、位移數十到數百 km 的叫逆衝斷層；平移斷層：沿走向水平錯動，站在斷層一側看對面往右移是右移（dextral），往左是左移（sinistral）。滑動方向介於傾向和走向之間的是斜移斷層（依擦痕的 pitch 分類，Angelier 1994）。高角度斷層傾角 > 60°，低角度 < 30°。" source="Fossen (2016) Fig. 9.5；課堂投影片 Ch9 p.5、p.14">
+      <svg viewBox="0 0 640 180" className="ix-svg" role="img" aria-label="斷層類型">
+        <Marks />
+        {sec(5, "正斷層", true)}
+        {sec(165, "逆斷層", false)}
+        {map(325, "右移平移斷層（俯視）", true)}
+        {map(485, "左移平移斷層（俯視）", false)}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch9：滑移與離距 ───────────── */
+
+export function SeparationFig() {
+  const dipA = 60, a = rad(dipA);
+  const ox = 260, oy = 40;
+  const fx = (t: number) => ox + t * Math.cos(a) * 0.9, fy = (t: number) => oy + t * Math.sin(a);
+  const tA = 50, tB = 140;
+  return (
+    <Fig caption="在垂直斷層走向的剖面上量斷層的位移。同一層被斷層錯開的兩個切點之間，沿斷層面的距離是傾向離距（dip separation）；它的水平分量叫水平斷距（heave），垂直分量叫落差（throw）。注意「離距」（separation）是看到的錯開量，不一定是真正的滑移（slip）；只有在剖面平行滑移方向時兩者才相同。地圖上看到的叫水平分距。鑽井穿過正斷層會少掉一段地層（缺失），穿過逆斷層會重複一段；但如果正斷層比井還陡，也可能重複。" source="Fossen (2016) Fig. 9.10–9.12；課堂投影片 Ch9 p.12–15">
+      <svg viewBox="0 0 640 210" className="ix-svg" role="img" aria-label="heave 與 throw">
+        <Marks />
+        <line x1={fx(-10)} y1={fy(-10)} x2={fx(190)} y2={fy(190)} stroke={C.rose} strokeWidth={3} />
+        <line x1={60} x2={fx(tA)} y1={fy(tA)} y2={fy(tA)} stroke={C.gold} strokeWidth={6} />
+        <line x1={fx(tB)} x2={600} y1={fy(tB)} y2={fy(tB)} stroke={C.gold} strokeWidth={6} />
+        <line x1={fx(tA)} y1={fy(tA)} x2={fx(tB)} y2={fy(tB)} stroke={C.orange} strokeWidth={3} markerEnd="url(#sm-o)" />
+        <line x1={fx(tA)} y1={fy(tB)} x2={fx(tB)} y2={fy(tB)} stroke={C.teal} strokeWidth={2.5} strokeDasharray="5 3" />
+        <line x1={fx(tA)} y1={fy(tA)} x2={fx(tA)} y2={fy(tB)} stroke={C.blue} strokeWidth={2.5} strokeDasharray="5 3" />
+        <text x={fx(tA) - 6} y={(fy(tA) + fy(tB)) / 2} textAnchor="end" style={{ fontSize: 12, fontWeight: 800, fill: C.blue }}>落差 throw</text>
+        <text x={(fx(tA) + fx(tB)) / 2} y={fy(tB) + 20} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: C.teal }}>水平斷距 heave</text>
+        <text x={(fx(tA) + fx(tB)) / 2 + 22} y={(fy(tA) + fy(tB)) / 2} style={{ fontSize: 12, fontWeight: 800, fill: C.orange }}>傾向離距</text>
+        <text x={80} y={fy(tA) - 10} style={{ fontSize: 11 }}>同一層（下盤）</text>
+        <text x={500} y={fy(tB) - 10} style={{ fontSize: 11 }}>同一層（上盤）</text>
+        <text x={fx(-10) + 8} y={fy(-10) + 12} style={{ fontSize: 11, fill: C.rose, fontWeight: 800 }}>斷層</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch9：斷坡–斷坪 ───────────── */
+
+export function RampFlatFig() {
+  return (
+    <Fig caption="逆衝斷層常呈階梯狀：在軟弱層（頁岩、蒸發岩）中沿層面走的平緩段叫斷坪（flat），切穿硬層的陡段叫斷坡（ramp）。上盤爬上斷坡時被彎成斷層彎曲褶皺。一系列斷坡往下會合到一條基底滑脫面，形成覆瓦狀構造，這就是 Ch6 的薄皮構造。台灣西部麓山帶是褶皺逆衝帶，淺部的基底滑脫面傾角約 6°（大致是隱沒板塊的表面），地震大多集中在滑脫面以上；往東，滑脫面一階一階往更深處下降，深部的基盤也被切穿（厚皮）。" source="Fossen (2016) Fig. 9.7；課堂投影片 Ch9 p.6–7（Carena et al. 2002；Suppe）">
+      <svg viewBox="0 0 640 190" className="ix-svg" role="img" aria-label="斷坡斷坪">
+        {[0, 1, 2, 3].map((i) => (
+          <line key={i} x1={10} x2={630} y1={140 - i * 22} y2={140 - i * 22} stroke={INK} strokeOpacity={0.15} />
+        ))}
+        <rect x={10} y={150} width={620} height={30} fill={C.violet} fillOpacity={0.2} />
+        <text x={600} y={170} textAnchor="end" style={{ fontSize: 11 }}>基盤</text>
+        <path d="M630,150 L380,150 L320,85 L120,85 L60,20" fill="none" stroke={C.rose} strokeWidth={3} />
+        <path d="M380,150 L330,150" stroke={C.rose} strokeWidth={0} />
+        <path d="M540,150 L470,150 Q440,150 420,120 Q400,90 380,90 L250,90 L210,62 Q200,50 180,50 L60,50" fill="none" stroke={INK} strokeWidth={1.8} />
+        <path d="M540,128 L455,128 Q430,128 412,103 Q396,80 375,74 L245,74 L200,40 Q190,30 170,30 L70,30" fill="none" stroke={INK} strokeWidth={1.8} />
+        <text x={500} y={146} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800, fill: C.rose }}>斷坪（沿軟弱層）</text>
+        <text x={355} y={128} textAnchor="end" style={{ fontSize: 11, fontWeight: 800, fill: C.rose }}>斷坡</text>
+        <text x={220} y={108} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800, fill: C.rose }}>上層斷坪</text>
+        <text x={420} y={64} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>斷層彎曲褶皺</text>
+        <text x={630} y={140} textAnchor="end" style={{ fontSize: 10.5 }}>基底滑脫面</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch9：正斷層系統 ───────────── */
+
+export function NormalSystemsFig() {
+  return (
+    <Fig caption="三種正斷層系統。(a) 地壘與地塹：兩條相背傾斜的正斷層夾出上升斷塊（地壘），相向傾斜的夾出下落斷塊（地塹）。和主斷層同方向傾斜的叫同向斷層，傾向主斷層的叫反向斷層。(b) 平板形斷塊（書架式／骨牌式）：一組平行的平面正斷層，斷塊一起旋轉。(c) 鏟狀正斷層：斷層往下變緩，上盤沿彎曲的斷層面下滑時，靠斷層的地方會留下空隙，上盤必須向下彎（用同向或反向的簡單剪切調適）來填補，形成滾動背斜（rollover，Ch1 的反牽引）。鏟狀斷層在垂直滑動方向的剖面上也常不規則，像大型的溝痕，上盤沿著它滑動。" source="Fossen (2016) Fig. 9.8–9.9；課堂投影片 Ch9 p.9–11">
+      <svg viewBox="0 0 640 180" className="ix-svg" role="img" aria-label="正斷層系統">
+        {/* 地壘地塹 */}
+        <g transform="translate(10,10)">
+          <path d="M0,60 L50,60 L70,120 L0,120 Z" fill={C.gold} fillOpacity={0.25} stroke={INK} />
+          <path d="M70,120 L50,60 L90,80 L110,120 Z" fill={C.teal} fillOpacity={0.3} stroke={INK} />
+          <path d="M110,120 L90,80 L130,80 L110,120" fill="none" />
+          <path d="M110,120 L130,80 L150,60 L190,60 L190,120 Z" fill={C.gold} fillOpacity={0.25} stroke={INK} />
+          <text x={80} y={100} textAnchor="middle" style={{ fontSize: 10.5, fontWeight: 800 }}>地塹</text>
+          <text x={25} y={52} style={{ fontSize: 10.5, fontWeight: 800 }}>地壘</text>
+          <text x={95} y={150} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>(a) 地壘與地塹</text>
+        </g>
+        {/* 書架式 */}
+        <g transform="translate(225,10)">
+          {[0, 1, 2, 3].map((i) => (
+            <polygon key={i} points={`${i * 45},${70 + i * 6} ${i * 45 + 45},${60 + i * 6} ${i * 45 + 25},120 ${i * 45 - 20},120`} fill={C.teal} fillOpacity={0.25 + i * 0.05} stroke={INK} />
+          ))}
+          <text x={90} y={150} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>(b) 書架式（骨牌）</text>
+        </g>
+        {/* 鏟狀 + rollover */}
+        <g transform="translate(430,10)">
+          <path d="M150,20 C140,70 120,100 60,120" fill="none" stroke={C.rose} strokeWidth={3} />
+          <path d="M0,60 Q80,62 136,80" fill="none" stroke={INK} strokeWidth={2} />
+          <path d="M0,80 Q80,82 126,98" fill="none" stroke={INK} strokeWidth={2} />
+          <path d="M152,40 L200,40" stroke={INK} strokeWidth={2} />
+          <path d="M150,60 L200,60" stroke={INK} strokeWidth={2} />
+          <text x={60} y={50} textAnchor="middle" style={{ fontSize: 10.5, fontWeight: 800 }}>滾動背斜</text>
+          <text x={100} y={150} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>(c) 鏟狀正斷層</text>
+        </g>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch9：斷層的解剖 ───────────── */
+
+export function FaultAnatomyFig() {
+  return (
+    <Fig caption="一條斷層的構成。核心（fault core）：滑動面以及最強烈變形的部分，可以從一個不到 mm 厚的碎裂帶，到好幾個滑動面、到一整個強烈剪切帶；裡面有斷層泥（黏土礦物）、角礫岩、碎裂岩，在結晶岩中還可能有假玄武岩玻璃（摩擦熔融後急冷的玻璃）。破碎帶（damage zone）：脆性構造（變形帶、剪裂、張裂、縫合線）的密度高於背景值的範圍，厚度和位移成正比（在 log–log 圖上是直線）。拖曳帶：斷層旁地層被彎曲的範圍。" source="Fossen (2016) Fig. 9.13–9.14；課堂投影片 Ch9 p.16–17">
+      <svg viewBox="0 0 640 190" className="ix-svg" role="img" aria-label="斷層解剖">
+        <rect x={150} y={10} width={340} height={150} fill={C.gold} fillOpacity={0.15} />
+        <rect x={250} y={10} width={140} height={150} fill={C.orange} fillOpacity={0.18} />
+        <rect x={305} y={10} width={30} height={150} fill={C.rose} fillOpacity={0.4} />
+        {Array.from({ length: 22 }, (_, i) => {
+          const x = 255 + (i % 11) * 12, y = 20 + Math.floor(i / 11) * 70 + (i % 3) * 14;
+          return x > 300 && x < 340 ? null : <line key={i} x1={x} y1={y} x2={x + 6} y2={y + 22} stroke={INK} strokeOpacity={0.6} strokeWidth={1.2} />;
+        })}
+        {[40, 90, 130].map((y) => (
+          <g key={y}>
+            <path d={`M20,${y} L150,${y} Q260,${y} 305,${y + 12}`} fill="none" stroke={INK} strokeWidth={1.6} />
+            <path d={`M335,${y + 30} Q380,${y + 18} 490,${y + 18} L620,${y + 18}`} fill="none" stroke={INK} strokeWidth={1.6} />
+          </g>
+        ))}
+        <text x={320} y={178} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800, fill: C.rose }}>核心</text>
+        <text x={270} y={178} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800, fill: C.orange }}>破碎帶</text>
+        <text x={370} y={178} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800, fill: C.orange }}>破碎帶</text>
+        <text x={200} y={178} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800, fill: C.gold }}>拖曳帶</text>
+        <text x={440} y={178} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800, fill: C.gold }}>拖曳帶</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch9：橢圓形斷層模型 ───────────── */
+
+export function EllipticalFaultFig() {
+  return (
+    <Fig caption="孤立的斷層在三維中可以簡化成一個橢圓形的面。邊界是尖端線（tip line）：有滑動和沒有滑動的交界，位移為 0。位移在中心最大，往尖端線遞減（等位移線是同心的橢圓），所以沿走向的位移剖面是鐘形。長軸通常平行走向（長度 L），短軸平行傾向（寬度 W），長寬比 L/W。斷層長大時，尖端線往外擴張、中心位移增加，兩者有系統性的比例關係（D–L 關係）。" source="Fossen (2016) Fig. 9.16；課堂投影片 Ch9 p.18">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="橢圓形斷層">
+        {[1, 0.75, 0.5, 0.25].map((k, i) => (
+          <ellipse key={k} cx={220} cy={100} rx={170 * k} ry={75 * k} fill={C.orange} fillOpacity={0.12 + i * 0.12} stroke={i === 0 ? C.rose : C.orange} strokeWidth={i === 0 ? 3 : 1.4} />
+        ))}
+        <text x={220} y={104} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800 }}>最大位移</text>
+        <text x={390} y={60} style={{ fontSize: 11.5, fontWeight: 800, fill: C.rose }}>尖端線（位移 = 0）</text>
+        <line x1={50} x2={390} y1={190} y2={190} stroke={INK} strokeWidth={1.4} />
+        <text x={220} y={186} textAnchor="middle" style={{ fontSize: 11 }}>長度 L（沿走向）</text>
+        <line x1={20} x2={20} y1={25} y2={175} stroke={INK} strokeWidth={1.4} />
+        <text x={14} y={100} transform="rotate(-90 14 100)" textAnchor="middle" style={{ fontSize: 11 }}>寬度 W（沿傾向）</text>
+        <path d="M440,160 L620,160" stroke={INK} strokeWidth={1.4} />
+        <path d="M440,160 Q530,40 620,160" fill={C.orange} fillOpacity={0.2} stroke={C.orange} strokeWidth={2.4} />
+        <text x={530} y={180} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800 }}>沿走向的位移剖面：鐘形</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch9：位移–長度關係 ───────────── */
+
+export function DLFig() {
+  const W = 420, H = 230, L = 50, R = 14, T = 14, B = 40;
+  const x = (lg: number) => L + ((lg + 2) / 6) * (W - L - R); // log L: -2..4 (m)
+  const y = (lg: number) => T + ((2 - lg) / 6) * (H - T - B); // log D: -4..2
+  const pts = (n: number, off: number, col: string) =>
+    Array.from({ length: n }, (_, i) => {
+      const lgL = -1.5 + (5 * i) / n + ((i * 37) % 7) / 20;
+      const lgD = lgL - 2 + off + (((i * 53) % 11) - 5) / 18;
+      return <circle key={i} cx={x(lgL)} cy={y(lgD)} r={3} fill={col} fillOpacity={0.8} />;
+    });
+  return (
+    <Fig caption="斷層的最大位移 D 和長度 L 呈冪次關係 D_max = γLⁿ，在 log–log 圖上是直線（n 約 1–1.5，示意資料）。不論是 cm 級的小斷層還是 km 級的大斷層都落在同一個帶上，表示斷層長大的方式有尺度不變性。孔隙砂岩中的變形帶（金色）明顯偏離：同樣的位移下，它們比預期的更長。" source="Schultz & Fossen (2002)；Fossen (2016) Fig. 9.31；課堂投影片 Ch9 p.36">
+      <svg viewBox={`0 0 ${W + 220} ${H}`} className="ix-svg" role="img" aria-label="D–L 關係">
+        {pts(36, 0, C.orange)}
+        {Array.from({ length: 12 }, (_, i) => {
+          const lgL = -1.5 + i * 0.25;
+          return <circle key={`b${i}`} cx={x(lgL)} cy={y(lgL - 3.3 + ((i * 7) % 5) / 15)} r={3} fill={C.gold} />;
+        })}
+        <line x1={x(-2)} y1={y(-4)} x2={x(4)} y2={y(2)} stroke={INK} strokeDasharray="5 3" />
+        <text x={x(3)} y={y(1) - 8} textAnchor="end" style={{ fontSize: 11 }}>D = γLⁿ</text>
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[-2, 0, 2, 4].map((v) => <text key={v} x={x(v)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 10.5 }}>10^{v}</text>)}
+        {[-4, -2, 0, 2].map((v) => <text key={v} x={L - 5} y={y(v) + 4} textAnchor="end" style={{ fontSize: 10.5 }}>10^{v}</text>)}
+        <text x={(L + W) / 2} y={H - 6} textAnchor="middle" style={{ fontSize: 12 }}>長度 L（m）</text>
+        <text x={16} y={(T + H - B) / 2} transform={`rotate(-90 16 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>最大位移 D（m）</text>
+        <circle cx={W + 30} cy={80} r={5} fill={C.orange} />
+        <text x={W + 42} y={84} style={{ fontSize: 12 }}>斷層</text>
+        <circle cx={W + 30} cy={106} r={5} fill={C.gold} />
+        <text x={W + 42} y={110} style={{ fontSize: 12 }}>孔隙砂岩的變形帶</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch9：地震再現模型 ───────────── */
+
+export function RecurrenceFig() {
+  const k = 0.03; // 應力累積速率
+  const panel = (ox: number, title: string, ev: [number, number, number][]) => {
+    // ev: [時間, 破裂時應力, 降到的應力]
+    const W = 190, x = (t: number) => ox + 10 + t * 1.7, ys = (s: number) => 100 - s * 70;
+    let path = `M${x(0)},${ys(ev[0][2])}`;
+    let cum = 0;
+    let slip = `M${x(0)},${190}`;
+    let prev = 0;
+    ev.forEach(([t, hi, lo], i) => {
+      path += ` L${x(t)},${ys(hi)} L${x(t)},${ys(lo)}`;
+      slip += ` L${x(t)},${190 - cum * 10}`;
+      cum += (hi - lo) * 3;
+      slip += ` L${x(t)},${190 - cum * 10}`;
+      prev = t;
+      void i;
+    });
+    path += ` L${x(100)},${ys(ev[ev.length - 1][2] + (100 - prev) * k)}`;
+    slip += ` L${x(100)},${190 - cum * 10}`;
+    return (
+      <g>
+        <line x1={ox + 10} x2={ox + W} y1={ys(1)} y2={ys(1)} stroke={C.rose} strokeDasharray="4 3" strokeOpacity={0.7} />
+        <line x1={ox + 10} x2={ox + W} y1={ys(0.3)} y2={ys(0.3)} stroke={C.teal} strokeDasharray="4 3" strokeOpacity={0.7} />
+        <path d={path} fill="none" stroke={C.orange} strokeWidth={2.2} />
+        <path d={slip} fill="none" stroke={C.blue} strokeWidth={2.2} />
+        <line x1={ox + 10} x2={ox + W} y1={190} y2={190} stroke={INK} strokeWidth={1.2} />
+        <line x1={ox + 10} x2={ox + W} y1={105} y2={105} stroke={INK} strokeWidth={1.2} />
+        <text x={ox + 100} y={14} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+      </g>
+    );
+  };
+  const mk = (pairs: [number, number][]) => {
+    // 依應力上下限算事件時間
+    let t = 0, s = pairs[0][1];
+    const out: [number, number, number][] = [];
+    pairs.forEach(([hi, lo]) => {
+      t += (hi - s) / k;
+      out.push([t, hi, lo]);
+      s = lo;
+    });
+    return out;
+  };
+  return (
+    <Fig caption="三種地震再現模型（考古題）。上：斷層上的應力隨時間（橘）；下：累積滑移（藍）。紅虛線是破裂的應力上限，藍綠虛線是下限。完美週期：每次都在同一個上限破裂、降到同一個下限，滑移量和間隔都相同，時間和規模都能預測。時間可預測：每次都在同一個上限破裂，但應力降不同；上一次滑移量越大，要等越久，所以知道上次的滑移量就能預測下次何時發生，但不知道規模。滑移可預測：每次都降到同一個下限，但破裂時的應力不同；距離上次越久，累積越多，下次的滑移（規模）就越大，所以能預測規模，不能預測時間。" source="Shimazaki & Nakata (1980)；課堂投影片 Ch9 p.28">
+      <svg viewBox="0 0 640 205" className="ix-svg" role="img" aria-label="地震再現模型">
+        {panel(5, "完美週期", mk([[1, 0.3], [1, 0.3], [1, 0.3]]))}
+        {panel(215, "時間可預測", mk([[1, 0.3], [1, 0.55], [1, 0.15], [1, 0.45]]))}
+        {panel(425, "滑移可預測", mk([[0.75, 0.3], [1.0, 0.3], [0.6, 0.3], [0.9, 0.3]]))}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch9：斷層的封閉 ───────────── */
+
+export function FaultSealFig() {
+  const col = (k: number) => (k % 2 === 0 ? C.gold : C.teal);
+  return (
+    <Fig caption="斷層對流體是導管還是障壁？三種主要的封閉（黃：砂岩儲集層；綠：不透水頁岩）。併接封閉：斷層把砂岩完全錯到頁岩對面，流體過不去。自併接封閉：砂岩對著砂岩，但斷層核心本身因碎裂作用（粒徑變小、孔隙率和滲透率降低）或膠結、溶解而變得不透水。頁岩塗抹：上盤的頁岩被拖進斷層，形成連續的不透水薄膜，即使砂對砂也能封住。一般來說，低孔隙岩石中的斷層（破碎帶充滿破裂）是流體的導管，找地下水的好目標；高孔隙岩石中的斷層常是障壁。" source="Fossen (2016) §9.7；課堂投影片 Ch9 p.37–39">
+      <svg viewBox="0 0 640 190" className="ix-svg" role="img" aria-label="斷層封閉">
+        {[0, 1, 2].map((p) => {
+          const ox = 15 + p * 210, off = p === 0 ? 30 : p === 1 ? 0 : 20;
+          return (
+            <g key={p}>
+              {[0, 1, 2, 3, 4].map((k) => (
+                <g key={k}>
+                  <rect x={ox} y={20 + k * 30} width={85} height={30} fill={col(k)} fillOpacity={0.35} />
+                  <rect x={ox + 95} y={20 + k * 30 + off} width={85} height={30} fill={col(k)} fillOpacity={0.35} />
+                </g>
+              ))}
+              <rect x={ox + 85} y={20} width={10} height={150 + off} fill={p === 1 ? INK : p === 2 ? C.teal : "none"} fillOpacity={p === 0 ? 0 : 0.5} />
+              <line x1={ox + 90} x2={ox + 90} y1={15} y2={180} stroke={C.rose} strokeWidth={2} />
+              <text x={ox + 90} y={186} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>{["併接封閉", "自併接（碎裂、膠結）", "頁岩塗抹"][p]}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch10：階狀構造、纖維與縫合線 ───────────── */
+
+export function StepsFibersFig() {
+  return (
+    <Fig caption="斷層面不是完美的平面，有很多階狀的不規則。剖面上，上盤往右滑（右上的箭頭）。遇到鬆弛階（releasing step）時，兩側被拉開，空隙裡長出平行滑動方向的礦物纖維（滑動纖維）；遇到受阻階（restraining step）時，兩側被擠壓，形成縫合線（壓溶）。所以看階的形狀和裡面長的是纖維還是縫合線，就能判斷滑動方向。用手摸階狀的擦痕面：順著滑動方向摸是平順的，逆著摸會卡住（但這個判準有時會反過來，要配合其他指標）。" source="Fossen (2016) Fig. 10.3–10.4；課堂投影片 Ch10 p.2–4">
+      <svg viewBox="0 0 640 190" className="ix-svg" role="img" aria-label="鬆弛階與受阻階">
+        <Marks />
+        {/* 下盤（不動） */}
+        <path d="M20,175 L20,115 L200,115 L230,80 L380,80 L410,115 L620,115 L620,175 Z" fill={C.teal} fillOpacity={0.18} stroke={INK} strokeWidth={2} />
+        {/* 上盤（往右移了 25） */}
+        <path d="M20,20 L20,115 L225,115 L255,80 L405,80 L435,115 L620,115 L620,20 Z" fill={C.gold} fillOpacity={0.15} stroke={INK} strokeWidth={2} />
+        {/* 鬆弛階：空隙長纖維 */}
+        <polygon points="380,80 405,80 435,115 410,115" fill={C.blue} fillOpacity={0.45} />
+        {[0, 1, 2, 3, 4].map((k) => {
+          const y = 84 + k * 7, x0 = 380 + (y - 80) * (30 / 35), x1 = 405 + (y - 80) * (30 / 35);
+          return <line key={k} x1={x0 + 2} x2={x1 - 2} y1={y} y2={y} stroke={C.blue} strokeWidth={1.6} />;
+        })}
+        {/* 受阻階：縫合線 */}
+        <path d="M200,115 L206,108 L211,104 L216,97 L222,94 L227,86 L232,82" fill="none" stroke={C.rose} strokeWidth={2.6} />
+        <path d="M205,117 L212,111 L216,104 L223,101 L227,93 L234,89 L238,84" fill="none" stroke={C.rose} strokeWidth={1.4} strokeDasharray="3 2" />
+        <line x1={480} y1={50} x2={540} y2={50} stroke={C.orange} strokeWidth={3} markerEnd="url(#sm-o)" />
+        <text x={485} y={40} style={{ fontSize: 11.5, fontWeight: 800 }}>上盤往右</text>
+        <text x={410} y={70} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: C.blue }}>鬆弛階：拉開 → 纖維</text>
+        <text x={215} y={70} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: C.rose }}>受阻階：擠壓 → 縫合線</text>
+        <text x={320} y={150} textAnchor="middle" style={{ fontSize: 11 }}>下盤（不動）　剖面平行滑動方向</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch10：形狀比 Φ ───────────── */
+
+export function PhiFig() {
+  const panel = (ox: number, phi: number, title: string, sub: string) => {
+    const s1 = 120, s3 = 10, s2 = s3 + phi * (s1 - s3);
+    const X = (v: number) => ox + v, y0 = 120;
+    const arc = (a: number, b: number, col: string, w: number) => {
+      const c = (a + b) / 2, r = Math.abs(a - b) / 2;
+      return r < 0.5 ? null : <path d={`M${X(c - r)},${y0} A${r},${r} 0 0,1 ${X(c + r)},${y0}`} fill="none" stroke={col} strokeWidth={w} />;
+    };
+    return (
+      <g>
+        <line x1={X(0)} x2={X(140)} y1={y0} y2={y0} stroke={INK} strokeWidth={1.2} />
+        {arc(s3, s1, C.teal, 2.4)}
+        {arc(s3, s2, C.orange, 1.8)}
+        {arc(s2, s1, C.orange, 1.8)}
+        {[[s3, "σ3"], [s2, "σ2"], [s1, "σ1"]].map(([v, l]) => (
+          <g key={l as string}>
+            <circle cx={X(v as number)} cy={y0} r={3.5} fill={INK} />
+            <text x={X(v as number)} y={l === "σ2" && (phi === 0 || phi === 1) ? y0 - 8 : y0 + 16} textAnchor="middle" style={{ fontSize: 10.5 }}>{l}</text>
+          </g>
+        ))}
+        <text x={X(65)} y={y0 + 40} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+        <text x={X(65)} y={y0 + 57} textAnchor="middle" style={{ fontSize: 10.5 }}>{sub}</text>
+      </g>
+    );
+  };
+  return (
+    <Fig caption="形狀比 Φ = (σ2 − σ3)/(σ1 − σ3) 描述 σ2 落在 σ1 和 σ3 之間的哪裡，也就是應力橢球的形狀。Φ = 0：σ2 = σ3，扁長（prolate）的應力橢球，像單軸壓縮；Φ = 1：σ1 = σ2，扁圓（oblate），像單軸張力；Φ = 0.5 在正中間。Φ 很小時 σ2、σ3 很接近，局部的小擾動就能讓兩者互換（σ2/σ3 交換）；Φ 很大時則容易發生 σ1/σ2 交換。" source="課堂投影片 Ch10 p.12–13；Hu & Angelier (2004)">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="形狀比 Φ">
+        {panel(40, 0, "Φ = 0", "σ2 = σ3：扁長，單軸壓縮")}
+        {panel(250, 0.5, "Φ = 0.5", "σ2 在正中間")}
+        {panel(460, 1, "Φ = 1", "σ1 = σ2：扁圓，單軸張力")}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch10：震源機制 ───────────── */
+
+export function BeachballFig() {
+  const R = 60;
+  // 把一個面（走向、傾角）投影成大圓（下半球等面積）
+  const arc = (cx: number, cy: number, str: number, dip: number) => {
+    const s = [Math.sin(rad(str)), Math.cos(rad(str)), 0];
+    const dd = rad(str + 90), dr = rad(dip);
+    const d = [Math.cos(dr) * Math.sin(dd), Math.cos(dr) * Math.cos(dd), -Math.sin(dr)];
+    const pts: [number, number][] = [];
+    for (let i = 0; i <= 90; i++) {
+      const t = rad(i * 2);
+      const p = [Math.cos(t) * s[0] + Math.sin(t) * d[0], Math.cos(t) * s[1] + Math.sin(t) * d[1], Math.cos(t) * s[2] + Math.sin(t) * d[2]];
+      const plunge = Math.asin(Math.min(1, -p[2]));
+      const tr = Math.atan2(p[0], p[1]);
+      const r = R * Math.SQRT2 * Math.sin((Math.PI / 2 - plunge) / 2);
+      pts.push([cx + r * Math.sin(tr), cy - r * Math.cos(tr)]);
+    }
+    return pts;
+  };
+  const ball = (cx: number, title: string, sub: string, kind: "normal" | "reverse" | "ss") => {
+    const cy = 90;
+    if (kind === "ss") {
+      return (
+        <g>
+          <circle cx={cx} cy={cy} r={R} fill="hsl(var(--card))" stroke={INK} strokeWidth={2} />
+          <path d={`M${cx},${cy} L${cx},${cy - R} A${R},${R} 0 0,1 ${cx + R},${cy} Z`} fill={INK} fillOpacity={0.75} />
+          <path d={`M${cx},${cy} L${cx},${cy + R} A${R},${R} 0 0,1 ${cx - R},${cy} Z`} fill={INK} fillOpacity={0.75} />
+          <text x={cx + 25} y={cy - 22} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800, fill: "hsl(var(--card))" }}>T</text>
+          <text x={cx - 25} y={cy - 22} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>P</text>
+          <text x={cx} y={cy + R + 22} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+          <text x={cx} y={cy + R + 38} textAnchor="middle" style={{ fontSize: 10.5 }}>{sub}</text>
+        </g>
+      );
+    }
+    const a1 = arc(cx, cy, 0, 45), a2 = arc(cx, cy, 180, 45);
+    const lens = [...a1, ...a2].map((p) => `${p[0]},${p[1]}`).join(" ");
+    const centerBlack = kind === "reverse";
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={R} fill={centerBlack ? "hsl(var(--card))" : INK} fillOpacity={centerBlack ? 1 : 0.75} stroke={INK} strokeWidth={2} />
+        <polygon points={lens} fill={centerBlack ? INK : "hsl(var(--card))"} fillOpacity={centerBlack ? 0.75 : 1} stroke={INK} strokeWidth={1.5} />
+        <text x={cx} y={cy + 4} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800, fill: centerBlack ? "hsl(var(--card))" : "currentColor" }}>{centerBlack ? "T" : "P"}</text>
+        <text x={cx + R - 12} y={cy + 4} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800, fill: centerBlack ? "currentColor" : "hsl(var(--card))" }}>{centerBlack ? "P" : "T"}</text>
+        <text x={cx} y={cy + R + 22} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+        <text x={cx} y={cy + R + 38} textAnchor="middle" style={{ fontSize: 10.5 }}>{sub}</text>
+      </g>
+    );
+  };
+  return (
+    <Fig caption="震源機制（海灘球）是 P 波初動的下半球投影。黑色是壓縮初動的象限（包含 T 軸），白色是伸張初動的象限（包含 P 軸）。中央白、兩側黑：正斷層（P 軸垂直）；中央黑：逆斷層（T 軸垂直）；四個象限：平移斷層。兩條節面中哪一條才是真正的斷層面，除非有餘震分布等資料，否則無法確定。P、T 軸平分兩個節面，所以只有斷層剛好和 σ1 夾 45° 時，P、T 才和 σ1、σ3 重合；實際斷層多和 σ1 夾約 30°，而低角度逆衝斷層差最多。" source="Fossen (2016) Box 9.1；課堂投影片 Ch10 p.17（Hu et al. 2007）">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="震源機制">
+        {ball(110, "正斷層", "中央白（P 垂直）", "normal")}
+        {ball(320, "逆斷層", "中央黑（T 垂直）", "reverse")}
+        {ball(530, "平移斷層", "四個象限", "ss")}
+      </svg>
+    </Fig>
+  );
+}
