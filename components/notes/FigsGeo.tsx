@@ -792,3 +792,149 @@ export function SteadyStateFig() {
     </Fig>
   );
 }
+
+/* ───────────── L5：緩衝強度（封閉碳酸系統，C_T = 10 mM） ───────────── */
+
+export function BufferFig() {
+  const W = 560, H = 280, L = 52, R = 16, T = 14, B = 44;
+  const x = (p: number) => L + ((p - 2) / 11) * (W - L - R);
+  const lo = -5, hi = 0;
+  const y = (v: number) => T + ((hi - Math.max(lo, Math.min(hi, v))) / (hi - lo)) * (H - T - B);
+  const ct = 0.01, k1 = Math.pow(10, -6.35), k2 = Math.pow(10, -10.33);
+  const beta = (p: number) => {
+    const h = Math.pow(10, -p), d = h * h + k1 * h + k1 * k2;
+    const a0 = (h * h) / d, a1 = (k1 * h) / d, a2 = (k1 * k2) / d;
+    return 2.303 * (h + Math.pow(10, p - 14) + ct * (a0 * a1 + 4 * a0 * a2 + a1 * a2));
+  };
+  const pts: string[] = [];
+  for (let i = 0; i <= 220; i++) {
+    const p = 2 + (11 * i) / 220;
+    pts.push(`${x(p)},${y(Math.log10(beta(p)))}`);
+  }
+  const marks: [number, string, boolean][] = [[6.35, "pK₁", true], [10.33, "pK₂", true], [4.2, "CO₂ 當量點", false], [8.34, "HCO₃⁻ 當量點", false]];
+  return (
+    <Fig caption="封閉碳酸系統（C_T = 10 mM）的緩衝強度 β 對 pH（對數座標）。β 在 pH = pK₁、pK₂ 最大，因為那裡兩種物種一樣多，加進來的酸或鹼都有對象可以中和；在當量點最小，那裡幾乎只有一種物種，pH 很容易被推動。pH 很低或很高時 β 又變大，是 H⁺、OH⁻ 本身多到能緩衝。" source="課堂投影片 L5 p.27–28；用 K₁、K₂ 計算">
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="緩衝強度對 pH" style={{ maxWidth: 620, margin: "0 auto" }}>
+        {[0, -1, -2, -3, -4, -5].map((v) => (
+          <g key={v}>
+            <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke={INK} strokeOpacity={0.1} />
+            <text x={L - 6} y={y(v) + 4} textAnchor="end" style={{ fontSize: 11 }}>{v}</text>
+          </g>
+        ))}
+        {marks.map(([p, lab, mx]) => (
+          <g key={lab}>
+            <line x1={x(p)} x2={x(p)} y1={T} y2={H - B} stroke={mx ? C.orange : C.teal} strokeDasharray="4 3" strokeOpacity={0.8} />
+            <text x={x(p) + 4} y={mx ? T + 12 : H - B - 8} style={{ fontSize: 11, fontWeight: 700, fill: mx ? C.orange : C.teal }}>{lab}</text>
+          </g>
+        ))}
+        <polyline points={pts.join(" ")} fill="none" stroke={INK} strokeWidth={2.6} />
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[2, 4, 6, 8, 10, 12].map((p) => (
+          <text key={p} x={x(p)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{p}</text>
+        ))}
+        <text x={(L + W) / 2} y={H - 8} textAnchor="middle" style={{ fontSize: 12 }}>pH</text>
+        <text x={16} y={(T + H - B) / 2} transform={`rotate(-90 16 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>log β（eq/L 每 pH）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L5：離子勢（White Table 6.3 的 Z/r） ───────────── */
+
+const IP: [string, number, number][] = [
+  ["Cs", 1, 0.6], ["Rb", 1, 0.68], ["K", 1, 0.75], ["Na", 1, 1.0], ["Li", 1, 1.5],
+  ["Ba", 2, 1.5], ["Sr", 2, 1.8], ["Ca", 2, 2.0], ["Mn", 2, 2.5], ["Fe²", 2, 2.7], ["Mg", 2, 3.0],
+  ["La", 3, 2.6], ["Y", 3, 3.3], ["Lu", 3, 3.5], ["Sc", 3, 3.7], ["Fe³", 3, 4.7], ["Al", 3, 5.9], ["B", 3, 13],
+  ["Th", 4, 3.9], ["Ce⁴", 4, 4.3], ["Zr", 4, 5.1], ["Ti", 4, 5.9], ["Mn⁴", 4, 6.7], ["Si", 4, 9.5], ["C", 4, 25],
+  ["Nb", 5, 7.5], ["P", 5, 14], ["N", 5, 38], ["Mo", 6, 9.7], ["S", 6, 20],
+];
+
+export function IonicPotentialFig() {
+  const W = 560, H = 320, L = 46, R = 16, T = 14, B = 44;
+  const x = (r: number) => L + (r / 1.8) * (W - L - R);
+  const y = (z: number) => T + ((6.6 - z) / 6.6) * (H - T - B);
+  const lineAt = (ip: number) => {
+    const zmax = Math.min(6.6, ip * 1.8);
+    return { x2: x(zmax / ip), y2: y(zmax) };
+  };
+  const l3 = lineAt(3), l9 = lineAt(9);
+  const col = (ip: number) => (ip <= 3 ? C.teal : ip < 9 ? C.orange : C.violet);
+  const label = (s: string) => s.replace("Fe²", "Fe²⁺").replace("Fe³", "Fe³⁺");
+  const below = ["Lu", "Fe²", "Ce⁴"];
+  return (
+    <Fig caption="橫軸是離子半徑 r，縱軸是電荷 Z，所以通過原點的直線就是固定的離子勢 Z/r。低離子勢（藍綠，左下到右邊）：電荷小、半徑大，在水中是水合陽離子，易溶。中離子勢（橘）：水解成氫氧化物，最難溶，Fe³⁺、Al³⁺、Ti⁴⁺、Zr⁴⁺ 都在這裡，所以它們留在風化殘餘的土壤裡。高離子勢（紫，靠縱軸）：小而高電荷，和 O 形成共價的含氧陰離子（CO₃²⁻、NO₃⁻、SO₄²⁻、PO₄³⁻），又變得易溶。分界約在 Z/r ≈ 3 和 ≈ 9（投影片寫中間是 ~4–10，邊界是大概的）。" source="Z/r 數值依 White (2013) Table 6.3；課堂投影片 L5 p.34">
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="離子勢圖" style={{ maxWidth: 620, margin: "0 auto" }}>
+        <line x1={x(0)} y1={y(0)} x2={l3.x2} y2={l3.y2} stroke={INK} strokeDasharray="5 4" strokeOpacity={0.6} />
+        <line x1={x(0)} y1={y(0)} x2={l9.x2} y2={l9.y2} stroke={INK} strokeDasharray="5 4" strokeOpacity={0.6} />
+        <text x={x(1.5)} y={y(4.5) - 6} textAnchor="end" style={{ fontSize: 10.5 }}>Z/r = 3</text>
+        <text x={l9.x2 + 4} y={l9.y2 + 12} style={{ fontSize: 10.5 }}>Z/r = 9</text>
+        <text x={x(1.25)} y={y(0.45)} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: C.teal }}>水合陽離子：易溶</text>
+        <text x={x(1.15)} y={y(5.6)} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: C.orange }}>氫氧化物：難溶</text>
+        <text x={x(0.17)} y={y(6.35)} textAnchor="start" style={{ fontSize: 12, fontWeight: 800, fill: C.violet }}>含氧陰離子：易溶</text>
+        {IP.map(([s, z, ip]) => {
+          const r = z / ip;
+          return (
+            <g key={s}>
+              <circle cx={x(r)} cy={y(z)} r={4.5} fill={col(ip)} stroke={INK} strokeWidth={1} />
+              <text x={x(r)} y={below.includes(s) ? y(z) + 16 : y(z) - 7} textAnchor="middle" style={{ fontSize: 10, fontWeight: 700 }}>{label(s)}</text>
+            </g>
+          );
+        })}
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[0, 0.4, 0.8, 1.2, 1.6].map((r) => (
+          <text key={r} x={x(r)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{r}</text>
+        ))}
+        {[1, 2, 3, 4, 5, 6].map((z) => (
+          <text key={z} x={L - 6} y={y(z) + 4} textAnchor="end" style={{ fontSize: 11 }}>+{z}</text>
+        ))}
+        <text x={(L + W) / 2} y={H - 8} textAnchor="middle" style={{ fontSize: 12 }}>離子半徑 r（Å，= Z ÷ 離子勢）</text>
+        <text x={16} y={(T + H - B) / 2} transform={`rotate(-90 16 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>電荷 Z</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L5：海水組成在週期表上（log μmol/kg，數量級） ───────────── */
+
+// [符號, 週期列, 族, log10(μmol/kg)]；數量級整理自 Nozaki (1997) 等；不含 H、O、溶解氣體
+const SW: [string, number, number, number][] = [
+  ["Li", 2, 1, 1.4], ["Be", 2, 2, -4.7], ["B", 2, 13, 2.6], ["C", 2, 14, 3.4], ["F", 2, 17, 1.8],
+  ["Na", 3, 1, 5.67], ["Mg", 3, 2, 4.72], ["Al", 3, 13, -2.7], ["Si", 3, 14, 2.0], ["P", 3, 15, 0.3], ["S", 3, 16, 4.45], ["Cl", 3, 17, 5.74],
+  ["K", 4, 1, 4.01], ["Ca", 4, 2, 4.01], ["Sc", 4, 3, -4.8], ["Ti", 4, 4, -4.8], ["V", 4, 5, -1.5], ["Cr", 4, 6, -2.4], ["Mn", 4, 7, -3.3], ["Fe", 4, 8, -3.3],
+  ["Co", 4, 9, -4.7], ["Ni", 4, 10, -2.1], ["Cu", 4, 11, -2.4], ["Zn", 4, 12, -2.3], ["Ga", 4, 13, -4.7], ["Ge", 4, 14, -4.2], ["As", 4, 15, -1.6], ["Se", 4, 16, -2.8], ["Br", 4, 17, 2.92],
+  ["Rb", 5, 1, 0.15], ["Sr", 5, 2, 1.95], ["Y", 5, 3, -3.7], ["Zr", 5, 4, -3.7], ["Nb", 5, 5, -5.4], ["Mo", 5, 6, -0.97], ["Ag", 5, 11, -4.7], ["Cd", 5, 12, -3.2], ["Sn", 5, 14, -5.4], ["Sb", 5, 15, -2.9], ["I", 5, 17, -0.35],
+  ["Cs", 6, 1, -2.6], ["Ba", 6, 2, -1.0], ["La", 6, 3, -4.5], ["Hf", 6, 4, -6], ["Ta", 6, 5, -7], ["W", 6, 6, -4.3], ["Re", 6, 7, -4.4], ["Au", 6, 11, -7], ["Hg", 6, 12, -6], ["Tl", 6, 13, -4.2], ["Pb", 6, 14, -5], ["Bi", 6, 15, -7],
+  ["Th", 7, 4, -7], ["U", 7, 6, -1.87],
+];
+
+export function SeawaterTableFig() {
+  const cw = 33, ch = 34, ox = 20, oy = 34;
+  const lo = -7, hi = 6;
+  const op = (v: number) => 0.08 + ((v - lo) / (hi - lo)) * 0.88;
+  return (
+    <Fig caption="海水中各元素的濃度，畫在週期表上（橘色越濃 = 越多，數字是 log μmol/kg，只看數量級）。左邊的鹼金屬、鹼土金屬（低離子勢，水合陽離子）和右邊的 B、C、S、Cl、Br、Mo、U（高離子勢，含氧陰離子或鹵素陰離子）很多；中間的 Al、Ti、Fe、Zr、Th 等（中離子勢，氫氧化物）極少，呈 U 形。空白格是沒有列出的元素（含 H、O、N 和溶解的惰性氣體）。U 和 Th 同在錒系，U⁶⁺ 形成碳酸鈾醯錯合物而易溶，Th⁴⁺ 不易溶，差了五個數量級。" source="數量級整理自 Nozaki (1997)；White (2013) Fig. 15.5；課堂投影片 L5 p.35">
+      <svg viewBox="0 0 640 300" className="ix-svg" role="img" aria-label="海水元素濃度週期表">
+        {[1, 2, 13, 14, 15, 16, 17].map((g) => (
+          <text key={g} x={ox + (g - 0.5) * cw} y={oy - 8} textAnchor="middle" style={{ fontSize: 10, opacity: 0.6 }}>{g}</text>
+        ))}
+        {SW.map(([s, p, g, v]) => (
+          <g key={s}>
+            <rect x={ox + (g - 1) * cw + 1} y={oy + (p - 2) * ch + 1} width={cw - 2} height={ch - 2} rx={3} fill={C.orange} fillOpacity={op(v)} stroke={INK} strokeOpacity={0.35} />
+            <text x={ox + (g - 0.5) * cw} y={oy + (p - 2) * ch + 15} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800 }}>{s}</text>
+            <text x={ox + (g - 0.5) * cw} y={oy + (p - 2) * ch + 28} textAnchor="middle" style={{ fontSize: 9 }}>{v > 0 ? v.toFixed(1) : v.toFixed(1)}</text>
+          </g>
+        ))}
+        <text x={ox + 3 * cw - 4} y={oy + 5 * ch + 22} textAnchor="end" style={{ fontSize: 10, opacity: 0.7 }}>錒系 →</text>
+        {/* 色階 */}
+        {Array.from({ length: 14 }, (_, i) => lo + i).map((v, i) => (
+          <rect key={v} x={330 + i * 20} y={250} width={20} height={14} fill={C.orange} fillOpacity={op(v)} />
+        ))}
+        <text x={326} y={261} textAnchor="end" style={{ fontSize: 10 }}>少 −7</text>
+        <text x={334 + 14 * 20} y={261} style={{ fontSize: 10 }}>+6 多</text>
+        <text x={470} y={284} textAnchor="middle" style={{ fontSize: 10.5 }}>log 濃度（μmol/kg）</text>
+      </svg>
+    </Fig>
+  );
+}

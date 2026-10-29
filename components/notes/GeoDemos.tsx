@@ -441,3 +441,283 @@ export function FirstOrderDemo() {
     </figure>
   );
 }
+
+/* ───────────── L5：碳酸系統 ───────────── */
+
+const PK1 = 6.35, PK2 = 10.33;
+const alphas = (pH: number) => {
+  const h = Math.pow(10, -pH), k1 = Math.pow(10, -PK1), k2 = Math.pow(10, -PK2);
+  const d = h * h + k1 * h + k1 * k2;
+  return [(h * h) / d, (k1 * h) / d, (k1 * k2) / d];
+};
+
+export function CarbonateDemo() {
+  const [lct, setLct] = useState(-2); // log C_T (M)
+  const [pH, setPH] = useState(8.2);
+  const W = 360, H = 260, L = 40, R = 14, T = 12, B = 36;
+  const x = (p: number) => L + ((p - 2) / 12) * (W - L - R);
+  const lo = -10, hi = 0;
+  const y = (lc: number) => T + ((hi - Math.max(lo, Math.min(hi, lc))) / (hi - lo)) * (H - T - B);
+  const ct = Math.pow(10, lct);
+  const line = (fn: (p: number) => number) => {
+    const a: string[] = [];
+    for (let i = 0; i <= 120; i++) {
+      const p = 2 + (12 * i) / 120;
+      a.push(`${x(p)},${y(fn(p))}`);
+    }
+    return a.join(" ");
+  };
+  const sp = [
+    { n: "H₂CO₃", c: "var(--teal)", f: (p: number) => Math.log10(ct * alphas(p)[0]) },
+    { n: "HCO₃⁻", c: "var(--orange)", f: (p: number) => Math.log10(ct * alphas(p)[1]) },
+    { n: "CO₃²⁻", c: "#8a6fd1", f: (p: number) => Math.log10(ct * alphas(p)[2]) },
+  ];
+  const a = alphas(pH);
+  const names = ["H₂CO₃", "HCO₃⁻", "CO₃²⁻"];
+  const dom = names[a.indexOf(Math.max(...a))];
+  // CO₂ 當量點：[H⁺] = [HCO₃⁻]，數值解
+  let ep = 4;
+  for (let p = 2; p < 8; p += 0.001) {
+    if (-p >= Math.log10(ct * alphas(p)[1])) ep = p;
+    else break;
+  }
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：碳酸物種隨 pH 的變化</b>
+        <span>封閉系統（總碳 C<sub>T</sub> 固定）；拉 pH 看哪個物種為主</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="碳酸物種對 pH">
+          {[0, -2, -4, -6, -8, -10].map((v) => (
+            <g key={v}>
+              <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke={INK} strokeOpacity={0.1} />
+              <text x={L - 5} y={y(v) + 4} textAnchor="end" style={{ fontSize: 11 }}>{v}</text>
+            </g>
+          ))}
+          {[PK1, PK2].map((p) => (
+            <line key={p} x1={x(p)} x2={x(p)} y1={T} y2={H - B} stroke={INK} strokeOpacity={0.3} strokeDasharray="3 3" />
+          ))}
+          <text x={x(PK1) + 3} y={H - B - 5} style={{ fontSize: 10 }}>pK₁</text>
+          <text x={x(PK2) + 3} y={H - B - 5} style={{ fontSize: 10 }}>pK₂</text>
+          <polyline points={line((p) => -p)} fill="none" stroke={INK} strokeOpacity={0.5} strokeWidth={1.4} strokeDasharray="5 3" />
+          <polyline points={line((p) => p - 14)} fill="none" stroke={INK} strokeOpacity={0.5} strokeWidth={1.4} strokeDasharray="5 3" />
+          <text x={x(2.6)} y={y(-2.6) - 4} style={{ fontSize: 10 }}>H⁺</text>
+          <text x={x(13.2)} y={y(-0.8) + 12} textAnchor="end" style={{ fontSize: 10 }}>OH⁻</text>
+          {sp.map((s) => (
+            <polyline key={s.n} points={line(s.f)} fill="none" stroke={s.c} strokeWidth={2.6} />
+          ))}
+          <circle cx={x(ep)} cy={y(-ep)} r={4} fill={INK} />
+          <text x={x(ep) - 4} y={y(-ep) + 14} textAnchor="end" style={{ fontSize: 10 }}>CO₂ 當量點</text>
+          <line x1={x(pH)} x2={x(pH)} y1={T} y2={H - B} stroke="var(--gold)" strokeWidth={2} />
+          {sp.map((s) => (
+            <circle key={s.n} cx={x(pH)} cy={y(s.f(pH))} r={4} fill={s.c} stroke={INK} />
+          ))}
+          <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          {[2, 4, 6, 8, 10, 12, 14].map((p) => (
+            <text key={p} x={x(p)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{p}</text>
+          ))}
+          <text x={(L + W) / 2} y={H - 4} textAnchor="middle" style={{ fontSize: 12 }}>pH</text>
+          <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>log 濃度（M）</text>
+          <g style={{ fontSize: 10.5, fontWeight: 700 }}>
+            {sp.map((s, i) => (
+              <g key={s.n}>
+                <line x1={L + 8 + i * 70} x2={L + 26 + i * 70} y1={T + 8} y2={T + 8} stroke={s.c} strokeWidth={3} />
+                <text x={L + 30 + i * 70} y={T + 12}>{s.n}</text>
+              </g>
+            ))}
+          </g>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>總碳 C<sub>T</sub></span>
+              <span>{fmt(ct * 1000, ct < 0.001 ? 2 : 1)} mM</span>
+            </label>
+            <input type="range" min={-4} max={-1} step={0.1} value={lct} onChange={(e) => setLct(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>pH</span>
+              <span>{fmt(pH, 2)}</span>
+            </label>
+            <input type="range" min={2} max={13} step={0.05} value={pH} onChange={(e) => setPH(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            H₂CO₃ <b>{fmt(a[0] * 100, 1)}%</b>　HCO₃⁻ <b>{fmt(a[1] * 100, 1)}%</b>　CO₃²⁻ <b>{fmt(a[2] * 100, 1)}%</b>
+            <br />這個 C<sub>T</sub> 的 CO₂ 當量點：pH ≈ <b>{fmt(ep, 2)}</b>
+          </div>
+          <div className="ix-verdict">以 {dom} 為主</div>
+          <div className="ix-note">
+            三條彩色線在 pH = pK₁ 和 pK₂ 交叉（兩物種各半）。天然水 pH 約 6–9，所以 HCO₃⁻ 為主。黑點是純 CO₂ 溶液會到的 pH（H⁺ 線碰到 HCO₃⁻ 線）；C<sub>T</sub> 越大，這個 pH 越低。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── L5：鹼度不受 CO₂ 影響 ───────────── */
+
+const solvePH = (alk: number, ct: number) => {
+  // alk、ct 單位 M；Alk = C_T(α1 + 2α2) + [OH⁻] − [H⁺]
+  let lo = 2, hi = 13;
+  for (let i = 0; i < 60; i++) {
+    const m = (lo + hi) / 2;
+    const a = alphas(m);
+    const f = ct * (a[1] + 2 * a[2]) + Math.pow(10, m - 14) - Math.pow(10, -m) - alk;
+    if (f > 0) hi = m;
+    else lo = m;
+  }
+  return (lo + hi) / 2;
+};
+
+export function AlkalinityDemo() {
+  const [ct, setCt] = useState(2.35); // mM
+  const alk = 2.3; // meq/L
+  const pH = solvePH(alk / 1000, ct / 1000);
+  const a = alphas(pH);
+  const hco3 = ct * a[1], co3 = ct * a[2];
+  const oh = Math.pow(10, pH - 14) * 1000, h = Math.pow(10, -pH) * 1000;
+  const W = 360, H = 270, base = 60, k = 60; // k：每 meq/L 的像素
+  const bx1 = 70, bx2 = 210, bw = 90, y0 = H - 30;
+  const parts = [
+    { n: "HCO₃⁻", v: hco3, c: "var(--orange)" },
+    { n: "2×CO₃²⁻", v: 2 * co3, c: "#8a6fd1" },
+    { n: "OH⁻ − H⁺", v: Math.max(0, oh - h), c: "var(--teal)" },
+  ];
+  let acc = y0 - base;
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：加 CO₂，鹼度變不變？</b>
+        <span>鹼度固定 2.3 meq/L，改變溶進來的 CO₂（總碳 C<sub>T</sub>）</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="電荷平衡長條">
+          <rect x={bx1} y={y0 - base} width={bw} height={base} fill={INK} fillOpacity={0.15} stroke={INK} />
+          <rect x={bx2} y={y0 - base} width={bw} height={base} fill={INK} fillOpacity={0.15} stroke={INK} />
+          <text x={bx1 + bw / 2} y={y0 - base / 2 + 4} textAnchor="middle" style={{ fontSize: 10.5 }}>…（其餘）</text>
+          <text x={bx2 + bw / 2} y={y0 - base / 2 + 4} textAnchor="middle" style={{ fontSize: 10.5 }}>保守陰離子</text>
+          <rect x={bx1} y={y0 - base - alk * k} width={bw} height={alk * k} fill="var(--gold)" fillOpacity={0.35} stroke={INK} strokeWidth={1.5} />
+          <text x={bx1 + bw / 2} y={y0 - base - (alk * k) / 2} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>鹼度</text>
+          <text x={bx1 + bw / 2} y={y0 - base - (alk * k) / 2 + 15} textAnchor="middle" style={{ fontSize: 10.5 }}>2.3 meq/L</text>
+          {parts.map((p) => {
+            const hgt = p.v * k;
+            acc -= hgt;
+            return (
+              <g key={p.n}>
+                <rect x={bx2} y={acc} width={bw} height={hgt} fill={p.c} fillOpacity={0.55} stroke={INK} strokeWidth={1} />
+                {hgt > 14 && (
+                  <text x={bx2 + bw / 2} y={acc + hgt / 2 + 4} textAnchor="middle" style={{ fontSize: 10.5, fontWeight: 700 }}>{p.n}</text>
+                )}
+              </g>
+            );
+          })}
+          <line x1={bx1 - 10} x2={bx2 + bw + 10} y1={y0 - base - alk * k} y2={y0 - base - alk * k} stroke={INK} strokeDasharray="4 3" strokeOpacity={0.6} />
+          <text x={bx1 + bw / 2} y={y0 + 18} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>保守陽離子</text>
+          <text x={bx2 + bw / 2} y={y0 + 18} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>陰離子</text>
+          <text x={W / 2} y={16} textAnchor="middle" style={{ fontSize: 10.5 }}>電荷平衡（當量）：兩根一樣高</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>總碳 C<sub>T</sub>（溶進多少 CO₂）</span>
+              <span>{fmt(ct, 2)} mM</span>
+            </label>
+            <input type="range" min={1.4} max={3.5} step={0.01} value={ct} onChange={(e) => setCt(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            pH = <b>{fmt(pH, 2)}</b>
+            <br />HCO₃⁻ = <b>{fmt(hco3, 3)}</b> mM，CO₃²⁻ = <b>{fmt(co3, 3)}</b> mM
+            <br />鹼度 = HCO₃⁻ + 2CO₃²⁻ + OH⁻ − H⁺ = <b>{fmt(hco3 + 2 * co3 + oh - h, 2)}</b> meq/L
+          </div>
+          <div className="ix-verdict">CO₂ 變多 → pH 下降、CO₃²⁻ 變 HCO₃⁻；鹼度不變</div>
+          <div className="ix-note">
+            CO₂ 進來只會在缺口裡面把 CO₃²⁻ 轉成 HCO₃⁻（CO₂ + CO₃²⁻ + H₂O → 2HCO₃⁻），電荷總量不變，所以右邊那根的高度不變。要改變鹼度，得改變保守離子，例如 CaCO₃ 沉澱帶走 Ca²⁺。（長條不按比例：真實海水的鹼度只占總電荷約 0.4%；這裡只算碳酸鹼度，用淡水的 K 值。）
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── L5：礦物穩定圖（K-長石 ⇌ 高嶺石） ───────────── */
+
+export function MineralStabilityDemo() {
+  const [pH, setPH] = useState(6);
+  const [lk, setLk] = useState(-4); // log [K⁺]
+  const [ls, setLs] = useState(-4); // log [H4SiO4]
+  const W = 360, H = 260, L = 44, R = 14, T = 12, B = 38;
+  const x = (v: number) => L + ((v + 6) / 5) * (W - L - R); // -6 .. -1
+  const y = (v: number) => T + ((10 - v) / 10) * (H - T - B); // 0 .. 10
+  const b = -2;
+  const yy = lk + pH;
+  const lineY = -2 * ls + b;
+  const over = ls > -2.74;
+  const above = yy > lineY;
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：K-長石會不會風化成高嶺石？</b>
+        <span>拉 pH、K⁺、溶解矽，看水的組成落在線的哪一側</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="K-長石與高嶺石穩定圖">
+          <polygon points={`${x(-6)},${y(10)} ${x(-6)},${y(10)} ${x(-2.74)},${y(-2 * -2.74 + b)} ${x(-2.74)},${y(10)}`} fill="var(--orange)" fillOpacity={0.12} />
+          <polygon points={`${x(-6)},${y(10)} ${x(-2.74)},${y(-2 * -2.74 + b)} ${x(-2.74)},${y(0)} ${x(-6)},${y(0)}`} fill="var(--teal)" fillOpacity={0.12} />
+          <polygon points={`${x(-2.74)},${y(0)} ${x(-1)},${y(0)} ${x(-1)},${y(10)} ${x(-2.74)},${y(10)}`} fill={INK} fillOpacity={0.12} />
+          <line x1={x(-6)} y1={y(10)} x2={x(-1)} y2={y(-2 * -1 + b)} stroke={INK} strokeWidth={2.2} />
+          <line x1={x(-2.74)} x2={x(-2.74)} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} strokeDasharray="5 3" />
+          <text x={x(-3.4)} y={y(8.5)} textAnchor="middle" style={{ fontWeight: 800 }}>K-長石</text>
+          <text x={x(-5.1)} y={y(3)} textAnchor="middle" style={{ fontWeight: 800 }}>高嶺石</text>
+          <text x={x(-1.87)} y={y(5.4)} textAnchor="middle" style={{ fontSize: 10.5 }}>非晶質矽</text>
+          <text x={x(-1.87)} y={y(5.4) + 13} textAnchor="middle" style={{ fontSize: 10.5 }}>會沉澱</text>
+          <circle cx={x(ls)} cy={y(Math.max(0, Math.min(10, yy)))} r={6} fill="var(--gold)" stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          {[-6, -5, -4, -3, -2, -1].map((v) => (
+            <text key={v} x={x(v)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{v}</text>
+          ))}
+          {[0, 2, 4, 6, 8, 10].map((v) => (
+            <text key={v} x={L - 5} y={y(v) + 4} textAnchor="end" style={{ fontSize: 11 }}>{v}</text>
+          ))}
+          <text x={(L + W) / 2} y={H - 5} textAnchor="middle" style={{ fontSize: 12 }}>log [H₄SiO₄]</text>
+          <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>log([K⁺]/[H⁺])</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>pH</span>
+              <span>{fmt(pH, 1)}</span>
+            </label>
+            <input type="range" min={4} max={9} step={0.1} value={pH} onChange={(e) => setPH(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>log [K⁺]</span>
+              <span>{fmt(lk, 1)}</span>
+            </label>
+            <input type="range" min={-6} max={-1} step={0.1} value={lk} onChange={(e) => setLk(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>log [H₄SiO₄]</span>
+              <span>{fmt(ls, 2)}</span>
+            </label>
+            <input type="range" min={-6} max={-1.5} step={0.05} value={ls} onChange={(e) => setLs(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            y = log([K⁺]/[H⁺]) = log[K⁺] + pH = <b>{fmt(yy, 1)}</b>
+            <br />直線在這個 x 的高度：−2x − 2 = <b>{fmt(lineY, 1)}</b>
+          </div>
+          <div className="ix-verdict">{over ? "超過非晶質矽的溶解度：矽會沉澱，到不了這裡" : above ? "在線上方：K-長石穩定" : "在線下方：高嶺石穩定，K-長石會被風化"}</div>
+          <div className="ix-note">
+            降低 pH（雨水多、酸性）或把 K⁺、矽帶走（淋溶），點會往下、往左移，進入高嶺石區，這就是強烈風化的方向。直線依投影片 25 °C 的線（截距約 −2），考試以題目給的 K 為準。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
