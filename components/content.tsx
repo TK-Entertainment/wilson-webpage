@@ -9,6 +9,7 @@ import { Zoomable } from "@/components/lightbox";
 import { MindMap } from "@/components/notes/MindMap";
 import { LogicMap } from "@/components/notes/LogicMap";
 import * as Figs from "@/components/notes/Figs";
+import * as FigsGeo from "@/components/notes/FigsGeo";
 import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
 
 const components = {
@@ -19,6 +20,7 @@ const components = {
   MindMap,
   LogicMap,
   ...Figs,
+  ...FigsGeo,
   StateFunctionDemo,
   MeltingGDemo,
   GraphiteDiamondDemo,
