@@ -1043,3 +1043,107 @@ export function StrengthDemo() {
     </figure>
   );
 }
+
+/* ───────────── Ch7：Mohr 圓與破壞包絡線 ───────────── */
+
+export function FailureDemo() {
+  const [T, setT] = useState(10);
+  const [mu, setMu] = useState(0.6);
+  const [s1, setS1] = useState(60);
+  const [s3, setS3] = useState(20);
+  const [pf, setPf] = useState(0);
+  const [old, setOld] = useState(false);
+  const e1 = s1 - pf, e3 = Math.min(s3, s1) - pf;
+  const c = (e1 + e3) / 2, r = (e1 - e3) / 2;
+  const env = (sn: number) => (sn < 0 ? Math.sqrt(Math.max(0, 4 * T * (sn + T))) : 2 * T + mu * sn);
+  // 找包絡線上離圓心最近的點
+  let best = { d: Infinity, sn: -T };
+  for (let i = 0; i <= 2000; i++) {
+    const sn = -T + (i / 2000) * (c + r + 3 * T + 50);
+    const d = Math.hypot(sn - c, env(sn));
+    if (d < best.d) best = { d, sn };
+  }
+  const failed = best.d <= r + 0.05;
+  const twoTheta = deg(Math.atan2(env(best.sn), best.sn - c)); // 從 σ1 端量
+  const planeToS1 = 90 - Math.abs(twoTheta) / 2;
+  let kind = "穩定：圓在包絡線內";
+  if (failed) {
+    if (best.sn <= -T + 0.3) kind = "張裂（Mode I）：垂直 σ3、平行 σ1";
+    else if (best.sn < 0) kind = "混合型破裂：和 σ1 夾角小於 θc";
+    else kind = "剪裂（共軛）";
+  }
+  // 既有斷層：法線和 σ1 夾 59°（斷層和 σ1 夾 31°），沒有內聚力，μ = 0.85
+  const reac = old && r * Math.sin(rad(118)) >= 0.85 * (c + r * Math.cos(rad(118)));
+  const W = 360, H = 230, L = 20, R = 10, T0 = 10, B = 26;
+  const lo = -30, hi = 110;
+  const X = (v: number) => L + ((v - lo) / (hi - lo)) * (W - L - R);
+  const sc = (W - L - R) / (hi - lo);
+  const Y0 = H - B;
+  const Y = (v: number) => Y0 - v * sc;
+  const envPts: string[] = [];
+  for (let i = 0; i <= 200; i++) {
+    const sn = -T + (i / 200) * (hi + T);
+    envPts.push(`${X(sn)},${Y(env(sn))}`);
+  }
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：岩石什麼時候破？</b>
+        <span>Griffith–Coulomb 包絡線；拉 σ1、σ3、孔隙壓，看圓碰到包絡線的哪一段</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="Mohr 圓與破壞包絡線">
+          <line x1={L} x2={W - R} y1={Y0} y2={Y0} stroke={INK} strokeWidth={1.5} />
+          <line x1={X(0)} x2={X(0)} y1={T0} y2={Y0} stroke={INK} strokeWidth={1.5} />
+          {[-20, 0, 20, 40, 60, 80, 100].map((v) => (
+            <text key={v} x={X(v)} y={Y0 + 14} textAnchor="middle" style={{ fontSize: 10 }}>{v}</text>
+          ))}
+          <text x={W - R} y={Y0 - 5} textAnchor="end" style={{ fontSize: 10.5 }}>σn（MPa）</text>
+          <text x={X(0) + 4} y={T0 + 8} style={{ fontSize: 10.5 }}>σs</text>
+          <polyline points={envPts.join(" ")} fill="none" stroke="var(--rose, #d0567a)" strokeWidth={2.4} />
+          {old && <line x1={X(0)} y1={Y0} x2={X(hi)} y2={Y(0.85 * hi)} stroke="var(--gold)" strokeWidth={1.8} strokeDasharray="6 4" />}
+          <text x={X(-T)} y={Y0 + 24} textAnchor="middle" style={{ fontSize: 10, fill: "var(--rose, #d0567a)" }}>−T</text>
+          {pf > 0 && <circle cx={X(c + pf)} cy={Y0} r={r * sc} fill="none" stroke={INK} strokeOpacity={0.3} strokeDasharray="4 3" />}
+          <path d={`M${X(c - r)},${Y0} A${r * sc},${r * sc} 0 0,1 ${X(c + r)},${Y0}`} fill="var(--teal)" fillOpacity={0.12} stroke="var(--teal)" strokeWidth={2.4} />
+          {failed && <circle cx={X(best.sn)} cy={Y(env(best.sn))} r={5.5} fill="var(--orange)" stroke={INK} />}
+          <text x={X(e3)} y={Y0 + 24} textAnchor="middle" style={{ fontSize: 10 }}>σ3′</text>
+          <text x={X(e1)} y={Y0 + 24} textAnchor="middle" style={{ fontSize: 10 }}>σ1′</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label><span>σ1</span><span>{s1} MPa</span></label>
+            <input type="range" min={0} max={110} step={1} value={s1} onChange={(e) => setS1(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>σ3</span><span>{Math.min(s3, s1)} MPa</span></label>
+            <input type="range" min={-20} max={110} step={1} value={s3} onChange={(e) => setS3(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>孔隙壓 p<sub>f</sub></span><span>{pf} MPa</span></label>
+            <input type="range" min={0} max={80} step={1} value={pf} onChange={(e) => setPf(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>抗張強度 T（C = 2T）</span><span>{T} MPa</span></label>
+            <input type="range" min={2} max={25} step={1} value={T} onChange={(e) => setT(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>內摩擦係數 μ = tan φ</span><span>{fmt(mu, 2)}（φ = {fmt(deg(Math.atan(mu)), 0)}°）</span></label>
+            <input type="range" min={0.2} max={1} step={0.01} value={mu} onChange={(e) => setMu(+e.target.value)} />
+          </div>
+          <div className="ix-btns">
+            <button type="button" className="ix-btn" aria-pressed={old} onClick={() => setOld(!old)}>顯示既有斷層（Byerlee μ = 0.85）</button>
+          </div>
+          <div className="ix-readout">
+            圓心 {fmt(c, 1)}、半徑 {fmt(r, 1)}（有效應力）
+            <br />{failed ? <>接觸點 σn = <b>{fmt(best.sn, 1)}</b>，2θ = <b>{fmt(Math.abs(twoTheta), 0)}°</b>，破裂面和 σ1 夾 <b>{fmt(planeToS1, 0)}°</b></> : <>Coulomb 預測的剪裂角：和 σ1 夾 <b>{fmt(45 - deg(Math.atan(mu)) / 2, 0)}°</b></>}
+            {old && <><br />既有斷層（約 31° 方向）：<b>{reac ? "會再活動" : "不會滑"}</b></>}
+          </div>
+          <div className="ix-verdict">{kind}</div>
+          <div className="ix-note">
+            加孔隙壓：圓往左平移、大小不變，最後碰到包絡線。差應力小（圓小）時先碰到左端 −T：張裂（節理、水力破裂）；差應力稍大時碰到拋物線段：混合型；差應力大時碰到右邊的 Coulomb 直線：剪裂，破裂面和 σ1 夾 45° − φ/2。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}

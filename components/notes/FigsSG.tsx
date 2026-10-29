@@ -1,10 +1,11 @@
 "use client";
 
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { Fig } from "./Figs";
 
 // 地球構造各章的自繪圖
 const INK = "currentColor";
+const rad = (d: number) => (d * Math.PI) / 180;
 const C = { orange: "var(--orange)", teal: "var(--teal)", gold: "var(--gold)", navy: "var(--navy)", rose: "#d0567a", violet: "#8a6fd1", blue: "#5b8bd9" };
 
 function Marks() {
@@ -848,6 +849,247 @@ export function ThinThickSkinFig() {
         })}
         <text x={480} y={150} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>基盤也被切穿</text>
         <text x={480} y={196} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>厚皮：基盤參與變形</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch7：破裂的模式與方位 ───────────── */
+
+export function FractureModesFig() {
+  const box = (ox: number, title: string, sub: string, inner: ReactNode) => (
+    <g transform={`translate(${ox},20)`}>
+      <rect x={0} y={0} width={130} height={110} fill={C.navy} fillOpacity={0.15} stroke={INK} strokeOpacity={0.35} />
+      {inner}
+      <text x={65} y={146} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+      <text x={65} y={163} textAnchor="middle" style={{ fontSize: 10.5 }}>{sub}</text>
+    </g>
+  );
+  const s1 = (len = 18) => (
+    <g>
+      <line x1={65} y1={-16} x2={65} y2={-2} stroke={C.orange} strokeWidth={3} markerEnd="url(#sm-o)" />
+      <line x1={65} y1={126 - 0} x2={65} y2={112} stroke={C.orange} strokeWidth={3} markerEnd="url(#sm-o)" transform="translate(0,0)" />
+      <text x={74} y={-6} style={{ fontSize: 10.5, fontWeight: 800, fill: C.orange }}>σ1</text>
+      {len > 0 && null}
+    </g>
+  );
+  return (
+    <Fig caption="破裂的四種模式和它們跟主應力的方位關係（σ1 垂直）。Mode I（張開）：裂面兩側往外張開，形成節理、裂縫或礦脈，裂面垂直 σ3、平行 σ1。Mode II（滑動）與 Mode III（撕裂）：剪裂，兩側沿裂面滑動，位移方向分別垂直和平行裂隙前緣；剪裂成對出現（共軛），各和 σ1 夾約 30°，交線平行 σ2。Mode IV（閉合）：縫合線，壓溶把物質溶走，留下不溶殘餘，面垂直 σ1。剪切加張開的叫混合型（hybrid）破裂。" source="Fossen (2016) Fig. 7.5–7.6；課堂投影片 Ch7 p.5–7">
+      <svg viewBox="0 0 640 210" className="ix-svg" role="img" aria-label="破裂模式">
+        <Marks />
+        {box(20, "Mode I 張開", "節理、脈：⊥ σ3", (
+          <g>
+            <path d="M65,10 L60,55 L65,100 L70,55 Z" fill={C.blue} fillOpacity={0.5} stroke={C.blue} />
+            <line x1={40} y1={55} x2={20} y2={55} stroke={C.teal} strokeWidth={2.5} markerEnd="url(#sm-t)" />
+            <line x1={90} y1={55} x2={110} y2={55} stroke={C.teal} strokeWidth={2.5} markerEnd="url(#sm-t)" />
+          </g>
+        ))}
+        {box(175, "Mode II 滑動", "剪裂：和 σ1 夾 ~30°", (
+          <g>
+            <line x1={36} y1={105} x2={94} y2={5} stroke={C.rose} strokeWidth={3} />
+            <line x1={50} y1={60} x2={60} y2={43} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+            <line x1={82} y1={50} x2={72} y2={67} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+          </g>
+        ))}
+        {box(330, "Mode III 撕裂", "剪裂（位移平行前緣）", (
+          <g>
+            <line x1={36} y1={105} x2={94} y2={5} stroke={C.rose} strokeWidth={3} />
+            <circle cx={55} cy={56} r={6} fill="none" stroke={INK} strokeWidth={1.5} />
+            <circle cx={55} cy={56} r={1.8} fill={INK} />
+            <circle cx={78} cy={58} r={6} fill="none" stroke={INK} strokeWidth={1.5} />
+            <line x1={74} y1={54} x2={82} y2={62} stroke={INK} strokeWidth={1.5} />
+            <line x1={82} y1={54} x2={74} y2={62} stroke={INK} strokeWidth={1.5} />
+          </g>
+        ))}
+        {box(485, "Mode IV 閉合", "縫合線：⊥ σ1", (
+          <path d="M10,55 L20,48 L28,60 L36,46 L46,58 L56,47 L66,60 L76,46 L86,59 L96,47 L106,58 L120,52" fill="none" stroke={C.gold} strokeWidth={2.5} />
+        ))}
+        {[20, 175, 330, 485].map((ox) => (
+          <g key={ox} transform={`translate(${ox},20)`}>{s1()}</g>
+        ))}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch7：四個環境因子 ───────────── */
+
+export function EnvFactorsFig() {
+  const panel = (ox: number, title: string, curves: [string, string, string][]) => (
+    <g transform={`translate(${ox},14)`}>
+      <line x1={0} x2={130} y1={120} y2={120} stroke={INK} strokeWidth={1.4} />
+      <line x1={0} x2={0} y1={0} y2={120} stroke={INK} strokeWidth={1.4} />
+      {curves.map(([d, col, lab], i) => (
+        <g key={i}>
+          <path d={d} fill="none" stroke={col} strokeWidth={2.4} />
+          <text x={Number(d.split(" ").slice(-1)[0].replace(/[A-Z]/g, "").split(",")[0]) + 4} y={Number(d.split(" ").slice(-1)[0].split(",")[1]) + 4} style={{ fontSize: 9.5, fill: col, fontWeight: 700 }}>{lab}</text>
+        </g>
+      ))}
+      <text x={65} y={136} textAnchor="middle" style={{ fontSize: 10 }}>應變</text>
+      <text x={-8} y={60} transform="rotate(-90 -8 60)" textAnchor="middle" style={{ fontSize: 10 }}>差應力</text>
+      <text x={65} y={156} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>{title}</text>
+    </g>
+  );
+  const strong = "M0,120 L25,30 C30,22 34,25 38,60 L45,95";
+  const ductile = "M0,120 L20,50 C40,30 80,22 120,18";
+  const weak = "M0,120 L12,90 C40,82 80,80 120,78";
+  return (
+    <Fig caption="三軸實驗中，四個環境因子讓應力–應變曲線怎麼變（考古題）。圍壓增加：強度增加，而且從破裂後應力驟降（脆性）變成持續塑性流動（延展性增加）。孔隙壓增加：效果相當於降低圍壓（有效應力變小），強度和延展性都下降。溫度增加：強度下降、延展性增加。應變率增加：強度增加、延展性下降（偏脆性）。" source="Fossen (2016) Fig. 7.9–7.11；課堂投影片 Ch7 p.9–11（大理石、Yule marble 等實驗）">
+      <svg viewBox="0 0 640 190" className="ix-svg" role="img" aria-label="四個環境因子">
+        {panel(30, "圍壓 ↑", [[strong, C.teal, "低"], [ductile, C.orange, "高"]])}
+        {panel(185, "孔隙壓 ↑", [[ductile, C.teal, "低"], [strong, C.orange, "高"]])}
+        {panel(340, "溫度 ↑", [[ductile, C.teal, "低"], [weak, C.orange, "高"]])}
+        {panel(495, "應變率 ↑", [[weak, C.teal, "慢"], [ductile, C.orange, "快"]])}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch7：實驗變形樣式隨圍壓 ───────────── */
+
+export function ExperimentStylesFig() {
+  const sample = (ox: number, title: string, inner: ReactNode, barrel = false) => (
+    <g transform={`translate(${ox},20)`}>
+      {barrel ? (
+        <path d="M20,0 L80,0 C95,40 95,80 80,120 L20,120 C5,80 5,40 20,0 Z" fill={C.navy} fillOpacity={0.25} stroke={INK} />
+      ) : (
+        <rect x={20} y={0} width={60} height={120} fill={C.navy} fillOpacity={0.25} stroke={INK} />
+      )}
+      {inner}
+      <text x={50} y={142} textAnchor="middle" style={{ fontSize: 11.5, fontWeight: 800 }}>{title}</text>
+    </g>
+  );
+  return (
+    <Fig caption="三軸實驗中，隨圍壓（和溫度）增加，岩樣破壞的樣子：(a) 張裂，裂面平行 σ1；(b) 剪裂，和 σ1 夾約 30°；(c) 共軛剪裂；(d) 剪力帶（脆韌性，分散的變形）；(e) 塑性流動，岩樣變成桶狀、沒有明顯破裂。脆–塑轉換在伸張狀態下比壓縮狀態需要更高的圍壓。" source="Fossen (2016) Fig. 7.8；課堂投影片 Ch7 p.8、p.11">
+      <svg viewBox="0 0 640 170" className="ix-svg" role="img" aria-label="實驗變形樣式">
+        {sample(20, "(a) 張裂", <line x1={50} y1={0} x2={52} y2={120} stroke={C.rose} strokeWidth={2.4} />)}
+        {sample(145, "(b) 剪裂", <line x1={28} y1={110} x2={74} y2={10} stroke={C.rose} strokeWidth={2.4} />)}
+        {sample(270, "(c) 共軛剪裂", <g><line x1={24} y1={100} x2={76} y2={20} stroke={C.rose} strokeWidth={2.4} /><line x1={24} y1={20} x2={76} y2={100} stroke={C.rose} strokeWidth={2.4} /></g>)}
+        {sample(395, "(d) 剪力帶", <path d="M24,110 L74,10 L80,20 L30,120 Z" fill={C.rose} fillOpacity={0.3} />)}
+        {sample(520, "(e) 塑性流動", <g />, true)}
+        <line x1={20} x2={620} y1={10} y2={10} stroke={INK} strokeOpacity={0.4} />
+        <text x={620} y={6} textAnchor="end" style={{ fontSize: 10.5 }}>圍壓、溫度增加 →</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch7：為什麼剪裂不在 45° ───────────── */
+
+export function Why30Fig() {
+  const W = 560, H = 230, L = 50, R = 16, T = 14, B = 40;
+  const s1 = 100, s3 = 20, mu = 0.6;
+  const c = (s1 + s3) / 2, r = (s1 - s3) / 2;
+  // a：破裂面和 σ1 的夾角；法線和 σ1 的夾角 θ = 90 − a
+  const sn = (a: number) => c + r * Math.cos(rad(2 * (90 - a)));
+  const ss = (a: number) => r * Math.sin(rad(2 * (90 - a)));
+  const x = (a: number) => L + (a / 90) * (W - L - R);
+  const y = (v: number) => T + ((110 - v) / 140) * (H - T - B);
+  const line = (f: (a: number) => number) => {
+    const p: string[] = [];
+    for (let a = 0; a <= 90; a += 1) p.push(`${x(a)},${y(f(a))}`);
+    return p.join(" ");
+  };
+  const eff = (a: number) => ss(a) - mu * sn(a) + 30;
+  let best = 0, bv = -1e9;
+  for (let a = 0; a <= 90; a += 0.5) if (eff(a) > bv) { bv = eff(a); best = a; }
+  return (
+    <Fig caption="σ1 = 100、σ3 = 20 MPa 時，不同方向的面上的正應力 σn（藍）、剪應力 σs（橘），以及「剪應力 − μ × 正應力」（紅，μ = 0.6，代表推動破裂的淨量，往上平移以便比較）對「面和 σ1 的夾角」作圖。剪應力在 45° 最大，但那裡的正應力也大，摩擦阻力大；往小角度移，正應力降得比剪應力快，所以淨量在約 30° 最大，剪裂就在那裡形成：θ = 45° − φ/2（面和 σ1 的夾角）。" source="Fossen (2016) Box 7.2；課堂投影片 Ch7 p.16（Hw01）">
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="為什麼剪裂不在 45°">
+        <line x1={x(45)} x2={x(45)} y1={T} y2={H - B} stroke={C.orange} strokeDasharray="4 3" strokeOpacity={0.6} />
+        <line x1={x(best)} x2={x(best)} y1={T} y2={H - B} stroke={C.rose} strokeDasharray="4 3" />
+        <polyline points={line(sn)} fill="none" stroke={C.blue} strokeWidth={2.4} />
+        <polyline points={line(ss)} fill="none" stroke={C.orange} strokeWidth={2.4} />
+        <polyline points={line(eff)} fill="none" stroke={C.rose} strokeWidth={2.6} />
+        <text x={x(80)} y={y(sn(80)) - 6} style={{ fontSize: 11, fontWeight: 800, fill: C.blue }}>σn</text>
+        <text x={x(45) + 4} y={y(ss(45)) - 6} style={{ fontSize: 11, fontWeight: 800, fill: C.orange }}>σs（45° 最大）</text>
+        <text x={x(best) - 4} y={y(eff(best)) - 8} textAnchor="end" style={{ fontSize: 11, fontWeight: 800, fill: C.rose }}>σs − μσn（{best.toFixed(0)}° 最大）</text>
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[0, 15, 30, 45, 60, 75, 90].map((a) => (
+          <text key={a} x={x(a)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{a}°</text>
+        ))}
+        <text x={(L + W) / 2} y={H - 6} textAnchor="middle" style={{ fontSize: 12 }}>面和 σ1 的夾角</text>
+        <text x={16} y={(T + H - B) / 2} transform={`rotate(-90 16 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>應力（MPa）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch7：Griffith 裂隙的應力集中與翼裂隙 ───────────── */
+
+export function GriffithFig() {
+  const ratios: [number, string][] = [[1, "圓：3 倍"], [3, "3:1：7 倍"], [10, "10:1：21 倍"]];
+  return (
+    <Fig caption="左：一個橢圓形孔洞受遠場張應力 σr，尖端的應力 σtip = σr(1 + 2a/c)，a、c 是長、短半軸。圓形孔洞放大 3 倍、3:1 的橢圓 7 倍；接近真實微裂隙的 100:1 則放大約 200 倍。所以岩石裡本來就有的微裂隙（Griffith 裂隙）讓實際強度遠低於理論強度；裂隙一開始長大，長寬比更大、應力更集中，於是越長越快。右：即使整體受壓，傾斜的 Griffith 裂隙尖端仍有局部張應力，裂隙會轉向、平行 σ1 成長，形成翼裂隙（Mode I）；剪切型的裂隙不會沿著自己的面成長。" source="Fossen (2016) Fig. 7.20–7.25；課堂投影片 Ch7 p.21–24">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="Griffith 裂隙與翼裂隙">
+        <Marks />
+        {ratios.map(([k, lab], i) => {
+          const ox = 60 + i * 110, a = 30, cc = a / k;
+          return (
+            <g key={k}>
+              <ellipse cx={ox} cy={95} rx={a} ry={Math.max(cc, 2)} fill={INK} fillOpacity={0.6} />
+              <circle cx={ox + a} cy={95} r={4 + i * 4} fill={C.rose} fillOpacity={0.5} />
+              <text x={ox} y={150} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>{lab}</text>
+            </g>
+          );
+        })}
+        <line x1={170} y1={40} x2={170} y2={20} stroke={C.teal} strokeWidth={2.5} markerEnd="url(#sm-t)" />
+        <line x1={170} y1={160} x2={170} y2={180} stroke={C.teal} strokeWidth={2.5} markerEnd="url(#sm-t)" />
+        <text x={180} y={28} style={{ fontSize: 11, fontWeight: 800, fill: C.teal }}>σr（遠場張應力）</text>
+        <text x={170} y={196} textAnchor="middle" style={{ fontSize: 11 }}>紅點大小 ≈ 尖端應力集中</text>
+        {/* 翼裂隙 */}
+        <rect x={420} y={20} width={200} height={160} fill={C.navy} fillOpacity={0.12} />
+        <line x1={490} y1={130} x2={550} y2={70} stroke={C.rose} strokeWidth={3} />
+        <path d="M550,70 C556,62 558,50 558,30" fill="none" stroke={C.blue} strokeWidth={2.6} />
+        <path d="M490,130 C484,138 482,150 482,170" fill="none" stroke={C.blue} strokeWidth={2.6} />
+        <line x1={520} y1={4} x2={520} y2={18} stroke={C.orange} strokeWidth={3} markerEnd="url(#sm-o)" />
+        <line x1={520} y1={198} x2={520} y2={184} stroke={C.orange} strokeWidth={3} markerEnd="url(#sm-o)" />
+        <text x={530} y={14} style={{ fontSize: 11, fontWeight: 800, fill: C.orange }}>σ1</text>
+        <text x={562} y={42} style={{ fontSize: 11, fontWeight: 800, fill: C.blue }}>翼裂隙</text>
+        <text x={540} y={110} style={{ fontSize: 11, fontWeight: 800, fill: C.rose }}>剪裂</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch7：變形帶的運動學分類 ───────────── */
+
+export function DeformationBandsFig() {
+  const band = (ox: number, title: string, sub: string, kind: "dil" | "shear" | "comp") => (
+    <g transform={`translate(${ox},14)`}>
+      <rect x={0} y={0} width={170} height={120} fill={C.gold} fillOpacity={0.12} stroke={INK} strokeOpacity={0.3} />
+      {Array.from({ length: 40 }, (_, i) => {
+        const x = 10 + (i % 8) * 20 + (Math.floor(i / 8) % 2) * 10, y = 12 + Math.floor(i / 8) * 24;
+        const inBand = Math.abs(x - 85) < 18;
+        const rr = inBand ? (kind === "comp" ? 4 : kind === "dil" ? 7 : 5) : 7;
+        return <circle key={i} cx={kind === "shear" && inBand ? x + (y - 60) * 0.1 : x} cy={y} r={rr} fill={inBand ? C.orange : C.gold} fillOpacity={inBand ? 0.6 : 0.5} />;
+      })}
+      <line x1={67} x2={67} y1={0} y2={120} stroke={INK} strokeDasharray="3 3" />
+      <line x1={103} x2={103} y1={0} y2={120} stroke={INK} strokeDasharray="3 3" />
+      {kind === "shear" && (
+        <g>
+          <line x1={40} y1={4} x2={40} y2={-8} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+          <line x1={130} y1={-8} x2={130} y2={4} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+        </g>
+      )}
+      {kind !== "shear" && (
+        <g>
+          <line x1={kind === "dil" ? 60 : 40} y1={60} x2={kind === "dil" ? 40 : 60} y2={60} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+          <line x1={kind === "dil" ? 110 : 130} y1={60} x2={kind === "dil" ? 130 : 110} y2={60} stroke={INK} strokeWidth={2} markerEnd="url(#sm-k)" />
+        </g>
+      )}
+      <text x={85} y={140} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+      <text x={85} y={157} textAnchor="middle" style={{ fontSize: 10.5 }}>{sub}</text>
+    </g>
+  );
+  return (
+    <Fig caption="變形帶只出現在高孔隙的顆粒介質（例如孔隙砂岩），依運動學分成三種：膨裂帶（帶內體積增加、孔隙變大）、剪力帶（以剪切為主）、壓密帶（帶內被壓實、孔隙變小）。和同樣位移的剪裂相比，變形帶比較寬、位移很小（mm–cm），通常以群集或帶狀出現；因為顆粒破碎、壓實或膠結，常會降低孔隙率和滲透率，在野外常形成突起的稜線。" source="Fossen (2016) Fig. 7.33；課堂投影片 Ch7 p.32–33">
+      <svg viewBox="0 0 640 190" className="ix-svg" role="img" aria-label="變形帶分類">
+        <Marks />
+        {band(30, "膨裂帶", "體積增加", "dil")}
+        {band(235, "剪力帶", "剪切為主", "shear")}
+        {band(440, "壓密帶", "體積減少", "comp")}
       </svg>
     </Fig>
   );
