@@ -1147,3 +1147,151 @@ export function FailureDemo() {
     </figure>
   );
 }
+
+/* ───────────── Ch8：節理間距與應力陰影 ───────────── */
+
+export function JointSpacingDemo() {
+  const [Bt, setBt] = useState(1); // 層厚（m）
+  const [ratio, setRatio] = useState(2); // 遠場張應力 / 抗張強度
+  const Lm = 12; // 露頭長度（m）
+  // 每條節理周圍的應力陰影：σ(x) = σr·Π(1 − exp(−|x − xj|/(0.6B)))
+  const sigma = (x: number, js: number[]) => js.reduce((p, xj) => p * (1 - Math.exp(-Math.abs(x - xj) / (0.6 * Bt))), ratio);
+  const joints: number[] = [];
+  // 依序在應力最大處產生新節理，直到處處 < 1（抗張強度）
+  for (let k = 0; k < 80; k++) {
+    let bx = -1, bv = 0;
+    for (let i = 0; i <= 600; i++) {
+      const xx = (Lm * i) / 600;
+      const v = sigma(xx, joints);
+      if (v > bv) { bv = v; bx = xx; }
+    }
+    if (bv < 1) break;
+    joints.push(bx);
+  }
+  joints.sort((a, b) => a - b);
+  const sp = joints.length > 1 ? (joints[joints.length - 1] - joints[0]) / (joints.length - 1) : NaN;
+  const W = 360, H = 230, L = 10, R = 10;
+  const x = (v: number) => L + (v / Lm) * (W - L - R);
+  const th = Math.min(60, 28 * Bt);
+  const yl = 40;
+  const prof: string[] = [];
+  for (let i = 0; i <= 300; i++) {
+    const xx = (Lm * i) / 300;
+    prof.push(`${x(xx)},${200 - Math.min(ratio, sigma(xx, joints)) * 22}`);
+  }
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：節理為什麼等間距？</b>
+        <span>應力陰影模型：拉層厚和遠場張應力，看節理一條一條長出來</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="節理間距">
+          <rect x={L} y={yl - 18} width={W - L - R} height={18} fill="var(--teal)" fillOpacity={0.12} />
+          <rect x={L} y={yl} width={W - L - R} height={th} fill="var(--gold)" fillOpacity={0.35} stroke={INK} strokeOpacity={0.5} />
+          <rect x={L} y={yl + th} width={W - L - R} height={18} fill="var(--teal)" fillOpacity={0.12} />
+          <text x={W - R - 4} y={yl - 6} textAnchor="end" style={{ fontSize: 10 }}>頁岩（軟）</text>
+          <text x={W - R - 4} y={yl + th / 2 + 4} textAnchor="end" style={{ fontSize: 10, fontWeight: 800 }}>砂岩（硬），厚 {fmt(Bt, 1)} m</text>
+          {joints.map((j, i) => (
+            <line key={i} x1={x(j)} x2={x(j)} y1={yl} y2={yl + th} stroke="var(--rose, #d0567a)" strokeWidth={2} />
+          ))}
+          <line x1={L} x2={W - R} y1={200 - 22} y2={200 - 22} stroke={INK} strokeDasharray="4 3" strokeOpacity={0.6} />
+          <text x={L + 2} y={200 - 26} style={{ fontSize: 10 }}>抗張強度 T</text>
+          <polyline points={prof.join(" ")} fill="none" stroke="var(--orange)" strokeWidth={2.2} />
+          <line x1={L} x2={W - R} y1={200} y2={200} stroke={INK} strokeWidth={1.2} />
+          <text x={(L + W) / 2} y={220} textAnchor="middle" style={{ fontSize: 11 }}>層內平行層面的張應力（橘）：節理旁被釋放（陰影）</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label><span>層厚 B</span><span>{fmt(Bt, 1)} m</span></label>
+            <input type="range" min={0.3} max={2.2} step={0.1} value={Bt} onChange={(e) => setBt(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label><span>遠場張應力 ÷ 抗張強度</span><span>{fmt(ratio, 1)}</span></label>
+            <input type="range" min={1.1} max={6} step={0.1} value={ratio} onChange={(e) => setRatio(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            節理數 <b>{joints.length}</b> 條，平均間距 ≈ <b>{isNaN(sp) ? "—" : fmt(sp, 2)} m</b>
+            <br />間距 ÷ 層厚 ≈ <b>{isNaN(sp) ? "—" : fmt(sp / Bt, 1)}</b>
+          </div>
+          <div className="ix-note">
+            每條節理形成後，旁邊平行層面的張應力被釋放，要離開大約一個層厚才恢復，這一區叫應力陰影。新的節理只能在陰影外面形成，所以節理會散開、等間距，間距和層厚成正比：層越厚，間距越大。張應力越大，陰影內也可能超過強度，節理會更密，但間距最後會「飽和」在層厚的量級。（示意模型，陰影寬度取 0.6B。）
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── Ch8：雁行脈與 S 形脈 ───────────── */
+
+export function EnEchelonDemo() {
+  const [gam, setGam] = useState(1);
+  const [simple, setSimple] = useState(true);
+  const W = 360, H = 220, cx = 180, cy = 110, S = 50;
+  const N = 60;
+  const dir = [Math.cos(rad(135)), Math.sin(rad(135))]; // 新長的尖端方向（⊥ ISA1）
+  const veins = [-1.6, -0.8, 0, 0.8, 1.6].map((x0) => {
+    let pts: [number, number][] = [[x0 - 0.05 * dir[0], -0.05 * dir[1]], [x0 + 0.05 * dir[0], 0.05 * dir[1]]];
+    for (let k = 0; k < N; k++) {
+      const dg = gam / N;
+      if (simple) pts = pts.map(([x, y]) => [x + dg * y, y]);
+      else {
+        const f = Math.exp(dg / 2);
+        pts = pts.map(([x, y]) => [x * f, y / f]);
+      }
+      const a = pts[0], b = pts[pts.length - 1];
+      const step = 0.012;
+      pts = [[a[0] - step * dir[0], a[1] - step * dir[1]], ...pts, [b[0] + step * dir[0], b[1] + step * dir[1]]];
+    }
+    return pts;
+  });
+  const P = (p: [number, number]) => `${cx + S * p[0]},${cy - S * p[1]}`;
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：雁行脈怎麼變成 S 形</b>
+        <span>脈的尖端總是沿著垂直 ISA1 的方向長；拉剪切量，比較 simple shear 和 pure shear</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="雁行脈">
+          <defs>
+            <Arrow id="ee-k" color="currentColor" />
+          </defs>
+          <rect x={10} y={cy - 70} width={W - 20} height={140} fill="var(--navy)" fillOpacity={0.12} />
+          <line x1={10} x2={W - 10} y1={cy - 70} y2={cy - 70} stroke={INK} strokeWidth={2} />
+          <line x1={10} x2={W - 10} y1={cy + 70} y2={cy + 70} stroke={INK} strokeWidth={2} />
+          {simple ? (
+            <>
+              <line x1={250} x2={320} y1={cy - 80} y2={cy - 80} stroke={INK} strokeWidth={2} markerEnd="url(#ee-k)" />
+              <line x1={110} x2={40} y1={cy + 80} y2={cy + 80} stroke={INK} strokeWidth={2} markerEnd="url(#ee-k)" />
+            </>
+          ) : (
+            <>
+              <line x1={cx} x2={cx} y1={cy - 90} y2={cy - 74} stroke={INK} strokeWidth={2} markerEnd="url(#ee-k)" />
+              <line x1={cx} x2={cx} y1={cy + 90} y2={cy + 74} stroke={INK} strokeWidth={2} markerEnd="url(#ee-k)" />
+            </>
+          )}
+          {veins.map((v, i) => (
+            <polyline key={i} points={v.map(P).join(" ")} fill="none" stroke="var(--gold)" strokeWidth={5} strokeLinecap="round" />
+          ))}
+          <text x={W - 14} y={cy + 64} textAnchor="end" style={{ fontSize: 10.5 }}>{simple ? "右移剪切帶" : "pure shear（垂直壓縮）"}</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-btns">
+            <button type="button" className="ix-btn" aria-pressed={simple} onClick={() => setSimple(true)}>simple shear</button>
+            <button type="button" className="ix-btn" aria-pressed={!simple} onClick={() => setSimple(false)}>pure shear</button>
+          </div>
+          <div className="ix-row">
+            <label><span>{simple ? "剪應變 γ" : "變形量"}</span><span>{fmt(gam, 2)}</span></label>
+            <input type="range" min={0} max={2.5} step={0.05} value={gam} onChange={(e) => setGam(+e.target.value)} />
+          </div>
+          <div className="ix-verdict">{simple ? "中段被轉、尖端仍在 45° → S 形脈" : "只變長、變寬，不旋轉 → 直脈"}</div>
+          <div className="ix-note">
+            Simple shear 時 ISA1 永遠和剪切帶夾 45°，所以剛長出來的尖端都垂直 ISA1；但先形成的中段會隨剪切一起旋轉，於是脈變成 S（或 Z）形，彎曲的方向反映剪切方向。Pure shear（共軸）沒有旋轉，脈只是慢慢變長變寬。檢查一列雁行脈的尖端是不是和剪切帶夾約 45°，就能判斷是不是 simple shear。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}

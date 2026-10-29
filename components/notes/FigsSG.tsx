@@ -1094,3 +1094,204 @@ export function DeformationBandsFig() {
     </Fig>
   );
 }
+
+/* ───────────── Ch8：節理需要的應力條件 ───────────── */
+
+export function JointMohrFig() {
+  const W = 560, H = 230, L = 30, R = 14, Y0 = 205;
+  const T = 5, mu = 0.6;
+  const lo = -8, hi = 34;
+  const sc = (W - L - R) / (hi - lo);
+  const X = (v: number) => L + (v - lo) * sc;
+  const Y = (v: number) => Y0 - v * sc;
+  const env = (sn: number) => (sn < 0 ? Math.sqrt(Math.max(0, 4 * T * (sn + T))) : 2 * T + mu * sn);
+  const pts: string[] = [];
+  for (let i = 0; i <= 200; i++) {
+    const sn = -T + (i / 200) * (hi + T);
+    pts.push(`${X(sn)},${Y(env(sn))}`);
+  }
+  const circ = (c: number, r: number, col: string) => <path d={`M${X(c - r)},${Y0} A${r * sc},${r * sc} 0 0,1 ${X(c + r)},${Y0}`} fill={col} fillOpacity={0.15} stroke={col} strokeWidth={2.4} />;
+  return (
+    <Fig caption="為什麼節理需要「有效張應力」加上「小的差應力」？藍綠圓：差應力小（直徑 < 4T），σ3 的有效值到達 −T 時，圓先碰到包絡線最左端的張力點，形成垂直 σ3 的張裂（節理）。橘圓：差應力大，圓還沒到 −T 就先碰到包絡線的剪力段，形成的是混合型或剪裂，而不是節理。" source="Fossen (2016) Fig. 8.6；課堂投影片 Ch8 p.6、Ch7 p.17">
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="節理的 Mohr 條件">
+        <line x1={L} x2={W - R} y1={Y0} y2={Y0} stroke={INK} strokeWidth={1.4} />
+        <line x1={X(0)} x2={X(0)} y1={10} y2={Y0} stroke={INK} strokeWidth={1.4} />
+        <polyline points={pts.join(" ")} fill="none" stroke={C.rose} strokeWidth={2.4} />
+        {circ(-T + 4, 4, C.teal)}
+        {circ(12, 14.75, C.orange)}
+        <circle cx={X(-T)} cy={Y0} r={5} fill={C.teal} stroke={INK} />
+        <text x={X(-T)} y={Y0 + 16} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800, fill: C.teal }}>−T：節理</text>
+        <text x={X(24)} y={Y(24) - 10} style={{ fontSize: 11, fontWeight: 800, fill: C.orange }}>差應力大：碰到剪力段</text>
+        <text x={W - R} y={Y0 - 6} textAnchor="end" style={{ fontSize: 11 }}>σn′</text>
+        <text x={X(0) + 4} y={20} style={{ fontSize: 11 }}>σs</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch8：節理的四種成因 ───────────── */
+
+export function JointOriginsFig() {
+  const panel = (ox: number, title: string, sub: string, inner: ReactNode) => (
+    <g transform={`translate(${ox},10)`}>
+      <rect x={0} y={0} width={140} height={130} fill={C.navy} fillOpacity={0.1} stroke={INK} strokeOpacity={0.3} />
+      {inner}
+      <text x={70} y={150} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+      <text x={70} y={167} textAnchor="middle" style={{ fontSize: 10.5 }}>{sub}</text>
+    </g>
+  );
+  return (
+    <Fig caption="地殼裡哪裡會有足夠的張應力形成節理？真正的張應力只存在於地表下幾百公尺內，更深的地方要靠孔隙壓把有效應力變成張應力。埋藏：被頁岩包住的砂岩產生超壓，水力破裂（p_f > σ3 + T），還會形成砂岩脈。構造：褶皺外弧伸張產生平行軸的節理；縮短時的超壓產生垂直褶皺軸的橫褶皺節理；斷層旁的羽狀節理。卸載：上覆岩層被侵蝕，接近自由面時 σ3 垂直地表，形成平行地形的頁狀（剝離）節理，例如優勝美地的半圓頂。冷卻：熔岩冷卻收縮形成柱狀節理；岩層抬升冷卻也會讓硬層進入張應力。" source="Fossen (2016) §8.3；課堂投影片 Ch8 p.7–14">
+      <svg viewBox="0 0 640 185" className="ix-svg" role="img" aria-label="節理的四種成因">
+        <Marks />
+        {panel(15, "埋藏（超壓）", "水力破裂", (
+          <g>
+            <rect x={0} y={40} width={140} height={50} fill={C.gold} fillOpacity={0.35} />
+            <rect x={0} y={0} width={140} height={40} fill={C.teal} fillOpacity={0.15} />
+            <rect x={0} y={90} width={140} height={40} fill={C.teal} fillOpacity={0.15} />
+            {[30, 70, 110].map((x) => <line key={x} x1={x} x2={x} y1={42} y2={88} stroke={C.rose} strokeWidth={2} />)}
+            <text x={70} y={25} textAnchor="middle" style={{ fontSize: 10 }}>頁岩（不透水）</text>
+            <text x={70} y={120} textAnchor="middle" style={{ fontSize: 10 }}>p_f 升高</text>
+          </g>
+        ))}
+        {panel(172, "構造（褶皺）", "外弧伸張", (
+          <g>
+            <path d="M5,110 Q70,10 135,110" fill="none" stroke={INK} strokeWidth={2} />
+            <path d="M15,125 Q70,40 125,125" fill="none" stroke={INK} strokeWidth={2} />
+            {[40, 70, 100].map((x, i) => {
+              const yTop = 110 - 100 * (1 - Math.pow((x - 70) / 65, 2)) * 0.95;
+              return <line key={x} x1={x} x2={x + (x - 70) * 0.15} y1={yTop + 2} y2={yTop + 22} stroke={C.rose} strokeWidth={2} />;
+            })}
+          </g>
+        ))}
+        {panel(329, "卸載（侵蝕）", "頁狀節理平行地表", (
+          <g>
+            <path d="M0,110 Q70,10 140,110" fill={C.gold} fillOpacity={0.25} stroke={INK} strokeWidth={2} />
+            <path d="M15,110 Q70,30 125,110" fill="none" stroke={C.rose} strokeWidth={2} />
+            <path d="M30,110 Q70,50 110,110" fill="none" stroke={C.rose} strokeWidth={2} />
+            <line x1={70} y1={6} x2={70} y2={-6} stroke={C.teal} strokeWidth={2} markerEnd="url(#sm-t)" />
+            <text x={78} y={8} style={{ fontSize: 10, fill: C.teal, fontWeight: 800 }}>σ3 ⊥ 地表</text>
+          </g>
+        ))}
+        {panel(486, "冷卻", "柱狀節理", (
+          <g>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <polygon key={i} points={`${14 + i * 26},20 ${36 + i * 26},20 ${36 + i * 26},120 ${14 + i * 26},120`} fill={C.blue} fillOpacity={0.2} stroke={INK} strokeWidth={1.5} />
+            ))}
+            {[0, 1, 2, 3, 4].map((i) => (
+              <polygon key={`t${i}`} points={`${25 + i * 26 - 10},14 ${25 + i * 26},8 ${25 + i * 26 + 10},14 ${25 + i * 26 + 10},20 ${25 + i * 26 - 10},20`} fill={C.blue} fillOpacity={0.35} stroke={INK} strokeWidth={1} />
+            ))}
+          </g>
+        ))}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch8：節理面的羽狀構造 ───────────── */
+
+export function PlumoseFig() {
+  const barbs: ReactElement[] = [];
+  for (let i = -6; i <= 6; i++) {
+    if (i === 0) continue;
+    const x0 = 320 + i * 38;
+    barbs.push(<path key={i} d={`M${x0},100 Q${x0 + (i > 0 ? 14 : -14)},${100 - 30} ${x0 + (i > 0 ? 22 : -22)},40`} fill="none" stroke={INK} strokeOpacity={0.6} strokeWidth={1.2} />);
+    barbs.push(<path key={`b${i}`} d={`M${x0},100 Q${x0 + (i > 0 ? 14 : -14)},${100 + 30} ${x0 + (i > 0 ? 22 : -22)},160`} fill="none" stroke={INK} strokeOpacity={0.6} strokeWidth={1.2} />);
+  }
+  return (
+    <Fig caption="節理面上的紋路記錄了破裂怎麼長大。羽狀構造（plumose structure）：從起裂點（常是一個瑕疵、化石或結核）沿著羽軸往外，細紋像羽毛一樣向兩側散開，羽毛張開的方向就是破裂傳播的方向。停止線（arrest lines）：破裂暫停時留下的弧形線，像貝殼的生長紋。扭梳紋（twist hackles）：靠近岩層邊緣時 σ3 的方向扭轉，破裂面分成一排雁行的小面。" source="Fossen (2016) Fig. 8.15–8.17；課堂投影片 Ch8 p.18–20（Weinberger & Bahat）">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="羽狀構造">
+        <Marks />
+        <rect x={60} y={20} width={520} height={160} fill={C.gold} fillOpacity={0.15} stroke={INK} strokeOpacity={0.4} />
+        <line x1={70} x2={570} y1={100} y2={100} stroke={C.orange} strokeWidth={2.4} />
+        {barbs}
+        <circle cx={320} cy={100} r={7} fill={C.rose} stroke={INK} />
+        <text x={320} y={124} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800, fill: C.rose }}>起裂點</text>
+        <path d="M470,30 Q520,100 470,170" fill="none" stroke={C.teal} strokeWidth={2} />
+        <path d="M170,30 Q120,100 170,170" fill="none" stroke={C.teal} strokeWidth={2} />
+        <text x={480} y={190} style={{ fontSize: 11, fontWeight: 800, fill: C.teal }}>停止線</text>
+        <line x1={380} y1={100} x2={440} y2={100} stroke={C.orange} strokeWidth={2.5} markerEnd="url(#sm-o)" />
+        <text x={400} y={94} style={{ fontSize: 11, fontWeight: 800, fill: C.orange }}>羽軸：傳播方向</text>
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <line key={i} x1={80 + i * 55} y1={22} x2={96 + i * 55} y2={34} stroke={C.violet} strokeWidth={2.2} />
+        ))}
+        <text x={60} y={14} style={{ fontSize: 11, fontWeight: 800, fill: C.violet }}>層的邊緣：扭梳紋</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch8：節理的交會與尖端交互作用 ───────────── */
+
+export function JointInteractionFig() {
+  return (
+    <Fig caption="怎麼判斷節理的先後？(a) T 型交會：新的節理碰到舊的就停住，而且接近時會彎過去、以 90° 碰上舊節理，因為舊節理是自由面，附近的 σ3 方向垂直它。所以「停住、彎曲」的是年輕的。(b) X 型交會：兩組互相切過，σ1 和 σ3 大小接近時常見，先後較難判斷。(c) 平行節理的尖端靠得夠近時會互相影響，年輕節理的尖端彎向舊的，形成鉤狀；兩條同時成長則形成雙鉤狀。" source="Fossen (2016) Fig. 8.18–8.20；課堂投影片 Ch8 p.21–22">
+      <svg viewBox="0 0 640 190" className="ix-svg" role="img" aria-label="節理交會">
+        <g transform="translate(20,10)">
+          <rect x={0} y={0} width={180} height={140} fill={C.navy} fillOpacity={0.1} />
+          <line x1={20} y1={70} x2={160} y2={70} stroke={INK} strokeWidth={3} />
+          <path d="M60,130 L60,100 Q60,80 75,70" fill="none" stroke={C.rose} strokeWidth={2.4} />
+          <path d="M120,130 L120,96 Q120,78 108,70" fill="none" stroke={C.rose} strokeWidth={2.4} />
+          <text x={90} y={60} textAnchor="middle" style={{ fontSize: 10.5 }}>舊節理</text>
+          <text x={90} y={162} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>(a) T 型：新的停住、彎過去</text>
+        </g>
+        <g transform="translate(230,10)">
+          <rect x={0} y={0} width={180} height={140} fill={C.navy} fillOpacity={0.1} />
+          <line x1={20} y1={70} x2={160} y2={70} stroke={INK} strokeWidth={3} />
+          <line x1={90} y1={10} x2={90} y2={130} stroke={C.rose} strokeWidth={2.4} />
+          <text x={90} y={162} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>(b) X 型：互相切過</text>
+        </g>
+        <g transform="translate(440,10)">
+          <rect x={0} y={0} width={180} height={140} fill={C.navy} fillOpacity={0.1} />
+          <path d="M10,50 L100,50 Q120,50 125,70" fill="none" stroke={INK} strokeWidth={3} />
+          <path d="M170,90 L80,90 Q60,90 55,70" fill="none" stroke={C.rose} strokeWidth={2.4} />
+          <text x={90} y={162} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>(c) 尖端交互作用：鉤狀</text>
+        </g>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch8：同向脈與反向脈 ───────────── */
+
+export function VeinTypesFig() {
+  const fibers = (ox: number, anti: boolean, oblique = 0) => (
+    <g>
+      {Array.from({ length: 12 }, (_, i) => {
+        const y = 22 + i * 9;
+        return anti ? (
+          <g key={i}>
+            <line x1={ox + 60} y1={y} x2={ox + 20 - oblique} y2={y + oblique * 0.4} stroke={C.gold} strokeWidth={2} />
+            <line x1={ox + 60} y1={y} x2={ox + 100 + oblique} y2={y - oblique * 0.4} stroke={C.gold} strokeWidth={2} />
+          </g>
+        ) : (
+          <g key={i}>
+            <line x1={ox + 20} y1={y} x2={ox + 58} y2={y} stroke={C.blue} strokeWidth={2} />
+            <line x1={ox + 100} y1={y} x2={ox + 62} y2={y} stroke={C.blue} strokeWidth={2} />
+          </g>
+        );
+      })}
+    </g>
+  );
+  return (
+    <Fig caption="脈是被礦物填起來的張裂，礦物從流經裂縫的流體沉澱。左：同向脈（syntaxial）。拉長的晶體從脈壁往中間長，最老的部分靠近脈壁，礦物和圍岩相同（例如砂岩中的石英脈）；常由反覆破裂、封填（crack–seal）形成，中間有不連續的生長線。右：反向脈（antiaxial）。真正的纖維狀礦物，和圍岩成分不同（例如石灰岩旁的石膏、頁岩中的方解石纖維），從中間的中線往兩側脈壁長，所以中線保留下來；常從變質作用開始一直長到綠色片岩相中期（~350 °C）。纖維的長軸記錄了最大伸張方向：斜的纖維代表斜向張開。" source="Fossen (2016) Fig. 8.25–8.28；課堂投影片 Ch8 p.25–28">
+      <svg viewBox="0 0 640 175" className="ix-svg" role="img" aria-label="同向脈與反向脈">
+        <rect x={60} y={14} width={20} height={120} fill={C.navy} fillOpacity={0.3} />
+        <rect x={160} y={14} width={20} height={120} fill={C.navy} fillOpacity={0.3} />
+        {fibers(60, false)}
+        <line x1={120} x2={120} y1={14} y2={134} stroke={INK} strokeDasharray="3 3" strokeOpacity={0.5} />
+        <text x={120} y={156} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>同向脈：從壁往中間長</text>
+        <rect x={290} y={14} width={20} height={120} fill={C.navy} fillOpacity={0.3} />
+        <rect x={390} y={14} width={20} height={120} fill={C.navy} fillOpacity={0.3} />
+        {fibers(290, true)}
+        <line x1={350} x2={350} y1={14} y2={134} stroke={C.rose} strokeWidth={2} />
+        <text x={350} y={156} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>反向脈：從中線往壁長</text>
+        <rect x={500} y={14} width={20} height={120} fill={C.navy} fillOpacity={0.3} />
+        <rect x={600} y={14} width={20} height={120} fill={C.navy} fillOpacity={0.3} />
+        {fibers(500, true, 18)}
+        <line x1={560} x2={560} y1={14} y2={134} stroke={C.rose} strokeWidth={2} />
+        <text x={560} y={156} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>斜纖維：斜向張開</text>
+      </svg>
+    </Fig>
+  );
+}
