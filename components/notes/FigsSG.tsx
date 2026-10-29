@@ -661,3 +661,194 @@ export function StressRegimeFig() {
     </Fig>
   );
 }
+
+/* ───────────── Ch6：三種彈性 ───────────── */
+
+export function ElasticTypesFig() {
+  const panel = (ox: number, title: string, up: string, down: string) => (
+    <g transform={`translate(${ox},20)`}>
+      <line x1={0} x2={160} y1={130} y2={130} stroke={INK} strokeWidth={1.5} />
+      <line x1={0} x2={0} y1={0} y2={130} stroke={INK} strokeWidth={1.5} />
+      <path d={up} fill="none" stroke={C.orange} strokeWidth={2.6} />
+      <path d={down} fill="none" stroke={C.teal} strokeWidth={2.2} strokeDasharray="5 3" />
+      <text x={80} y={150} textAnchor="middle" style={{ fontSize: 11 }}>應變</text>
+      <text x={-8} y={65} transform="rotate(-90 -8 65)" textAnchor="middle" style={{ fontSize: 11 }}>應力</text>
+      <text x={80} y={172} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>{title}</text>
+    </g>
+  );
+  return (
+    <Fig caption="彈性的三種型態（橘：加載；藍綠虛線：卸載）。線彈性：加載和卸載都沿同一條直線，斜率就是楊氏模數 E，大部分岩石和礦物在小應變時都是這樣。完美彈性：路徑是曲線，但加載、卸載走同一條。彈性滯後：加載和卸載走不同路徑，圍出一個迴圈，但最後仍回到原點（沒有永久應變）。" source="Fossen (2016) Fig. 6.4；課堂投影片 Ch6 p.6–7">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="三種彈性">
+        {panel(40, "線彈性", "M0,130 L140,20", "M140,20 L0,130")}
+        {panel(240, "完美彈性（非線性）", "M0,130 C60,120 110,70 140,20", "M140,20 C110,70 60,120 0,130")}
+        {panel(440, "彈性滯後", "M0,130 C70,125 110,70 140,20", "M140,20 C90,50 40,100 0,130")}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch6：潛變曲線 ───────────── */
+
+export function CreepCurveFig() {
+  return (
+    <Fig caption="恆應力潛變試驗的應變–時間曲線。施加應力的瞬間有一段彈性應變；初期（暫態）潛變應變率逐漸減小；二期（穩態）潛變應變隨時間線性增加；三期（加速）潛變應變率越來越快，最後破壞。潛變大多發生在同系溫度 T/Tm（用絕對溫度）大於約 0.5 時。台灣的例子：池上斷層的潛移、1999 草嶺山崩滑動面的潛變。" source="Fossen (2016) Fig. 6.15；課堂投影片 Ch6 p.28–29">
+      <svg viewBox="0 0 640 210" className="ix-svg" role="img" aria-label="潛變曲線">
+        <rect x={110} y={20} width={140} height={150} fill={C.teal} fillOpacity={0.08} />
+        <rect x={250} y={20} width={220} height={150} fill={C.gold} fillOpacity={0.08} />
+        <rect x={470} y={20} width={120} height={150} fill={C.rose} fillOpacity={0.08} />
+        <path d="M60,170 L60,140 C90,110 110,104 140,100 C180,96 220,93 250,92 L470,70 C520,62 560,40 585,22" fill="none" stroke={C.orange} strokeWidth={3} />
+        <text x={585} y={18} textAnchor="end" style={{ fontSize: 11, fontWeight: 800, fill: C.rose }}>破壞</text>
+        <text x={64} y={150} style={{ fontSize: 10.5 }}>彈性</text>
+        <text x={180} y={150} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>初期（暫態）</text>
+        <text x={180} y={166} textAnchor="middle" style={{ fontSize: 10.5 }}>應變率遞減</text>
+        <text x={360} y={150} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>二期（穩態）</text>
+        <text x={360} y={166} textAnchor="middle" style={{ fontSize: 10.5 }}>應變率固定</text>
+        <text x={530} y={150} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>三期（加速）</text>
+        <text x={530} y={166} textAnchor="middle" style={{ fontSize: 10.5 }}>應變率遞增</text>
+        <line x1={50} x2={600} y1={170} y2={170} stroke={INK} strokeWidth={1.5} />
+        <line x1={50} x2={50} y1={10} y2={170} stroke={INK} strokeWidth={1.5} />
+        <text x={325} y={194} textAnchor="middle" style={{ fontSize: 12 }}>時間 →</text>
+        <text x={30} y={90} transform="rotate(-90 30 90)" textAnchor="middle" style={{ fontSize: 12 }}>應變</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch6：脆性到韌性的四種樣式 ───────────── */
+
+export function DuctileStylesFig() {
+  const panel = (ox: number, title: string, width: number, crack: boolean, sideBend: boolean) => {
+    const lines = [0, 1, 2, 3, 4];
+    return (
+      <g transform={`translate(${ox},10)`}>
+        <rect x={0} y={0} width={130} height={140} fill={C.navy} fillOpacity={0.12} stroke={INK} strokeOpacity={0.3} />
+        {lines.map((i) => {
+          const y0 = 20 + i * 25;
+          // 剪切帶：中間寬 width，兩側彎曲
+          const mid = 65;
+          const d = width < 6 ? `M0,${y0} L${mid - 2},${y0} M${mid + 2},${y0 + 18} L130,${y0 + 18}` : `M0,${y0} L${mid - width / 2 - (sideBend ? 10 : 0)},${y0} C${mid - width / 4},${y0} ${mid + width / 4},${y0 + 18} ${mid + width / 2 + (sideBend ? 10 : 0)},${y0 + 18} L130,${y0 + 18}`;
+          return <path key={i} d={d} fill="none" stroke={INK} strokeWidth={1.6} />;
+        })}
+        {width >= 6 && <rect x={65 - width / 2} y={0} width={width} height={140} fill={C.orange} fillOpacity={0.15} />}
+        {crack && <line x1={65} y1={0} x2={65} y2={140} stroke={C.rose} strokeWidth={2.4} />}
+        <text x={65} y={162} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>{title}</text>
+      </g>
+    );
+  };
+  return (
+    <Fig caption="同一個剪切變形，從脆性到韌性的四種樣式。(a) 脆性：變形集中在一條很窄的破裂面，兩側岩石沒有變形。(b) 韌脆性：仍集中在窄的破裂帶，但兩側有一些韌性彎曲。(c) 脆韌性：寬廣的韌性剪切帶，應變從中心往兩側遞減，中心有裂隙。(d) 韌性：寬廣的剪切帶，中心沒有裂隙，原本連續的層保持連續。注意「韌性」描述的是變形的樣式（保持連續），「塑性」描述的是晶體內差排的機制，「脆性」可以指樣式也可以指機制。" source="Fossen (2016) Fig. 6.20；課堂投影片 Ch6 p.32–33">
+      <svg viewBox="0 0 640 180" className="ix-svg" role="img" aria-label="脆性到韌性的四種樣式">
+        {panel(20, "(a) 脆性", 0, true, false)}
+        {panel(175, "(b) 韌脆性", 14, true, true)}
+        {panel(330, "(c) 脆韌性", 50, true, false)}
+        {panel(485, "(d) 韌性", 60, false, false)}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch6：地殼斷層模型 ───────────── */
+
+export function FaultZoneModelFig() {
+  const zones: [number, number, string, string, string, string][] = [
+    [0, 4, "斷層泥", "摩擦區（脆性）", "孔隙、顆粒滑動", C.gold],
+    [4, 11, "碎裂岩", "摩擦區（脆性）：大地震震源", "碎裂流", C.orange],
+    [11, 15, "碎裂岩 + 糜稜岩", "摩擦–塑性過渡（石英 ~300 °C）", "綠色片岩相", C.rose],
+    [15, 25, "糜稜岩", "塑性區（石英塑性）", "綠色片岩相 → 角閃岩相", C.violet],
+    [25, 35, "糜稜岩", "長石塑性變形", "角閃岩相", C.blue],
+  ];
+  const y = (z: number) => 20 + z * 5.4;
+  return (
+    <Fig caption="一條穿過整個地殼的斷層，在不同深度長不一樣（地殼斷層模型）。淺處是摩擦區，斷層岩是未固結的斷層泥和碎裂岩，強度由 Byerlee 摩擦控制、隨深度增加；大地震的震源通常在脆性區底部、強度最大的地方。石英在約 300 °C（10–15 km）開始塑性變形，進入摩擦–塑性過渡；再往下是塑性區，斷層變成寬廣的韌性剪切帶，斷層岩是糜稜岩，強度隨溫度下降。長石大約在 500 °C 才開始塑性變形。右側曲線是強度剖面的示意。" source="Sibson (1977)、Scholz (1988) 的地殼斷層模型；課堂投影片 Ch6 p.34；斷層岩見 Ch9">
+      <svg viewBox="0 0 640 230" className="ix-svg" role="img" aria-label="地殼斷層模型">
+        {zones.map(([a, b, rock, regime, meta, c]) => (
+          <g key={a}>
+            <rect x={20} y={y(a)} width={400} height={y(b) - y(a)} fill={c} fillOpacity={0.15} stroke={INK} strokeOpacity={0.2} />
+            <text x={30} y={(y(a) + y(b)) / 2 + 4} style={{ fontSize: 11.5, fontWeight: 800 }}>{rock}</text>
+            <text x={160} y={(y(a) + y(b)) / 2 + 4} style={{ fontSize: 11 }}>{regime}</text>
+            <text x={415} y={(y(a) + y(b)) / 2 + 4} textAnchor="end" style={{ fontSize: 10, opacity: 0.75 }}>{meta}</text>
+          </g>
+        ))}
+        <path d={`M140,${y(0)} L140,${y(11)} C140,${y(14)} 128,${y(17)} 115,${y(22)} L100,${y(35)}`} fill="none" stroke={C.rose} strokeWidth={2} strokeDasharray="5 3" opacity={0.6} />
+        <circle cx={140} cy={y(10)} r={6} fill={C.rose} />
+        <text x={430} y={y(0) + 2} style={{ fontSize: 11 }}>0 km</text>
+        <text x={430} y={y(11) + 4} style={{ fontSize: 11 }}>~11 km</text>
+        <text x={430} y={y(35)} style={{ fontSize: 11 }}>~35 km</text>
+        {/* 強度剖面 */}
+        <line x1={480} x2={620} y1={y(0)} y2={y(0)} stroke={INK} strokeWidth={1.5} />
+        <line x1={480} x2={480} y1={y(0)} y2={y(35)} stroke={INK} strokeWidth={1.5} />
+        <path d={`M480,${y(0)} L590,${y(11)} C560,${y(14)} 520,${y(20)} 490,${y(35)}`} fill={C.orange} fillOpacity={0.2} stroke={C.orange} strokeWidth={2.4} />
+        <text x={550} y={y(0) - 4} textAnchor="middle" style={{ fontSize: 11 }}>強度 →</text>
+        <text x={592} y={y(11) + 14} textAnchor="middle" style={{ fontSize: 10.5 }}>脆–塑轉換</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch6：岩石圈強度的三種模型 ───────────── */
+
+export function LithosphereModelsFig() {
+  const panel = (ox: number, title: string, sub: string, d: string) => (
+    <g transform={`translate(${ox},20)`}>
+      <rect x={0} y={0} width={150} height={60} fill={C.gold} fillOpacity={0.12} />
+      <rect x={0} y={60} width={150} height={100} fill={C.violet} fillOpacity={0.1} />
+      <text x={146} y={14} textAnchor="end" style={{ fontSize: 10 }}>地殼</text>
+      <text x={146} y={74} textAnchor="end" style={{ fontSize: 10 }}>地函</text>
+      <line x1={0} x2={150} y1={60} y2={60} stroke={INK} strokeDasharray="4 3" />
+      <path d={d} fill={C.orange} fillOpacity={0.3} stroke={C.orange} strokeWidth={2.2} />
+      <line x1={0} x2={0} y1={0} y2={160} stroke={INK} strokeWidth={1.5} />
+      <text x={75} y={180} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>{title}</text>
+      <text x={75} y={196} textAnchor="middle" style={{ fontSize: 10.5 }}>{sub}</text>
+    </g>
+  );
+  return (
+    <Fig caption="大陸岩石圈的強度怎麼分布（橘色是強度剖面，越往右越強）。果醬三明治：上地殼和上部地函都強，中間的下地殼弱，適用於冷的岩石圈（熱流較低）。焦糖布蕾：只有地殼強，熱的地函很弱（熱流較高）。香蕉船：孔隙壓很高（λ ≈ 0.9）時，整個岩石圈都弱。三者差在溫度和孔隙壓，可以用上面的互動圖自己做出來。" source="Bürgmann & Dresen (2008) Annu. Rev. Earth Planet. Sci.；課堂投影片 Ch6 p.37">
+      <svg viewBox="0 0 640 225" className="ix-svg" role="img" aria-label="果醬三明治、焦糖布蕾、香蕉船">
+        {panel(40, "果醬三明治", "冷岩石圈：兩個強層", "M0,0 L90,30 L20,58 L0,60 L0,62 L80,75 L10,150 L0,160 Z")}
+        {panel(245, "焦糖布蕾", "熱岩石圈：只有地殼強", "M0,0 L100,35 L15,58 L0,60 L0,62 L10,70 L0,90 Z")}
+        {panel(450, "香蕉船", "高孔隙壓：整體都弱", "M0,0 L30,40 L5,58 L0,60 L0,62 L20,72 L0,110 Z")}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch6：薄皮與厚皮構造 ───────────── */
+
+export function ThinThickSkinFig() {
+  return (
+    <Fig caption="左：薄皮構造（thin-skinned）。變形集中在沉積蓋層，逆衝斷層都從一條基底滑脫面（décollement）分出來；滑脫面由軟弱的頁岩、蒸發岩或高孔隙壓的地層組成，力學上很弱，所以下面的基盤幾乎沒有變形。右：厚皮構造（thick-skinned）。基盤也被斷層切穿、參與變形，常是舊的正斷層再活動。流變分層決定哪一種：有軟弱的滑脫層、或中地殼弱（脫偶）時傾向薄皮；基盤強、或有基盤高區（例如台灣西部的北港高區）擋住時，變形會深入基盤。" source="課堂投影片 Ch6 p.48–49；Mouthereau & Petit (2003) JGR">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="薄皮與厚皮構造">
+        {/* 薄皮 */}
+        <rect x={20} y={130} width={280} height={50} fill={C.violet} fillOpacity={0.25} />
+        <text x={160} y={162} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>基盤（不變形）</text>
+        <path d="M20,130 L300,130" stroke={C.rose} strokeWidth={3} />
+        <text x={296} y={124} textAnchor="end" style={{ fontSize: 10.5, fill: C.rose, fontWeight: 800 }}>基底滑脫面</text>
+        {[0, 1, 2].map((i) => {
+          const x0 = 60 + i * 80;
+          return (
+            <g key={i}>
+              <path d={`M${x0},130 C${x0 + 20},130 ${x0 + 30},110 ${x0 + 45},60`} fill="none" stroke={C.rose} strokeWidth={2} />
+              <path d={`M${x0 - 30},${100 - i * 4} Q${x0 + 25},${70 - i * 4} ${x0 + 70},${100 - i * 4}`} fill="none" stroke={INK} strokeWidth={1.6} />
+              <path d={`M${x0 - 30},${115 - i * 4} Q${x0 + 25},${88 - i * 4} ${x0 + 70},${115 - i * 4}`} fill="none" stroke={INK} strokeWidth={1.6} />
+            </g>
+          );
+        })}
+        <text x={160} y={196} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>薄皮：只有沉積蓋層變形</text>
+        {/* 厚皮 */}
+        <rect x={340} y={110} width={280} height={70} fill={C.violet} fillOpacity={0.25} />
+        {[0, 1].map((i) => {
+          const x0 = 420 + i * 110;
+          return (
+            <g key={i}>
+              <path d={`M${x0 - 20},180 L${x0 + 30},50`} stroke={C.rose} strokeWidth={2.6} />
+              <path d={`M${x0 - 80},${90} Q${x0 - 10},${60} ${x0 + 40},${70}`} fill="none" stroke={INK} strokeWidth={1.6} />
+              <path d={`M${x0 - 80},${105} Q${x0 - 10},${80} ${x0 + 40},${88}`} fill="none" stroke={INK} strokeWidth={1.6} />
+            </g>
+          );
+        })}
+        <text x={480} y={150} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>基盤也被切穿</text>
+        <text x={480} y={196} textAnchor="middle" style={{ fontSize: 12.5, fontWeight: 800 }}>厚皮：基盤參與變形</text>
+      </svg>
+    </Fig>
+  );
+}

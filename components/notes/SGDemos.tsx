@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactElement, ReactNode } from "react";
 import "./notes.css";
 
 // 地球構造各章的互動圖
@@ -706,6 +707,336 @@ export function BurialUpliftDemo() {
           </div>
           <div className="ix-note">
             虛線：埋藏時（未固結的沉積物，σH 隨 σV 成比例增加）。實線：固結後抬升，σH 下降的速率 = ν/(1 − ν)·ρg + Eα·(地溫梯度)/(1 − ν)，第一項是覆蓋層變輕，第二項是冷卻收縮。E 大、ν 小的砂岩下降得快，先跨進張應力區；頁岩一直是壓應力。示意模型：ρg = 25 MPa/km、地溫梯度 30 °C/km、α = 10⁻⁵ /°C，岩石參數為代表值，未考慮孔隙壓。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── Ch6：流變模型 ───────────── */
+
+type RM = "elastic" | "viscous" | "plastic" | "prandtl" | "bingham" | "kelvin" | "maxwell" | "burgers";
+const RM_INFO: Record<RM, { name: string; combo: string; eq: string; use: string }> = {
+  elastic: { name: "彈性", combo: "彈簧", eq: "σ = E·ε", use: "地震波通過、短時間的反應" },
+  viscous: { name: "黏性（牛頓流體）", combo: "唧筒", eq: "σ = η·ε̇", use: "冰河、地函長時間流動" },
+  plastic: { name: "完全塑性（St. Venant）", combo: "摩擦塊", eq: "σ < σy 不動；σ = σy 持續變形", use: "理想化的塑性流動" },
+  prandtl: { name: "Prandtl（彈塑性）", combo: "彈簧 — 摩擦塊 串聯", eq: "ε = σ/E + εp", use: "地殼斷層破裂、深部剪切帶" },
+  bingham: { name: "Bingham（黏塑性）", combo: "唧筒 ∥ 摩擦塊", eq: "τ = τy + η·γ̇（τ > τy）", use: "熔岩、土石流、岩漿庫、海底山崩" },
+  kelvin: { name: "Kelvin（黏彈性）", combo: "彈簧 ∥ 唧筒", eq: "σ = E·ε + η·dε/dt", use: "暫態潛變；延遲但可完全恢復" },
+  maxwell: { name: "Maxwell（黏彈性）", combo: "彈簧 — 唧筒 串聯", eq: "ε̇ = σ̇/E + σ/η", use: "地函：震後鬆弛、冰河後回彈" },
+  burgers: { name: "Burgers", combo: "Maxwell + Kelvin 串聯", eq: "兩者相加", use: "最接近天然岩石" },
+};
+
+function Spring({ x, y, w }: { x: number; y: number; w: number }) {
+  const n = 6, seg = (w - 12) / n;
+  const pts = [`${x},${y}`, `${x + 6},${y}`];
+  for (let i = 0; i < n; i++) pts.push(`${x + 6 + seg * (i + 0.5)},${y + (i % 2 ? 7 : -7)}`);
+  pts.push(`${x + w - 6},${y}`, `${x + w},${y}`);
+  return <polyline points={pts.join(" ")} fill="none" stroke="var(--teal)" strokeWidth={2} />;
+}
+function Dashpot({ x, y, w }: { x: number; y: number; w: number }) {
+  const m = x + w / 2;
+  return (
+    <g stroke="var(--orange)" strokeWidth={2} fill="none">
+      <line x1={x} y1={y} x2={m - 6} y2={y} />
+      <path d={`M${m + 10},${y - 9} L${m - 10},${y - 9} L${m - 10},${y + 9} L${m + 10},${y + 9}`} />
+      <line x1={m - 2} y1={y - 7} x2={m - 2} y2={y + 7} />
+      <line x1={m - 2} y1={y} x2={x + w} y2={y} />
+    </g>
+  );
+}
+function Block({ x, y, w }: { x: number; y: number; w: number }) {
+  const m = x + w / 2;
+  return (
+    <g stroke="var(--gold)" strokeWidth={2} fill="none">
+      <line x1={x} y1={y} x2={m - 10} y2={y} />
+      <rect x={m - 10} y={y - 8} width={20} height={14} fill="var(--gold)" fillOpacity={0.3} />
+      <line x1={m - 16} y1={y + 7} x2={m + 16} y2={y + 7} strokeOpacity={0.6} />
+      <line x1={m + 10} y1={y} x2={x + w} y2={y} />
+    </g>
+  );
+}
+const ELS: Record<string, (p: { x: number; y: number; w: number }) => ReactElement> = { s: Spring, d: Dashpot, b: Block };
+
+function ModelDiagram({ m }: { m: RM }) {
+  const y = 40, x0 = 10;
+  const ser = (items: string[]) => {
+    const w = 200 / items.length;
+    return items.map((k, i) => {
+      const C = ELS[k];
+      return <C key={i} x={x0 + 20 + i * w} y={y} w={w} />;
+    });
+  };
+  const par = (a: string, b: string, x: number, w: number) => {
+    const A = ELS[a], B = ELS[b];
+    return (
+      <g>
+        <line x1={x} y1={y - 16} x2={x} y2={y + 16} stroke={INK} strokeWidth={2} />
+        <line x1={x + w} y1={y - 16} x2={x + w} y2={y + 16} stroke={INK} strokeWidth={2} />
+        <A x={x} y={y - 16} w={w} />
+        <B x={x} y={y + 16} w={w} />
+      </g>
+    );
+  };
+  let body: ReactNode;
+  switch (m) {
+    case "elastic": body = ser(["s"]); break;
+    case "viscous": body = ser(["d"]); break;
+    case "plastic": body = ser(["b"]); break;
+    case "prandtl": body = ser(["s", "b"]); break;
+    case "maxwell": body = ser(["s", "d"]); break;
+    case "bingham": body = par("d", "b", 50, 140); break;
+    case "kelvin": body = par("s", "d", 50, 140); break;
+    default:
+      body = (
+        <g>
+          <Spring x={30} y={y} w={50} />
+          <Dashpot x={80} y={y} w={50} />
+          <line x1={130} y1={y - 16} x2={130} y2={y + 16} stroke={INK} strokeWidth={2} />
+          <line x1={210} y1={y - 16} x2={210} y2={y + 16} stroke={INK} strokeWidth={2} />
+          <Spring x={130} y={y - 16} w={80} />
+          <Dashpot x={130} y={y + 16} w={80} />
+        </g>
+      );
+  }
+  return (
+    <g>
+      <line x1={x0} y1={y - 22} x2={x0} y2={y + 22} stroke={INK} strokeWidth={3} />
+      {(m === "bingham" || m === "kelvin") && <line x1={x0} y1={y} x2={50} y2={y} stroke={INK} strokeWidth={2} />}
+      {(m === "bingham" || m === "kelvin") && <line x1={190} y1={y} x2={230} y2={y} stroke={INK} strokeWidth={2} />}
+      {m === "burgers" && <line x1={x0} y1={y} x2={30} y2={y} stroke={INK} strokeWidth={2} />}
+      {m === "burgers" && <line x1={210} y1={y} x2={230} y2={y} stroke={INK} strokeWidth={2} />}
+      {body}
+      <line x1={230} y1={y} x2={255} y2={y} stroke={INK} strokeWidth={2} markerEnd="url(#rh-k)" />
+      <text x={258} y={y + 4} style={{ fontSize: 12, fontWeight: 800 }}>σ</text>
+    </g>
+  );
+}
+
+export function RheologyDemo() {
+  const [m, setM] = useState<RM>("maxwell");
+  const [sr, setSr] = useState(1.5); // σ/σy
+  const E = 1, eta = 1, sy = 1;
+  const sig = m === "plastic" || m === "prandtl" || m === "bingham" ? sr * sy : 1;
+  const t0 = 1, t1 = 3, tE = 5.5;
+  const kel = (tt: number) => (sig / E) * (1 - Math.exp((-E * tt) / eta));
+  const strain = (t: number) => {
+    const on = t >= t0 && t <= t1;
+    const dt = Math.min(Math.max(t - t0, 0), t1 - t0);
+    const after = t > t1 ? t - t1 : 0;
+    const yielded = sig > sy;
+    switch (m) {
+      case "elastic": return on ? sig / E : 0;
+      case "viscous": return (sig / eta) * dt;
+      case "plastic": return yielded ? 0.6 * dt : 0;
+      case "prandtl": return (on ? sig / E : 0) + (yielded ? 0.6 * dt : 0);
+      case "bingham": return yielded ? ((sig - sy) / eta) * dt : 0;
+      case "kelvin": return t < t0 ? 0 : t <= t1 ? kel(dt) : kel(t1 - t0) * Math.exp((-E * after) / eta);
+      case "maxwell": return (on ? sig / E : 0) + (sig / eta) * dt;
+      default: {
+        const k = t < t0 ? 0 : t <= t1 ? kel(dt) : kel(t1 - t0) * Math.exp((-E * after) / eta);
+        return (on ? sig / (2 * E) : 0) + (sig / (3 * eta)) * dt + k;
+      }
+    }
+  };
+  const W = 300, H = 170, L = 34, R = 10, T = 12, B = 30;
+  const x = (t: number) => L + (t / tE) * (W - L - R);
+  const y = (e: number) => T + (1 - Math.min(e, 4.2) / 4.2) * (H - T - B);
+  const pts: string[] = [];
+  let prev = strain(0);
+  for (let i = 0; i <= 300; i++) {
+    const t = (tE * i) / 300;
+    const e = strain(t);
+    if (Math.abs(e - prev) > 0.3) pts.push(`${x(t)},${y(prev)}`);
+    pts.push(`${x(t)},${y(e)}`);
+    prev = e;
+  }
+  // 應力–應變(率)示意
+  const ss: Record<RM, { xl: string; d: string }> = {
+    elastic: { xl: "應變 ε", d: "M0,100 L120,10" },
+    viscous: { xl: "應變率 ε̇", d: "M0,100 L120,10" },
+    plastic: { xl: "應變 ε", d: "M0,100 L0,40 L130,40" },
+    prandtl: { xl: "應變 ε", d: "M0,100 L50,40 L130,40 M110,40 L60,100" },
+    bingham: { xl: "應變率 ε̇", d: "M0,100 L0,60 L120,10" },
+    kelvin: { xl: "應變 ε", d: "M0,100 C40,90 90,40 120,20 C110,60 60,95 0,100" },
+    maxwell: { xl: "應變 ε", d: "M0,100 L40,45 L130,40" },
+    burgers: { xl: "應變 ε", d: "M0,100 C25,60 60,42 130,38" },
+  };
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：流變模型</b>
+        <span>選一個模型，看它的元件組合、在 t₀ 加上固定應力、t₁ 移除時的應變反應，以及應力–應變（率）圖</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox="0 0 300 400" className="ix-svg" role="img" aria-label="流變模型">
+          <defs>
+            <Arrow id="rh-k" color="currentColor" />
+          </defs>
+          <g transform="translate(10,0)">
+            <ModelDiagram m={m} />
+          </g>
+          <text x={10} y={98} style={{ fontSize: 10.5 }}>彈簧（藍綠）、唧筒（橘）、摩擦塊（金）</text>
+          <g transform="translate(0,105)">
+            <rect x={x(t0)} y={T} width={x(t1) - x(t0)} height={H - T - B} fill="var(--gold)" fillOpacity={0.12} />
+            <text x={(x(t0) + x(t1)) / 2} y={T + 12} textAnchor="middle" style={{ fontSize: 10 }}>施加固定應力</text>
+            <polyline points={pts.join(" ")} fill="none" stroke="var(--orange)" strokeWidth={2.6} />
+            <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+            <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+            <text x={x(t0)} y={H - B + 13} textAnchor="middle" style={{ fontSize: 10 }}>t₀</text>
+            <text x={x(t1)} y={H - B + 13} textAnchor="middle" style={{ fontSize: 10 }}>t₁</text>
+            <text x={(L + W) / 2} y={H - 4} textAnchor="middle" style={{ fontSize: 11 }}>時間 →</text>
+            <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 11 }}>應變 ε</text>
+          </g>
+          <g transform="translate(70,282)">
+            <path d={ss[m].d} fill="none" stroke="var(--teal)" strokeWidth={2.6} />
+            <line x1={0} x2={150} y1={100} y2={100} stroke={INK} strokeWidth={1.5} />
+            <line x1={0} x2={0} y1={0} y2={100} stroke={INK} strokeWidth={1.5} />
+            {(m === "plastic" || m === "prandtl" || m === "bingham") && (
+              <text x={-4} y={m === "bingham" ? 64 : 44} textAnchor="end" style={{ fontSize: 10 }}>σy</text>
+            )}
+            <text x={75} y={114} textAnchor="middle" style={{ fontSize: 11 }}>{ss[m].xl}</text>
+            <text x={-16} y={50} transform="rotate(-90 -16 50)" textAnchor="middle" style={{ fontSize: 11 }}>應力 σ</text>
+          </g>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-btns">
+            {(Object.keys(RM_INFO) as RM[]).map((k) => (
+              <button key={k} type="button" className="ix-btn" aria-pressed={m === k} onClick={() => setM(k)}>
+                {RM_INFO[k].name.split("（")[0]}
+              </button>
+            ))}
+          </div>
+          {(m === "plastic" || m === "prandtl" || m === "bingham") && (
+            <div className="ix-row">
+              <label>
+                <span>施加的應力 ÷ 降伏應力</span>
+                <span>{fmt(sr, 2)}</span>
+              </label>
+              <input type="range" min={0.3} max={2.5} step={0.05} value={sr} onChange={(e) => setSr(+e.target.value)} />
+            </div>
+          )}
+          <div className="ix-readout">
+            <b>{RM_INFO[m].name}</b>
+            <br />組合：{RM_INFO[m].combo}
+            <br />組成方程式：{RM_INFO[m].eq}
+            <br />應用：{RM_INFO[m].use}
+          </div>
+          <div className="ix-note">
+            讀應變–時間圖看兩件事：加載瞬間有沒有「跳」（有彈簧串聯才會跳）；卸載後有沒有留下永久應變（有唧筒或摩擦塊串聯才會留）。應力–應變（率）圖：彈簧畫 σ–ε，唧筒畫 σ–ε̇，摩擦塊看有沒有門檻 σy；串聯時應變相加，並聯時應力相加。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── Ch6：岩石圈強度剖面 ───────────── */
+
+export function StrengthDemo() {
+  const [G, setG] = useState(25); // °C/km
+  const [lsr, setLsr] = useState(-14); // log 應變率
+  const [lam, setLam] = useState(0.4);
+  const [rg, setRg] = useState<"thrust" | "strike" | "normal">("thrust");
+  const beta = { thrust: 3, strike: 1.2, normal: 0.75 }[rg];
+  const moho = 35, zmax = 60, rho = 2700, R = 8.314;
+  const er = Math.pow(10, lsr);
+  // 冪律潛變參數（課堂投影片 p.40，A 以 GPa⁻ⁿ s⁻¹）
+  const qz = { A: 2.0e3, n: 2.3, Q: 154e3 }; // 濕石英岩
+  const ol = { A: 4.0e15, n: 4.0, Q: 540e3 }; // 橄欖岩
+  const brittle = (z: number) => (beta * rho * 9.8 * z * 1000 * (1 - lam)) / 1e6; // MPa
+  const ductile = (z: number) => {
+    const T = 273 + 10 + G * z;
+    const p = z < moho ? qz : ol;
+    return Math.pow(er / p.A, 1 / p.n) * Math.exp(p.Q / (p.n * R * T)) * 1000; // MPa
+  };
+  const strength = (z: number) => Math.min(brittle(z), ductile(z));
+  const W = 320, H = 300, L = 40, Rr = 12, T = 14, B = 34;
+  const smax = 1500;
+  const x = (s: number) => L + (Math.min(s, smax) / smax) * (W - L - Rr);
+  const y = (z: number) => T + (z / zmax) * (H - T - B);
+  const pts: string[] = [], bp: string[] = [], dp: string[] = [];
+  let bdt = -1, mantleStrong = false;
+  for (let i = 0; i <= 240; i++) {
+    const z = (zmax * i) / 240;
+    pts.push(`${x(strength(z))},${y(z)}`);
+    bp.push(`${x(brittle(z))},${y(z)}`);
+    dp.push(`${x(ductile(z))},${y(z)}`);
+    if (bdt < 0 && z < moho && ductile(z) < brittle(z)) bdt = z;
+    if (z > moho && z < moho + 10 && brittle(z) < ductile(z)) mantleStrong = true;
+  }
+  const area = `${x(0)},${y(0)} ${pts.join(" ")} ${x(0)},${y(zmax)}`;
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：岩石圈強度剖面</b>
+        <span>淺處 Byerlee 摩擦、深處冪律潛變，兩者取小；拉地溫梯度、應變率、孔隙壓</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="強度剖面">
+          <rect x={L} y={y(moho)} width={W - L - Rr} height={H - B - y(moho)} fill="var(--violet, #8a6fd1)" fillOpacity={0.08} />
+          <polygon points={area} fill="var(--orange)" fillOpacity={0.25} />
+          <polyline points={bp.join(" ")} fill="none" stroke={INK} strokeOpacity={0.35} strokeDasharray="4 3" />
+          <polyline points={dp.join(" ")} fill="none" stroke={INK} strokeOpacity={0.35} strokeDasharray="2 3" />
+          <polyline points={pts.join(" ")} fill="none" stroke="var(--orange)" strokeWidth={2.6} />
+          <line x1={L} x2={W - Rr} y1={y(moho)} y2={y(moho)} stroke={INK} strokeDasharray="6 4" />
+          <text x={W - Rr - 4} y={y(moho) - 4} textAnchor="end" style={{ fontSize: 10.5 }}>Moho（35 km）</text>
+          {bdt > 0 && (
+            <g>
+              <line x1={L} x2={W - Rr} y1={y(bdt)} y2={y(bdt)} stroke="var(--teal)" strokeWidth={1.5} />
+              <text x={W - Rr - 4} y={y(bdt) - 4} textAnchor="end" style={{ fontSize: 10.5, fill: "var(--teal)", fontWeight: 800 }}>脆–塑轉換 ≈ {fmt(bdt, 0)} km</text>
+            </g>
+          )}
+          <text x={L + 6} y={y(moho) + 16} style={{ fontSize: 10.5 }}>上部地函（橄欖岩）</text>
+          <text x={L + 6} y={y(2.5)} style={{ fontSize: 10.5 }}>地殼（濕石英岩）</text>
+          <line x1={L} x2={W - Rr} y1={T} y2={T} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          {[0, 500, 1000, 1500].map((s) => (
+            <text key={s} x={x(s)} y={H - B + 14} textAnchor="middle" style={{ fontSize: 10.5 }}>{s}</text>
+          ))}
+          {[0, 20, 40, 60].map((z) => (
+            <text key={z} x={L - 5} y={y(z) + 4} textAnchor="end" style={{ fontSize: 10.5 }}>{z}</text>
+          ))}
+          <text x={(L + W) / 2} y={H - 4} textAnchor="middle" style={{ fontSize: 11.5 }}>差應力 σ1 − σ3（MPa）</text>
+          <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 11.5 }}>深度（km）</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-btns">
+            {([["thrust", "逆斷層 β = 3"], ["strike", "平移 β = 1.2"], ["normal", "正斷層 β = 0.75"]] as const).map(([k, t]) => (
+              <button key={k} type="button" className="ix-btn" aria-pressed={rg === k} onClick={() => setRg(k)}>
+                {t}
+              </button>
+            ))}
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>地溫梯度</span>
+              <span>{G} °C/km</span>
+            </label>
+            <input type="range" min={12} max={40} step={1} value={G} onChange={(e) => setG(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>應變率</span>
+              <span>10^{lsr} s⁻¹</span>
+            </label>
+            <input type="range" min={-17} max={-11} step={0.5} value={lsr} onChange={(e) => setLsr(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>孔隙壓比 λ = p<sub>f</sub>/σ<sub>V</sub></span>
+              <span>{fmt(lam, 2)}</span>
+            </label>
+            <input type="range" min={0} max={0.95} step={0.05} value={lam} onChange={(e) => setLam(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            地殼脆–塑轉換：<b>{bdt > 0 ? `≈ ${fmt(bdt, 0)} km` : "整個地殼都是脆性"}</b>
+            <br />Moho 下方：<b>{mantleStrong ? "有強的脆性地函層" : "地函弱（潛變）"}</b>
+          </div>
+          <div className="ix-verdict">{mantleStrong ? "果醬三明治：上地殼和上部地函都強" : "焦糖布蕾：只有地殼強"}</div>
+          <div className="ix-note">
+            虛線：Byerlee 摩擦強度 βρgz(1 − λ)（隨深度變強）；點線：冪律潛變 ε̇ = Aσⁿexp(−Q/RT)（隨溫度變弱）；橘色：兩者取小。地溫梯度越高、應變率越慢，轉換越淺；孔隙壓越高，脆性區越弱（λ 接近 1 就像香蕉船）。參數：濕石英岩與橄欖岩，依課堂投影片 p.40（Ranalli & Murphy 1987），ρ = 2700 kg/m³，地表 10 °C。
           </div>
         </div>
       </div>
