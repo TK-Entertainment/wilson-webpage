@@ -559,3 +559,236 @@ export function MorbOibFig() {
     </Fig>
   );
 }
+
+/* ───────────── L4：ln K 對 1/T 的切線（示意） ───────────── */
+
+export function VantHoffTangentFig() {
+  const W = 560, H = 300, L = 44, R = 16, T = 16, B = 44;
+  const x = (u: number) => L + (u / 3.5) * (W - L - R);
+  const lo = -12.3, hi = -8.6;
+  const y = (v: number) => T + ((hi - v) / (hi - lo)) * (H - T - B);
+  const f = (u: number, shift: number) => -9.6 + shift - 0.9 * (u - 2.85) ** 2;
+  const curve = (shift: number) => {
+    const a: string[] = [];
+    for (let i = 0; i <= 60; i++) {
+      const u = 1.7 + (1.7 * i) / 60;
+      a.push(`${x(u)},${y(f(u, shift))}`);
+    }
+    return a.join(" ");
+  };
+  const u0 = 2.4, v0 = f(u0, 0.5), m = -1.8 * (u0 - 2.85);
+  const icpt = v0 - m * u0;
+  return (
+    <Fig
+      caption="真實的 ln K 對 1/T 常常是彎的（ΔH 本身會隨溫度變），這時在想知道的溫度畫切線：切線斜率 = −ΔH°/R，延伸到 1/T = 0（溫度無限高）的截距 = ΔS°/R。左半邊溫度高、右半邊溫度低；這個例子在高壓時整條曲線往上，表示加壓讓 K 變大（ΔV° < 0）。"
+      source="White (2013) Fig. 3.17（重晶石溶解，after Blount 1977）；課堂投影片 L4 p.17。曲線形狀為示意，未標實際數值"
+    >
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="ln K 對 1/T 與切線" style={{ maxWidth: 620, margin: "0 auto" }}>
+        <Marks />
+        <polyline points={curve(0)} fill="none" stroke={C.teal} strokeWidth={2.5} />
+        <polyline points={curve(0.5)} fill="none" stroke={C.orange} strokeWidth={2.5} />
+        <text x={x(3.42)} y={y(f(3.4, 0)) + 16} textAnchor="end" style={{ fontSize: 11, fontWeight: 700 }}>低壓</text>
+        <text x={x(3.42)} y={y(f(3.4, 0.5)) - 8} textAnchor="end" style={{ fontSize: 11, fontWeight: 700 }}>高壓</text>
+        <line x1={x(0)} y1={y(icpt)} x2={x(3.1)} y2={y(icpt + m * 3.1)} stroke={INK} strokeWidth={1.6} strokeDasharray="7 5" />
+        <circle cx={x(u0)} cy={y(v0)} r={5} fill={C.gold} stroke={INK} />
+        <circle cx={x(0)} cy={y(icpt)} r={5} fill={C.violet} stroke={INK} />
+        <text x={x(0) + 10} y={y(icpt) + 18} style={{ fontSize: 12, fontWeight: 700 }}>截距 = ΔS°/R</text>
+        <text x={x(1.2)} y={y(icpt + m * 1.2) - 12} textAnchor="middle" transform={`rotate(${(-Math.atan((m * (H - T - B)) / (hi - lo) / ((W - L - R) / 3.5)) * 180) / Math.PI} ${x(1.2)} ${y(icpt + m * 1.2) - 12})`} style={{ fontSize: 12, fontWeight: 700 }}>
+          切線斜率 = −ΔH°/R
+        </text>
+        <text x={x(u0) - 12} y={y(v0) - 12} textAnchor="end" style={{ fontSize: 11 }}>在這個溫度畫切線</text>
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[0, 1, 2, 3].map((u) => (
+          <text key={u} x={x(u)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{u}</text>
+        ))}
+        <text x={(L + W) / 2} y={H - 8} textAnchor="middle" style={{ fontSize: 12 }}>1/T（×10⁻³ K⁻¹）　← 高溫　低溫 →</text>
+        <text x={16} y={(T + H - B) / 2} transform={`rotate(-90 16 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>ln K</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L4：與鎂橄欖石共存的 opx 的 Al 含量（示意） ───────────── */
+
+export function OpxAlFig() {
+  const W = 560, H = 320, L = 50, R = 16, T = 14, B = 44;
+  const x = (t: number) => L + ((t - 300) / 1350) * (W - L - R);
+  const y = (p: number) => T + ((3 - p) / 3) * (H - T - B);
+  const ga = (t: number) => 1.55 + 0.7 * ((t - 850) / 500) ** 2;
+  const an = (t: number) => 0.88 * Math.pow(Math.max(0, (t - 430) / 870), 1.15);
+  const path = (fn: (t: number) => number, a: number, b: number) => {
+    const s: string[] = [];
+    for (let i = 0; i <= 50; i++) {
+      const t = a + ((b - a) * i) / 50;
+      s.push(`${x(t)},${y(fn(t))}`);
+    }
+    return s.join(" ");
+  };
+  const sol: [number, number][] = [[1255, 0], [1285, 0.55], [1300, 0.88], [1380, 1.5], [1455, 2.2], [1520, 3]];
+  // Sp 區的等值線：從 Fo+An 的邊界（或 P = 0）往上畫到 Fo+Ga 的邊界，稍往右傾
+  const iso: [number, number][] = [[2, 480], [4, 600], [6, 700], [8, 800], [10, 900], [12, 1000], [14, 1100], [16, 1200]];
+  const isoLine = (t0: number) => {
+    const p0 = an(t0);
+    let p1 = p0;
+    let t1 = t0;
+    for (let i = 0; i < 400; i++) {
+      p1 += 0.01;
+      t1 = t0 + 40 * (p1 - p0);
+      if (p1 >= ga(t1)) break;
+    }
+    return { p0, t1, p1 };
+  };
+  return (
+    <Fig
+      caption="與鎂橄欖石（Fo）共存的斜方輝石（opx）的 Al 含量。依共存的含鋁礦物分成三區：斜長石（An，低壓）、尖晶石（Sp，中壓）、石榴子石（Ga，高壓）。尖晶石區的等值線幾乎是直的，表示 opx 的 Al 主要由溫度決定，溫度越高 Al 越多；斜長石區的等值線很平，Al 同時受壓力影響。量出 opx 的 Al 含量，再配合共存礦物，就能估 P–T。"
+      source="White (2013) Fig. 4.15（after Gasparik 1984）；課堂投影片 L4 p.25。相界與等值線位置為示意"
+    >
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="opx 的 Al 含量等值線" style={{ maxWidth: 620, margin: "0 auto" }}>
+        {iso.map(([a, t0]) => {
+          const { p0, t1, p1 } = isoLine(t0);
+          return (
+            <g key={a}>
+              <line x1={x(t0)} y1={y(p0)} x2={x(t1)} y2={y(p1)} stroke={C.rose} strokeWidth={1.3} />
+              <text x={x(t0 + 40 * 0.35) - 3} y={y(p0 + 0.35) + 4} textAnchor="end" style={{ fontSize: 10.5, fill: C.rose, fontWeight: 700 }}>{a}</text>
+            </g>
+          );
+        })}
+        {[0.12, 0.26, 0.42].map((d, i) => (
+          <polyline key={i} points={path((t) => Math.max(0, an(t) - d + 0.00025 * (t - 900)), 700 + i * 120, 1270)} fill="none" stroke={C.rose} strokeWidth={1.3} />
+        ))}
+        <polyline points={path(ga, 330, 1470)} fill="none" stroke={INK} strokeWidth={2.4} />
+        <polyline points={path(an, 430, 1300)} fill="none" stroke={INK} strokeWidth={2.4} />
+        <polyline points={sol.map(([t, p]) => `${x(t)},${y(p)}`).join(" ")} fill="none" stroke={INK} strokeWidth={2.4} />
+        <text x={x(850)} y={y(2.45)} textAnchor="middle" style={{ fontWeight: 800 }}>Fo + Ga（石榴子石）</text>
+        <text x={x(640)} y={y(0.95)} textAnchor="middle" style={{ fontWeight: 800 }}>Fo + Sp（尖晶石）</text>
+        <text x={x(1070)} y={y(0.12)} textAnchor="middle" style={{ fontWeight: 800 }}>Fo + An（斜長石）</text>
+        <text x={x(1500)} y={y(0.6)} textAnchor="middle" style={{ fontWeight: 800 }}>晶體 +</text>
+        <text x={x(1500)} y={y(0.6) + 16} textAnchor="middle" style={{ fontWeight: 800 }}>熔體</text>
+        <text x={x(1215)} y={y(1.42)} textAnchor="middle" style={{ fontSize: 11, fill: C.rose, fontWeight: 700 }}>opx 的 Al（wt%）</text>
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        {[400, 600, 800, 1000, 1200, 1400, 1600].map((t) => (
+          <text key={t} x={x(t)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{t}</text>
+        ))}
+        {[0, 0.5, 1, 1.5, 2, 2.5, 3].map((p) => (
+          <text key={p} x={L - 6} y={y(p) + 4} textAnchor="end" style={{ fontSize: 11 }}>{p}</text>
+        ))}
+        <text x={(L + W) / 2} y={H - 8} textAnchor="middle" style={{ fontSize: 12 }}>溫度（°C）</text>
+        <text x={16} y={(T + H - B) / 2} transform={`rotate(-90 16 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>壓力（GPa）</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L4：熱力學 vs 動力學（能量障壁） ───────────── */
+
+export function EnergyBarrierFig() {
+  const prof = "M20,110 L80,110 C120,110 125,40 160,40 C195,40 200,175 240,175 L300,175";
+  const mb = (e: number, kt: number) => Math.sqrt(e) * Math.exp(-e / kt);
+  const ex = (e: number) => 360 + e * 26; // e 0..10
+  const dist = (kt: number, from = 0, to = 10) => {
+    const a: string[] = [];
+    let mx = 0;
+    for (let i = 0; i <= 100; i++) mx = Math.max(mx, mb((10 * i) / 100, 1));
+    for (let i = 0; i <= 100; i++) {
+      const e = from + ((to - from) * i) / 100;
+      a.push(`${ex(e)},${200 - (mb(e, kt) / mx) * 120}`);
+    }
+    return a;
+  };
+  const ea = 5;
+  const tail = (kt: number) => [`${ex(ea)},200`, ...dist(kt, ea, 10), `${ex(10)},200`].join(" ");
+  return (
+    <Fig caption="左：熱力學只比較起點和終點的高低（ΔG），決定反應往哪邊走；動力學看中間的山有多高（活化能 Eₐ），決定走得多快。右：分子的能量有一個分布，只有能量超過 Eₐ 的（塗色部分）才翻得過山。溫度升高，分布往高能量拉長，超過 Eₐ 的比例急遽增加，所以速率隨溫度指數上升。" source="課堂投影片 L4 p.29–32、p.35">
+      <svg viewBox="0 0 640 240" className="ix-svg" role="img" aria-label="能量障壁與能量分布">
+        <Marks />
+        <path d={prof} fill="none" stroke={INK} strokeWidth={3} />
+        <text x={45} y={100} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>反應物</text>
+        <text x={275} y={165} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>產物</text>
+        <line x1={95} y1={110} x2={95} y2={44} stroke={C.orange} strokeWidth={2} markerEnd="url(#gm-o)" />
+        <line x1={95} y1={40} x2={160} y2={40} stroke={C.orange} strokeWidth={1} strokeDasharray="3 3" />
+        <text x={88} y={80} textAnchor="end" style={{ fontSize: 12, fontWeight: 800, fill: C.orange }}>Eₐ</text>
+        <line x1={80} y1={110} x2={215} y2={110} stroke={INK} strokeOpacity={0.4} strokeDasharray="3 3" />
+        <line x1={215} y1={110} x2={215} y2={171} stroke={C.teal} strokeWidth={2} markerEnd="url(#gm-t)" />
+        <text x={222} y={145} style={{ fontSize: 12, fontWeight: 800, fill: C.teal }}>ΔG</text>
+        <text x={160} y={222} textAnchor="middle" style={{ fontSize: 12 }}>反應進行 →</text>
+        <text x={160} y={20} textAnchor="middle" style={{ fontSize: 11 }}>動力學：山多高？　熱力學：高低差多少？</text>
+        {/* 右：能量分布 */}
+        <polygon points={tail(2)} fill={C.orange} fillOpacity={0.3} />
+        <polygon points={tail(1)} fill={C.teal} fillOpacity={0.45} />
+        <polyline points={dist(1).join(" ")} fill="none" stroke={C.teal} strokeWidth={2.5} />
+        <polyline points={dist(2).join(" ")} fill="none" stroke={C.orange} strokeWidth={2.5} />
+        <line x1={ex(ea)} x2={ex(ea)} y1={60} y2={200} stroke={INK} strokeDasharray="4 3" />
+        <text x={ex(ea) + 4} y={70} style={{ fontSize: 12, fontWeight: 800 }}>Eₐ</text>
+        <line x1={ex(0)} x2={ex(10)} y1={200} y2={200} stroke={INK} strokeWidth={1.5} />
+        <line x1={ex(0)} x2={ex(0)} y1={60} y2={200} stroke={INK} strokeWidth={1.5} />
+        <text x={ex(5)} y={222} textAnchor="middle" style={{ fontSize: 12 }}>分子的能量 →</text>
+        <text x={ex(1.8)} y={120} style={{ fontSize: 11, fontWeight: 700, fill: C.teal }}>低溫</text>
+        <text x={ex(3.5)} y={84} style={{ fontSize: 11, fontWeight: 700, fill: C.orange }}>高溫</text>
+        <text x={ex(7.4)} y={182} textAnchor="middle" style={{ fontSize: 10.5 }}>翻得過山的分子</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L4：碰撞截面 ───────────── */
+
+export function CollisionFig() {
+  const dots: [number, number][] = [[190, 70], [250, 112], [300, 88], [360, 128], [420, 96], [470, 60], [520, 118], [230, 160], [330, 40], [400, 170], [560, 150], [140, 140], [500, 30], [280, 190]];
+  const inCyl = (px: number, py: number) => px > 110 && px < 540 && Math.abs(py - 100) < 34;
+  return (
+    <Fig caption="N 原子以速度 v 前進，時間 t 內掃過一個半徑 r = r(N) + r(O₂)、長度 v·t 的圓柱。中心落在圓柱裡的 O₂ 分子（橘色）會被撞到，外面的不會。所以碰撞次數 ∝ 圓柱體積 × 對方的濃度：濃度加倍，碰撞次數加倍，這就是速率和濃度成正比的來源。" source="White (2013) Ch. 5；課堂投影片 L4 p.33">
+      <svg viewBox="0 0 640 220" className="ix-svg" role="img" aria-label="碰撞截面圓柱">
+        <Marks />
+        <path d="M110,66 L540,66 M110,134 L540,134" stroke={INK} strokeWidth={1.8} />
+        <ellipse cx={110} cy={100} rx={14} ry={34} fill={C.gold} fillOpacity={0.15} stroke={INK} strokeWidth={1.8} />
+        <ellipse cx={540} cy={100} rx={14} ry={34} fill="none" stroke={INK} strokeWidth={1.8} strokeDasharray="4 3" />
+        <circle cx={110} cy={100} r={13} fill={C.teal} stroke={INK} strokeWidth={1.5} />
+        <text x={110} y={104} textAnchor="middle" style={{ fontSize: 11, fontWeight: 800 }}>N</text>
+        <line x1={130} y1={100} x2={200} y2={100} stroke={C.teal} strokeWidth={2.5} markerEnd="url(#gm-t)" />
+        <text x={165} y={92} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>v</text>
+        <line x1={78} y1={100} x2={78} y2={68} stroke={INK} strokeWidth={1.3} markerEnd="url(#gm-k)" />
+        <text x={14} y={56} style={{ fontSize: 11 }}>r = r(N) + r(O₂)</text>
+        <line x1={110} y1={208} x2={540} y2={208} stroke={INK} strokeWidth={1.3} markerEnd="url(#gm-k)" markerStart="url(#gm-k)" />
+        <text x={325} y={202} textAnchor="middle" style={{ fontSize: 12 }}>長度 = v · t</text>
+        {dots.map(([px, py], i) => (
+          <circle key={i} cx={px} cy={py} r={7} fill={inCyl(px, py) ? C.orange : "none"} stroke={inCyl(px, py) ? INK : INK} strokeOpacity={inCyl(px, py) ? 1 : 0.55} strokeWidth={1.3} />
+        ))}
+        <circle cx={566} cy={56} r={6} fill={C.orange} stroke={INK} strokeWidth={1.2} />
+        <text x={577} y={60} style={{ fontSize: 11 }}>會被撞</text>
+        <circle cx={566} cy={76} r={6} fill="none" stroke={INK} strokeOpacity={0.55} strokeWidth={1.2} />
+        <text x={577} y={80} style={{ fontSize: 11 }}>不會</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── L4：穩態 ≠ 平衡 ───────────── */
+
+export function SteadyStateFig() {
+  return (
+    <Fig caption="左：平衡。正反應和逆反應一直在發生，但速率相等，沒有淨變化，而且系統沒有和外界交換物質。右：穩態。湖的水位不變，但那是因為流入 = 流出，水一直在流過；把河流截斷，水位就會變。平衡一定是穩態，穩態不一定是平衡。" source="課堂投影片 L4 p.37–38">
+      <svg viewBox="0 0 640 210" className="ix-svg" role="img" aria-label="平衡與穩態">
+        <Marks />
+        <rect x={40} y={40} width={220} height={120} rx={8} fill={C.teal} fillOpacity={0.08} stroke={INK} strokeWidth={2.5} />
+        <text x={90} y={108} textAnchor="middle" style={{ fontSize: 22, fontWeight: 800 }}>A</text>
+        <text x={210} y={108} textAnchor="middle" style={{ fontSize: 22, fontWeight: 800 }}>B</text>
+        <line x1={112} y1={92} x2={186} y2={92} stroke={C.orange} strokeWidth={2.5} markerEnd="url(#gm-o)" />
+        <line x1={186} y1={114} x2={112} y2={114} stroke={C.teal} strokeWidth={2.5} markerEnd="url(#gm-t)" />
+        <text x={150} y={82} textAnchor="middle" style={{ fontSize: 11 }}>正反應 k₊[A]</text>
+        <text x={150} y={134} textAnchor="middle" style={{ fontSize: 11 }}>逆反應 k₋[B]</text>
+        <text x={150} y={185} textAnchor="middle" style={{ fontSize: 13, fontWeight: 800 }}>平衡：正 = 逆，封閉</text>
+        {/* 湖 */}
+        <path d="M380,90 L590,90 L560,160 L410,160 Z" fill={C.teal} fillOpacity={0.3} stroke={INK} strokeWidth={2.5} />
+        <line x1={380} y1={90} x2={590} y2={90} stroke={C.teal} strokeWidth={3} />
+        <text x={485} y={130} textAnchor="middle" style={{ fontSize: 12, fontWeight: 700 }}>水位不變</text>
+        <line x1={320} y1={70} x2={392} y2={88} stroke={C.orange} strokeWidth={3} markerEnd="url(#gm-o)" />
+        <text x={330} y={60} style={{ fontSize: 11 }}>流入 10</text>
+        <line x1={580} y1={92} x2={630} y2={70} stroke={C.orange} strokeWidth={3} markerEnd="url(#gm-o)" />
+        <text x={600} y={60} textAnchor="middle" style={{ fontSize: 11 }}>流出 10</text>
+        <text x={485} y={185} textAnchor="middle" style={{ fontSize: 13, fontWeight: 800 }}>穩態：流入 = 流出，開放</text>
+      </svg>
+    </Fig>
+  );
+}

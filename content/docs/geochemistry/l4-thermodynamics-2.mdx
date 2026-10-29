@@ -3,206 +3,509 @@ title: 第 4 講　熱力學 II 與動力學
 description: 化學勢、平衡常數、地質溫度壓力計、反應速率
 ---
 
-**這講在回答**：有很多成分、很多相的時候，怎麼判斷平衡？怎麼從岩石裡的礦物讀出它形成時的溫度和壓力？反應要多久才會發生？
+**這講在回答**：L3 的 G 只處理單一物質（石墨或鑽石、冰或水）。真實的岩石和水溶液裡有很多成分、很多相，這時怎麼判斷反應往哪走、停在哪裡？反過來，能不能從岩石裡礦物的組成讀出它形成時的溫度和壓力？最後，熱力學說「會發生」的反應，要多久才真的發生？
 
 **考前 30 秒**
 
-1. $\Delta G^\circ = -RT\ln K$；Q \< K 往右，Q \> K 往左。
-2. ln K 對 1/T 的斜率 = $-\Delta H^\circ/R$ → 溫度計要 ΔH 大、ΔV 小；壓力計要 ΔV 大。
-3. 熱力學決定**方向**，動力學決定**速度**；一階反應 $t_{1/2} = \ln 2/k$。
+1. $\Delta G_r = \Delta G^\circ + RT\ln Q$；平衡時 $\Delta G^\circ = -RT\ln K$。Q \< K 往右，Q \> K 往左。
+2. $\ln K = -\dfrac{\Delta H^\circ}{R}\cdot\dfrac{1}{T} + \dfrac{\Delta S^\circ}{R}$：ln K 對 1/T 的斜率 = −ΔH°/R。
+3. 溫度計要 **ΔH 大、ΔV 小**；壓力計要 **ΔV 大**（\> 2 cm³/mol）。
+4. 熱力學決定**方向**，動力學決定**速度**；一階反應 $t_{1/2} = \ln 2/k$。穩態 ≠ 平衡。
 
-**主線**：L3 的 G 只處理純物質 → 有多種成分時，看每個成分的化學勢 μ → μ 跟濃度（活度）有關 → 寫成反應的 ΔG = ΔG° + RT ln Q → 平衡時得到平衡常數 K → K 隨溫度、壓力變（van't Hoff）→ 所以礦物間的平衡可以當溫度計、壓力計 → 但前提是礦物降溫後「凍結」不再反應，這就要看動力學。
+### 先認識的名詞
 
-★ = 考試重點。
+| 名詞 | 一句話 |
+|---|---|
+| 化學勢 μ | 多加 1 mol 某成分，系統的 G 增加多少（partial molar G） |
+| 活度 a | 有效濃度；理想溶液中等於莫耳分率 X |
+| 逸度 f | 真實氣體的「有效壓力」，逃離溶液的傾向 |
+| 反應商 Q | 目前產物和反應物的活度比；平衡時等於 K |
+| 平衡常數 K | 平衡時的活度比，只跟 T、P 有關 |
+| 地質溫度計／壓力計 | 用礦物組成（= K）反推形成時的 T／P |
+| 活化能 Eₐ | 反應途中要翻過的能量障壁 |
+| 半衰期 t<sub>1/2</sub> | 反應物剩一半所需的時間 |
+| 穩態 | 不隨時間變；不一定是平衡 |
+
+### 這一講的邏輯地圖
+
+<LogicMap
+  core={{ label: "多成分系統：反應往哪走、停在哪、多快？", sub: "熱力學給方向和終點，動力學給速度" }}
+  rows={[
+    [{ id: "mu", label: "多成分的 G 怎麼描述？", sub: "化學勢 μ；平衡時每個成分在各相的 μ 相等", to: "1.", tone: 5 }],
+    [{ id: "act", label: "μ 跟濃度有什麼關係？", sub: "μ = μ° + RT ln a；活度、逸度", to: "2.", tone: 0 }],
+    [{ id: "k", label: "反應停在哪裡？", sub: "ΔG = ΔG° + RT ln Q；平衡時 Q = K", to: "3.", tone: 1 }],
+    [
+      { id: "vh", label: "K 怎麼隨 T、P 改變？", sub: "ln K 對 1/T 斜率 −ΔH°/R；ΔV° 決定壓力效應", to: "4.", tone: 2 },
+      { id: "kin", label: "要多久才到平衡？", sub: "活化能、碰撞；一階反應 t½ = ln2/k", to: "6.", tone: 3 },
+    ],
+    [
+      { id: "geo", label: "能從礦物讀出 T、P 嗎？", sub: "溫度計 ΔH 大 ΔV 小；壓力計 ΔV 大", to: "5.", tone: 4 },
+      { id: "link", label: "速率和平衡怎麼接？", sub: "k₊/k₋ = K；穩態不一定是平衡", to: "7.", tone: 5 },
+    ],
+  ]}
+  links={[
+    { from: "core", to: "mu", label: "先描述" },
+    { from: "mu", to: "act", label: "代入濃度" },
+    { from: "act", to: "k", label: "把各物種加總" },
+    { from: "k", to: "vh", label: "K 不是常數" },
+    { from: "k", to: "kin", label: "多久才到？" },
+    { from: "vh", to: "geo", label: "反過來用" },
+    { from: "kin", to: "geo", label: "降溫後凍結", dashed: true },
+    { from: "kin", to: "link", label: "正 = 逆" },
+  ]}
+  note="讀法：上半部是一條推導鏈：μ → 活度 → K。K 會隨溫度、壓力變，反過來用就是地質溫度計和壓力計；但溫度計要能用，礦物降溫後必須不再反應，這要靠動力學（虛線）。最後，平衡就是正逆反應速率相等的狀態。"
+/>
+
+★ = 考試重點。每一節最後有「自我檢測」，先自己回答再打開。
 
 ## 1. 化學勢 μ：多成分系統的 G
 
-L3 的 G 是整個系統的。多成分時，要看「多加一點成分 i，G 變多少」：
+L3 告訴我們，固定 T、P 時，系統會往 G 降低的方向走，G 最低就是平衡。這對單一物質很好用：比較石墨和鑽石的 G，低的就穩定。但岩漿裡有十幾種氧化物，海水裡有幾十種離子，每一種成分的量都可以變。這時我們需要知道的是：**某一個成分多一點或少一點，G 會怎麼變？**
+
+這個量就是**化學勢**（chemical potential）。它是 G 對某成分莫耳數的偏微分，其他成分的量和 T、P 都固定：
 
 $$
-\begin{aligned}
-\mu_i &= \left(\frac{\partial G}{\partial n_i}\right)_{T,P,n_{j\neq i}} \quad \text{（partial molar Gibbs free energy）} \\
-dG &= V\,dP - S\,dT + \sum_i \mu_i\,dn_i
-\end{aligned}
+\mu_i = \left(\frac{\partial G}{\partial n_i}\right)_{T,P,n_{j\neq i}}
 $$
 
-- **平衡時，每個成分在所有相中的 μ 相等**。例如冰水共存：μ<sub>H₂O,冰</sub> = μ<sub>H₂O,水</sub>。
-- 不平衡時，成分會從 μ 高的相跑到 μ 低的相，直到相等為止。
-
-（推導：冰融化時，H₂O 在固相減少的量 = 在液相增加的量，−dn<sup>α</sup> = dn<sup>β</sup>，代入 dG = 0 就得到 μ<sup>α</sup> = μ<sup>β</sup>。）
-
-## 2. 溶液：μ 跟濃度的關係
+所以它也叫 partial molar Gibbs free energy。有了 μ，L3 的 dG 就多了成分變化的那一項，系統的總 G 也可以寫成每個成分「量 × 化學勢」的總和：
 
 $$
-\begin{aligned}
-\text{理想溶液：}\ \mu_i &= \mu_i^\circ + RT\ln X_i \\
-\text{真實溶液：}\ \mu_i &= \mu_i^\circ + RT\ln a_i, \qquad a_i = \lambda_i X_i\ (\lambda\ \text{為活度係數})
-\end{aligned}
+dG = V\,dP - S\,dT + \sum_i \mu_i\,dn_i, \qquad G = \sum_i n_i\mu_i
 $$
 
-- **理想溶液**：不同分子之間的作用力和同種分子之間一樣，所以 a = X。
-- **活度（activity）**：有效濃度。**逸度（fugacity）**：真實氣體的「有效壓力」，逃逸的傾向。
-- 濃度越高，μ 越大。這就是為什麼濃度會影響反應方向。
+**化學勢最重要的性質：平衡時，每個成分在每一相裡的 μ 都相等。** 用冰水混合物來推。固定 T、P，讓一點點冰融化：H₂O 在冰（α 相）裡少了 dn，在水（β 相）裡多了 dn，也就是 $dn^\alpha = -dn^\beta$。整個系統的 G 變化是
+
+$$
+dG = \mu^\alpha\,dn^\alpha + \mu^\beta\,dn^\beta = (\mu^\beta - \mu^\alpha)\,dn^\beta
+$$
+
+平衡時 dG = 0，而 dn<sup>β</sup> 不是 0，所以 $\mu^\alpha = \mu^\beta$。如果不相等，例如 μ<sup>冰</sup> \> μ<sup>水</sup>，那冰融化（dn<sup>β</sup> \> 0）會讓 dG \< 0，冰就會自己融化，直到兩邊相等為止。
+
+這和溫度很像：熱從高溫流到低溫，直到溫度相等；**成分從 μ 高的相流到 μ 低的相，直到 μ 相等**。所以化學勢就是「成分的溫度」，它決定物質往哪裡跑。
+
+<details>
+<summary>自我檢測 1</summary>
+
+1. 為什麼 L3 的 G 不夠用，需要化學勢？
+2. 用 dG = 0 推出「平衡時 μ<sup>冰</sup> = μ<sup>水</sup>」。
+3. 如果某成分在熔體的 μ 比在礦物高，它會往哪裡跑？
+
+**答案**：(1) 多成分系統裡每個成分的量都會變，要知道個別成分對 G 的貢獻。(2) 冰減少的量 = 水增加的量，dG = (μ<sup>水</sup> − μ<sup>冰</sup>) dn = 0，所以兩者相等。(3) 從熔體跑進礦物，直到兩邊 μ 相等。
+
+</details>
+
+## 2. 化學勢和濃度的關係
+
+μ 是抽象的量，要能算，得先知道它跟看得到的濃度有什麼關係。從理想氣體開始推。L3 說固定溫度下 $(\partial G/\partial P)_T = V$，換成每莫耳就是 $(\partial \mu/\partial P)_T = \bar v$。理想氣體 $\bar v = RT/P$，從標準壓力 P° 積分到 P：
+
+$$
+\mu - \mu^\circ = \int_{P^\circ}^{P} \frac{RT}{P}\,dP = RT\ln\frac{P}{P^\circ}
+$$
+
+**理想溶液**的意思是：不同分子之間的作用力和同種分子之間一樣，所以分子混在一起不會多放熱或吸熱。這時液體上方的分壓和它在液體中的比例成正比（投影片 p.10 的圖：液體裡 A:B = 1:2，氣體裡也是 1:2），P/P° 就換成莫耳分率 X：
+
+$$
+\mu_i = \mu_i^\circ + RT\ln X_i
+$$
+
+**真實溶液**的分子之間有吸引或排斥，有效的濃度和實際濃度不一樣。做法是保留同一個式子，把 X 換成**活度** a（有效濃度），差別全部塞進活度係數 λ；氣體則把壓力換成**逸度** f（有效壓力，也就是逃離溶液的傾向）：
+
+$$
+\mu_i = \mu_i^\circ + RT\ln a_i, \qquad a_i = \lambda_i X_i = \frac{f_i}{f_i^\circ}
+$$
+
+這條式子是整講的基礎，要讀懂兩件事。第一，**濃度越高，μ 越高**，所以物質會從濃的地方往稀的地方跑，這就是濃度能推動反應的原因。第二，濃度是放在**對數**裡：濃度變 10 倍，μ 只增加 RT ln 10（25 °C 時約 5.7 kJ/mol）。這個數字下一節會再出現。
+
+<details>
+<summary>自我檢測 2</summary>
+
+1. 理想溶液的定義是什麼？
+2. 活度和莫耳分率差在哪？什麼時候兩者相等？
+3. 25 °C 時，某成分濃度變成 100 倍，μ 增加多少？
+
+**答案**：(1) 不同分子之間的作用力和同種分子之間一樣。(2) 活度是有效濃度，a = λX；理想溶液 λ = 1 時相等。(3) RT ln 100 = 2 × 5.7 ≈ 11.4 kJ/mol。
+
+</details>
 
 ## 3. 平衡常數 K ★
 
-把每個物種的 μ 加起來，就是反應的 ΔG：
+現在可以處理一整個反應了。反應 $a\mathrm{A} + b\mathrm{B} \rightleftharpoons c\mathrm{C} + d\mathrm{D}$ 往右走一點點，產物增加、反應物減少，G 的變化就是「產物的 μ 減掉反應物的 μ」，每個乘上係數。把上一節的 μ 代進去，標準狀態的部分收成 ΔG°，濃度的部分收成一個對數：
 
 $$
 \begin{aligned}
-& a\mathrm{A} + b\mathrm{B} \rightleftharpoons c\mathrm{C} + d\mathrm{D} \\
-& \Delta G_r = \sum \nu_i\mu_i = \Delta G_r^\circ + RT\ln Q, \qquad Q = \frac{a_C^{\,c}\,a_D^{\,d}}{a_A^{\,a}\,a_B^{\,b}}\ \text{（目前的活度比）} \\
-& \text{平衡時 } \Delta G_r = 0,\ Q = K \;\Rightarrow\; \Delta G_r^\circ = -RT\ln K
+\Delta G_r &= (c\mu_C + d\mu_D) - (a\mu_A + b\mu_B) \\
+&= \Delta G_r^\circ + RT\ln\frac{a_C^{\,c}\,a_D^{\,d}}{a_A^{\,a}\,a_B^{\,b}} = \Delta G_r^\circ + RT\ln Q
 \end{aligned}
 $$
 
-- **Q \< K → 往右**（產物方向）；**Q \> K → 往左**。
-- **Law of mass action**：改變某物種的濃度，反應往抵銷這個改變的方向走。例如加 H⁺ 到碳酸溶液，平衡往 H₂CO₃ 移動。
-- **Le Chatelier**：系統受擾動時會反應來減少擾動。例如冰 → 水 ΔV \< 0，加壓有利融化，所以冰的熔點隨壓力增加而下降。
-- 用濃度代替活度的三種「常數」：distribution coefficient K<sub>D</sub> = ΠXᵢ^νᵢ；apparent K<sup>app</sup> = Πmᵢ^νᵢ；solubility product **K<sub>sp</sub>**（純固體活度 = 1，所以只剩離子，例如 K<sub>sp</sub> = a<sub>Na⁺</sub>·a<sub>Cl⁻</sub>）。
+Q 叫**反應商**，就是「現在」的產物活度比反應物活度。這條式子把 ΔG 拆成兩部分：ΔG° 是這個反應本身的傾向，只跟 T、P 有關；RT ln Q 是目前的組成造成的修正。反應進行時 Q 一直變，ΔG<sub>r</sub> 也跟著變，直到 ΔG<sub>r</sub> = 0 停下來。這時的 Q 有一個特別的名字：**平衡常數 K**。
+
+$$
+0 = \Delta G_r^\circ + RT\ln K \quad\Rightarrow\quad \Delta G_r^\circ = -RT\ln K
+$$
+
+這是整門課最常用的一條式子之一。它說明 K 只由 ΔG° 決定，所以只跟 T、P 有關，跟一開始放了多少反應物無關。代入 RT ln 10 ≈ 5.7 kJ/mol：**ΔG° 每負 5.7 kJ/mol，K 就大 10 倍**。
+
+把兩條式子相減，得到判斷方向的方法：$\Delta G_r = RT\ln(Q/K)$。
+
+- **Q \< K**：ΔG<sub>r</sub> \< 0，反應往右（產物還不夠多）。
+- **Q \> K**：ΔG<sub>r</sub> \> 0，反應往左。
+- **Q = K**：平衡。
+
+**先預測**：A ⇌ B 的 ΔG° = −3 kJ/mol（B 比較穩定）。如果一開始全部是 B，反應會往哪邊走？會不會一路走到 A 完全沒有？想好再拉下面的圖。
+
+<ReactionProgressDemo />
+
+圖上的曲線是系統的 G 對反應進度。即使 ΔG° \< 0，曲線的最低點也不在「全部是 B」，而是在中間的某處，因為兩種分子混在一起會增加熵（曲線兩端是彎下去的）。所以全部是 B 時，Q 無限大，Q \> K，反應會往左生成一些 A，停在最低點。**ΔG° 的正負只決定最低點偏向哪一邊，不代表反應會走到底。**
+
+**兩個由此推出的原理**
+
+- **質量作用定律（law of mass action）**：改變某個物種的濃度，反應會往抵銷這個改變的方向走。例如在碳酸溶液 $\mathrm{H_2CO_3} \rightleftharpoons \mathrm{H^+} + \mathrm{HCO_3^-}$ 裡加 H⁺，Q 變大、Q \> K，反應往左，生成更多 H₂CO₃。
+- **Le Chatelier 原理**：系統受到擾動時，會往減少擾動的方向反應。例如冰 → 水的 ΔV \< 0（水比冰密），加壓時系統會往體積小的方向走，也就是融化，所以冰的熔點隨壓力增加而下降。這和 L3 用 Clapeyron 斜率得到的結論一樣。
+
+**用濃度代替活度**：活度通常很難測，實務上常用濃度寫成三種「常數」，代價是它們會隨組成稍微變動。
+
+| 名稱 | 寫法 | 用在哪 |
+|---|---|---|
+| 分配係數 K<sub>D</sub> | 莫耳分率的乘積 ΠX<sub>i</sub><sup>ν<sub>i</sub></sup> | 礦物和熔體之間的交換（L2 的 D 就是這種） |
+| 表觀平衡常數 K<sup>app</sup> | 莫耳濃度的乘積 Πm<sub>i</sub><sup>ν<sub>i</sub></sup> | 水溶液 |
+| 溶度積 K<sub>sp</sub> | 只寫離子，例如 a<sub>Na⁺</sub>·a<sub>Cl⁻</sub> | 礦物溶解；純固體活度 = 1，所以不寫 |
 
 <details>
-<summary>【例題 ★】螢石 CaF₂ K<sub>sp</sub> = 3.9×10⁻¹¹，\[F⁻\] = 0.1 mM，求 \[Ca²⁺\]</summary>
+<summary>【例題 ★ 完整解】螢石 CaF₂ 在 25 °C 的 K<sub>sp</sub> = 3.9×10⁻¹¹。地下水含 0.1 mM 的 F⁻ 並與螢石平衡，Ca²⁺ 濃度是多少？</summary>
 
-K<sub>sp</sub> = \[Ca²⁺\]\[F⁻\]² → \[Ca²⁺\] = 3.9×10⁻¹¹ / (10⁻⁴)² = 3.9×10⁻¹¹ / 10⁻⁸ = **3.9×10⁻³ M（3.9 mM）**
+**第一步：寫反應和 K<sub>sp</sub>。** CaF₂ ⇌ Ca²⁺ + 2F⁻。純固體 CaF₂ 的活度 = 1，所以 K<sub>sp</sub> = \[Ca²⁺\]\[F⁻\]²。F⁻ 的係數是 2，所以要**平方**。
 
-陷阱：\[F⁻\] 要**平方**；0.1 mM = 10⁻⁴ M。
+**第二步：換單位。** 0.1 mM = 0.1 × 10⁻³ M = 10⁻⁴ M。
+
+**第三步：代入。** \[Ca²⁺\] = K<sub>sp</sub> / \[F⁻\]² = 3.9×10⁻¹¹ / (10⁻⁴)² = 3.9×10⁻¹¹ / 10⁻⁸ = **3.9×10⁻³ M（3.9 mM）**。
+
+**檢查**：F⁻ 越多，Ca²⁺ 能溶的越少（質量作用），合理。常見錯誤是忘了平方，會得到 3.9×10⁻⁷ M，差了一萬倍。
+
+</details>
+
+<details>
+<summary>【換你算】(a) 同一個地下水如果 F⁻ 是 1 mM，Ca²⁺ 最多多少？(b) 某反應 25 °C 的 ΔG° = −11.4 kJ/mol，K 大約多少？</summary>
+
+**提示**：(a) 濃度變 10 倍，平方後是 100 倍。(b) 每 −5.7 kJ/mol，K 乘 10。
+
+**答案**：(a) 3.9×10⁻¹¹ / (10⁻³)² = **3.9×10⁻⁵ M**，是原本的 1/100。(b) −11.4 = 2 × (−5.7)，所以 K ≈ **10² = 100**（精確算：e<sup>11400/(8.314×298)</sup> = e<sup>4.60</sup> ≈ 99）。
+
+</details>
+
+<details>
+<summary>自我檢測 3</summary>
+
+1. 從 ΔG<sub>r</sub> = ΔG° + RT ln Q 推出 ΔG° = −RT ln K。
+2. ΔG° \< 0 的反應，會不會一路走到反應物完全用完？
+3. 為什麼 K<sub>sp</sub> 的式子裡沒有固體？
+4. 加壓時冰的熔點會升高還是降低？用 Le Chatelier 說明。
+
+**答案**：(1) 平衡時 ΔG<sub>r</sub> = 0 且 Q = K，代入即得。(2) 不會，停在 G 的最低點，Q = K，兩邊都還有。(3) 純固體的活度 = 1。(4) 降低；冰 → 水體積變小，加壓讓系統往體積小的方向（融化）走。
 
 </details>
 
 ## 4. K 隨溫度、壓力改變：van't Hoff ★
 
-把 ΔG° = ΔH° − TΔS° 代入 ΔG° = −RT ln K：
+K 是「常數」，但只在固定 T、P 下是常數。要知道它怎麼隨溫度變，把 L3 的 ΔG° = ΔH° − TΔS° 代進 ΔG° = −RT ln K，兩邊除以 −RT：
 
 $$
-\begin{aligned}
-\ln K &= -\frac{\Delta H^\circ}{R}\cdot\frac{1}{T} + \frac{\Delta S^\circ}{R} \quad (\text{形式為 } \ln K = a/T + b) \\
-\left(\frac{\partial \ln K}{\partial P}\right)_T &= -\frac{\Delta V^\circ}{RT} \quad \text{（補充）}
-\end{aligned}
+\ln K = -\frac{\Delta H^\circ}{R}\cdot\frac{1}{T} + \frac{\Delta S^\circ}{R}
 $$
 
-**ln K 對 1/T 作圖：斜率 = −ΔH°/R，截距 = ΔS°/R。**
+這就是 van't Hoff 式。如果 ΔH°、ΔS° 在這段溫度內差不多不變，**ln K 對 1/T 作圖是一條直線：斜率 = −ΔH°/R，截距 = ΔS°/R**。
 
-<img src="/img/notes/geochemistry/l4-thermodynamics-2/slide-p17.webp" alt="重晶石溶解常數 log K 對 1/T，切線斜率 = −ΔH/R" width="622" height="884" />
+讀懂斜率的意思：吸熱反應（ΔH° \> 0）斜率為負，1/T 變小（溫度升高）時 ln K 變大，所以**吸熱反應升溫時 K 變大**，往產物移動；放熱反應相反。這也是 Le Chatelier 原理：升溫等於給熱，系統往吸熱的方向走。
 
-*圖：重晶石溶解常數 log K 對 1/T。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 3.17（after Blount 1977）；Abby Ren〈地球化學〉課程投影片 L4 p.17。*
+壓力的效應用同樣的方法推。$(\partial \Delta G^\circ/\partial P)_T = \Delta V^\circ$，代入 ΔG° = −RT ln K：
 
-真實數據是弧形的（ΔH 本身隨 T 變），在某一點畫切線，斜率 = −ΔH/R。壓力越高，log K 越大。
+$$
+\left(\frac{\partial \ln K}{\partial P}\right)_T = -\frac{\Delta V^\circ}{RT}
+$$
+
+ΔV° \< 0（產物比較密）時，加壓讓 K 變大。
+
+<VantHoffTangentFig />
+
+真實的資料常常是彎的，因為 ΔH 本身也隨溫度變。這時在關心的溫度畫切線，切線的斜率就是該溫度的 −ΔH°/R。
+
+<details>
+<summary>【例題 ★ 完整解】某礦物溶解反應 25 °C 時 K = 1.0×10⁻⁵，ΔH° = +20 kJ/mol。50 °C 時 K 是多少？</summary>
+
+**第一步：寫兩個溫度的 van't Hoff 式相減。** ΔS°/R 消掉：
+
+$$
+\ln\frac{K_2}{K_1} = -\frac{\Delta H^\circ}{R}\left(\frac{1}{T_2} - \frac{1}{T_1}\right)
+$$
+
+**第二步：溫度換成 K。** T₁ = 298 K，T₂ = 323 K。1/T₂ − 1/T₁ = 0.003096 − 0.003356 = −2.60×10⁻⁴ K⁻¹。
+
+**第三步：代入。** ln(K₂/K₁) = −(20000/8.314) × (−2.60×10⁻⁴) = 2406 × 2.60×10⁻⁴ = 0.625。K₂/K₁ = e<sup>0.625</sup> = 1.87。
+
+**答案**：K₂ ≈ **1.9×10⁻⁵**。吸熱反應，升溫 K 變大，方向合理。
+
+</details>
+
+<details>
+<summary>【換你算】某反應 300 K 時 K = 1.0×10⁻⁴，350 K 時 K = 1.0×10⁻³。求 ΔH°，並判斷吸熱還是放熱。</summary>
+
+**提示**：ln(K₂/K₁) = ln 10 = 2.303；1/350 − 1/300 = −4.76×10⁻⁴。
+
+**答案**：2.303 = −(ΔH°/8.314)(−4.76×10⁻⁴) → ΔH° = 2.303 × 8.314 / 4.76×10⁻⁴ ≈ **40 kJ/mol，吸熱**（升溫 K 變大）。
+
+</details>
+
+<details>
+<summary>自我檢測 4</summary>
+
+1. 從 ΔG° = ΔH° − TΔS° 推出 van't Hoff 式。
+2. ln K 對 1/T 作圖，斜率和截距各代表什麼？
+3. 放熱反應升溫，K 變大還是變小？
+4. ΔV° \< 0 的反應，加壓時 K 怎麼變？
+
+**答案**：(1) 代入 −RT ln K = ΔH° − TΔS°，兩邊除以 −RT。(2) 斜率 −ΔH°/R，截距 ΔS°/R。(3) 變小。(4) 變大。
+
+</details>
 
 ## 5. 地質溫度計與壓力計 ★
 
-上一節說 K 隨 T、P 變。反過來，**量出岩石中礦物的組成（= K），就能推回 T、P**。
+上一節說 K 隨 T、P 改變。把這件事反過來用：**量出岩石中礦物的組成，就等於量出 K，再用 K 推回 T、P**。這就是地質溫度計（geothermometer）和地質壓力計（geobarometer）。
 
 **兩個看似矛盾的假設**
 
-1. 礦物組合在形成時處於平衡；
-2. 抬升到地表的過程中**沒有重新平衡**。
+使用溫度壓力計必須同時假設兩件事。第一，礦物組合形成時處於**平衡**，否則組成不等於 K。第二，岩石從深處抬升到地表的路上**沒有重新平衡**，否則組成會被改成低溫低壓的值。前者要反應快，後者要反應慢，看起來矛盾。能同時成立，是因為反應速率隨溫度**指數**變化（第 6 節）：在深處高溫時反應很快，所以達到平衡；抬升降溫後反應變得極慢，組成就「凍結」下來。
 
-兩者能同時成立，是因為反應速率隨溫度**指數**下降（第 6 節），降溫後就「凍結」了。
+**什麼樣的反應是好溫度計？** 看第 4 節的兩條式子。溫度計希望 K 對 T 很敏感、對 P 不敏感，所以要 **ΔH° 大**（線陡）、**ΔV° 小**（壓力影響小）。壓力計則相反，要 **ΔV° 大**，一般要 \> 2 cm³/mol。
 
-**怎麼挑好的溫度計、壓力計**（看第 4 節的兩條式子）：
+**先預測**：如果一個反應的 ΔV 很大，拿來當溫度計會發生什麼事？拉下面的 ΔV 試試看。
 
-- **溫度計**：K 對 T 很敏感、對 P 不敏感 → **ΔH 大、ΔV 小**。橄欖石–輝石 Fe–Mg 交換因為 ΔH 太小而被放棄。
-- **壓力計**：**ΔV 大**（一般要 \> 2 cm³/mol）。rhodonite → pyroxmangite 的 ΔV 只有 0.2 cm³/mol，不能當壓力計。
+<ThermometerDemo />
 
-| 類型 | 說明 | 例子 |
-|---|---|---|
-| I. Univariant reaction | 相的組成固定；ΔV 常常很大 → 好的壓力計；但只有一個反應時，只能給 P–T 的範圍 | 石墨–鑽石、SiO₂ 同質異形體、Al₂SiO₅、calcite–aragonite |
-| Ia. Displaced equilibria | 固溶體讓平衡線「移動」，從等值線（isopleth）讀出 P、T | 與 forsterite 共存的 opx 的 Al 含量；GASP（garnet–plagioclase–Al₂SiO₅–quartz） |
-| II. Exchange reactions | 兩個物種在兩相之間交換；ΔV 小 → 溫度計 | garnet–biotite Fe–Mg、olivine–liquid Fe–Mg |
-| Solvus | 兩相互溶度隨 T 改變 | calcite–dolomite |
+課堂的兩個反例正好對應這兩個條件。1960 年代很多人想用橄欖石和輝石之間的 Fe–Mg 交換當溫度計，後來發現它的 ΔH 太小，K 幾乎不隨溫度變，就放棄了（投影片的經驗法則：ΔH° 至少要 1 kJ）。薔薇輝石（rhodonite）和錳三斜輝石（pyroxmangite）在變質岩裡常常一起出現，但它們之間的反應 ΔV 只有 0.2 cm³/mol，壓力改變幾乎不影響 K，不能當壓力計。
 
-**Type I 的例子：Al₂SiO₅ 相圖**
+**溫度壓力計的類型**
 
-<img src="/img/notes/geochemistry/l4-thermodynamics-2/slide-p23.webp" alt="Al₂SiO₅（藍晶石–矽線石–紅柱石）相圖" width="640" height="656" />
+| 類型 | 原理 | 優缺點 | 例子 |
+|---|---|---|---|
+| I. Univariant reaction | 相的組成固定，只看「是哪一相」 | ΔV 常常很大，適合當壓力計；但只有一相時只能給範圍 | 石墨–鑽石、SiO₂ 同質異形體、Al₂SiO₅ |
+| Ia. Displaced equilibria | 固溶體讓相界「移動」，讀礦物組成的等值線 | 可以給出具體數值 | 與鎂橄欖石共存的 opx 的 Al 含量；GASP |
+| II. Exchange reaction | 兩個物種在兩相之間交換 | ΔV 小，適合當溫度計 | 石榴子石–黑雲母 Fe–Mg、橄欖石–熔體 Fe–Mg |
+| Solvus | 兩相的互溶程度隨溫度變 | 溫度計 | 方解石–白雲石 |
 
-*圖：Al₂SiO₅ 相圖。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 4.14（Holdaway 1971）；Abby Ren〈地球化學〉課程投影片 L4 p.23。*
+**Type I：Al₂SiO₅**。藍晶石（kyanite）、紅柱石（andalusite）、矽線石（sillimanite）成分都是 Al₂SiO₅，只是結構不同，屬於 L3 講的同質異形體。藍晶石最密，所以在高壓；紅柱石在低壓；矽線石在高溫。
 
-Kyanite（藍晶石）在高 P、低 T；andalusite（紅柱石）在低 P；sillimanite（矽線石）在高 T。**三相點約 500 °C、380 MPa**。岩石裡看到哪一種，就知道落在哪一區。
+<Al2SiO5Demo />
 
-**Type Ia 的例子：opx 的 Al 含量**
+這類反應的限制在於：只有一相時，只能說「落在這一區」。兩相共存時落在一條線上，知道 T 就能求 P（或反過來）；三相共存時 T、P 都固定，但三相同時出現的岩石極少。
 
-<img src="/img/notes/geochemistry/l4-thermodynamics-2/slide-p25.webp" alt="與鎂橄欖石共存的斜方輝石 Al 含量等值線" width="454" height="374" />
+**Type Ia：opx 的 Al 含量**。斜方輝石（opx）是固溶體，Al 可以進到它的晶格裡，含量隨 T、P 變。與鎂橄欖石共存時，依共存的含鋁礦物不同，分成三個區。
 
-*圖：與 forsterite 共存的 opx 的 Al 含量（wt%）等值線。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell Fig. 4.15（after Gasparik 1984）；Abby Ren〈地球化學〉課程投影片 L4 p.25。*
+<OpxAlFig />
 
-依共存的含 Al 相（spinel、anorthite 或 garnet）分成三個穩定區，各區的等值線方向不同，所以量 opx 的 Al 含量可以估算 P–T。
+**Type II：交換反應**。兩個成分在兩相之間互換，例如 Fe 和 Mg 在橄欖石和熔體之間：$\mathrm{MgO^{ol}} + \mathrm{FeO^{liq}} \rightleftharpoons \mathrm{MgO^{liq}} + \mathrm{FeO^{ol}}$。反應兩邊的礦物種類一樣，只是 Fe、Mg 換位置，所以 ΔV 很小，壓力影響小。
 
 <details>
-<summary>【例題 ★】Type II：olivine–liquid Fe–Mg 交換，求 1200 °C 的 K<sub>D</sub></summary>
+<summary>【例題 ★ 完整解】橄欖石–熔體 Fe–Mg 交換：已知 log(X<sub>MgO</sub><sup>ol</sup>/X<sub>MgO</sub><sup>liq</sup>) = 3740/T − 1.87，log(X<sub>FeO</sub><sup>ol</sup>/X<sub>FeO</sub><sup>liq</sup>) = 3911/T − 2.50。求 1200 °C 的 K<sub>D</sub>，並判斷它是不是好溫度計。</summary>
 
-已知：log(X<sub>MgO</sub><sup>ol</sup>/X<sub>MgO</sub><sup>liq</sup>) = 3740/T − 1.87；log(X<sub>FeO</sub><sup>ol</sup>/X<sub>FeO</sub><sup>liq</sup>) = 3911/T − 2.50
+**第一步：寫 K<sub>D</sub>。** 反應 MgO<sup>ol</sup> + FeO<sup>liq</sup> ⇌ MgO<sup>liq</sup> + FeO<sup>ol</sup>，產物除以反應物：
 
-1. 反應 MgO<sub>ol</sub> + FeO<sub>liq</sub> ⇌ MgO<sub>liq</sub> + FeO<sub>ol</sub>，K<sub>D</sub> = Fe 式 ÷ Mg 式 → log K<sub>D</sub> = (3911 − 3740)/T + (−2.50 + 1.87) = 171/T − 0.63
-2. T = 1473 K：log K<sub>D</sub> = 0.116 − 0.63 = −0.514 → **K<sub>D</sub> ≈ 0.31**（就是有名的橄欖石–熔體 K<sub>D</sub> ≈ 0.3）
-3. 171/T 這一項很小，表示 K<sub>D</sub> 對溫度不敏感 → 不是好的溫度計。
+$$
+K_D = \frac{X_{FeO}^{ol}\,X_{MgO}^{liq}}{X_{FeO}^{liq}\,X_{MgO}^{ol}} = \frac{X_{FeO}^{ol}/X_{FeO}^{liq}}{X_{MgO}^{ol}/X_{MgO}^{liq}}
+$$
+
+**第二步：取 log，相除變相減。** log K<sub>D</sub> = (3911/T − 2.50) − (3740/T − 1.87) = 171/T − 0.63。
+
+**第三步：代溫度。** T = 1200 + 273 = 1473 K。log K<sub>D</sub> = 0.116 − 0.63 = −0.514，K<sub>D</sub> = 10<sup>−0.514</sup> ≈ **0.31**。這就是有名的橄欖石–熔體 K<sub>D</sub> ≈ 0.3：橄欖石的 Fe/Mg 大約是熔體的 0.3 倍。
+
+**第四步：判斷。** 和 van't Hoff 式 log K = −ΔH°/(2.303R)·(1/T) + … 比較，1/T 的係數 171 很小，表示 ΔH° 很小，K<sub>D</sub> 幾乎不隨溫度變，**不是好的溫度計**。反過來說，它的好處是可以拿來檢查橄欖石和熔體有沒有平衡。
+
+</details>
+
+<details>
+<summary>【換你算】同一個交換反應，1300 °C 時 K<sub>D</sub> 是多少？和 1200 °C 差多少？</summary>
+
+**提示**：T = 1573 K。
+
+**答案**：log K<sub>D</sub> = 171/1573 − 0.63 = 0.109 − 0.63 = −0.521，K<sub>D</sub> ≈ **0.30**。溫度差了 100 °C，K<sub>D</sub> 只從 0.31 變成 0.30，量測誤差就比這個大，所以不能當溫度計。
+
+</details>
+
+<details>
+<summary>自我檢測 5</summary>
+
+1. 溫度壓力計的兩個假設是什麼？為什麼不矛盾？
+2. 好的溫度計和好的壓力計，對 ΔH、ΔV 的要求各是什麼？為什麼？
+3. 岩石裡只找到矽線石，能知道什麼？找到藍晶石 + 矽線石呢？
+4. 為什麼交換反應適合當溫度計？
+
+**答案**：(1) 形成時平衡、抬升時沒有重新平衡；反應速率隨溫度指數變化，高溫快、低溫慢。(2) 溫度計 ΔH 大、ΔV 小（對 T 敏感、對 P 不敏感）；壓力計 ΔV 大（對 P 敏感）。(3) 只能知道落在矽線石穩定區（一個範圍）；兩相共存表示落在 Ky–Sil 相界上，知道 T 就能求 P。(4) 兩邊礦物一樣，只是交換位置，ΔV 小。
 
 </details>
 
 ## 6. 動力學：反應多快 ★
 
-<img src="/img/notes/geochemistry/l4-thermodynamics-2/01.png" alt="熱力學 vs 動力學：同一張圖上的兩個問題" width="719" height="330" />
+熱力學說 ΔG \< 0 的反應「會」發生，卻沒說「多快」。鑽石在地表的 G 比石墨高，熱力學上應該變成石墨，但我們從來沒看過鑽石變黑。原因是反應途中要先翻過一座能量的山。
 
-熱力學只看起點和終點的高低差（ΔG），決定**方向**；動力學看中間的山有多高（活化能 Eₐ），決定**速度**。溫度越高，越多分子翻得過山。
+<EnergyBarrierFig />
 
-所以**低溫系統常常不平衡**：地表的鑽石、生物殼的 aragonite、有機物與 O₂ 共存、海水對 calcite 過飽和。高溫（岩漿）較接近平衡，但也有例外：火山玻璃、環帶結晶。
+熱力學只比較起點和終點，**決定方向**；動力學看路途上的障壁，**決定速度**。障壁的高度叫活化能 Eₐ。
+
+日常經驗告訴我們，反應在低溫慢、高溫快。所以**低溫的地球化學系統常常不平衡**，投影片問的例子：鑽石留在地表不變成石墨；生物用 aragonite 做殼，但在地表穩定的是 calcite；有機物和大氣中的 O₂ 共存而不燒起來；表層海水對 calcite 過飽和卻沒有沉澱。**高溫系統**（岩漿）比較接近平衡，熱力學通常很好用，但也有例外：火山玻璃（冷得太快，來不及結晶）、有環帶的晶體（晶體核心來不及和後來的熔體重新平衡）。
+
+**反應速率的定義**：反應物消耗或產物生成的速度，除以它的係數，讓不同物種算出來的速率一樣：
+
+$$
+a\mathrm{A} + b\mathrm{B} \rightarrow c\mathrm{C} + d\mathrm{D}: \qquad \Re = -\frac{1}{a}\frac{d[\mathrm{A}]}{dt} = \frac{1}{c}\frac{d[\mathrm{C}]}{dt}
+$$
+
+負號是因為反應物在減少。
 
 **控制速率的三個因素**
 
-1. **能量障壁 E<sub>B</sub>**：只有能量 \> E<sub>B</sub> 的碰撞才會反應，否則彈開。
-2. **組成**：碰撞頻率 ∝ 濃度。
-3. **溫度**：溫度越高，越多分子超過障壁（Arrhenius：$k = A\,e^{-E_a/RT}$，補充）。
+1. **能量障壁**：只有能量超過障壁的碰撞才會反應，其他的只是彈開。
+2. **組成（濃度）**：分子要先撞到才可能反應，濃度越高，撞到的機會越多。
+3. **溫度**：溫度越高，能量超過障壁的分子比例越多（上圖右）。這個比例是指數關係，寫成 Arrhenius 式 $k = A\,e^{-E_a/RT}$。
 
-**速率式**
+濃度為什麼重要，可以用碰撞截面來想：
+
+<CollisionFig />
+
+**速率式**：把「速率和濃度成正比」寫成一般式。
 
 $$
-\begin{aligned}
-& a\mathrm{A} + b\mathrm{B} \rightarrow c\mathrm{C} + d\mathrm{D}: \quad \Re = -\frac{1}{a}\frac{d[\mathrm{A}]}{dt} = \frac{1}{c}\frac{d[\mathrm{C}]}{dt} \\
-& \text{一般式：}\ \Re = k\,a_A^{n_A}a_B^{n_B}\cdots \quad (n\ \text{要實驗測}), \qquad \text{基本反應：}\ \Re = k\,a_A^{a}a_B^{b} \\
-& \text{一階：}\ -\frac{d[\mathrm{A}]}{dt} = k[\mathrm{A}] \;\Rightarrow\; [\mathrm{A}] = [\mathrm{A}]_0\,e^{-kt}, \qquad t_{1/2} = \frac{\ln 2}{k}
-\end{aligned}
+\Re = k\,a_A^{n_A}\,a_B^{n_B}\cdots
 $$
+
+k 是速率常數，n 是對每個物種的反應級數，一般要靠實驗測。如果反應就是分子一步撞出來的（基本反應），級數就等於係數：$\Re = k\,a_A^{a}a_B^{b}$。如果某個反應物多到濃度幾乎不變（例如水溶液裡的水），可以把它併進 k，簡化成**擬一階**反應。
+
+一階反應 $-d[\mathrm{A}]/dt = k[\mathrm{A}]$ 的意思是：剩多少就以那個量的固定比例減少。分離變數積分：
+
+$$
+\int_{[A]_0}^{[A]} \frac{d[\mathrm{A}]}{[\mathrm{A}]} = -k\int_0^t dt \;\Rightarrow\; [\mathrm{A}] = [\mathrm{A}]_0\,e^{-kt}
+$$
+
+剩一半時 $1/2 = e^{-kt_{1/2}}$，所以 $t_{1/2} = \ln 2 / k$。**半衰期和起始濃度無關**，這是一階反應的特徵，放射性衰變也是一樣。
 
 <details>
-<summary>【例題 ★】CO₂(aq) 水合：k\* = 0.014 s⁻¹，畫出 \[CO₂\] 對時間</summary>
+<summary>【例題 ★ 完整解】CO₂(aq) 水合：CO₂ + H₂O → H₂CO₃，25 °C 時 k\* = 0.014 s⁻¹。畫出 \[CO₂\] 對時間的變化（假設最終 CO₂ 濃度為 0）。</summary>
 
-CO₂ + H₂O → H₂CO₃ 本來是二階：−d\[CO₂\]/dt = k\[CO₂\]\[H₂O\]。但水大量存在、濃度幾乎不變，可以併進速率常數 → **擬一階**：−d\[CO₂\]/dt = k\*\[CO₂\]。
+**第一步：為什麼可以用一階。** 本來速率 = k\[CO₂\]\[H₂O\]，但水的量極多，反應用掉的水可以忽略，\[H₂O\] 幾乎是常數，把它併進 k：k\* = k\[H₂O\]，變成 −d\[CO₂\]/dt = k\*\[CO₂\]。
 
-\[CO₂\] = \[CO₂\]₀·e^(−0.014t)，指數衰減。半衰期 t<sub>1/2</sub> = 0.693/0.014 ≈ **50 s**；約 5 個半衰期（~4 分鐘）後剩約 3%。
+**第二步：解。** \[CO₂\] = \[CO₂\]₀ e<sup>−0.014t</sup>，指數衰減。
+
+**第三步：半衰期。** t<sub>1/2</sub> = 0.693 / 0.014 ≈ **50 s**。所以 50 s 剩 50%、100 s 剩 25%、150 s 剩 12.5%；大約 5 個半衰期（約 4 分鐘）後剩 3%。
 
 </details>
 
-<img src="/img/notes/geochemistry/l4-thermodynamics-2/02.png" alt="一階反應：CO₂(aq) 水合（k = 0.014 s⁻¹）" width="732" height="390" />
+<FirstOrderDemo />
 
-每過一個半衰期（≈ 50 s）剩一半：50 s 剩 50%、99 s 剩 25%、149 s 剩 12.5%。
+<details>
+<summary>【換你算】同一個反應，要多久 CO₂ 才會剩 1%？</summary>
 
-**動力學和熱力學怎麼接起來**：平衡時正反應速率 = 逆反應速率，
+**提示**：0.01 = e<sup>−kt</sup>，t = ln 100 / k。
+
+**答案**：t = 4.605 / 0.014 ≈ **329 s，約 5.5 分鐘**（約 6.6 個半衰期）。
+
+</details>
+
+<details>
+<summary>自我檢測 6</summary>
+
+1. 熱力學和動力學各回答什麼問題？
+2. 舉兩個低溫不平衡、一個高溫不平衡的地質例子。
+3. 為什麼可以把 CO₂ 水合當成一階反應？
+4. 一階反應的半衰期和起始濃度有沒有關係？
+
+**答案**：(1) 熱力學：會不會發生、平衡在哪；動力學：多快、怎麼到達。(2) 低溫：地表的鑽石、生物殼的 aragonite、海水對 calcite 過飽和；高溫：火山玻璃、環帶晶體。(3) 水的濃度幾乎不變，併進速率常數。(4) 沒有，t<sub>1/2</sub> = ln 2 / k。
+
+</details>
+
+## 7. 動力學和熱力學的連結；穩態不等於平衡
+
+平衡不是反應停止，而是正反應和逆反應**一樣快**。以 A ⇌ B 為例，兩個方向都是基本反應：
 
 $$
 k_+[\mathrm{A}]_{eq} = k_-[\mathrm{B}]_{eq} \;\Rightarrow\; \frac{k_+}{k_-} = \frac{[\mathrm{B}]_{eq}}{[\mathrm{A}]_{eq}} = K
 $$
 
-> <strong>易錯：Steady state ≠ equilibrium。</strong>平衡一定是穩態，但穩態不一定是平衡（例如流入 = 流出的湖，水位不變，但一直有水在流）。穩態是平衡的**必要條件，不是充分條件**。
+平衡常數就是正逆速率常數的比值。這條關係把動力學和熱力學接在一起：知道其中兩個，就能求第三個。
+
+很多地球化學系統是**穩態**（steady state）：性質不隨時間變。平衡一定是穩態，但穩態不一定是平衡。
+
+<SteadyStateFig />
+
+**穩態是平衡的必要條件，不是充分條件。** L6 的海洋碳循環和滯留時間，就是用穩態（流入 = 流出）的觀念在算，那時要記得它不是平衡。
 
 <details>
-<summary>延伸：看過就好（投影片上的推導）</summary>
+<summary>自我檢測 7</summary>
 
-**化學勢的完整式子（p.5）**：$G = \sum_i n_i\mu_i$
+1. 平衡時反應停止了嗎？
+2. 推出 K = k₊/k₋。
+3. 舉一個穩態但不是平衡的例子，說明為什麼不是平衡。
 
-**理想溶液的推導（p.9, p.10）**
+**答案**：(1) 沒有，正逆反應一樣快，淨變化為 0。(2) 平衡時正逆速率相等，k₊\[A\] = k₋\[B\]，移項得 \[B\]/\[A\] = k₊/k₋ = K。(3) 有河流流入和流出的湖：水位不變，但水一直在流，系統是開放的，截斷河流水位就會變。
+
+</details>
+
+## 容易混淆的地方
+
+| 容易搞混 | 正確理解 |
+|---|---|
+| ΔG° \< 0 就會反應到底？ | ΔG° 只決定 K；反應停在 Q = K，兩邊都還有 |
+| ΔG 和 ΔG° 一樣？ | ΔG° 是標準狀態的值（只跟 T、P 有關）；ΔG = ΔG° + RT ln Q 還要看目前的組成 |
+| K 是常數，不會變？ | 只在固定 T、P 下不變；ln K 隨 1/T 線性變（斜率 −ΔH°/R） |
+| 溫度計要 ΔV 大？ | 溫度計要 **ΔH 大、ΔV 小**；**ΔV 大**的是壓力計 |
+| K<sub>sp</sub> 的指數忘了 | 係數變指數：CaF₂ 的 \[F⁻\] 要平方 |
+| ΔG \< 0 的反應一定很快？ | 熱力學只管方向；速度看活化能（鑽石在地表不會變石墨） |
+| 穩態就是平衡？ | 平衡一定是穩態，穩態不一定是平衡（流入 = 流出的湖） |
+| 一階反應剩 1/4 要 2 倍時間？ | 對，2 個半衰期；但剩 0 要無限久 |
+
+## 章末綜合題
+
+<details>
+<summary>1.（觀念）用「μ → 活度 → K → van't Hoff」這條鏈，說明為什麼量礦物組成可以推回溫度。</summary>
+
+每個成分的 μ = μ° + RT ln a，把反應各物種的 μ 加總得到 ΔG = ΔG° + RT ln Q；平衡時 Q = K，ΔG° = −RT ln K。ΔG° = ΔH° − TΔS° 隨溫度變，所以 ln K = −ΔH°/(RT) + ΔS°/R 也隨溫度變。礦物在高溫平衡時的組成就是 K，降溫後凍結保存下來；量出組成 = 量出 K，代回 van't Hoff 式就得到 T。ΔH 越大，K 對 T 越敏感，溫度計越準。
+
+</details>
+
+<details>
+<summary>2.（計算）某反應 25 °C 時 ΔG° = +17.1 kJ/mol、ΔH° = −30 kJ/mol。(a) 25 °C 的 K？(b) 升溫到 100 °C，K 變大還是變小？算出來。</summary>
+
+(a) 17.1 / 5.7 = 3，所以 K = 10⁻³（精確：e<sup>−17100/(8.314×298)</sup> = e<sup>−6.90</sup> ≈ 1.0×10⁻³）。
+
+(b) 放熱反應，升溫 K 變小。ln(K₂/K₁) = −(−30000/8.314)(1/373 − 1/298) = 3608 × (−6.75×10⁻⁴) = −2.43，K₂/K₁ = 0.088，K₂ ≈ **8.8×10⁻⁵**。
+
+</details>
+
+<details>
+<summary>3.（判斷）下面哪個反應最適合當壓力計？(A) ΔH = 50 kJ、ΔV = 0.3 cm³；(B) ΔH = 5 kJ、ΔV = 6 cm³；(C) ΔH = 0.5 kJ、ΔV = 0.1 cm³</summary>
+
+**(B)**，ΔV 最大（\> 2 cm³/mol），K 對壓力最敏感，而且 ΔH 小，溫度不準時影響小。(A) 是好溫度計（ΔH 大、ΔV 小）。(C) 對 T、P 都不敏感，兩者都不適合。
+
+</details>
+
+<details>
+<summary>4.（應用）一塊變質岩同時有藍晶石和矽線石，另一個溫度計給出 650 °C。這塊岩石形成時的壓力大約多少？如果只有矽線石呢？</summary>
+
+藍晶石 + 矽線石共存 → 落在 Ky–Sil 相界上。用上面的相圖，650 °C 時相界約在 **700 MPa（0.7 GPa）**。如果只有矽線石，只能說壓力低於 Ky–Sil 相界、高於 And–Sil 相界（650 °C 時約 160 至 700 MPa），只是一個範圍。
+
+</details>
+
+<details>
+<summary>延伸：看過就好（投影片上的其他式子）</summary>
+
+**G 隨 T、P 的完整積分式（p.2）**：從參考狀態 (T′, P′) 出發，
 
 $$
-\left(\frac{\partial \mu}{\partial P}\right)_T = \bar v = \frac{RT}{P}\ \text{（理想氣體）} \;\Rightarrow\; \mu^{P} - \mu^{P^\circ} = RT\ln\frac{P}{P^\circ} \;\Rightarrow\; \mu_i = \mu_i^\circ + RT\ln X_i
+G(T,P) = G(T',P') + \int_{P'}^{P} V\,dP - \int_{T'}^{T} S\,dT
 $$
 
-真實情況把壓力換成逸度：$\mu_i = \mu_i^\circ + RT\ln(f_i/f_i^\circ)$，定義 $a_i = f_i/f_i^\circ$。p.10 的圖：理想情況下液相中 A:B = 1:2，氣相中也是 1:2。
+這就是 L3 的 dG = V dP − S dT 積分起來；L3 石墨–鑽石的計算就是用這條式子。
 
-**碰撞截面（p.33）**
+**化學勢的另外兩個性質（p.6–7）**：自發過程中，成分在各相之間重新分配，讓所有成分的化學勢降到最低；平衡就是所有成分化學勢最低的狀態。
 
-<img src="/img/notes/geochemistry/l4-thermodynamics-2/slide-p33.webp" alt="碰撞截面：只有在圓柱內的分子會被撞到" width="640" height="405" />
-
-*圖：碰撞截面。來源：White, W. M. (2013) *Geochemistry*, Wiley-Blackwell；Abby Ren〈地球化學〉課程投影片 L4 p.33。*
-
-分子在時間 t 內掃過半徑 r = r<sub>N</sub> + r<sub>O₂</sub>、長度 v·t 的圓柱，圓柱內的分子才會被撞到 → 碰撞頻率 ∝ 濃度。p.35：log k 隨 T 上升（300 K 到 500 K 之間從約 5 升到 7.5）。
+**碰撞頻率與溫度（p.35）**：反應速率常數的 log k 隨溫度上升，300 K 到 500 K 之間大約從 5 升到 7.5。
 
 </details>
