@@ -457,3 +457,207 @@ export function CompatibilityFig() {
     </Fig>
   );
 }
+
+/* ───────────── Ch4：力與應力的分解 ───────────── */
+
+export function StressVectorFig() {
+  return (
+    <Fig caption="左：作用在一個面上的力 F 可以直接分解成垂直面的 Fn 和平行面的 Fs。右：應力是「力 ÷ 面積」，同一個力作用在斜的面上時，面積變大（A/cos θ），所以應力不能像力一樣直接分解，要連面積一起算。這就是推導 Mohr 圓時要用三角形元素、分別考慮各面面積的原因。地質慣例：壓應力為正。" source="Fossen (2016) Fig. 4.1–4.2；課堂投影片 Ch4 p.7–8">
+      <svg viewBox="0 0 640 210" className="ix-svg" role="img" aria-label="力與應力的分解">
+        <Marks />
+        <line x1={40} y1={150} x2={260} y2={70} stroke={INK} strokeWidth={3} />
+        <line x1={100} y1={45} x2={150} y2={110} stroke={C.orange} strokeWidth={3.5} markerEnd="url(#sm-o)" />
+        <text x={92} y={42} style={{ fontSize: 13, fontWeight: 800, fill: C.orange }}>F</text>
+        <line x1={150} y1={110} x2={168.7} y2={161.5} stroke={C.teal} strokeWidth={2.5} markerEnd="url(#sm-t)" />
+        <text x={176} y={160} style={{ fontSize: 12, fontWeight: 800, fill: C.teal }}>Fn（垂直面）</text>
+        <line x1={150} y1={110} x2={178} y2={99.8} stroke={C.rose} strokeWidth={2.5} markerEnd="url(#sm-r)" />
+        <text x={182} y={96} style={{ fontSize: 12, fontWeight: 800, fill: C.rose }}>Fs（平行面）</text>
+        <text x={150} y={190} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>力：可以直接分解</text>
+        {/* 面積效應 */}
+        <rect x={380} y={110} width={80} height={20} fill={C.navy} fillOpacity={0.3} stroke={INK} />
+        <line x1={420} y1={50} x2={420} y2={106} stroke={C.orange} strokeWidth={3.5} markerEnd="url(#sm-o)" />
+        <text x={420} y={150} textAnchor="middle" style={{ fontSize: 11 }}>面積 A：σ = F/A</text>
+        <polygon points="510,130 600,95 606,110 516,145" fill={C.navy} fillOpacity={0.3} stroke={INK} />
+        <line x1={558} y1={40} x2={558} y2={108} stroke={C.orange} strokeWidth={3.5} markerEnd="url(#sm-o)" />
+        <text x={560} y={170} textAnchor="middle" style={{ fontSize: 11 }}>斜面面積 A/cos θ：應力變小</text>
+        <text x={500} y={190} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>應力：要考慮面積</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch4：應力張量的九個分量 ───────────── */
+
+export function StressCubeFig() {
+  // 等角投影的立方體
+  const o = [150, 150];
+  const ex = [70, 35], ey = [-70, 35], ez = [0, -80];
+  const p = (a: number, b: number, c: number) => `${o[0] + a * ex[0] + b * ey[0] + c * ez[0]},${o[1] + a * ex[1] + b * ey[1] + c * ez[1]}`;
+  const pt = (a: number, b: number, c: number) => [o[0] + a * ex[0] + b * ey[0] + c * ez[0], o[1] + a * ex[1] + b * ey[1] + c * ez[1]];
+  const arrow = (from: number[], d: number[], col: string, lab: string) => (
+    <g>
+      <line x1={from[0]} y1={from[1]} x2={from[0] + d[0]} y2={from[1] + d[1]} stroke={col} strokeWidth={2.5} markerEnd={`url(#${col === C.orange ? "sm-o" : "sm-t"})`} />
+      <text x={from[0] + d[0] * 1.5} y={from[1] + d[1] * 1.5 + 4} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: col }}>{lab}</text>
+    </g>
+  );
+  const cx = pt(1, 0.5, 0.5); // x 面中心
+  return (
+    <Fig caption="一個小立方體三個面上的應力：每個面有一個正應力（垂直面）和兩個剪應力（平行面），三個面共 9 個分量，組成二階張量 σij（第一個下標是面的法線方向，第二個是應力的方向，例如 σxy 作用在垂直 x 軸的面上、方向平行 y）。立方體靜止時力矩平衡，σxy = σyx，所以獨立的只有 6 個。轉到適當的座標方向，剪應力全部變成 0，剩下對角線的三個就是主應力 σ1 ≥ σ2 ≥ σ3。" source="Fossen (2016) Fig. 4.6；課堂投影片 Ch4 p.10–12">
+      <svg viewBox="0 0 640 260" className="ix-svg" role="img" aria-label="應力張量">
+        <Marks />
+        <polygon points={[p(1, 0, 0), p(1, 1, 0), p(1, 1, 1), p(1, 0, 1)].join(" ")} fill={C.blue} fillOpacity={0.25} stroke={INK} />
+        <polygon points={[p(0, 1, 0), p(1, 1, 0), p(1, 1, 1), p(0, 1, 1)].join(" ")} fill={C.teal} fillOpacity={0.15} stroke={INK} />
+        <polygon points={[p(0, 0, 1), p(1, 0, 1), p(1, 1, 1), p(0, 1, 1)].join(" ")} fill={C.gold} fillOpacity={0.15} stroke={INK} />
+        {arrow(cx, [42, 21], C.orange, "σxx")}
+        {arrow(cx, [-30, 15], C.teal, "σxy")}
+        {arrow(cx, [0, -38], C.teal, "σxz")}
+        <text x={o[0] + 2 * ex[0] + 10} y={o[1] + 2 * ex[1]} style={{ fontSize: 12 }}>x</text>
+        <line x1={o[0]} y1={o[1]} x2={o[0] + 1.8 * ex[0]} y2={o[1] + 1.8 * ex[1]} stroke={INK} strokeOpacity={0.4} strokeDasharray="3 3" />
+        <foreignObject x={340} y={50} width={280} height={170}>
+          <div style={{ fontSize: 15, lineHeight: 1.9, color: "currentColor", fontFamily: "serif" }}>
+            <div>σ<sub>ij</sub> =</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 70px)", borderLeft: "2px solid currentColor", borderRight: "2px solid currentColor", padding: "4px 8px", width: 230 }}>
+              <b style={{ color: "var(--orange)" }}>σxx</b><span>σxy</span><span>σxz</span>
+              <span>σyx</span><b style={{ color: "var(--orange)" }}>σyy</b><span>σyz</span>
+              <span>σzx</span><span>σzy</span><b style={{ color: "var(--orange)" }}>σzz</b>
+            </div>
+            <div style={{ fontSize: 12, fontFamily: "inherit", marginTop: 6 }}>對角線（橘）：正應力；其他：剪應力</div>
+          </div>
+        </foreignObject>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch4：常見應力狀態的 3D Mohr 圖 ───────────── */
+
+export function Mohr3DFig() {
+  const panel = (ox: number, title: string, s: [number, number, number]) => {
+    const k = 3.2, y0 = 110;
+    const X = (v: number) => ox + 10 + v * k;
+    const circ = (a: number, b: number, col: string, fill: boolean) => (
+      <circle cx={X((a + b) / 2)} cy={y0} r={Math.max(1.5, ((a - b) / 2) * k)} fill={fill ? col : "none"} fillOpacity={fill ? 0.18 : 0} stroke={col} strokeWidth={2} />
+    );
+    return (
+      <g>
+        <line x1={ox} x2={ox + 140} y1={y0} y2={y0} stroke={INK} strokeWidth={1.2} />
+        <line x1={X(0)} x2={X(0)} y1={y0 - 55} y2={y0 + 10} stroke={INK} strokeWidth={1.2} />
+        {circ(s[0], s[2], C.teal, true)}
+        {s[1] !== s[2] && s[1] !== s[0] && circ(s[0], s[1], C.orange, false)}
+        {s[1] !== s[2] && s[1] !== s[0] && circ(s[1], s[2], C.orange, false)}
+        <text x={ox + 70} y={y0 + 60} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>{title}</text>
+        <text x={ox + 70} y={y0 + 78} textAnchor="middle" style={{ fontSize: 10.5 }}>σ1 = {s[0]}、σ2 = {s[1]}、σ3 = {s[2]}</text>
+      </g>
+    );
+  };
+  return (
+    <Fig caption="三維時三個主應力畫成三個圓（σ1–σ3 大圓、σ1–σ2 和 σ2–σ3 兩個小圓），所有可能的面落在大圓內、兩小圓外的區域。靜水（靜岩）狀態三個主應力相等，圓縮成一點，任何面上都沒有剪應力。單軸壓縮只有 σ1；軸向壓縮（三軸實驗）σ2 = σ3，兩個小圓有一個縮成點；一般的三軸應力三個圓都在。" source="Fossen (2016) Fig. 4.10；課堂投影片 Ch4 p.20">
+      <svg viewBox="0 0 640 200" className="ix-svg" role="img" aria-label="3D Mohr 圖">
+        {panel(10, "靜水／靜岩", [25, 25, 25])}
+        {panel(170, "單軸壓縮", [35, 0, 0])}
+        {panel(330, "軸向壓縮（σ2 = σ3）", [38, 12, 12])}
+        {panel(490, "三軸（一般）", [38, 22, 8])}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch5：裸孔崩落與水力劈裂 ───────────── */
+
+export function BoreholeFig() {
+  return (
+    <Fig caption="從井孔量現地應力（俯視井的橫切面）。左：裸孔崩落。井壁上和 σH 垂直的兩側應力集中最大，岩石剝落，所以井孔沿 σh 方向被拉長：剝落方向平行最小水平應力 σh。右：水力劈裂。把一段井封起來加壓，張裂會沿著最容易打開的方向形成，也就是垂直 σh、平行 σH 的方向；維持裂縫張開所需的壓力約等於 σh。" source="Fossen (2016) Fig. 5.2–5.4；課堂投影片 Ch5 p.23–28">
+      <svg viewBox="0 0 640 220" className="ix-svg" role="img" aria-label="裸孔崩落與水力劈裂">
+        <Marks />
+        {[0, 1].map((k) => {
+          const ox = 160 + k * 320, oy = 110;
+          return (
+            <g key={k}>
+              <rect x={ox - 110} y={oy - 90} width={220} height={180} fill={C.navy} fillOpacity={0.12} />
+              {[1, -1].map((sg) => (
+                <line key={sg} x1={ox + sg * 105} y1={oy} x2={ox + sg * 70} y2={oy} stroke={C.orange} strokeWidth={5} markerEnd="url(#sm-o)" />
+              ))}
+              {[1, -1].map((sg) => (
+                <line key={`v${sg}`} x1={ox} y1={oy + sg * 88} x2={ox} y2={oy + sg * 66} stroke={C.teal} strokeWidth={2.5} markerEnd="url(#sm-t)" />
+              ))}
+              <text x={ox + 98} y={oy - 10} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: C.orange }}>σH</text>
+              <text x={ox + 18} y={oy - 76} style={{ fontSize: 12, fontWeight: 800, fill: C.teal }}>σh</text>
+              {k === 0 ? (
+                <path d={`M${ox - 28},${oy} A28,28 0 0,1 ${ox - 12},${oy - 25} L${ox},${oy - 46} L${ox + 12},${oy - 25} A28,28 0 0,1 ${ox + 12},${oy + 25} L${ox},${oy + 46} L${ox - 12},${oy + 25} A28,28 0 0,1 ${ox - 28},${oy}`} fill={INK} fillOpacity={0.6} stroke={INK} />
+              ) : (
+                <g>
+                  <circle cx={ox} cy={oy} r={26} fill={INK} fillOpacity={0.6} />
+                  <line x1={ox - 70} y1={oy} x2={ox + 70} y2={oy} stroke={C.rose} strokeWidth={3} />
+                </g>
+              )}
+              <text x={ox} y={oy + 108} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>{k === 0 ? "崩落：井孔沿 σh 拉長" : "水力劈裂：裂縫平行 σH"}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch5：板塊力 ───────────── */
+
+export function PlateForcesFig() {
+  return (
+    <Fig caption="和板塊運動有關的力。中洋脊推力（ridge push）：中洋脊地形高，往兩側推，脊頂附近是正斷層、遠處是逆斷層。隱沒板塊拉力（slab pull）：下沉的板塊拉著後面的板塊，老而冷、密度大的海洋岩石圈最大；如果隱沒的是輕的大陸地殼則為負。底部拖曳（basal drag）：岩石圈底部和地函之間的剪力，依兩者的相對運動，可能驅動也可能阻擋。碰撞阻力（collisional resistance）：作用在隱沒板塊上方，陸–陸碰撞時最大。水平應力主要來自這些板塊力，垂直應力來自上覆岩層的重量。" source="Fossen (2016) Fig. 5.13；課堂投影片 Ch5 p.46–47">
+      <svg viewBox="0 0 640 220" className="ix-svg" role="img" aria-label="板塊力">
+        <Marks />
+        <path d="M20,90 L120,90 Q170,60 220,90 L460,96 Q500,98 530,110 L600,200 L570,205 L505,120 Q480,108 455,108 L220,104 Q170,78 120,104 L20,104 Z" fill={C.blue} fillOpacity={0.3} stroke={INK} />
+        <path d="M480,80 L640,80 L640,96 L530,96 Z" fill={C.gold} fillOpacity={0.35} stroke={INK} />
+        <rect x={0} y={104} width={640} height={110} fill={C.orange} fillOpacity={0.08} />
+        <line x1={190} y1={70} x2={250} y2={74} stroke={C.orange} strokeWidth={3} markerEnd="url(#sm-o)" />
+        <line x1={150} y1={70} x2={90} y2={74} stroke={C.orange} strokeWidth={3} markerEnd="url(#sm-o)" />
+        <text x={170} y={50} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: C.orange }}>中洋脊推力</text>
+        <line x1={560} y1={150} x2={585} y2={190} stroke={C.rose} strokeWidth={3} markerEnd="url(#sm-r)" />
+        <text x={600} y={150} textAnchor="end" style={{ fontSize: 12, fontWeight: 800, fill: C.rose }}>隱沒板塊拉力</text>
+        <line x1={380} y1={125} x2={320} y2={125} stroke={C.teal} strokeWidth={3} markerEnd="url(#sm-t)" />
+        <text x={350} y={145} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800, fill: C.teal }}>底部拖曳（±）</text>
+        <line x1={540} y1={70} x2={505} y2={88} stroke={INK} strokeWidth={3} markerEnd="url(#sm-k)" />
+        <text x={560} y={66} style={{ fontSize: 12, fontWeight: 800 }}>碰撞阻力</text>
+        <text x={330} y={86} textAnchor="middle" style={{ fontSize: 11 }}>海洋岩石圈 → 板塊運動方向</text>
+        <text x={320} y={200} textAnchor="middle" style={{ fontSize: 11, opacity: 0.8 }}>軟流圈</text>
+      </svg>
+    </Fig>
+  );
+}
+
+/* ───────────── Ch5：水平擠壓增加時的應力體制 ───────────── */
+
+export function StressRegimeFig() {
+  const W = 560, H = 230, L = 50, R = 16, T = 16, B = 40;
+  const x = (c: number) => L + c * (W - L - R);
+  const y = (s: number) => T + ((100 - s) / 100) * (H - T - B);
+  const sv = 50;
+  const sH = (c: number) => 15 + 85 * c;
+  const sh = (c: number) => 10 + 55 * c;
+  const c1 = (sv - 15) / 85, c2 = (sv - 10) / 55;
+  return (
+    <Fig caption="垂直應力 σV（上覆岩層重量）固定，水平擠壓逐漸增加。一開始兩個水平應力都比 σV 小，σV = σ1，是正斷層體制；σH 先超過 σV，這時 σV 變成 σ2，進入平移斷層體制；擠壓再大，σh 也超過 σV，σV 變成 σ3，進入逆斷層體制。所以從伸張到擠壓，中間會先經過平移體制（應力軸交換）。這也解釋了為什麼造山帶裡逆斷層、平移斷層、正斷層可以同時出現。" source="Fossen (2016) Fig. 5.12；課堂投影片 Ch5 p.40–43">
+      <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="應力體制隨水平擠壓變化">
+        <rect x={x(0)} y={T} width={x(c1) - x(0)} height={H - T - B} fill={C.teal} fillOpacity={0.1} />
+        <rect x={x(c1)} y={T} width={x(c2) - x(c1)} height={H - T - B} fill={C.gold} fillOpacity={0.12} />
+        <rect x={x(c2)} y={T} width={x(1) - x(c2)} height={H - T - B} fill={C.orange} fillOpacity={0.1} />
+        <line x1={x(0)} x2={x(1)} y1={y(sv)} y2={y(sv)} stroke={INK} strokeWidth={2.5} />
+        <line x1={x(0)} x2={x(1)} y1={y(sH(0))} y2={y(sH(1))} stroke={C.orange} strokeWidth={2.5} />
+        <line x1={x(0)} x2={x(1)} y1={y(sh(0))} y2={y(sh(1))} stroke={C.blue} strokeWidth={2.5} />
+        <text x={x(0.02)} y={y(sv) - 6} style={{ fontSize: 12, fontWeight: 800 }}>σV</text>
+        <text x={x(0.97)} y={y(sH(0.97)) - 6} textAnchor="end" style={{ fontSize: 12, fontWeight: 800, fill: C.orange }}>σH</text>
+        <text x={x(0.97)} y={y(sh(0.97)) + 16} textAnchor="end" style={{ fontSize: 12, fontWeight: 800, fill: C.blue }}>σh</text>
+        <text x={x(c1 / 2)} y={T + 16} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>正斷層</text>
+        <text x={x(c1 / 2)} y={T + 32} textAnchor="middle" style={{ fontSize: 11 }}>σV = σ1</text>
+        <text x={x((c1 + c2) / 2)} y={T + 16} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>平移斷層</text>
+        <text x={x((c1 + c2) / 2)} y={T + 32} textAnchor="middle" style={{ fontSize: 11 }}>σV = σ2</text>
+        <text x={x((c2 + 1) / 2)} y={T + 16} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>逆斷層</text>
+        <text x={x((c2 + 1) / 2)} y={T + 32} textAnchor="middle" style={{ fontSize: 11 }}>σV = σ3</text>
+        <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+        <text x={(L + W) / 2} y={H - 12} textAnchor="middle" style={{ fontSize: 12 }}>水平擠壓 →</text>
+        <text x={18} y={(T + H - B) / 2} transform={`rotate(-90 18 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 12 }}>應力（示意）</text>
+      </svg>
+    </Fig>
+  );
+}

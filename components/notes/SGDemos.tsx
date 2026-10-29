@@ -514,3 +514,201 @@ export function FryDemo() {
     </figure>
   );
 }
+
+/* ───────────── Ch4：Mohr 圓 ───────────── */
+
+export function MohrDemo() {
+  const [s1, setS1] = useState(50);
+  const [s3, setS3] = useState(22);
+  const [th, setTh] = useState(60); // σ1 和面的法線的夾角
+  const [pf, setPf] = useState(0);
+  const e1 = s1 - pf, e3 = Math.min(s3, s1) - pf;
+  const c = (e1 + e3) / 2, r = (e1 - e3) / 2;
+  const sn = c + r * Math.cos(rad(2 * th)), ss = r * Math.sin(rad(2 * th));
+  // Mohr 圖座標
+  const W = 360, H = 200, L = 30, R = 10, T = 10, B = 30;
+  const lo = -20, hi = 80;
+  const X = (v: number) => L + ((v - lo) / (hi - lo)) * (W - L - R);
+  const sc = (W - L - R) / (hi - lo);
+  const Y0 = T + (H - T - B) * 0.62;
+  const Y = (v: number) => Y0 - v * sc;
+  // 物理圖：σ1 垂直，面依 θ 傾斜
+  const bx = 70, by = 300, bs = 52;
+  const dip = th; // 法線和垂直夾 θ → 面的傾角 = θ
+  const pa = rad(dip);
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：Mohr 圓</b>
+        <span>拉 σ1、σ3 和面的方向，看這個面上的正應力和剪應力；加孔隙壓看有效應力</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} 380`} className="ix-svg" role="img" aria-label="Mohr 圓">
+          <defs>
+            <Arrow id="mo-o" color="var(--orange)" />
+            <Arrow id="mo-t" color="var(--teal)" />
+          </defs>
+          <line x1={L} x2={W - R} y1={Y0} y2={Y0} stroke={INK} strokeWidth={1.5} />
+          <line x1={X(0)} x2={X(0)} y1={T} y2={H - B + 6} stroke={INK} strokeWidth={1.5} />
+          {[-20, 0, 20, 40, 60, 80].map((v) => (
+            <text key={v} x={X(v)} y={Y0 + 14} textAnchor="middle" style={{ fontSize: 10 }}>{v}</text>
+          ))}
+          <text x={W - R} y={Y0 - 6} textAnchor="end" style={{ fontSize: 11 }}>σn（MPa）</text>
+          <text x={X(0) + 5} y={T + 8} style={{ fontSize: 11 }}>σs</text>
+          {pf > 0 && <circle cx={X(c + pf)} cy={Y0} r={r * sc} fill="none" stroke={INK} strokeOpacity={0.3} strokeDasharray="4 3" />}
+          <circle cx={X(c)} cy={Y0} r={Math.max(0.5, r * sc)} fill="var(--teal)" fillOpacity={0.12} stroke="var(--teal)" strokeWidth={2.4} />
+          <line x1={X(c)} y1={Y0} x2={X(sn)} y2={Y(ss)} stroke={INK} strokeWidth={1.4} />
+          <path d={`M${X(c) + 22},${Y0} A22,22 0 0,0 ${X(c) + 22 * Math.cos(rad(2 * th))},${Y0 - 22 * Math.sin(rad(2 * th))}`} fill="none" stroke={INK} />
+          <text x={X(c) + 28 * Math.cos(rad(th))} y={Y0 - 28 * Math.sin(rad(th)) + 2} style={{ fontSize: 10.5, fontWeight: 800 }}>2θ</text>
+          <line x1={X(sn)} y1={Y(ss)} x2={X(sn)} y2={Y0} stroke="var(--orange)" strokeDasharray="3 3" />
+          <line x1={X(0)} y1={Y(ss)} x2={X(sn)} y2={Y(ss)} stroke="var(--orange)" strokeDasharray="3 3" />
+          <circle cx={X(sn)} cy={Y(ss)} r={5.5} fill="var(--orange)" stroke={INK} strokeWidth={1.2} />
+          <text x={X(e3)} y={Y0 + 26} textAnchor="middle" style={{ fontSize: 10.5, fontWeight: 800 }}>σ3{pf > 0 ? "′" : ""}</text>
+          <text x={X(e1)} y={Y0 + 26} textAnchor="middle" style={{ fontSize: 10.5, fontWeight: 800 }}>σ1{pf > 0 ? "′" : ""}</text>
+          {pf > 0 && <text x={X(c + pf)} y={T + 16} textAnchor="middle" style={{ fontSize: 10, opacity: 0.7 }}>虛線：沒有孔隙壓時</text>}
+          {/* 物理圖 */}
+          <rect x={bx - bs} y={by - bs} width={2 * bs} height={2 * bs} fill="var(--navy)" fillOpacity={0.15} stroke={INK} strokeOpacity={0.4} />
+          <line x1={bx - 60 * Math.cos(pa)} y1={by - 60 * Math.sin(pa)} x2={bx + 60 * Math.cos(pa)} y2={by + 60 * Math.sin(pa)} stroke="var(--orange)" strokeWidth={3} />
+          <line x1={bx} y1={by} x2={bx + 34 * Math.sin(pa)} y2={by - 34 * Math.cos(pa)} stroke={INK} strokeWidth={1.5} markerEnd="url(#mo-o)" />
+          <text x={bx + 40 * Math.sin(pa) + 4} y={by - 40 * Math.cos(pa)} style={{ fontSize: 10 }}>法線</text>
+          {[1, -1].map((sg) => (
+            <line key={sg} x1={bx} y1={by - sg * 78} x2={bx} y2={by - sg * 58} stroke="var(--orange)" strokeWidth={4} markerEnd="url(#mo-o)" />
+          ))}
+          {[1, -1].map((sg) => (
+            <line key={`h${sg}`} x1={bx - sg * 78} y1={by} x2={bx - sg * 60} y2={by} stroke="var(--teal)" strokeWidth={2.5} markerEnd="url(#mo-t)" />
+          ))}
+          <text x={bx + 12} y={by - 66} style={{ fontSize: 11, fontWeight: 800, fill: "var(--orange)" }}>σ1</text>
+          <text x={bx + 62} y={by - 6} style={{ fontSize: 11, fontWeight: 800, fill: "var(--teal)" }}>σ3</text>
+          <text x={bx + 2} y={by - 12} style={{ fontSize: 10.5 }}>θ</text>
+          <text x={200} y={258} style={{ fontSize: 11 }}>面的傾角 = θ = {th}°</text>
+          <text x={200} y={278} style={{ fontSize: 11 }}>（σ1 垂直、σ3 水平時）</text>
+          <text x={200} y={310} style={{ fontSize: 11, fill: "var(--orange)", fontWeight: 800 }}>σn = {fmt(sn, 1)} MPa</text>
+          <text x={200} y={330} style={{ fontSize: 11, fill: "var(--orange)", fontWeight: 800 }}>σs = {fmt(ss, 1)} MPa</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>σ1</span>
+              <span>{s1} MPa</span>
+            </label>
+            <input type="range" min={0} max={80} step={1} value={s1} onChange={(e) => setS1(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>σ3</span>
+              <span>{Math.min(s3, s1)} MPa</span>
+            </label>
+            <input type="range" min={-10} max={80} step={1} value={s3} onChange={(e) => setS3(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>θ（σ1 與面的法線夾角）</span>
+              <span>{th}°</span>
+            </label>
+            <input type="range" min={0} max={90} step={1} value={th} onChange={(e) => setTh(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>孔隙壓 p<sub>f</sub></span>
+              <span>{pf} MPa</span>
+            </label>
+            <input type="range" min={0} max={40} step={1} value={pf} onChange={(e) => setPf(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            圓心（平均應力）= <b>{fmt(c, 1)}</b>，半徑 = <b>{fmt(r, 1)}</b>
+            <br />差應力 σ1 − σ3 = 直徑 = <b>{fmt(2 * r, 1)} MPa</b>
+            <br />σn = {fmt(c, 1)} + {fmt(r, 1)} cos {2 * th}° = <b>{fmt(sn, 1)}</b>
+            <br />σs = {fmt(r, 1)} sin {2 * th}° = <b>{fmt(ss, 1)}</b>
+          </div>
+          <div className="ix-note">
+            預設值就是作業 Hw05：σ1 = 50、σ3 = 22，向東傾 60° 的斷層（θ = 60°）。θ = 45° 時剪應力最大，等於半徑。孔隙壓讓所有正應力減少 p<sub>f</sub>（有效應力），圓整個往左平移、大小不變。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+/* ───────────── Ch5：埋藏與抬升的應力路徑（示意模型） ───────────── */
+
+export function BurialUpliftDemo() {
+  const [zmax, setZmax] = useState(4);
+  const [z, setZ] = useState(1);
+  const rg = 25; // MPa/km
+  const G = 30; // °C/km
+  const alpha = 1e-5;
+  const rocks = [
+    { n: "砂岩（硬：E = 40 GPa、ν = 0.15）", K0: 0.43, E: 40, nu: 0.15, col: "var(--orange)" },
+    { n: "頁岩（軟：E = 10 GPa、ν = 0.35）", K0: 0.82, E: 10, nu: 0.35, col: "var(--teal)" },
+  ];
+  const rate = (r: (typeof rocks)[0]) => (r.nu / (1 - r.nu)) * rg + (r.E * 1e3 * alpha * G) / (1 - r.nu);
+  const sH = (r: (typeof rocks)[0], zz: number) => r.K0 * rg * zmax - rate(r) * (zmax - zz);
+  const W = 340, H = 260, L = 44, R = 14, T = 14, B = 34;
+  const lo = -60, hi = 150;
+  const x = (s: number) => L + ((s - lo) / (hi - lo)) * (W - L - R);
+  const y = (d: number) => T + (d / 6) * (H - T - B);
+  const zc = Math.min(z, zmax);
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：埋藏再抬升，水平應力怎麼變？</b>
+        <span>先埋到最大深度，再拉「現在深度」往上抬，看砂岩和頁岩誰先進入張應力</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="埋藏抬升應力路徑">
+          <rect x={x(lo)} y={T} width={x(0) - x(lo)} height={H - T - B} fill="var(--rose, #d0567a)" fillOpacity={0.1} />
+          <text x={x(-30)} y={y(5.7)} textAnchor="middle" style={{ fontSize: 10.5, fontWeight: 800 }}>張應力區</text>
+          <line x1={x(0)} y1={T} x2={x(0)} y2={H - B} stroke={INK} strokeWidth={1.2} />
+          <line x1={x(0)} y1={y(0)} x2={x(rg * 6)} y2={y(6)} stroke={INK} strokeDasharray="5 4" strokeOpacity={0.6} />
+          <text x={x(rg * 5.3) - 4} y={y(5.3)} textAnchor="end" style={{ fontSize: 10.5 }}>σV</text>
+          {rocks.map((r) => (
+            <g key={r.n}>
+              <line x1={x(0)} y1={y(0)} x2={x(r.K0 * rg * zmax)} y2={y(zmax)} stroke={r.col} strokeWidth={1.6} strokeDasharray="4 3" />
+              <line x1={x(r.K0 * rg * zmax)} y1={y(zmax)} x2={x(sH(r, zc))} y2={y(zc)} stroke={r.col} strokeWidth={3} />
+              <circle cx={x(sH(r, zc))} cy={y(zc)} r={5} fill={r.col} stroke={INK} />
+            </g>
+          ))}
+          <line x1={L} x2={W - R} y1={y(zc)} y2={y(zc)} stroke="var(--gold)" strokeOpacity={0.6} />
+          <line x1={L} x2={W - R} y1={T} y2={T} stroke={INK} strokeWidth={1.5} />
+          <line x1={L} x2={L} y1={T} y2={H - B} stroke={INK} strokeWidth={1.5} />
+          {[-50, 0, 50, 100, 150].map((s) => (
+            <text key={s} x={x(s)} y={H - B + 14} textAnchor="middle" style={{ fontSize: 10.5 }}>{s}</text>
+          ))}
+          {[0, 2, 4, 6].map((d) => (
+            <text key={d} x={L - 5} y={y(d) + 4} textAnchor="end" style={{ fontSize: 10.5 }}>{d}</text>
+          ))}
+          <text x={(L + W) / 2} y={H - 4} textAnchor="middle" style={{ fontSize: 11.5 }}>應力（MPa，壓為正）</text>
+          <text x={12} y={(T + H - B) / 2} transform={`rotate(-90 12 ${(T + H - B) / 2})`} textAnchor="middle" style={{ fontSize: 11.5 }}>深度（km）</text>
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>最大埋藏深度</span>
+              <span>{zmax} km</span>
+            </label>
+            <input type="range" min={1} max={6} step={0.1} value={zmax} onChange={(e) => setZmax(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>現在深度（抬升後）</span>
+              <span>{fmt(zc, 1)} km</span>
+            </label>
+            <input type="range" min={0} max={6} step={0.1} value={z} onChange={(e) => setZ(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            σV = <b>{fmt(rg * zc, 0)}</b> MPa
+            {rocks.map((r) => (
+              <span key={r.n}>
+                <br />
+                <span style={{ color: r.col }}>■</span> {r.n.split("（")[0]} σH = <b>{fmt(sH(r, zc), 0)}</b> MPa{sH(r, zc) < 0 ? "（張應力 → 節理）" : ""}
+              </span>
+            ))}
+          </div>
+          <div className="ix-note">
+            虛線：埋藏時（未固結的沉積物，σH 隨 σV 成比例增加）。實線：固結後抬升，σH 下降的速率 = ν/(1 − ν)·ρg + Eα·(地溫梯度)/(1 − ν)，第一項是覆蓋層變輕，第二項是冷卻收縮。E 大、ν 小的砂岩下降得快，先跨進張應力區；頁岩一直是壓應力。示意模型：ρg = 25 MPa/km、地溫梯度 30 °C/km、α = 10⁻⁵ /°C，岩石參數為代表值，未考慮孔隙壓。
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
