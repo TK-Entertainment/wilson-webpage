@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 
-const SUBJECTS = { geochemistry: "地球化學", "structural-geology": "地球構造", mineralogy: "礦物學" };
+const SUBJECTS = { geochemistry: "地球化學", "structural-geology": "地球構造", mineralogy: "礦物學", "earth-materials": "地球物質" };
 const slug = (s) => s.trim().toLowerCase().replace(/[^\p{L}\p{M}\p{Nd}\p{Pc} -]/gu, "").replace(/ /g, "-");
 const out = [];
 for (const [subj, name] of Object.entries(SUBJECTS)) {

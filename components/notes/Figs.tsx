@@ -1,12 +1,21 @@
 "use client";
 
+import { createContext, useContext } from "react";
 import type { ReactNode } from "react";
 import "./notes.css";
 
 // 自繪示意圖（取代課堂投影片的圖）。全部是內嵌 SVG，跟著網站深淺色變色。
 // 用法：<SystemTypesFig />，圖說寫在元件裡。
 
+// 其他科重用同一張圖時，用 <FigSource s="…"> 包起來，換成該科的出處
+const SourceCtx = createContext<string | null>(null);
+export function FigSource({ s, children }: { s: string; children: ReactNode }) {
+  return <SourceCtx.Provider value={s}>{children}</SourceCtx.Provider>;
+}
+
 export function Fig({ children, caption, source }: { children: ReactNode; caption: string; source?: string }) {
+  const override = useContext(SourceCtx);
+  if (override) source = override;
   return (
     <figure className="nd-not-prose fg-wrap">
       {children}

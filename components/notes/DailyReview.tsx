@@ -94,7 +94,7 @@ export function DailyReview({ subject }: { subject?: string }) {
   }, [subj, shift, onlyNo, day, ready]);
   const done = pool.filter((x) => rec[x.id]).length;
   const nNo = pool.filter((x) => rec[x.id]?.s === "no").length;
-  const subjects = subject ? [] : [["all", "全部"], ["geochemistry", "地球化學"], ["structural-geology", "地球構造"], ["mineralogy", "礦物學"]];
+  const subjects = subject ? [] : [["all", "全部"], ["geochemistry", "地球化學"], ["structural-geology", "地球構造"], ["mineralogy", "礦物學"], ["earth-materials", "地球物質"]];
   return (
     <figure className="nd-not-prose ix-wrap">
       <figcaption className="ix-head">
