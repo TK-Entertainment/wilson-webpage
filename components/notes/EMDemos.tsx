@@ -696,3 +696,193 @@ export function StokesDemo() {
   );
 }
 
+
+/* ───────────── Ch5：對稱操作（2D 圖樣）與為什麼沒有 5 次軸 ───────────── */
+
+// 不對稱的小圖樣（像一隻腳印加一個逗點），複製時才看得出對稱
+const MOTIF = "M0,-6 C6,-6 9,-1 7,5 C5,10 -1,11 -3,6 C-4,3 -1,2 0,-1 Z M-2,-10 a2.2,2.2 0 1,0 0.1,0 Z";
+
+export function SymmetryOpsDemo() {
+  const [n, setN] = useState(4);
+  const [mir, setMir] = useState(false);
+  const cx = 160, cy = 135, R = 72;
+  const copies: ReactNode[] = [];
+  for (let k = 0; k < n; k++) {
+    const a = (360 * k) / n;
+    copies.push(
+      <g key={`r${k}`} transform={`rotate(${a} ${cx} ${cy}) translate(${cx + 20} ${cy - R}) rotate(15) scale(2.2)`}>
+        <path d={MOTIF} fill={C.orange} stroke={INK} strokeWidth={0.6} />
+      </g>,
+    );
+    if (mir)
+      copies.push(
+        <g key={`m${k}`} transform={`rotate(${a} ${cx} ${cy}) translate(${cx - 20} ${cy - R}) scale(-2.2 2.2) rotate(15)`}>
+          <path d={MOTIF} fill={C.teal} stroke={INK} strokeWidth={0.6} />
+        </g>,
+      );
+  }
+  const lines = mir
+    ? Array.from({ length: n }, (_, k) => {
+        const a = rad((180 * k) / n - 90);
+        return <line key={k} x1={cx - 115 * Math.cos(a)} y1={cy - 115 * Math.sin(a)} x2={cx + 115 * Math.cos(a)} y2={cy + 115 * Math.sin(a)} stroke={INK} strokeWidth={2.2} />;
+      })
+    : null;
+  // 鋪地磚：正 n 邊形的內角能不能剛好繞一點 360°
+  const tile = n >= 3;
+  const inner = tile ? (180 * (n - 2)) / n : 0;
+  const fit = tile ? 360 / inner : 0;
+  const whole = Math.floor(fit + 1e-9);
+  const ok = tile && Math.abs(fit - Math.round(fit)) < 1e-9;
+  const tx = 160, ty = 395, s = 44;
+  const polys: ReactNode[] = [];
+  if (tile) {
+    for (let j = 0; j < whole; j++) {
+      const start = j * inner;
+      // 頂點在 (tx,ty)，兩邊方向 start、start+inner
+      const pts: number[][] = [[tx, ty]];
+      let x = tx, y = ty, dir = start;
+      for (let e = 0; e < n - 1; e++) {
+        x += s * Math.cos(rad(dir));
+        y -= s * Math.sin(rad(dir));
+        pts.push([x, y]);
+        dir += 180 - inner;
+      }
+      polys.push(<polygon key={j} points={pts.map((p) => p.join(",")).join(" ")} fill={ok ? C.teal : C.gold} fillOpacity={0.35} stroke={INK} strokeWidth={1.2} />);
+    }
+    if (!ok) {
+      const a0 = whole * inner;
+      const gp = `M${tx},${ty} L${tx + s * Math.cos(rad(a0))},${ty - s * Math.sin(rad(a0))} A${s},${s} 0 0 0 ${tx + s * Math.cos(rad(360))},${ty - s * Math.sin(rad(360))} Z`;
+      polys.push(<path key="gap" d={gp} fill={C.rose} fillOpacity={0.7} stroke={C.rose} />);
+    }
+  }
+  const svg = (
+    <svg viewBox="0 0 320 500" className="ix-svg" role="img" aria-label="旋轉對稱與鏡面">
+      {lines}
+      {copies}
+      <circle cx={cx} cy={cy} r={4} fill={INK} />
+      <text x={cx} y={262} textAnchor="middle" style={{ fontSize: 14, fontWeight: 800 }}>{mir ? `${n === 1 ? "m" : n % 2 ? `${n}m` : `${n}mm`}：${n} 次軸 + ${n} 個鏡面` : `${n}：只有 ${n} 次軸`}</text>
+      <text x={tx} y={300} textAnchor="middle" style={{ fontSize: 14, fontWeight: 800 }}>同樣的形狀能不能鋪滿地板？</text>
+      {tile ? polys : <text x={tx} y={ty} textAnchor="middle" style={{ fontSize: 13 }}>1、2 次軸一定可以鋪滿</text>}
+      {tile ? <text x={tx} y={490} textAnchor="middle" style={{ fontSize: 13, fontWeight: 800, fill: ok ? undefined : C.rose }}>{ok ? `內角 ${inner}°，${Math.round(fit)} 個剛好 360° ✓` : `內角 108°，3 個只有 324°，缺 36° ✗`}</text> : null}
+    </svg>
+  );
+  return (
+    <Shell title="互動：旋轉軸與鏡面" sub="選 n，把一個不對稱的圖樣轉一圈複製；打開鏡面看看多出什麼" svg={svg}>
+      <div className="ix-btns">
+        {[1, 2, 3, 4, 5, 6].map((k) => (
+          <button key={k} type="button" className="ix-btn" aria-pressed={n === k} onClick={() => setN(k)}>{k} 次</button>
+        ))}
+      </div>
+      <div className="ix-btns">
+        <button type="button" className="ix-btn" aria-pressed={mir} onClick={() => setMir(!mir)}>{mir ? "鏡面：開" : "鏡面：關"}</button>
+      </div>
+      <div className="ix-readout">
+        n 次旋轉軸：每轉 <b>{fmt(360 / n, 0)}°</b> 看起來一樣，轉一圈出現 <b>{n}</b> 次。
+        <br />{n === 5 ? <b>5 次軸：圖樣本身可以五重對稱，但晶體做不到——它無法一格一格無縫堆滿空間。</b> : <>晶體允許的只有 <b>1、2、3、4、6</b>。</>}
+      </div>
+      <div className="ix-note">
+        橘色是原本的圖樣，藍色是鏡射出來的「左右相反版」。旋轉只會產生同手性的複製（像右手轉來轉去還是右手）；鏡面會產生鏡像（右手變左手）。晶體是同一個單元在空間中一格一格平移堆起來的，所以它的對稱也必須能鋪滿空間——這就是只有 1、2、3、4、6 次軸的原因（下面：三角形、正方形、六邊形能鋪滿，五邊形不行）。
+      </div>
+    </Shell>
+  );
+}
+
+/* ───────────── Ch5：七個最高對稱晶族的赤平投影與對稱要素 ───────────── */
+
+type V3 = [number, number, number];
+const nrm = (v: V3): V3 => { const l = Math.hypot(...v); return [v[0] / l, v[1] / l, v[2] / l]; };
+type Cls = { key: string; hm: string; sys: string; axes: string; slots: string; ax: [V3, number, boolean][]; mir: V3[]; center: boolean; ex: string };
+const h = (deg: number): V3 => [Math.cos(rad(deg)), Math.sin(rad(deg)), 0];
+const CLASSES: Cls[] = [
+  { key: "iso", hm: "4/m 3̄ 2/m", sys: "等軸 Isometric", axes: "a = b = c；α = β = γ = 90°", slots: "第 1 格：三條晶軸 a（4 次）｜第 2 格：四條體對角線（3̄）｜第 3 格：六條面對角線（2 次）", ex: "石榴子石、螢石、岩鹽、黃鐵礦、鑽石", center: true,
+    ax: [[[1, 0, 0], 4, false], [[0, 1, 0], 4, false], [[0, 0, 1], 4, false], [[1, 1, 1], 3, true], [[-1, 1, 1], 3, true], [[1, -1, 1], 3, true], [[-1, -1, 1], 3, true], [[1, 1, 0], 2, false], [[1, -1, 0], 2, false], [[1, 0, 1], 2, false], [[-1, 0, 1], 2, false], [[0, 1, 1], 2, false], [[0, -1, 1], 2, false]],
+    mir: [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, -1, 0], [1, 0, 1], [-1, 0, 1], [0, 1, 1], [0, -1, 1]] },
+  { key: "hex", hm: "6/m 2/m 2/m", sys: "六方 Hexagonal", axes: "a₁ = a₂ = a₃ ≠ c；a 軸間 120°，c ⊥ a", slots: "第 1 格：c 軸（6 次）｜第 2 格：a 軸（2 次）｜第 3 格：a 軸之間的方向（2 次）", ex: "綠柱石、磷灰石", center: true,
+    ax: [[[0, 0, 1], 6, false], ...[0, 30, 60, 90, 120, 150].map((d) => [h(d), 2, false] as [V3, number, boolean])],
+    mir: [[0, 0, 1], ...[0, 30, 60, 90, 120, 150].map((d) => h(d))] },
+  { key: "trig", hm: "3̄ 2/m", sys: "三方 Trigonal（六方晶系的三方分部）", axes: "同六方，但 c 軸只有 3 次", slots: "第 1 格：c 軸（3̄）｜第 2 格：a 軸（2 次）", ex: "方解石、剛玉、赤鐵礦（石英是 32，對稱較低）", center: true,
+    ax: [[[0, 0, 1], 3, true], ...[0, 120, 240].map((d) => [h(d), 2, false] as [V3, number, boolean])],
+    mir: [0, 120, 240].map((d) => h(d)) },
+  { key: "tet", hm: "4/m 2/m 2/m", sys: "正方 Tetragonal", axes: "a = b ≠ c；全部 90°", slots: "第 1 格：c 軸（4 次）｜第 2 格：a、b 軸（2 次）｜第 3 格：a、b 的對角線（2 次）", ex: "鋯石、金紅石、符山石", center: true,
+    ax: [[[0, 0, 1], 4, false], [[1, 0, 0], 2, false], [[0, 1, 0], 2, false], [[1, 1, 0], 2, false], [[1, -1, 0], 2, false]],
+    mir: [[0, 0, 1], [1, 0, 0], [0, 1, 0], [1, 1, 0], [1, -1, 0]] },
+  { key: "ort", hm: "2/m 2/m 2/m", sys: "斜方 Orthorhombic", axes: "a ≠ b ≠ c；全部 90°", slots: "第 1、2、3 格：依序是 a、b、c 軸（各 2 次）", ex: "橄欖石、霰石、重晶石、斜方輝石", center: true,
+    ax: [[[1, 0, 0], 2, false], [[0, 1, 0], 2, false], [[0, 0, 1], 2, false]], mir: [[1, 0, 0], [0, 1, 0], [0, 0, 1]] },
+  { key: "mon", hm: "2/m", sys: "單斜 Monoclinic", axes: "a ≠ b ≠ c；α = γ = 90° ≠ β", slots: "只有 1 格：b 軸（2 次）和垂直它的鏡面", ex: "普通輝石、角閃石、雲母、正長石、石膏", center: true,
+    ax: [[[0, 1, 0], 2, false]], mir: [[0, 1, 0]] },
+  { key: "tri", hm: "1̄", sys: "三斜 Triclinic", axes: "a ≠ b ≠ c；α ≠ β ≠ γ ≠ 90°", slots: "只有對稱中心（1̄ = 反演中心 i）", ex: "斜長石、微斜長石、藍晶石", center: true, ax: [], mir: [] },
+];
+
+export function PointGroupDemo() {
+  const [k, setK] = useState("iso");
+  const c = CLASSES.find((x) => x.key === k)!;
+  const cx = 150, cy = 140, R = 115;
+  const proj = (v0: V3): [number, number] => { let v = nrm(v0); if (v[2] < 0) v = [-v[0], -v[1], -v[2]]; const f = R / (1 + v[2]); return [cx + v[0] * f, cy - v[1] * f]; };
+  // 鏡面：平面上的單位向量，取上半球投影
+  const mirrorPath = (nv: V3) => {
+    const n = nrm(nv);
+    if (Math.abs(n[2]) > 0.999) return null; // 水平鏡面 → 基圓加粗
+    const u = nrm([n[1], -n[0], 0]);
+    const w: V3 = [n[1] * u[2] - n[2] * u[1], n[2] * u[0] - n[0] * u[2], n[0] * u[1] - n[1] * u[0]];
+    const pts: string[] = [];
+    for (let t = 0; t <= 180; t += 3) {
+      const a = rad(t);
+      let v: V3 = [u[0] * Math.cos(a) + w[0] * Math.sin(a), u[1] * Math.cos(a) + w[1] * Math.sin(a), u[2] * Math.cos(a) + w[2] * Math.sin(a)];
+      if (v[2] < 0) v = [-v[0], -v[1], -v[2]];
+      const f = R / (1 + v[2]);
+      pts.push(`${cx + v[0] * f},${cy - v[1] * f}`);
+    }
+    return pts.join(" ");
+  };
+  const horizMirror = c.mir.some((m) => Math.abs(nrm(m)[2]) > 0.999);
+  const sym = (n: number, inv: boolean, x: number, y: number, key: string) => {
+    const r = 9;
+    const shape = n === 2 ? <ellipse cx={x} cy={y} rx={r} ry={r * 0.55} /> : <polygon points={Array.from({ length: n }, (_, i) => `${x + r * Math.cos(rad((n === 4 ? 45 : 90) + (360 * i) / n))},${y - r * Math.sin(rad((n === 4 ? 45 : 90) + (360 * i) / n))}`).join(" ")} />;
+    return (
+      <g key={key} fill={n === 2 ? C.blue : n === 3 ? C.gold : n === 4 ? C.orange : C.rose} stroke={INK} strokeWidth={1}>
+        {shape}
+        {inv ? <circle cx={x} cy={y} r={3} fill="#fff" /> : null}
+      </g>
+    );
+  };
+  const marks: ReactNode[] = [];
+  c.ax.forEach(([v, n, inv], i) => {
+    const vv = nrm(v);
+    marks.push(sym(n, inv, ...proj(vv), `a${i}`));
+    if (Math.abs(vv[2]) < 1e-6) marks.push(sym(n, inv, ...proj([-vv[0], -vv[1], 0.0000001]), `b${i}`));
+  });
+  const cnt = (o: number, inv = false) => c.ax.filter(([, n, iv]) => n === o && iv === inv).length;
+  const parts: string[] = [];
+  [[6, false], [4, false], [3, true], [3, false], [2, false]].forEach(([o, iv]) => { const m = cnt(o as number, iv as boolean); if (m) parts.push(`${m} 條 ${o}${iv ? "̄" : ""} ${iv ? "旋反軸" : "次軸"}`); });
+  if (c.mir.length) parts.push(`${c.mir.length} 個鏡面`);
+  if (c.center) parts.push("1 個對稱中心");
+  const svg = (
+    <svg viewBox="0 0 300 310" className="ix-svg" role="img" aria-label="點群赤平投影">
+      <circle cx={cx} cy={cy} r={R} fill="none" stroke={INK} strokeWidth={horizMirror ? 4 : 1.2} />
+      {c.mir.map((m, i) => { const p = mirrorPath(m); return p ? <polyline key={i} points={p} fill="none" stroke={INK} strokeWidth={2} /> : null; })}
+      {marks}
+      {c.ax.length === 0 ? <circle cx={cx} cy={cy} r={4} fill="none" stroke={INK} strokeWidth={2} /> : null}
+      <text x={cx} y={284} textAnchor="middle" style={{ fontSize: 11 }}>線＝鏡面（外圈特別粗＝水平鏡面）</text>
+      <text x={cx} y={302} textAnchor="middle" style={{ fontSize: 11 }}>藍橢圓 2、黃三角 3、橘方 4、紅六角 6；白點＝旋反</text>
+    </svg>
+  );
+  return (
+    <Shell title="互動：七個最高對稱晶族長什麼樣子" sub="選一個晶系，看赤平投影上的對稱要素，數一數" svg={svg}>
+      <div className="ix-btns">
+        {CLASSES.map((x) => (
+          <button key={x.key} type="button" className="ix-btn" aria-pressed={k === x.key} onClick={() => setK(x.key)} style={{ fontSize: "0.78rem" }}>{x.sys.split(" ")[0]}</button>
+        ))}
+      </div>
+      <div className="ix-readout">
+        <b style={{ fontSize: "1.15rem" }}>{c.hm}</b>　{c.sys}
+        <br />晶軸：{c.axes}
+        <br />符號怎麼讀：{c.slots}
+        <br />對稱要素：<b>{parts.join("、")}</b>
+        <br />例：{c.ex}
+      </div>
+      <div className="ix-note">
+        赤平投影是「從上往下看」：垂直的軸畫在圓心，水平的軸畫在外圈（兩端各一個），斜的軸畫在中間。鏡面是直線或弧線（大圓）。對稱要素都是用向量算出來畫的，可以直接拿來對照考卷的赤平投影題（2025 C2）。
+      </div>
+    </Shell>
+  );
+}
