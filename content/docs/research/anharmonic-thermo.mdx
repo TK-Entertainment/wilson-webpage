@@ -1,0 +1,166 @@
+---
+title: 溫度和壓力為什麼改變模數
+description: 位能井、熱力學拆解、Grüneisen 參數，以及實驗怎麼量
+---
+
+## 4. 為什麼 T 和 P 會改變 G、K
+
+### 問題
+同一顆晶體，加熱會變軟，加壓會變硬。為什麼？
+
+### 邏輯鏈
+**步驟 1：原子間位能。** 兩個相鄰原子之間的能量 $U$ 隨距離 $r$ 變化：
+- 很近時強烈排斥（電子雲重疊），$U$ 急速上升。
+- 很遠時微弱吸引，$U$ 緩慢趨近 0。
+- 中間有一個最低點，在平衡距離 $r_0$。
+
+**步驟 2：剛度 = 曲率。** 在 $r_0$ 附近把 $U$ 做泰勒展開（$x = r - r_0$）：
+
+$$
+U(x) = U_0 + \tfrac12\,k\,x^2 + \tfrac16\,U'''\,x^3 + \cdots
+$$
+
+- 一次項是 0，因為 $r_0$ 是最低點。
+- 力 $F = -dU/dx \approx -kx$。所以 $k = d^2U/dr^2$（曲率）就是「彈簧常數」，對應到巨觀的模數。
+
+**步驟 3：簡諧（harmonic）近似。** 只留 $\tfrac12 k x^2$，位能是對稱的拋物線。後果：
+- 原子振動左右對稱，平均位置永遠在 $r_0$ → **沒有熱膨脹**。
+- 曲率 $k$ 是常數 → **模數不隨溫度變**。
+- 所以「簡諧晶體」的 $G$、$K$ 和 $T$ 無關。這和實驗不符。
+
+**步驟 4：非簡諧（anharmonic）。** 真實的位能不對稱（排斥邊陡、吸引邊緩），也就是 $x^3$ 以上的項不為 0。後果：
+- 溫度越高，振幅越大。原子往緩的那邊（大 $r$）跑得比較遠 → 平均間距變大 → **熱膨脹**。這就是熱膨脹的微觀來源。
+- 在大 $r$ 處，位能曲線比較平（曲率較小）→ **模數變小**。
+- 加壓把原子擠近，進入陡的排斥區 → 曲率變大 → **模數變大**。
+- VBRc 的模型叫「anharmonic」，就是因為「$G$、$K$ 隨 $T$、$P$ 變」整件事來自非簡諧性（Havlin et al. 2021, 第 352-355 行）。
+
+**步驟 5：兩種機制要分開。** 溫度升高時，模數下降有兩條路：
+- **(a) 準簡諧（quasi-harmonic）/ 體積效應：** 溫度 → 熱膨脹 → 體積變大 → 模數變小。這裡把晶格當成「在每個體積下都是簡諧的」，只是體積會變。
+- **(b) 本質非簡諧（intrinsic anharmonic）效應：** 就算把體積固定住（等容加熱），振幅變大本身也會改變有效曲率。
+- 實驗量到的 $\left(\partial G/\partial T\right)_P$（等壓）是兩者之和。
+
+### 方程式：熱力學恆等式
+把 $G$ 看成 $G(T, V)$。連鎖律：
+
+$$
+\left(\frac{\partial G}{\partial T}\right)_P = \left(\frac{\partial G}{\partial T}\right)_V + \left(\frac{\partial G}{\partial V}\right)_T \left(\frac{\partial V}{\partial T}\right)_P
+$$
+
+再代三個定義：
+- $\left(\partial V/\partial T\right)_P = \alpha V$（$\alpha$ = **體積熱膨脹係數**，單位 1/K）
+- $\left(\partial P/\partial V\right)_T = -K_T / V$（$K_T$ = **等溫**體積模數）
+- 所以 $\left(\partial G/\partial V\right)_T = \left(\partial G/\partial P\right)_T \left(\partial P/\partial V\right)_T = -\left(\partial G/\partial P\right)_T K_T / V$
+
+代入：
+
+$$
+\underbrace{\left(\frac{\partial G}{\partial T}\right)_P}_{\text{總效應}} = \underbrace{\left(\frac{\partial G}{\partial T}\right)_V}_{\text{本質非簡諧}} - \underbrace{\alpha\,K_T\left(\frac{\partial G}{\partial P}\right)_T}_{\text{準簡諧（體積）效應}}
+$$
+
+$K$ 也一樣：$\left(\partial K/\partial T\right)_P = \left(\partial K/\partial T\right)_V - \alpha K_T \left(\partial K/\partial P\right)_T$。
+
+### 數字：兩部分各佔多少（自算）
+輸入：
+- $\left(\partial G/\partial T\right)_P = -13.6\ \mathrm{MPa/K}$、$\left(\partial K_S/\partial T\right)_P = -18.0\ \mathrm{MPa/K}$：Isaak 1992 摘要（doi:10.1029/91JB02675）報兩個樣品 $G$：$(-1.38, -1.36)\times10^{-2}\ \mathrm{GPa/K}$，$K_S$：$(-1.69, -1.80)\times10^{-2}\ \mathrm{GPa/K}$。VBRc 取的是第二個樣品（`Params_Elastic.m:42-43`）。
+- $K_T = 126.3$ GPa、$(\partial G/\partial P) = 1.71$、$(\partial K_T/\partial P) = 4.28$：Abramson 1997 摘要。
+- $\alpha$ 有兩個選擇，差很多：
+  - VBRc 的 $\alpha(300\ \mathrm{K}) = 1.89\times10^{-5}\ \mathrm{/K}$（自算，`thermal_expansion_coefficient.m:33-44`，FracFo = 0.9，數值微分）。
+  - Mao et al. 2015（p.208）推得常溫 $\alpha = 3.47\times10^{-5}\ \mathrm{/K}$。
+
+| | $\alpha = 1.89\times10^{-5}$（VBRc） | $\alpha = 3.47\times10^{-5}$（Mao 2015） |
+|---|---|---|
+| $G$ 的體積效應 $\alpha K_T G'$ | 4.1 MPa/K（30%） | 7.5 MPa/K（55%） |
+| $G$ 的本質效應 | −9.5 MPa/K（70%） | −6.1 MPa/K（45%） |
+| $K$ 的體積效應 $\alpha K_T K'$ | 10.2 MPa/K（57%） | 18.8 MPa/K（$\approx 100\%$） |
+| $K$ 的本質效應 | −7.8 MPa/K | $\approx +0.8$ MPa/K（$\approx 0$） |
+
+（百分比 = 該部分 / 總效應。注意這是室溫的 $\alpha$ 和 $K_T$，混用 Isaak 的高溫平均斜率，只能當數量級估計。）
+
+**意義：**
+- 對 **$K$**：大部分（甚至全部）溫度效應都是「體積變大」造成的。$K$ 近似只是體積的函數。
+- 對 **$G$**：體積效應只解釋三到五成，**本質非簡諧效應不能忽略**。所以「$G$ 只是密度的函數」這種簡化（Birch 定律式的想法）對 $G$ 比對 $K$ 更差。
+- 這個分解對 $\alpha$ 很敏感。$\alpha$ 的不確定性是真實存在的問題（見第 7 節）。
+
+### Grüneisen 參數 γ
+**定義（巨觀，熱力學）：**
+
+$$
+\gamma = \frac{\alpha\,K_T}{\rho\,C_V} = \frac{\alpha\,K_S}{\rho\,C_P}
+$$
+
+$C_V$、$C_P$ 是定容、定壓比熱（J/kg/K）。
+
+**定義（微觀）：** 每個振動模式頻率 $\omega_i$ 對體積的敏感度：
+
+$$
+\gamma_i = -\frac{d\ln \omega_i}{d\ln V}
+$$
+
+巨觀的 $\gamma$ 是所有模式 $\gamma_i$ 按比熱加權的平均。
+
+**意義（白話）：** 體積增加 1%，振動頻率下降約 $\gamma$%。$\gamma$ 把「熱（振動能）」和「力學（壓力、體積）」連在一起。$\gamma = 0$ 就是完全簡諧，沒有熱膨脹。
+- 橄欖石 $\gamma \approx 1.1$：Mao et al. 2015（p.208）用 $\gamma = 1.11$（引自 Liu and Li 2006，該篇我未查證）。
+
+**$\gamma$ 在本文的用途：** 換算絕熱與等溫模數：
+
+$$
+K_S = K_T\,(1 + \alpha\gamma T)
+$$
+
+自算（$\alpha$ 用 VBRc 函數）：300 K 時 $1 + \alpha\gamma T = 1.006$；1573 K 時 $= 1.051$。也就是在地函溫度，$K_S$ 比 $K_T$ 大約 5%。
+
+### 常見誤解
+- **誤解：「anharmonic 只是指溫度效應」。** 壓力效應（模數隨壓力上升）同樣來自位能的不對稱。
+- **誤解：「準簡諧 = 簡諧」。** 準簡諧允許體積變化，所以有熱膨脹；純簡諧沒有。
+- **誤解：「測到的 $dG/dT$ 全部是熱膨脹造成的」。** 上面的表顯示 $G$ 有一半以上可能是本質效應。
+- **誤解：「$K_S$ 和 $K_T$ 一樣」。** 在 1300 °C 差約 5%。
+
+---
+
+## 5. 實驗怎麼量：超音波、RUS、Brillouin／ISS；為什麼都是「未鬆弛」模數
+
+### 問題
+第 3 節的 $C_{ij}$、第 4 節的 $dG/dT$ 是怎麼量的？量到的是哪一種模數？
+
+### 邏輯鏈
+所有方法的核心都一樣：**量波速 $v$，配上密度 $\rho$，反推模數 $M = \rho v^2$**（第 2 節的公式倒過來用）。差別在頻率和樣品條件。
+
+1. **超音波脈衝回波（ultrasonic pulse-echo）**
+   - 壓電換能器發一個短脈衝，量它穿過約 1 mm 樣品的走時。
+   - 頻率：約 40 MHz（你的講義 MineralPhysics_0330 p.16）。週期 $= 1/(40\times10^{6}) = 25\ \mathrm{ns}$。
+   - 波長（自算）：$\lambda = v/f = 4560/(40\times10^{6}) \approx 0.11\ \mathrm{mm}$。
+
+2. **共振超音波（Resonant Ultrasound Spectroscopy, RUS）**
+   - 把一塊磨成長方體的晶體輕輕夾住，掃頻率，找出所有自由振動的共振頻率。共振頻率由 $C_{ij}$、形狀、密度決定，反算回 $C_{ij}$。
+   - Isaak 1992 用的是這個方法（摘要：「rectangular parallelepiped resonance apparatus」），而且能加熱到 1500 K，並用 CO/$\mathrm{CO_2}$ 氣體控制氧逸度以保持含鐵橄欖石穩定。
+   - 頻率：毫米級樣品約 MHz 量級（未查證具體數字）。
+   - 優點：一次量到 9 個 $C_{ij}$ 的溫度關係；缺點：只能在常壓。
+
+3. **光散射法（GHz）**
+   - **更正：** Abramson et al. 1997 用的不是 Brillouin 散射，而是 **脈衝受激散射（Impulsive Stimulated Scattering, ISS）**。依據：Abramson, Brown & Slutsky 1999（Annu. Rev. Phys. Chem. 50:279-313，doi:10.1146/annurev.physchem.50.1.279）整篇在介紹 ISS 在地球科學的應用，並以他們的橄欖石鑽石砧量測為例，寫道鑽石砧中的彈性波頻率「ranging past 3 GHz」。
+   - ISS：兩道雷射在樣品中干涉，產生週期性的熱/電致伸縮光柵，激發出已知波長的聲波，再用第三道光讀出振盪頻率 $f$，$v = \lambda f$。
+   - **Brillouin 散射**：雷射光被樣品中熱擾動產生的聲子散射，頻率偏移 $\Delta f$ 和聲速成正比。Mao et al. 2015 用的是 Brillouin（p.207：「our Brillouin measurements yield…」）。頻率也是 GHz 量級（未查證具體數字）。
+   - 這兩種光學方法可以放進鑽石砧（diamond anvil cell），所以能量高壓。Abramson 1997 到 17 GPa。
+
+### 為什麼都量到「未鬆弛（unrelaxed）」的模數
+**定義：**
+- 材料內部有一些可以「慢慢調整」的機制（例如缺陷移動、晶界滑移），每種有自己的特徵時間 $\tau$。
+- 如果施力的時間（波的週期）**遠短於** $\tau$，這些機制來不及動。材料只靠原子鍵的瞬間彈性回應。這時的模數叫 **未鬆弛模數 $M_U$**。
+- 如果施力時間 **遠長於** $\tau$，機制完全作用，得到較小的 **鬆弛模數 $M_R$**。（液體的 $G = 0$ 就是極端的鬆弛例子，見第 1 節。）
+
+**邏輯：**
+- 實驗週期：超音波 25 ns，ISS/Brillouin $\lt  1$ ns。
+- 室溫下乾燥單晶裡，能在這麼短時間作用的鬆弛機制幾乎沒有，而且單晶沒有晶界。
+- 所以這些方法量到的就是原子鍵本身的剛度 = 未鬆弛模數。VBRc 的命名 Gu、Ku、Vsu 的「u」就是 unrelaxed（`el_anharmonic.m:63-66`）。
+
+**Abramson 1999 自己的保留（第 720-735 行附近）：** 他們把 ISS 推得的晶格參數和靜態 X 光繞射比較，吻合得很好，這「supports but does not establish」高頻模數可以直接用在低頻地震資料。也就是說，從 0 到 3 GHz 之間沒有明顯影響的鬆弛過程，但這不排除地函溫度下有更慢的過程。這句話是範圍說明，不是要你去做非彈性。
+
+**另一個區分：絕熱 vs 等溫。**
+- 波動太快，熱來不及從壓縮區流到膨脹區 → 量到的是 **絕熱（adiabatic）** 模數 $K_S$。
+- 這和「未鬆弛」是兩件不同的事：前者是熱的擴散，後者是力學鬆弛。
+- 對 $G$ 沒有絕熱/等溫之分（純剪切不改變體積，一階不產熱）。
+
+### 常見誤解
+- **誤解：「Abramson 1997 是 Brillouin」。** 是 ISS（見上）。
+- **誤解：「未鬆弛 = 絕熱」。** 兩個不同的概念。
+- **誤解：「頻率高低無所謂，彈性模數就是彈性模數」。** 只有在完全彈性（沒有鬆弛機制）時才成立。「anharmonic 模型給的是未鬆弛值」是它的定義，不是近似。

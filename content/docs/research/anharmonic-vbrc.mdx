@@ -1,0 +1,123 @@
+---
+title: VBRc 的公式和程式
+description: 線性模型、三組實驗斜率、地殼混合、upper_mantle 參考點
+---
+
+## 6. VBRc 的公式和程式碼
+
+### 問題
+VBRc 到底怎麼從室溫常壓的 $G_0$、$K_0$ 算到 $(T, P)$？
+
+### 邏輯鏈：泰勒展開
+任何平滑函數 $M(T, P)$ 在參考點 $(T_{\mathrm{ref}}, P_{\mathrm{ref}})$ 附近可以展開：
+
+$$
+\begin{aligned}
+M(T, P) = M_0
+&+ \left(\frac{\partial M}{\partial T}\right)\Delta T + \left(\frac{\partial M}{\partial P}\right)\Delta P \\
+&+ \tfrac12\left(\frac{\partial^2 M}{\partial T^2}\right)\Delta T^2 + \left(\frac{\partial^2 M}{\partial T\,\partial P}\right)\Delta T\,\Delta P + \tfrac12\left(\frac{\partial^2 M}{\partial P^2}\right)\Delta P^2 \\
+&+ \cdots
+\end{aligned}
+$$
+
+$$
+\Delta T = T - T_{\mathrm{ref}}, \qquad \Delta P = P - P_{\mathrm{ref}}
+$$
+
+VBRc 只保留：
+
+$$
+M_u(T, P) = M_0 + \texttt{dM\_dT}\,\Delta T + \texttt{dM\_dP}\,\Delta P + \texttt{dM\_dP2}\,\Delta P^2
+$$
+
+程式：`el_anharmonic.m:127`
+```matlab
+M_TP = Mu_0 + dMdT * dT + dP * dMdP + dP.^2 * dMdP2;
+```
+（第 122 和 123 行是重複的同一行，無害。）
+
+**重點：程式裡沒有 $\tfrac12$。** 這表示參數 `dG_dP2` 的定義 **不是** 二階導數 $\partial^2 G/\partial P^2$，而是多項式 $G = a + bP + cP^2$ 的 **$P^2$ 係數 $c = \tfrac12\,\partial^2 G/\partial P^2$**。查證：Abramson 1997 摘要原文是「$G_{\mathrm{HS}} = 78 + 1.71P - 0.027P^2$」，是多項式寫法。所以 VBRc 的 `abramson.dG_dP2 = -0.027 / 1e9`（`Params_Elastic.m:55`）和論文是一致的。真正的二階導數是 $2 \times (-0.027) =$ **$-0.054\ \mathrm{GPa^{-1}}$**（自算）。變數名稱 `dG_dP2` 容易讓人誤以為是二階導數，`anharmonic.md` 和 `Params_Elastic.m` 都沒有說明（`Params_Elastic.m:48` 的單位註解「1 / Pa」也只寫了單位）。
+- 對照：Abramson 摘要對 c55 又寫「The second derivative for c55 is −0.070 $\mathrm{GPa^{-1}}$」，那是真的二階導數。同一篇摘要用了兩種不同的說法，引用時要小心。
+
+### 單位
+- $G_0$、$K_0$ 以 GPa 輸入，程式乘以 1e9 變 Pa（`el_anharmonic.m:100, 103`）。
+- dM_dT 以 Pa/K 儲存：例如 isaak `-1.36 * 1e7` Pa/K = −13.6 MPa/K = −0.0136 GPa/K（`Params_Elastic.m:42`）。
+- dM_dP 沒有單位（Pa/Pa = GPa/GPa）。
+- dM_dP2 單位 1/Pa。
+- 輸入 $P$ 用 GPa（`VBR.in.SV.P_GPa`），程式乘 1e9（`el_anharmonic.m:31, 45`）。
+
+### 計算路徑（`el_anharmonic.m`）
+三個分支，依照你輸入了什麼決定：
+
+1. **你直接給 `VBR.in.elastic.Gu_TP` 和 `Ku_TP`**（第 19-22 行）：完全不算，直接拿來用。用途：你用 Perple_X 或 Abers & Hacker 工具箱算好了模數（`anharmonic.md:160-177`）。此時 **不做** chi 混合，也 **不輸出** Gu_0、Ku_0。
+2. **只給 `Gu_TP`**（第 23-35 行）：$G$ 直接用，$K$ 用泰勒公式算。同樣不做 chi 混合。
+3. **都不給（預設）**（第 36-58 行）：
+   - `get_M`（第 93-105 行）：依 `reference_scaling` 取 $G_0$、$K_0$。`'default'` 時取 `Gu_0_ol`、`Ku_0_ol`；否則取 `ela.(名稱).Gu_0`。
+   - `get_ref_TP`（第 80-90 行）：依 `reference_scaling` 取 $T_{\mathrm{ref}}$、$P_{\mathrm{ref}}$。
+   - `calc_Mu`（第 107-128 行）：溫度斜率從 `temperature_scaling` 指定的結構取，壓力斜率從 `pressure_scaling` 取。**兩者可以來自不同論文。**
+   - 若 `chi_mixing == 1`（預設，`Params_Elastic.m:80`），呼叫 `chi_mixing`（第 131-146 行）。
+4. 最後用 `el_VpVs_unrelaxed` 算 $V_p$、$V_s$（第 60 行），**用的是你給的 `VBR.in.SV.rho`**。el_anharmonic 本身不算密度。
+
+### chi：地殼混合
+- `VBR.in.SV.chi` = 橄欖石（地函）比例。沒給時預設全部 = 1（`checkInput.m:115-118`），等於不混合。
+- 混合公式（第 144-145 行）：$G = \chi\,G_{\mathrm{ol}} + (1 - \chi)\,G_{\mathrm{crust}}$。這是體積加權的 **Voigt 型（上限）平均**，程式註解也寫「voigt average」。
+- 地殼參數 `crust.*`（`Params_Elastic.m:81-88`）：$G_0 = 40$、$K_0 = 86$ GPa，註解說是用 Abers & Hacker 2016 算的鈣長石（anorthite）近似值，生成腳本在 vbrPublicData 的 `scripts/an_T_P_G_K.m`。
+- 範例：CB_008（第 26-28 行）在 30 km 以上設 chi = 0。
+
+**我在生成腳本裡發現的問題（請你自己再核對一次）：** 我從 GitHub 下載了 `vbrPublicData/scripts/an_T_P_G_K.m`。它做壓力擬合的那兩行是：
+```matlab
+gfit_p = polyfit(tvals, gvals_p, 1);
+kfit_p = polyfit(tvals, kvals_p, 1);
+```
+x 軸用的是溫度陣列 `tvals`（0.01–1200，100 點），而不是壓力陣列 `pvals`（0–4 GPa，100 點）。兩個陣列都是等間距，所以得到的斜率被縮小了 $1199.99/4 \approx 300$ 倍。於是 `crust.dG_dP = 0.011474`、`crust.dK_dP = 0.013032`（`Params_Elastic.m:84, 87`）大概應該是 **$\approx 3.44$** 和 **$\approx 3.91$**（自算：乘 300）。前一版（commit `d552e56`）的 `crust.dG_dP = 3.5`，和修正值相近，也支持這個判斷。後果：只要 chi &lt; 1，地殼的壓力效應幾乎等於零。在 30 km（約 0.8 GPa），$G$ 少加約 $0.8 \times 3.4 \approx 2.8$ GPa（約 7%）。
+
+另一個 chi 的細節：chi 混合用的 $\Delta T$、$\Delta P$ 來自 `get_ref_TP`（第 43-45、56 行）。如果你把 `reference_scaling` 設成 `'upper_mantle'`（$T_{\mathrm{ref}} = 1573$ K、$P_{\mathrm{ref}} = 3$ GPa），地殼的 $G_0 = 40$（擬合於 0 °C、0.01 GPa）也會被當成是 1573 K、3 GPa 的值來外推。這在物理上不對。只有在 chi &lt; 1 而且用非預設參考點時才會出問題。
+
+### 三組斜率資料
+
+| 名稱 | $dG/dT$ (MPa/K) | $dK/dT$ (MPa/K) | $dG/dP$ | dG_dP2 (1/GPa) | $dK/dP$ | 位置 |
+|---|---|---|---|---|---|---|
+| isaak | −13.6 | −18.0 | — | — | — | `Params_Elastic.m:41-43` |
+| cammarano | −14.0 | −17.0 | 1.4 | 0 | 4.2 | `Params_Elastic.m:45-51` |
+| abramson | — | — | 1.71 | −0.027 | 4.2 | `Params_Elastic.m:53-57` |
+| upper_mantle | −13.816 | −19.845 | 1.5734 | 0 | 4.451 | `Params_Elastic.m:59-69` |
+
+預設：溫度用 isaak、壓力用 cammarano（`Params_Elastic.m:35, 38`）。
+
+各組的來源與差異：
+- **isaak**（Isaak 1992，doi:10.1029/91JB02675）。RUS，**常壓**，兩顆天然含鐵橄欖石（Fo92、Fo91，摘要說含 8 和 9 模式百分比的鐵橄欖石），300–1500 K。摘要明說「Neither specimen exhibits measurable nonlinear temperature dependence」，所以用線性外推到 1500 K 有實驗支持。**只有溫度斜率**（常壓量測不可能給壓力斜率）。數值查證：摘要 $G$ 為 $(-1.38, -1.36)$、$K_S$ 為 $(-1.69, -1.80)\times10^{-2}\ \mathrm{GPa/K}$；VBRc 取第二組。兩組差距（$G$ 差 1.5%、$K$ 差 6%）可以當成實驗不確定性的下限。
+- **cammarano**（Cammarano et al. 2003，doi:10.1016/S0031-9201(03)00156-0）。這是一篇整理文獻值、用來把地震波速轉成溫度的論文，不是原始量測。**（2026-11-10 已查證）Table A.1：$\partial G/\partial T = -0.014$、$\partial K_S/\partial T = -0.017$ GPa/K（$\pm 17\%$），$G' = 1.4$（$\pm 7\%$），$K' = 4.2$（$\pm 3\%$）。**一個間接的參考：arXiv:1810.11159 的 Table 2 列了 Goes et al. 2000 的橄欖石 $K = 129$、$\mu = 82$ GPa、$\partial K/\partial T = -16$、$\partial \mu/\partial T = -14$ MPa/K（二手來源，未查證原文）。
+- **abramson**（Abramson 1997）。ISS，**室溫**，到 12 GPa（$G$）。**只有壓力斜率。** 摘要：$K_{\mathrm{HS}} = 129.4 + 4.29P$、$G_{\mathrm{HS}} = 78 + 1.71P - 0.027P^2$。注意兩個不一致：
+  - VBRc `abramson.dK_dP = 4.2`（`Params_Elastic.m:56`），論文是 **4.29**。到 3 GPa 差 0.27 GPa（自算）。
+  - Abramson 的多項式以 **$G_0 = 78$** 為基準；VBRc 預設把 1.71、−0.027 接在 **$G_0 = 81$** 上。
+  - 呼叫 `temperature_scaling = 'abramson'` 會出錯，因為那個結構沒有 `dG_dT`。同理 `pressure_scaling = 'isaak'` 也會出錯。
+- **cammarano vs abramson 的壓力效應（自算）：** 3 GPa 時 $G$ 增加 4.20 vs 4.89 GPa；10 GPa 時 14.0 vs 14.4 GPa。Abramson 的低壓斜率較大，但有往下彎的曲率。
+
+### upper_mantle 參考點
+- $T_{\mathrm{ref}} = 1573$ K（1300 °C）、$P_{\mathrm{ref}} = 3$ GPa，$G_0 = 66.41$、$K_0 = 119.88$ GPa，$\rho_{\mathrm{ref}} = 3323.1$ kg/m³（`Params_Elastic.m:59-69`）。
+- 註解：「Values calculated with Abers and Hacker 2016 for a representative upper mantle pyrolitic composition」（`Params_Elastic.m:70-71`）。Abers & Hacker 2016（doi:10.1002/2015GC006171）是一個含 60 種礦物端元的 MATLAB 工具箱，用來算岩石在高溫高壓下的密度和波速（摘要）。
+- 我沒有重跑 Abers & Hacker 來驗證 66.41 等數字，也沒找到生成它們的腳本（未查證）。2026-11-10 讀了原文：論文是工具說明，本身沒有這組 pyrolite 數值。
+- **意義：**
+  1. 參考點就在上部地函的典型條件。研究條件離參考點近，$\Delta T$、$\Delta P$ 小，泰勒展開被截斷的高階項就小。預設的參考點在 300 K、1 atm，要外推約 1300 K，誤差主要累積在這段。
+  2. 組成是 pyrolite（多種礦物混合），不是純橄欖石。所以 $G_0$ 比較低（66.41 vs 預設在同一點算出來的 67.89，自算）。
+  3. 這組值是「在那一點的局部線性化」，離 1573 K、3 GPa 越遠越不準。
+- 使用方式見 CB_020（第 13-15 行三個 scaling 都設 `'upper_mantle'`；第 22-24 行用同一組參數算密度）。
+- **注意：** 如果只改 `reference_scaling` 而不改 `pressure_scaling`，就會在 3 GPa 的參考點上套用 Abramson（或 Cammarano）的斜率。Abramson 的多項式是以 $P = 0$ 為中心展開的，在 3 GPa 處它的真正斜率是 $1.71 - 2\times0.027\times3 = 1.548$（自算），不是 1.71。程式不會阻止這種組合。
+
+### 泰勒展開的適用範圍與忽略的項
+VBRc 忽略：
+- $\tfrac12\left(\partial^2 M/\partial T^2\right)\Delta T^2$：溫度的曲率。Isaak et al. 1989（doi:10.1029/JB094iB05p05895）摘要說純鎂橄欖石的 $K_S$、$G$ 在 1700 K「lower … than predicted by linear extrapolation」，實測 $G = 61.3$ GPa。對照：$81 - 0.0136 \times 1400 = 61.96$ GPa（自算），高了約 1%。（這個對照混用了不同樣品，只是數量級示意。）Isaak 1992 則說 Fo90 量不到非線性。
+- $\left(\partial^2 M/\partial T\,\partial P\right)\Delta T\,\Delta P$：交叉項，也就是「壓力斜率本身隨溫度改變」。Mao et al. 2015（p.208）就發現 $C_{12}$、$C_{13}$ 的溫度效應在高壓下加強，需要額外的交叉項。
+- 壓力的二次項：只有 abramson 的 $G$ 有。
+
+**適用範圍：** 大致在原始數據的範圍內：溫度 300–1500 K（Isaak 1992）、壓力 0–12 GPa（Abramson 1997 的 $G$）。在 410 km 相變之上（約 13 GPa）的橄欖石穩定區。外推到更深或更熱時，誤差沒有被量化。
+
+### 文件和程式不一致的地方（實務上會踩到）
+- `anharmonic.md:91-92` 的範例寫 `temperature_scale`、`pressure_scale`，但程式讀的是 `temperature_scaling`、`pressure_scaling`（`el_anharmonic.m:49-50`）。照文件寫的話，MATLAB 不會報錯，只是 **靜靜地用預設值**。
+- `anharmonic.md:54` 說 Gu_0 輸出在 `VBR.out.elastic.Gu_0` 而且是陣列。實際上在 `VBR.out.elastic.anharmonic.Gu_0`（`el_anharmonic.m:40, 75`），而且是一個純量，分支 1、2 沒有這個欄位。
+- CB_019（第 20-34 行）示範怎麼自訂一組斜率；必須同時定義 dG_dT、dG_dP、dG_dP2、dK_dT、dK_dP、dK_dP2 六個欄位。
+
+### 常見誤解
+- **誤解：「dG_dP2 是二階導數」。** 它是 $P^2$ 的係數（$= \tfrac12 \times$ 二階導數）。
+- **誤解：「VBRc 會幫我算密度」。** el_anharmonic 只用你給的 `SV.rho`。CB_008（第 18-19 行）直接用常數 3300，完全沒有熱膨脹。
+- **誤解：「三組斜率都來自同一種樣品、同一種條件」。** isaak 是常壓高溫，abramson 是室溫高壓，cammarano 是文獻整理。預設把它們拼起來用。

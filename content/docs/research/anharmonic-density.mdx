@@ -1,0 +1,173 @@
+---
+title: 密度與敏感度
+description: ρ(T, P) 怎麼算、誤差多大，以及溫度、壓力各讓 Vs 變多少
+---
+
+## 7. 密度：為什麼 ρ 也要隨 T、P 變
+
+### 問題
+$V_s = \sqrt{G/\rho}$。$G$ 隨 $T$、$P$ 變了，$\rho$ 也會變。VBRc 怎麼處理？
+
+### 邏輯鏈
+1. 質量不變，體積變了，密度就變：$d\ln\rho = -d\ln V$。
+2. 加壓 → 體積變小 → $\rho$ 增加。程度由 $K$ 決定。
+3. 加熱 → 體積變大 → $\rho$ 減少。程度由 $\alpha$ 決定。
+4. VBRc 提供 `density_from_vbrc`，把這兩步分開算（`density_from_vbrc.m:5-7` 的說明）。**它不會自動被 el_anharmonic 呼叫**，要你自己在呼叫 VBR_spine 之前算好，放進 `VBR.in.SV.rho`（CB_020 第 22-25 行就是這樣做）。
+
+### 步驟一：等溫壓縮（`density_isothermal_compression.m`）
+推導（照程式碼第 26-37 行的註解展開）：
+
+壓縮率定義：
+
+$$
+\beta = \frac{1}{\rho}\,\frac{d\rho}{dP} = \frac{1}{K}
+$$
+
+$K$ 隨壓力線性增加：
+
+$$
+K = K_0 + K'\,(P - P_{\mathrm{ref}})
+$$
+
+所以：
+
+$$
+\frac{d\rho}{\rho} = \frac{dP}{K_0 + K'\,(P - P_{\mathrm{ref}})}
+$$
+
+兩邊積分：
+
+$$
+\ln\frac{\rho}{\rho_0} = \frac{1}{K'}\,\ln\!\left(1 + \frac{K'\,(P - P_{\mathrm{ref}})}{K_0}\right)
+$$
+
+結果：
+
+$$
+\rho = \rho_0\left(1 + \frac{K'\,\Delta P}{K_0}\right)^{1/K'}
+$$
+
+這就是 **Murnaghan 狀態方程**（Murnaghan 1944，doi:10.1073/pnas.30.9.244）。程式第 36-37 行完全照這個寫。
+
+### 步驟二：等壓熱膨脹（`density_thermal_expansion.m`）
+
+$$
+\alpha = \frac{1}{V}\left(\frac{\partial V}{\partial T}\right)_P = -\left(\frac{\partial \ln\rho}{\partial T}\right)_P
+$$
+
+$$
+\Rightarrow\quad \rho(T) = \rho(T_{\mathrm{ref}})\,\exp\!\left(-\int \alpha\,dT\right)
+$$
+
+（從 $T_{\mathrm{ref}}$ 積到 $T$）
+
+程式第 27-28 行。$\alpha(T)$ 的形式（`thermal_expansion_coefficient.m:33-44`）：
+
+$$
+\alpha(T) = a_0 + a_1 T + \frac{a_2}{T^2}
+$$
+
+$$
+\int \alpha\,dT = a_0\,(T - T_{\mathrm{ref}}) + \frac{a_1}{2}\left(T^2 - T_{\mathrm{ref}}^2\right) - a_2\left(\frac{1}{T} - \frac{1}{T_{\mathrm{ref}}}\right)
+$$
+
+- 係數是「7 組鎂橄欖石、4 組鐵橄欖石文獻係數各自取平均」，再依 FracFo 線性混合（第 33-41 行）。檔頭引用 Xu et al. 2004（doi:10.1016/j.pepi.2004.03.005），但 7 組係數各自出自哪篇論文，程式沒寫（未查證）。
+- `density_from_vbrc.m:94` 把 FracFo **寫死成 0.9**，使用者無法從 `density_from_vbrc` 改。
+
+### 用的是哪個 K：K_S 還是 K_T？
+- `density_from_vbrc.m:62, 91`：$K_o$ = `Ku_0_ol`（或 `upper_mantle.Ku_0`）。這是 **未鬆弛、絕熱的 $K_S$**（來自聲波量測）。
+- 等溫壓縮在熱力學上應該用 **$K_T$**。
+- $dK/dP$ 也用 $K_S$ 的斜率（`density_from_vbrc.m:90`）。
+
+### 誤差多大（自算，MATLAB）
+| 誤差來源 | 大小 | 怎麼算的 |
+|---|---|---|
+| $K_S$ 代替 $K_T$（300 K） | $\rho$ 差 0.043% | 3 GPa：$K = 129$、$K' = 4.2$ vs Abramson 的 $K_T = 126.3$、$K' = 4.28$ |
+| $K_S$ 代替 $K_T$（1573 K，upper_mantle） | $\rho$ 差 0.044% | 從 3 GPa 減壓到 2 GPa，$K_T = K_S/1.051$ |
+| 兩步驟的順序（路徑） | $\rho$ 差 0.45% | A：常溫先壓再加熱（VBRc 的做法）= 3267.3；B：先加熱，再用 $K(1573\ \mathrm{K}) = 106.1$ GPa 壓 = 3282.2 |
+| $\alpha$ 的選擇 | $\rho$ 差約 1.5% | 見下 |
+
+**$\alpha$ 是最大的問題。** 我把 `thermal_expansion_coefficient.m:33-35` 裡 7 組鎂橄欖石係數一組一組算（自算）：
+- $\alpha(300\ \mathrm{K})$：第 1–3 組是 0.68–$0.99\times10^{-5}$，第 4–7 組是 2.5–$3.1\times10^{-5}$。
+- $\int \alpha\,dT$（$300\to1573$ K）：第 1–3 組 0.013–0.018，第 4–7 組 0.038–0.052。
+- VBRc 的平均（FracFo = 0.9）= 0.0321。
+- 第 1–3 組的 $\alpha$ 只有一般橄欖石值的三分之一左右（比較 Mao 2015 的 $3.47\times10^{-5}$），看起來像是不同單位或不同定義（例如線膨脹係數）被混進來（未查證）。
+- 如果只用第 4–7 組（$\int \approx 0.047$），1573 K 的 $\rho$ 會再低約 1.5%。對 $V_s$ 的影響是 +0.75%（因為 $d\ln V_s = -\tfrac12\,d\ln\rho$），相當於約 90 K（自算，用第 8 節的敏感度）。
+- 另外，VBRc 用的是常壓的 $\alpha$ 來加熱已經被壓縮的樣品。真實的 $\alpha$ 隨壓力下降，所以在 3 GPa 會稍微高估熱膨脹（大小未量化）。
+
+**結論：** $K_S/K_T$ 的混用在密度上只造成 $\lt  0.05\%$ 的誤差，可以忽略。真正需要注意的是 $\alpha$ 的係數和兩步驟的順序（0.5–1.5%）。
+
+### 常見誤解
+- **誤解：「密度不重要，只看模數就好」。** $d\ln\rho/dT \approx -2.9\times10^{-5}\ \mathrm{/K}$，大約是 $d\ln G/dT$ 的 15%（第 8 節）。
+- **誤解：「anharmonic 會自動更新密度」。** 不會。
+- **誤解：「$K_S$ 和 $K_T$ 的差別是密度誤差的主要來源」。** 不是，$\alpha$ 才是。
+
+---
+
+## 8. 合起來：d ln Vs 的推導與 1300 °C、3 GPa 的敏感度
+
+### 問題
+溫度每升高 1 K，$V_s$ 變多少？哪一部分來自 $G$，哪一部分來自 $\rho$？
+
+### 推導
+
+$$
+\begin{aligned}
+V_s &= \sqrt{G/\rho} \\
+\Rightarrow\quad V_s^2 &= G/\rho \\
+\Rightarrow\quad 2\ln V_s &= \ln G - \ln\rho \qquad \text{（兩邊取自然對數）} \\
+\Rightarrow\quad 2\,\frac{dV_s}{V_s} &= \frac{dG}{G} - \frac{d\rho}{\rho} \qquad \text{（兩邊微分，}d(\ln x) = dx/x\text{）} \\
+\Rightarrow\quad d\ln V_s &= \tfrac12\,(d\ln G - d\ln\rho)
+\end{aligned}
+$$
+
+對溫度：
+
+$$
+\frac{d\ln V_s}{dT} = \tfrac12\left[\frac{1}{G}\left(\frac{\partial G}{\partial T}\right) + \alpha\right]
+$$
+
+（因為 $d\ln\rho/dT = -\alpha$）
+
+$V_p$ 同理：
+
+$$
+d\ln V_p = \tfrac12\left[\frac{dK + \tfrac43\,dG}{K + \tfrac43\,G} - d\ln\rho\right]
+$$
+
+用「對數」的好處：直接得到「百分比變化」，可以和地震層析的 $d\ln V_s$ 比較。
+
+### 數字（1300 °C = 1573 K、3 GPa；MATLAB VBRc 2.1.1，`VBR_spine`，有限差分 ΔT = 1 K、ΔP = 1 MPa；密度用 `density_from_vbrc`）
+
+| | default（isaak + cammarano，ref 300 K） | upper_mantle |
+|---|---|---|
+| $G$ (GPa) | 67.887 | 66.410 |
+| $K$ (GPa) | 118.686 | 119.880 |
+| $\rho$ (kg/m³) | 3267.3 | 3323.1 |
+| $V_s$ (km/s) | 4.558 | 4.470 |
+| $V_p$ (km/s) | 8.002 | 7.920 |
+| $d\ln G/dT$ (1/K) | −2.004e-4 | −2.081e-4 |
+| $d\ln\rho/dT$ (1/K) | −2.93e-5 | −2.93e-5 |
+| **$d\ln V_s/dT$ (1/K)** | **−8.55e-5** | **−8.94e-5** |
+| $d\ln V_s/dT$，$\rho$ 固定 | −1.00e-4 | −1.04e-4 |
+| $d\ln V_s/dP$ (1/GPa) | +0.0068 | +0.0077 |
+| $d\ln V_s/d\ln V_p$（溫度造成） | 1.19 | 1.16 |
+
+**手算檢查 default：**
+- $G = 81 - 0.0136 \times (1573 - 300) + 1.4 \times (3 - 0.0001) = 81 - 17.31 + 4.20 = 67.89$ GPa ✓
+- $d\ln G/dT = \dfrac{-13.6\times10^{6}}{67.887\times10^{9}} = -2.003\times10^{-4}\ \mathrm{/K}$ ✓
+- $\alpha(1573\ \mathrm{K}) = 2.93\times10^{-5}\ \mathrm{/K}$（VBRc 函數）
+- $d\ln V_s/dT = \tfrac12 \times \left(-2.003\times10^{-4} + 0.293\times10^{-4}\right) = -8.55\times10^{-5}\ \mathrm{/K}$ ✓
+
+### 意義
+- **每升溫 100 K，$V_s$ 下降約 0.86%**（default）或 0.89%（upper_mantle）。
+- 其中 $G$ 的貢獻是 $\rho$ 的大約 7 倍（2.00e-4 vs 0.29e-4）。密度部分 **抵消** 了一部分：加熱讓 $\rho$ 變小，$V_s$ 反而增加一點。
+- 如果像 CB_008 那樣把 $\rho$ 固定，敏感度會高估約 17%（−1.00e-4 vs −8.55e-5）。
+- 每增加 1 GPa（約 30 km），$V_s$ 增加約 0.7%。在固定溫度下，壓力效應和約 80 K 的溫度變化相當（$0.0068 / (8.55\times10^{-5}) \approx 80$ K，自算）。
+- **交叉檢查：** Isaak et al. 1989 摘要說純鎂橄欖石的 $\left(\partial\ln V_s/\partial\ln V_p\right)_P$「near to 1.2」。VBRc 的 1.16–1.19 一致。
+- 和第 3 節的系統誤差比較：$G_0$ 從 81 換成 78 相當於約 260 K（在 1300 °C、3 GPa）；$\alpha$ 係數的選擇相當於約 90 K。這些系統誤差都比「1 K 的敏感度」本身重要很多。
+
+### 常見誤解
+- **誤解：「$d\ln V_s = d\ln G$」。** 要乘 $\tfrac12$，還要減 $d\ln\rho$。
+- **誤解：「溫度越高，密度越低，所以波速變快」。** 密度那一項確實讓波速變快，但 $G$ 下降的效應大 7 倍，總效應是變慢。
+- **誤解：「這個敏感度就是真實地函的 $V_s$ 溫度敏感度」。** 這是 **未鬆弛** 的敏感度，是模型的定義。

@@ -14,8 +14,13 @@ const markers = [
 
 // 學習日常首頁的筆記目錄：依側欄的資料夾（課程）自動列出所有筆記
 export default function NotesIndex({ tree }: { tree: typeof Tree }) {
+  // 研究內容有自己的「研究」分頁，不列在學習日常的課程目錄裡
   const folders = tree.children.filter(
-    (node): node is Folder => node.type === "folder",
+    (node): node is Folder =>
+      node.type === "folder" &&
+      !node.children.some(
+        (n) => n.type === "page" && n.url.startsWith("/docs/research"),
+      ),
   );
   const loose = tree.children.filter(
     (node): node is Page => node.type === "page" && node.url !== "/docs",

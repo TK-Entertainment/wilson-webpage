@@ -1,0 +1,32 @@
+---
+title: 研究：VBRc
+description: 用實驗室的岩石物理，從地震波速度推地函溫度——目前在理解彈性模型 anharmonic
+---
+
+**這裡在回答**：地震波的速度，能不能告訴我們地底下有多熱？
+
+我用的工具是 **VBRc**（Very Broadband Rheology calculator）：給它地函的狀態（溫度、壓力、密度……），它用實驗室量到的岩石物理，算出地震學能觀測的量（例如剪力波速度 $V_s$）。要從觀測反推溫度，得先徹底懂正向計算。
+
+## 目前在哪一步
+
+依照地震學家實際使用 VBRc 的流程：
+
+1. **先只用彈性模型**，一次改一個參數，建立直覺 ← **現在在這裡**（anharmonic 模型）
+2. 比較不同的模數來源（下一個：SLB2005）
+3. 用熱模型（例如半空間冷卻）從年齡算出溫度剖面
+4. 帶著誤差跟觀測比，再用熱流、岩石學等獨立證據檢查
+
+目標區域是美國西部的 **Basin and Range（盆嶺區）**。
+
+## Anharmonic 模型筆記
+
+從零開始，每一步都有推導和出處：
+
+- [彈性與波速](/docs/research/anharmonic-elasticity)：應力、應變、$K$ 和 $G$，以及 $V_s=\sqrt{G/\rho}$ 怎麼推出來
+- [從單晶到岩石](/docs/research/anharmonic-aggregate)：彈性常數 $C_{ij}$ 的平均，以及 VBRc 的 $G_0=81$ 從哪來
+- [溫度和壓力為什麼改變模數](/docs/research/anharmonic-thermo)：位能井、熱力學拆解、實驗怎麼量
+- [VBRc 的公式和程式](/docs/research/anharmonic-vbrc)：線性模型、三組實驗斜率、參考點
+- [密度與敏感度](/docs/research/anharmonic-density)：$\rho(T,P)$ 怎麼算，以及溫度、壓力各讓 $V_s$ 變多少
+- [假設、限制與自我檢查](/docs/research/anharmonic-limits)
+
+> 這些筆記是我和 AI 一起整理的。數字都用 VBRc v2.1.1 重算過，核心文獻（Isaak 1992、Abramson et al. 1997、Cammarano et al. 2003、Abers & Hacker 2016）都對照過原文；還沒查證的地方會標「（未查證）」。

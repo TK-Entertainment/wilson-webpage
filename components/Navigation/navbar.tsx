@@ -16,7 +16,13 @@ const sections = [
   { href: "/docs", label: "學習日常", no: "02", color: "var(--teal)" },
   { href: "/gallery", label: "生活影像", no: "03", color: "var(--orange)" },
   { href: "/map", label: "足跡地圖", no: "04", color: "var(--teal)" },
+  { href: "/docs/research", label: "研究", no: "05", color: "var(--gold)" },
 ];
+
+// 研究放在 /docs/research 底下（共用筆記系統），所以在研究頁時不要把「學習日常」標成目前頁面
+const isCurrent = (href: string, pathname: string) =>
+  pathname.startsWith(href) &&
+  !(href === "/docs" && pathname.startsWith("/docs/research"));
 
 export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
@@ -113,7 +119,7 @@ export default function Navbar() {
               href={section.href}
               aria-label={section.label}
               aria-current={
-                pathname.startsWith(section.href) ? "page" : undefined
+                isCurrent(section.href, pathname) ? "page" : undefined
               }
               className="nav-sec group/sec relative nd-flex items-baseline gap-1.5 px-1.5 py-1 text-[15px] sm:px-2 font-black"
               style={{ ["--c" as string]: section.color }}

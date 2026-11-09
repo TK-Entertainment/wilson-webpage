@@ -1,0 +1,197 @@
+---
+title: 彈性與波速
+description: 應力、應變、K 和 G，以及 Vs = √(G/ρ)、Vp 怎麼從牛頓定律推出來
+---
+
+寫作規則：
+- 每個名詞第一次出現時就定義。
+- 每個數字都標來源：論文（DOI 已用 Crossref API 逐一查證）或本機程式碼「檔案:行號」。
+- 查不到原文、只能間接推論的地方，標「（未查證）」。
+- 「（自算）」= 我用文中寫出的公式或 MATLAB（VBRc 2.1.1）自己算的，你可以重算。
+- 方程式用 LaTeX 排版；$d$ 是微小變化，$\partial$ 是偏微分。
+
+程式碼路徑簡寫：
+- `el_anharmonic.m` = `VBRc repo 的 vbr/vbrCore/functions/el_anharmonic.m`
+- `el_VpVs_unrelaxed.m` = `vbr/vbrCore/functions/el_VpVs_unrelaxed.m`
+- `Params_Elastic.m` = `vbr/vbrCore/params/Params_Elastic.m`
+- `density_*.m`、`thermal_expansion_coefficient.m` = `vbr/vbrCore/functions/density/`
+- `anharmonic.md` = `VBRc repo 的 docs/_pages/vbrmethods/el/anharmonic.md`
+- 範例 = `VBRc repo 的 Projects/vbr_core_examples/CB_008_anharmonic_Gu0.m`、`CB_019_custom_anharmonic_derivatives.m`、`CB_020_uppermantle_reference_values.m`
+
+先講全貌。你的課堂講義（MineralPhysics_0330 p.4）寫 $V = f(P, T, \text{組成}, \text{結構}, \text{狀態})$。VBRc 的 anharmonic 模型只處理其中一小塊：**固定組成、固定結構、固體狀態下，$T$ 和 $P$ 怎麼改變「未鬆弛」的 $G$、$K$，進而改變 $V_s$、$V_p$。** 組成怎麼影響 $G$、$K$，VBRc 不算，要你自己給（`anharmonic.md:129`）。
+
+---
+
+---
+
+## 1. 什麼是彈性：應力、應變、虎克定律；G 和 K；為什麼液體 G = 0
+
+### 問題
+「彈性」到底指什麼？$G$ 和 $K$ 各自在量什麼？
+
+### 邏輯鏈
+1. **力**作用在一塊物體上。單看力的大小還不夠，因為同樣的力壓在大面積和小面積上效果不同。所以定義 **應力（stress, $\sigma$）= 力 / 面積**，單位 $\mathrm{Pa} = \mathrm{N/m^2}$。$1\ \mathrm{GPa} = 10^{9}\ \mathrm{Pa}$。
+2. 物體受力會變形。變形的大小也要「去尺寸化」，所以定義 **應變（strain, $\varepsilon$）= 長度變化 / 原長度**，沒有單位。
+3. **彈性**的定義：力拿掉以後，變形完全恢復，而且能量沒有損失。
+4. 對很小的應變（地震波的應變大約 $10^{-6}$ 或更小（未查證，數量級常識）），實驗發現應力和應變成正比。這就是 **虎克定律（Hooke's law）**：應力 $=$ 模數 $\times$ 應變。比例常數叫 **模數（modulus）**，單位跟應力一樣（Pa）。模數越大 = 越「硬」。
+5. 變形有兩種最基本、互相獨立的方式：
+   - **改變體積、不改變形狀**（四面八方均勻受壓）。描述它的叫 **體積模數 $K$（bulk modulus）**。
+   - **改變形狀、不改變體積**（像把一副撲克牌推斜）。描述它的叫 **剪力模數 $G$（shear modulus，也寫 $\mu$）**。
+6. 對 **等向性（isotropic）** 材料（各方向性質一樣），只要 $K$ 和 $G$ 兩個數字，就能描述所有小變形。（第 3 節會講晶體不是等向的。）
+
+### 方程式
+體積模數：
+
+$$
+P = -K\,\frac{\Delta V}{V} \qquad\Rightarrow\qquad K = -V\,\frac{dP}{dV}
+$$
+
+$P$ 是壓力（均勻的壓應力），$\Delta V/V$ 是體積應變。負號是因為加壓時體積變小。
+
+剪力模數：
+
+$$
+\sigma_{xy} = 2G\,\varepsilon_{xy}
+$$
+
+其中
+
+$$
+\varepsilon_{xy} = \tfrac12\left(\frac{\partial u_x}{\partial y} + \frac{\partial u_y}{\partial x}\right)
+$$
+
+$u$ 是位移（每一點離開原位多遠）。$\varepsilon_{xy}$ 是「張量剪應變」。工程上常用 $\gamma = 2\varepsilon_{xy}$（角度變化），寫成 $\sigma_{xy} = G\gamma$。
+
+三維等向虎克定律（之後第 2 節會用到）：
+
+$$
+\sigma_{ij} = \lambda\,(\varepsilon_{xx} + \varepsilon_{yy} + \varepsilon_{zz})\,\delta_{ij} + 2G\,\varepsilon_{ij}
+$$
+
+$$
+K = \lambda + \tfrac23\,G
+$$
+
+$\lambda$ 叫 **Lamé 第一參數**，$\delta_{ij}$ 在 $i = j$ 時是 1，否則是 0。$K = \lambda + 2G/3$ 的來源：把三個正向應力相加除以 3 得到平均壓應力 $= (\lambda + 2G/3) \times$ 體積應變。
+
+### 數字
+- 橄欖石在室溫常壓：$K \approx 129$ GPa，$G \approx 78$ GPa（Abramson et al. 1997，doi:10.1029/97JB00682，摘要：$K_{\mathrm{HS}} = 129.4$，$G_{\mathrm{HS}} = 78$）。
+- VBRc 預設：`Ku_0_ol = 129`、`Gu_0_ol = 81` GPa（`Params_Elastic.m:29-30`）。
+
+### 意義
+- $K$ 衡量「抗壓縮」，主要反映原子間的排斥。
+- $G$ 衡量「抗剪切」，反映原子排列能不能抵抗互相滑過去。
+- 對岩石，$K$ 通常大於 $G$（橄欖石 $K/G \approx 1.66$，自算 $129.4/78$）。
+
+### 為什麼液體 G = 0
+- 液體的分子可以互相滑動，沒有固定的鄰居。
+- 給液體一個「持續的」剪應力，它就一直流，不會停在某個變形量。變形不會停 → 應力和應變之間沒有固定比例 → 靜態的 $G = 0$。
+- 但液體可以抗壓縮（壓水很難），所以 $K \neq 0$。
+- 精確一點說：「$G = 0$」是指 **長時間（鬆弛後）** 的行為。這個「時間尺度」的觀念在第 5 節會再用到。
+
+### 常見誤解
+- **誤解：「$K$ 大就是密度大」。** 不對。$K$ 是「壓力增加多少 / 體積減少多少的比例」，跟密度是不同的量。
+- **誤解：「楊氏模數 $E$ 就是硬度」。** $E$（單軸拉伸、側向可自由收縮）是 $K$ 和 $G$ 的組合：$E = 9KG/(3K + G)$。地震波速度用的不是 $E$（見第 2 節）。
+- **誤解：「剪應變 $= \partial u_y/\partial x$」。** 張量剪應變有 $\tfrac12$，工程剪應變沒有。$\sigma = 2G\varepsilon_{xy}$ 和 $\sigma = G\gamma$ 是同一件事，不要混用。
+
+---
+
+## 2. 為什麼 Vs = √(G/ρ)、Vp = √((K+4G/3)/ρ)
+
+### 問題
+彈性模數和密度怎麼決定波速？
+
+### 邏輯鏈（一維推導，每一步都寫出來）
+**情境：** 一個平面剪力波（S 波）沿 $x$ 方向傳播。物質點只在 $y$ 方向來回動。位移寫成 $u_y(x, t)$。
+
+**步驟 1：取一小塊。** 在 $x$ 到 $x + dx$ 之間取一個薄片，截面積 $A$。
+- 體積 $= A\,dx$
+- 質量 $= \rho\,A\,dx$（$\rho$ 是密度，kg/m³）
+
+**步驟 2：這塊受多少淨力？** 左面受剪應力 $\sigma_{xy}(x)$，右面受 $\sigma_{xy}(x + dx)$。兩面的力方向相反，淨力是差值：
+
+$$
+F_y = \left[\sigma_{xy}(x + dx) - \sigma_{xy}(x)\right] A \approx \frac{\partial \sigma_{xy}}{\partial x}\,dx\,A
+$$
+
+（「$\approx$」用的是一階泰勒展開：$f(x + dx) \approx f(x) + f'(x)\,dx$。$dx$ 很小時這是準確的。）
+
+**步驟 3：牛頓第二定律 $F = ma$。** 加速度 $a = \partial^2 u_y/\partial t^2$。
+
+$$
+\begin{aligned}
+\rho\,A\,dx\,\frac{\partial^2 u_y}{\partial t^2} &= \frac{\partial \sigma_{xy}}{\partial x}\,dx\,A \\
+\Rightarrow\quad \rho\,\frac{\partial^2 u_y}{\partial t^2} &= \frac{\partial \sigma_{xy}}{\partial x} \qquad \text{(1)}
+\end{aligned}
+$$
+
+$A$ 和 $dx$ 消掉了。這一行是「動量守恆」，跟材料無關。
+
+**步驟 4：虎克定律把應力換成位移。** 平面波只有 $u_y$ 隨 $x$ 變，所以 $\partial u_x/\partial y = 0$：
+
+$$
+\sigma_{xy} = 2G\,\varepsilon_{xy} = 2G\cdot\tfrac12\,\frac{\partial u_y}{\partial x} = G\,\frac{\partial u_y}{\partial x} \qquad \text{(2)}
+$$
+
+**步驟 5：把 (2) 代入 (1)。** 假設 $G$ 在這一小段內是常數：
+
+$$
+\begin{aligned}
+\rho\,\frac{\partial^2 u_y}{\partial t^2} &= G\,\frac{\partial^2 u_y}{\partial x^2} \\
+\Rightarrow\quad \frac{\partial^2 u_y}{\partial t^2} &= \frac{G}{\rho}\,\frac{\partial^2 u_y}{\partial x^2} \qquad \text{(3)}
+\end{aligned}
+$$
+
+**步驟 6：認出這是波動方程。** 標準一維波動方程是 $\partial^2 u/\partial t^2 = c^2\,\partial^2 u/\partial x^2$。檢查：任何形狀的函數 $u = f(x - ct)$ 代進去，左邊 $= c^2 f''$，右邊 $= c^2 f''$，成立。$f(x - ct)$ 代表「形狀 $f$ 以速度 $c$ 往 $+x$ 移動」。所以比較 (3)：
+
+$$
+c^2 = \frac{G}{\rho} \qquad\Rightarrow\qquad V_s = \sqrt{\frac{G}{\rho}}
+$$
+
+**P 波：同樣的步驟，但應力不同。** P 波位移 $u_x(x, t)$ 沿傳播方向。
+- 關鍵：波前是一個無限大的平面。平面上每一點都在做同樣的事，所以物質 **側向不能自由膨脹或收縮**：$\varepsilon_{yy} = \varepsilon_{zz} = 0$，只有 $\varepsilon_{xx} = \partial u_x/\partial x$。
+- 用三維虎克定律：$\sigma_{xx} = \lambda\,\varepsilon_{xx} + 2G\,\varepsilon_{xx} = (\lambda + 2G)\,\varepsilon_{xx}$。
+- 用 $K = \lambda + 2G/3$，得 $\lambda + 2G = K + 4G/3$。這個組合叫 **P 波模數 $M$**。
+- 同步驟 1–6：$\rho\,\partial^2 u_x/\partial t^2 = (K + 4G/3)\,\partial^2 u_x/\partial x^2$，所以
+
+$$
+V_p = \sqrt{\frac{K + 4G/3}{\rho}}
+$$
+
+### 三維的結果（只說結論）
+把步驟 1–4 用在三維小立方體上，得到 **Navier 方程**：
+
+$$
+\rho\,\frac{\partial^2 \mathbf{u}}{\partial t^2} = (\lambda + 2G)\,\nabla(\nabla\cdot\mathbf{u}) - G\,\nabla\times(\nabla\times\mathbf{u})
+$$
+
+任何位移場都能拆成「無旋（只改體積）」和「無散度（只改形狀）」兩部分。無旋那部分以 $V_p$ 傳播，無散度那部分以 $V_s$ 傳播。和一維結果相同。
+
+### 程式碼
+`el_VpVs_unrelaxed.m:18-19`：
+```matlab
+Vp = sqrt((bulk_mod + 4/3 * shear_mod)./rho);
+Vs = sqrt(shear_mod./rho);
+```
+就是上面兩條公式，沒有別的。它在 `el_anharmonic.m:60` 被呼叫。
+
+### 數字（自算）
+用 Abramson 1997 的 $K_H = 129.44$、$G_H = 78.01$ GPa（第 3 節算出）和他們的初始密度 3355 kg/m³（Abramson 1997 摘要）：
+
+$$
+V_s = \sqrt{78.01\times10^{9} / 3355} = 4822\ \mathrm{m/s}
+$$
+
+$$
+V_p = \sqrt{\left(129.44\times10^{9} + \tfrac43\times 78.01\times10^{9}\right) / 3355} = 8342\ \mathrm{m/s}
+$$
+
+### 意義
+- $V_s$ 只看 $G$ 和 $\rho$。所以液體（$G = 0$）不傳 S 波。
+- $V_p$ 同時看 $K$ 和 $G$。$G$ 的權重是 $4/3$，所以 $G$ 變化對 $V_p$ 的影響不小。
+- 波速是「恢復力（模數）」和「慣性（密度）」之比的平方根。
+
+### 常見誤解
+- **誤解：「密度大的岩石波速比較快」。** 公式裡 $\rho$ 在分母。實際上密度大的岩石常常更快，是因為它的模數增加得更多，不是因為密度本身。
+- **誤解：「$V_p = \sqrt{E/\rho}$」。** 那是細長棒子（側向可自由收縮）的「棒速」。地震波是平面波，側向受拘束，要用 $K + 4G/3$。
+- **誤解：「$V_p$ 只跟 $K$ 有關」。** 不對，$G$ 佔了 $4G/3$。

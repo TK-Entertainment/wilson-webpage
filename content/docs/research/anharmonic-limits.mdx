@@ -1,0 +1,90 @@
+---
+title: 假設、限制與自我檢查
+description: 模型的假設清單、10 題自我檢查題與參考文獻
+---
+
+## 9. 這個模型的假設與限制清單
+
+**物理假設**
+1. 材料是等向的（VRH/HS 平均後）。沒有晶格優選方位。
+2. 模數是未鬆弛、絕熱的（定義如此）。
+3. $G$、$K$ 對 $T$、$P$ 是線性（$G$ 對 $P$ 在 abramson 時是二次），沒有 $\partial^2/\partial T^2$，沒有 $T$–$P$ 交叉項。
+4. 斜率在整個 $T$、$P$ 範圍內是常數，而且來自不同實驗條件（常壓高溫 vs 室溫高壓）。
+5. 組成固定。預設是「橄欖石」，$G_0 = 81$（大概是 Fo100），斜率是 Fo90。
+6. 只有 chi 這一個組成變數，而且是 Voigt 型的線性混合。
+7. 密度不在 el_anharmonic 內部計算；`density_from_vbrc` 是 Murnaghan 壓縮 + 常壓 $\alpha$ 熱膨脹的兩步近似。
+
+**程式／文件層面（我讀程式時發現的）**
+8. `Gu_0_ol = 81` 在程式中沒有引用；Cammarano 2003 Table A.1 的 Fo100 值（已查證）。和 Fo90 的 77.9 差 3 GPa；在 1300 °C、3 GPa 讓 $V_s$ 差 2.3% $\approx$ 260 K（不是 220 K，經另一次獨立驗算確認）。
+9. `abramson.dK_dP = 4.2`，論文是 4.29。
+10. `dG_dP2` 是 $P^2$ 係數，不是二階導數。名稱容易誤導。
+11. `crust.dG_dP`、`crust.dK_dP` 很可能小了約 300 倍（生成腳本把溫度陣列當成壓力的 x 軸）。
+12. chi 混合在非預設參考點下會錯用地殼參數的參考點。
+13. 可以混用不同參考點和不同來源的斜率，程式不會警告（例如 upper_mantle 參考點 + abramson 壓力多項式）。
+14. `density_from_vbrc` 用 $K_S$ 代替 $K_T$（誤差 $\lt  0.05\%$）、FracFo 寫死 0.9、$\alpha$ 係數有三組明顯偏低（影響約 1.5% 的 $\rho$）。
+15. 文件的 `temperature_scale` / `pressure_scale` 寫錯（應為 `..._scaling`），照抄不會報錯，只會悄悄使用預設值。
+16. 文件說 Gu_0 輸出在 `VBR.out.elastic.Gu_0`，實際在 `VBR.out.elastic.anharmonic.Gu_0`。
+
+**適用範圍**
+17. 有實驗支持的範圍：約 300–1500 K（常壓）和 0–12 GPa（室溫）。兩者同時高溫高壓的區域是外推。
+18. 只適用於橄欖石穩定區（410 km 以上）。
+
+---
+
+## 10. 自我檢查題（答案在最後）
+
+1. 寫出 $V_s$ 公式的一維推導中，哪一步用了牛頓第二定律、哪一步用了虎克定律？如果省略「$G$ 在小段內是常數」這個假設，方程式會多出什麼項？
+2. 為什麼 P 波用 $K + 4G/3$，而不是楊氏模數 $E$？
+3. 正交晶系為什麼是 9 個獨立 $C_{ij}$？用 Abramson 1997 的數據，Voigt 和 Reuss 的 $G$ 差多少？這代表什麼？
+4. VBRc 的 Gu_0_ol = 81 和 San Carlos 橄欖石的 $G \approx 78$ 差在哪裡？在 1300 °C 這相當於多少 K 的溫度誤差？怎麼算？
+5. 用熱力學恆等式說明：為什麼 $K$ 的溫度效應大部分可以用熱膨脹解釋，而 $G$ 不行？
+6. $\gamma = 1.1$ 的白話意義是什麼？用它估計 1573 K 時 $K_S/K_T$。
+7. 超音波、RUS、ISS 的頻率大約多少？為什麼它們量到的是未鬆弛模數？「未鬆弛」和「絕熱」有什麼不同？
+8. `el_anharmonic.m:127` 沒有 $\tfrac12$。`abramson.dG_dP2 = -0.027e-9` 代表什麼？真正的 $\partial^2 G/\partial P^2$ 是多少？
+9. 在 1300 °C、3 GPa，$d\ln V_s/dT$ 是多少？其中 $G$ 和 $\rho$ 各貢獻多少？如果把 $\rho$ 固定不變，結果會偏多少？
+10. 如果你只把 `reference_scaling` 改成 `'upper_mantle'`，其他都不動，會發生什麼事？
+
+---
+
+### 解答
+
+**1.** 步驟 3（$\rho\,\partial^2 u/\partial t^2 = \partial\sigma/\partial x$）是牛頓第二定律，步驟 4（$\sigma = G\,\partial u/\partial x$）是虎克定律。如果 $G$ 隨 $x$ 變，$\partial\sigma/\partial x = \partial/\partial x\,(G\,\partial u/\partial x) = G\,\partial^2 u/\partial x^2 + (\partial G/\partial x)(\partial u/\partial x)$，多出 $(\partial G/\partial x)(\partial u/\partial x)$ 這一項。這一項造成反射和散射，波速公式只在 $G$ 變化的尺度遠大於波長時成立。
+
+**2.** 平面波的波前無限大，側向應變 $\varepsilon_{yy} = \varepsilon_{zz} = 0$。三維虎克定律給 $\sigma_{xx} = (\lambda + 2G)\,\varepsilon_{xx} = (K + 4G/3)\,\varepsilon_{xx}$。$E$ 是側向可以自由收縮時的模數，只適用於細棒。
+
+**3.** $6\times6$ 對稱矩陣最多 21 個；正交晶系的三個互相垂直鏡面讓正向–剪切耦合和不同剪切分量之間的耦合為零，剩下 $C_{11}$、$C_{22}$、$C_{33}$、$C_{44}$、$C_{55}$、$C_{66}$、$C_{12}$、$C_{13}$、$C_{23}$。$G_V = 79.54$、$G_R = 76.48$，差 3.06 GPa（3.9%）。這代表「不知道晶粒之間如何分擔應力」造成的不確定性。
+
+**4.** 81 大概是純鎂橄欖石（Fo100）的值（VBRc 早期註解：Cammarano 的 $G_0 = 81 - 31\,X_{\mathrm{Fe}}$；Mao 2015：$81.6 - 0.38\,X_{\mathrm{Fe}}$）；San Carlos 是 Fo90，$G \approx 78$。$d\ln V_s = \tfrac12 \ln(81/78) = 0.0189$；除以 $\lvert d\ln V_s/dT\rvert = 8.55\times10^{-5}\ \mathrm{/K}$ → 約 220 K（這是室溫比值；在 1300 °C、3 GPa 實際算是 $V_s$ 差 2.3%，約 260 K）。
+
+**5.** $\left(\partial M/\partial T\right)_P = \left(\partial M/\partial T\right)_V - \alpha K_T \left(\partial M/\partial P\right)_T$。$K' \approx 4.3$ 很大，所以 $\alpha K_T K' \approx 10$–19 MPa/K，接近 $\left(\partial K_S/\partial T\right)_P = -18$ MPa/K 的全部。$G' \approx 1.7$ 較小，$\alpha K_T G' \approx 4$–7.5 MPa/K，只佔 −13.6 MPa/K 的 30–55%，其餘是等容下的本質非簡諧效應。
+
+**6.** 體積增加 1%，晶格振動頻率約降低 1.1%。$K_S/K_T = 1 + \alpha\gamma T = 1 + 2.93\times10^{-5} \times 1.11 \times 1573 \approx 1.051$。
+
+**7.** 超音波約 40 MHz（講義 p.16），RUS 約 MHz 量級（未查證具體數字），ISS 到約 3 GHz（Abramson et al. 1999）。週期 $\le 25$ ns，遠短於室溫單晶中任何鬆弛機制的特徵時間，所以只量到原子鍵的瞬時剛度。「未鬆弛」是力學鬆弛機制來不及作用；「絕熱」是熱來不及擴散。兩個是不同的過程。
+
+**8.** 它是多項式 $G = 78 + 1.71P - 0.027P^2$（$P$ 用 GPa）的 $P^2$ 係數 $= \tfrac12\,\partial^2 G/\partial P^2$。所以 $\partial^2 G/\partial P^2 = -0.054\ \mathrm{GPa^{-1}} = -0.054\times10^{-9}\ \mathrm{Pa^{-1}}$。程式直接乘 $\Delta P^2$，沒有 $\tfrac12$，和這個定義一致。
+
+**9.** $d\ln V_s/dT = -8.55\times10^{-5}\ \mathrm{/K}$（default）。$\tfrac12\,d\ln G/dT = -1.00\times10^{-4}$，$\tfrac12 \times (-d\ln\rho/dT) = +1.47\times10^{-5}$。$\rho$ 固定時 $= -1.00\times10^{-4}\ \mathrm{/K}$，高估約 17%。
+
+**10.** $G_0$、$K_0$、$T_{\mathrm{ref}}$、$P_{\mathrm{ref}}$ 會換成 pyrolite 在 1573 K、3 GPa 的值，但溫度斜率仍是 isaak、壓力斜率仍是 cammarano（`Params_Elastic.m:35, 38`）。程式不會報錯。結果是「pyrolite 的參考值 + 橄欖石的斜率」的混合。若 chi &lt; 1，地殼參數也會被錯誤地當作 1573 K、3 GPa 的值來外推。CB_020 的做法是三個 scaling 都改成 `'upper_mantle'`。
+
+---
+
+## 參考文獻（DOI 全部在 2026-11-09 用 Crossref API 查證，作者、年份、標題、卷頁皆吻合）
+
+- Abramson, E. H., Brown, J. M., Slutsky, L. J., Zaug, J. (1997). The elastic constants of San Carlos olivine to 17 GPa. JGR Solid Earth 102, 12253–12263. doi:10.1029/97JB00682（數值取自 Crossref 收錄的摘要；全文未讀）
+- Abramson, E. H., Brown, J. M., Slutsky, L. J. (1999). Applications of impulsive stimulated scattering in the Earth and planetary sciences. Annu. Rev. Phys. Chem. 50, 279–313. doi:10.1146/annurev.physchem.50.1.279（全文 PDF 已讀）
+- Abers, G. A., Hacker, B. R. (2016). A MATLAB toolbox and Excel workbook for calculating the densities, seismic wave speeds, and major element composition of minerals and rocks at pressure and temperature. G-cubed 17, 616–624. doi:10.1002/2015GC006171
+- Cammarano, F., Goes, S., Vacher, P., Giardini, D. (2003). Inferring upper-mantle temperatures from seismic velocities. PEPI 138, 197–222. doi:10.1016/S0031-9201(03)00156-0（DOI 與 Table A.1 數值均已查證，papers/Cammarano_2003.pdf）
+- Hashin, Z., Shtrikman, S. (1963). A variational approach to the theory of the elastic behaviour of multiphase materials. J. Mech. Phys. Solids 11, 127–140. doi:10.1016/0022-5096(63)90060-7
+- Havlin, C., Holtzman, B. K., Hopper, E. (2021). Inference of thermodynamic state in the asthenosphere from anelastic properties… PEPI 314, 106639. doi:10.1016/j.pepi.2020.106639（讀的是 EarthArXiv 版本）
+- Hill, R. (1952). The elastic behaviour of a crystalline aggregate. Proc. Phys. Soc. A 65, 349–354. doi:10.1088/0370-1298/65/5/307
+- Isaak, D. G. (1992). High-temperature elasticity of iron-bearing olivines. JGR 97, 1871–1885. doi:10.1029/91JB02675（數值取自摘要）
+- Isaak, D. G., Anderson, O. L., Goto, T., Suzuki, I. (1989). Elasticity of single-crystal forsterite measured to 1700 K. JGR 94, 5895–5906. doi:10.1029/JB094iB05p05895（數值取自摘要）
+- Mao, Z., Fan, D., Lin, J.-F., et al. (2015). Elasticity of single-crystal olivine at high pressures and temperatures. EPSL 426, 204–215. doi:10.1016/j.epsl.2015.06.045（全文 PDF 已讀）
+- Murnaghan, F. D. (1944). The compressibility of media under extreme pressures. PNAS 30, 244–247. doi:10.1073/pnas.30.9.244
+- Xu, Y., Shankland, T. J., Linhardt, S., Rubie, D. C., Langenhorst, F., et al. (2004). Thermal diffusivity and conductivity of olivine, wadsleyite and ringwoodite to 20 GPa and 1373 K. PEPI 143–144, 321–336. doi:10.1016/j.pepi.2004.03.005
+- 延伸（已查證 DOI，本文未直接取數值）：Anderson, Isaak & Oda (1992) Rev. Geophys. 30, 57–90, doi:10.1029/91RG02810；Watt, Davies & O'Connell (1976) Rev. Geophys. 14, 541–563, doi:10.1029/RG014i004p00541；Reuss (1929) ZAMM 9, 49–58, doi:10.1002/zamm.19290090104；Kumazawa & Anderson (1969) JGR 74, 5961–5972, doi:10.1029/JB074i025p05961；Grüneisen (1912) Ann. Phys. 344, 257–306, doi:10.1002/andp.19123441202。
+- 未查證：Voigt (1928) Lehrbuch der Kristallphysik（書，無 DOI）；Liu & Li (2006)（γ = 1.11 的來源，只透過 Mao 2015 轉引）；Goes et al. (2000)（只透過 arXiv:1810.11159 轉引）。
+
+重算用的 MATLAB 腳本：`/private/tmp/claude-501/-Users-chenyanting-vbr/54845034-173a-4930-8df3-914e3af13d45/scratchpad/m/calc_anh.m`
