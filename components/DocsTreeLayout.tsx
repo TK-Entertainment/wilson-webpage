@@ -16,9 +16,15 @@ export default function DocsTreeLayout({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const tree = pathname.startsWith("/docs/research") ? researchTree : notesTree;
+  const isResearch = pathname.startsWith("/docs/research");
+  const tree = isResearch ? researchTree : notesTree;
   return (
-    <DocsLayout tree={tree} nav={{ enabled: false }}>
+    <DocsLayout
+      tree={tree}
+      nav={{ enabled: false }}
+      // 學習日常的課程資料夾預設收起來（目前所在的課程仍會自動展開）；研究只有一個資料夾，維持展開
+      sidebar={{ defaultOpenLevel: isResearch ? 1 : 0 }}
+    >
       {children}
     </DocsLayout>
   );
