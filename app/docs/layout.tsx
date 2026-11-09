@@ -1,14 +1,14 @@
-import { DocsLayout } from "next-docs-ui/layout";
 import type { ReactNode } from "react";
-import { tree } from "../source";
+import { notesTree, researchTree } from "../source";
 import DocsI18n from "@/components/docsi18n";
+import DocsTreeLayout from "@/components/DocsTreeLayout";
 
 export default function RootDocsLayout({ children }: { children: ReactNode }) {
   return (
     <DocsI18n>
-      <DocsLayout tree={tree} nav={{ enabled: false }}>
+      <DocsTreeLayout notesTree={notesTree} researchTree={researchTree}>
         {children}
-      </DocsLayout>
+      </DocsTreeLayout>
     </DocsI18n>
   );
 }

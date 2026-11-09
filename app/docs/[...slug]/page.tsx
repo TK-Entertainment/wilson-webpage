@@ -1,4 +1,10 @@
-import { getPage, getPageUrl, tree } from "@/app/source";
+import {
+  getPage,
+  getPageUrl,
+  isResearchUrl,
+  notesTree,
+  researchTree,
+} from "@/app/source";
 import { allDocs } from "contentlayer/generated";
 import type { Metadata } from "next";
 import { MDXContent } from "next-docs-ui/mdx";
@@ -25,7 +31,12 @@ export default async function Page(props: Props) {
   }
 
   const toc = await getTableOfContents(page.body.raw);
-  const neighbour = findNeighbour(tree, getPageUrl(params.slug));
+  const url = getPageUrl(params.slug);
+  // 上一頁／下一頁只在同一邊（研究或課程筆記）裡找
+  const neighbour = findNeighbour(
+    isResearchUrl(url) ? researchTree : notesTree,
+    url,
+  );
 
   return (
     <DocsPage toc={toc} footer={neighbour}>
@@ -51,7 +62,7 @@ export default async function Page(props: Props) {
         <div data-reading-body>
           <Content code={page.body.code} />
         </div>
-        {(params.slug ?? []).length === 0 ? <NotesIndex tree={tree} /> : <></>}
+        {(params.slug ?? []).length === 0 ? <NotesIndex tree={notesTree} /> : <></>}
       </MDXContent>
     </DocsPage>
   );
