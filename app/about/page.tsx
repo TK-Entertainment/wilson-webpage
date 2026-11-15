@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { pageMetadata } from "@/utils/seo";
@@ -140,20 +139,24 @@ export default function AboutPage() {
           </section>
           <section>
             <Label>{"// 04 住在心裡的那隻狼"}</Label>
-            <div className="mt-3 grid gap-6 border-t-4 border-foreground pt-6 sm:grid-cols-[200px_minmax(0,1fr)]">
-              <div className="relative mx-auto w-48 sm:w-full">
-                <div
-                  className="absolute inset-x-2 bottom-0 top-10 -skew-x-6 bg-[var(--navy)]"
-                  aria-hidden="true"
-                />
-                <Image
-                  src="/img/meridian/globe.webp"
-                  alt="子午線 Meridian：戴圓框眼鏡和白色棒球帽的灰狼，用手指轉著地球儀"
-                  width={518}
-                  height={720}
-                  className="relative"
-                />
-              </div>
+            <div className="mt-3 grid gap-6 border-t-4 border-foreground pt-6 sm:grid-cols-[240px_minmax(0,1fr)]">
+              <figure className="mx-auto w-60 sm:w-full">
+                {/* 逐格動畫（6 格）；偏好減少動態時只顯示最後一格 */}
+                <picture>
+                  <source srcSet="/img/meridian/hammer-still.webp" media="(prefers-reduced-motion: reduce)" />
+                  <img
+                    src="/img/meridian/hammer.webp"
+                    alt="子午線 Meridian：戴圓框眼鏡和白色棒球帽的灰狼，揮地質錘敲石頭，敲下碎片後得意地笑"
+                    width={480}
+                    height={485}
+                    loading="lazy"
+                    className="block h-auto w-full border-2 border-foreground bg-white shadow-[6px_6px_0_var(--navy)] dark:shadow-[6px_6px_0_var(--gold)]"
+                  />
+                </picture>
+                <figcaption className="mt-3 font-mono-label text-xs text-muted-foreground">
+                  {"// 今天也在找東西敲"}
+                </figcaption>
+              </figure>
               <div>
                 <p className="text-2xl font-black">
                   子午線 <span className="font-mono-label text-base text-muted-foreground">MERIDIAN</span>
