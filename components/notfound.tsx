@@ -9,6 +9,9 @@ const routes = [
   { href: "/blog", label: "日常碎念", code: "01", color: "var(--gold)" },
   { href: "/docs", label: "學習日常", code: "02", color: "var(--teal)" },
   { href: "/gallery", label: "生活影像", code: "03", color: "var(--orange)" },
+  { href: "/map", label: "足跡地圖", code: "04", color: "var(--sage)" },
+  { href: "/docs/research", label: "研究", code: "05", color: "var(--plum)" },
+  { href: "/about", label: "關於我", code: "06", color: "var(--rose)" },
 ];
 
 export default function NotFoundScreen({ compact }: { compact?: boolean }) {

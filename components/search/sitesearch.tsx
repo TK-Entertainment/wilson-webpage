@@ -22,18 +22,18 @@ const SECTION_META: Record<
 > = {
   blog: {
     label: "日常碎念",
-    shape: "h-3 w-3 rounded-full bg-bh-red",
-    accent: "bg-bh-red text-white",
+    shape: "h-3 w-3 rounded-full bg-[var(--gold)]",
+    accent: "bg-[var(--gold)] text-bh-ink",
   },
   docs: {
     label: "學習日常",
-    shape: "h-3 w-3 bg-bh-blue [clip-path:polygon(50%_0,100%_100%,0_100%)]",
-    accent: "bg-bh-blue text-white",
+    shape: "h-3 w-3 bg-[var(--teal)] [clip-path:polygon(50%_0,100%_100%,0_100%)]",
+    accent: "bg-[var(--teal)] text-bh-ink",
   },
   gallery: {
     label: "生活影像",
-    shape: "h-3 w-3 bg-bh-yellow",
-    accent: "bg-bh-yellow text-bh-ink",
+    shape: "h-3 w-3 bg-[var(--orange)]",
+    accent: "bg-[var(--orange)] text-bh-ink",
   },
 };
 

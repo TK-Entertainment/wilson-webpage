@@ -2,12 +2,12 @@ import Link from "next/link";
 import Logo from "@/components/logo";
 
 const sections = [
-  { href: "/blog", no: "01", label: "日常碎念" },
-  { href: "/docs", no: "02", label: "學習日常" },
-  { href: "/gallery", no: "03", label: "生活影像" },
-  { href: "/map", no: "04", label: "足跡地圖" },
-  { href: "/docs/research", no: "05", label: "研究" },
-  { href: "/about", no: "06", label: "關於我" },
+  { href: "/blog", no: "01", label: "日常碎念", c: "var(--gold)" },
+  { href: "/docs", no: "02", label: "學習日常", c: "var(--teal)" },
+  { href: "/gallery", no: "03", label: "生活影像", c: "var(--orange)" },
+  { href: "/map", no: "04", label: "足跡地圖", c: "var(--sage)" },
+  { href: "/docs/research", no: "05", label: "研究", c: "var(--plum)" },
+  { href: "/about", no: "06", label: "關於我", c: "var(--rose)" },
 ];
 
 export default function Footer() {
@@ -22,8 +22,13 @@ export default function Footer() {
               <li key={s.href}>
                 <Link
                   href={s.href}
-                  className="transition-colors hover:text-[var(--gold)]"
+                  className="group inline-flex items-center transition-colors hover:text-[var(--c)]"
+                  style={{ ["--c" as string]: s.c }}
                 >
+                  <span
+                    className="mr-1.5 h-2 w-2 flex-none bg-[var(--c)]"
+                    aria-hidden="true"
+                  />
                   <span className="mr-1.5 font-mono-label text-[11px] opacity-60">
                     {s.no}
                   </span>
