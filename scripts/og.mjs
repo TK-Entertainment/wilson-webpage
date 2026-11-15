@@ -60,6 +60,14 @@ const SECTIONS = {
     color: C.teal,
     ghost: "MAP",
   },
+  about: {
+    no: "06",
+    label: "關於我",
+    latin: "ABOUT // WILSON",
+    description: "出生自台中豐原的平凡小孩，內心永遠住著一個 15 歲的小屁孩。",
+    color: "#c98b84",
+    ghost: "ABOUT",
+  },
 };
 
 /* ---------------- 讀取 MDX frontmatter ---------------- */

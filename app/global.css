@@ -717,3 +717,9 @@ button[aria-label="Scroll to Top"] {
 .nd-prose table td:first-child {
   min-width: 5.5em;
 }
+
+/* 關於我：重點字下面一條斜切的色帶 */
+.about-mark {
+  background: linear-gradient(transparent 58%, color-mix(in srgb, var(--rose) 55%, transparent) 58% 92%, transparent 92%);
+  padding: 0 0.1em;
+}

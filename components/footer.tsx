@@ -6,6 +6,8 @@ const sections = [
   { href: "/docs", no: "02", label: "學習日常" },
   { href: "/gallery", no: "03", label: "生活影像" },
   { href: "/map", no: "04", label: "足跡地圖" },
+  { href: "/docs/research", no: "05", label: "研究" },
+  { href: "/about", no: "06", label: "關於我" },
 ];
 
 export default function Footer() {
