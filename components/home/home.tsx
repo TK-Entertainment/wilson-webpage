@@ -36,6 +36,7 @@ const MENU = [
   { href: "/docs", n: "02", t: "學習日常", d: "咖啡", c: "var(--teal)" },
   { href: "/gallery", n: "03", t: "生活影像", d: "果汁", c: "var(--orange)" },
   { href: "/map", n: "04", t: "足跡地圖", d: "出門", c: "var(--teal)" },
+  { href: "/docs/research", n: "05", t: "研究", d: "論文", c: "var(--gold)" },
 ];
 
 const loc = (p: HomePhoto) =>
