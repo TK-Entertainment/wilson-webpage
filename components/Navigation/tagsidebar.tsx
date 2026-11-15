@@ -3,6 +3,7 @@ import { allBlogs } from "@/.contentlayer/generated";
 import { getTopicTagsMap, getTagsMapWithoutTopics, tagHref } from "@/utils/tags";
 import { usePathname } from "next/navigation";
 import getTopicTagsIcon from "@/utils/tagsicon";
+import { tagColor } from "@/utils/palette";
 import Link from "next/link";
 
 function itemClass(active: boolean) {
@@ -58,12 +59,14 @@ export default function TagSidebar({ activeTag }: { activeTag?: string }) {
             <Link
               href={tagHref(tag)}
               key={tag}
-              className={
+              style={{ ["--c" as string]: tagColor(tag) }}
+              className={`inline-flex items-center gap-1 ${
                 activeTag === tag
-                  ? "bg-bh-yellow px-1 text-bh-ink"
-                  : "transition-colors hover:text-bh-red"
-              }
+                  ? "bg-[var(--c)] px-1 text-bh-ink"
+                  : "transition-colors hover:text-[var(--c)]"
+              }`}
             >
+              <span className="h-1.5 w-1.5 flex-none bg-[var(--c)]" aria-hidden="true" />
               #{tag}
             </Link>
           ))}

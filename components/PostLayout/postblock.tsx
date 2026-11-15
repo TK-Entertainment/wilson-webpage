@@ -3,6 +3,7 @@ import Link from "next/link";
 import { tagHref } from "@/utils/tags";
 import Image from "next/image";
 import type { Blog } from "contentlayer/generated";
+import { tagColor } from "@/utils/palette";
 import PostCover from "@/components/PostCover";
 
 export default function PostBlock({ page }: { page: Blog }) {
@@ -34,8 +35,10 @@ export default function PostBlock({ page }: { page: Blog }) {
             <Link
               key={tag}
               href={tagHref(tag)}
-              className="transition-colors hover:text-bh-red"
+              style={{ ["--c" as string]: tagColor(tag) }}
+              className="inline-flex items-center gap-1 transition-colors hover:text-[var(--c)]"
             >
+              <span className="h-1.5 w-1.5 flex-none bg-[var(--c)]" aria-hidden="true" />
               #{tag}
             </Link>
           ))}

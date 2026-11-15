@@ -15,6 +15,7 @@ import ArticleNeighbours from "@/components/ArticleNeighbours";
 import { readingTimeLabel } from "@/utils/readingtime";
 import Comments from "@/components/comments";
 import { pageMetadata } from "@/utils/seo";
+import { tagColor } from "@/utils/palette";
 import { tagHref } from "@/utils/tags";
 
 // Next 15 起 params 是 Promise
@@ -75,8 +76,10 @@ export default async function BlogSlug(props: Props) {
                   <Link
                     key={tag}
                     href={tagHref(tag)}
-                    className="border-2 border-foreground px-2 py-1 transition-colors hover:bg-bh-yellow hover:text-bh-ink"
+                    style={{ ["--c" as string]: tagColor(tag) }}
+                    className="inline-flex items-center gap-1.5 border-2 border-foreground px-2 py-1 transition-colors hover:bg-[var(--c)] hover:text-bh-ink"
                   >
+                    <span className="h-2 w-2 flex-none bg-[var(--c)]" aria-hidden="true" />
                     #{tag}
                   </Link>
                 ))}

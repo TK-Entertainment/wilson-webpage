@@ -88,6 +88,29 @@ const Album = defineDocumentType(() => ({
   },
 }));
 
+// 提示框分類：引用區塊開頭是 **易錯** → callout-warn；**觀念題／口訣／重點／提示** → callout-tip
+function rehypeCalloutKind() {
+  const text = (n: any): string =>
+    n.type === "text" ? n.value : (n.children ?? []).map(text).join("");
+  return (tree: any) => {
+    visit(tree, "element", (node: any) => {
+      if (node.tagName !== "blockquote") return;
+      const p = node.children.find((c: any) => c.type === "element");
+      const first = p?.tagName === "p" ? p.children.find((c: any) => !(c.type === "text" && !c.value.trim())) : undefined;
+      if (first?.tagName !== "strong") return;
+      const label = text(first).trim();
+      const kind = /^(易錯|注意|陷阱|常見錯誤)/.test(label)
+        ? "callout-warn"
+        : /^(觀念題|口訣|重點|提示|小提醒|記法)/.test(label)
+          ? "callout-tip"
+          : undefined;
+      if (!kind) return;
+      const cls = node.properties.className ?? [];
+      node.properties.className = [...(Array.isArray(cls) ? cls : [cls]), kind];
+    });
+  };
+}
+
 // 內文圖片（/img/... 開頭）補上寬高：next-docs-ui 的 img 是 next/image，少了寬高會報錯
 function rehypeLocalImageSize() {
   return (tree: any) => {
@@ -207,7 +230,7 @@ const config = createConfig();
 // - rehype-slug：標題 id，跟目錄（getTableOfContents）一樣用 github-slugger
 config.mdx = {
   remarkPlugins: [remarkGfm, remarkMath],
-  rehypePlugins: [rehypeSlug, rehypeKatex, rehypeLocalImageSize],
+  rehypePlugins: [rehypeSlug, rehypeKatex, rehypeLocalImageSize, rehypeCalloutKind],
 };
 
 // @ts-ignore

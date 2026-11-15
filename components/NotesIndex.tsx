@@ -1,15 +1,16 @@
 import Link from "next/link";
 import type { tree as Tree } from "@/app/source";
+import { PALETTE, courseColor } from "@/utils/palette";
 
 type Node = (typeof Tree)["children"][number];
 type Folder = Extract<Node, { type: "folder" }>;
 type Page = Extract<Node, { type: "page" }>;
 
 const markers = [
-  "rounded-full bg-bh-red",
-  "bg-bh-blue [clip-path:polygon(50%_0,100%_100%,0_100%)]",
-  "bg-bh-yellow",
-  "bg-bh-green rounded-[50%_0]",
+  "rounded-full",
+  "[clip-path:polygon(50%_0,100%_100%,0_100%)]",
+  "",
+  "rounded-[50%_0]",
 ];
 
 // 學習日常首頁的筆記目錄：依側欄的資料夾（課程）自動列出所有筆記
@@ -26,11 +27,15 @@ export default function NotesIndex({ tree }: { tree: typeof Tree }) {
     (node): node is Page => node.type === "page" && node.url !== "/docs",
   );
   const groups = [
-    ...folders.map((folder) => ({
-      name: String(folder.name),
-      pages: folder.children.filter((n): n is Page => n.type === "page"),
-    })),
-    ...(loose.length > 0 ? [{ name: "其他筆記", pages: loose }] : []),
+    ...folders.map((folder) => {
+      const pages = folder.children.filter((n): n is Page => n.type === "page");
+      return {
+        name: String(folder.name),
+        pages,
+        color: pages[0] ? courseColor(pages[0].url) : undefined,
+      };
+    }),
+    ...(loose.length > 0 ? [{ name: "其他筆記", pages: loose, color: undefined }] : []),
   ].filter((group) => group.pages.length > 0);
 
   if (groups.length === 0) return <></>;
@@ -50,6 +55,7 @@ export default function NotesIndex({ tree }: { tree: typeof Tree }) {
             >
               <span
                 className={`h-4 w-4 flex-none ${markers[i % markers.length]}`}
+                style={{ background: group.color ?? PALETTE[i % PALETTE.length] }}
                 aria-hidden="true"
               />
               {group.name}

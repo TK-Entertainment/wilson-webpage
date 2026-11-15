@@ -18,6 +18,8 @@ import { readingTimeLabel } from "@/utils/readingtime";
 import { pageMetadata } from "@/utils/seo";
 import NotesIndex from "@/components/NotesIndex";
 import PageHeader from "@/components/PageHeader";
+import { courseColor } from "@/utils/palette";
+import type { CSSProperties } from "react";
 
 // Next 15 起 params 是 Promise
 type Props = { params: Promise<{ slug?: string[] }> };
@@ -32,6 +34,7 @@ export default async function Page(props: Props) {
 
   const toc = await getTableOfContents(page.body.raw);
   const url = getPageUrl(params.slug);
+  const course = courseColor(url);
   // 上一頁／下一頁只在同一邊（研究或課程筆記）裡找
   const neighbour = findNeighbour(
     isResearchUrl(url) ? researchTree : notesTree,
@@ -59,7 +62,11 @@ export default async function Page(props: Props) {
         <p className="nd-not-prose -mt-4 mb-8 font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
           閱讀時間 // {readingTimeLabel(page.body.raw)}
         </p>
-        <div data-reading-body>
+        <div
+          data-reading-body
+          data-course={course ? "" : undefined}
+          style={course ? ({ ["--course" as string]: course } as CSSProperties) : undefined}
+        >
           <Content code={page.body.code} />
         </div>
         {(params.slug ?? []).length === 0 ? <NotesIndex tree={notesTree} /> : <></>}

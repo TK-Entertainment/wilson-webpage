@@ -26,15 +26,17 @@
   --glitch-b: #4cb8b0;
   --glitch-blend: multiply;
 
-  /* 新配色（取自 Meridian）：深藍、米白、金、橘、青綠＋輔助色灰綠、灰紫 */
+  /* 新配色（取自 Meridian）：深藍、米白、金、橘、青綠＋輔助色灰綠、灰紫、灰玫瑰、灰藍 */
   --navy: #26304f;
   --cream: #efe4c8;
   --gold: #d6a53c;
   --orange: #e2782d;
   --teal: #4cb8b0;
-  /* 輔助色（低彩度，只用在分頁色塊與點綴）：灰綠、灰紫 */
+  /* 輔助色（低彩度，只用在色塊與點綴）：灰綠、灰紫、灰玫瑰、灰藍 */
   --sage: #8fa878;
   --plum: #9c88b6;
+  --rose: #c98b84;
+  --sky: #7f9dc0;
 }
 
 :root.dark {
@@ -223,11 +225,28 @@ button[aria-label="Scroll to Top"] {
   flex: none;
   width: 0.55em;
   height: 0.55em;
-  background: #e2782d;
+  background: var(--course, #e2782d);
   border-radius: 50%;
 }
 .nd-prose blockquote {
-  border-left: 4px solid #26304f;
+  border-left: 4px solid var(--course, #26304f);
+}
+/* 筆記裡的提示框：底色帶一點課程色；「易錯」用灰玫瑰、「觀念題／口訣／重點」用金 */
+[data-course] blockquote {
+  background: color-mix(in srgb, var(--course) 10%, transparent);
+  padding: 0.6em 1em;
+}
+.nd-prose blockquote.callout-warn {
+  --course: var(--rose);
+  background: color-mix(in srgb, var(--rose) 14%, transparent);
+  border-left-color: var(--rose);
+  padding: 0.6em 1em;
+}
+.nd-prose blockquote.callout-tip {
+  --course: var(--gold);
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+  border-left-color: var(--gold);
+  padding: 0.6em 1em;
 }
 
 /* 相簿照片牆 */
