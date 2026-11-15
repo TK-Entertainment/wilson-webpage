@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { pageMetadata } from "@/utils/seo";
@@ -38,6 +39,16 @@ const MUSIC: { when: string; artists: { name: string; href: string }[] }[] = [
       { name: "毛不易", href: "https://open.spotify.com/search/%E6%AF%9B%E4%B8%8D%E6%98%93" },
     ],
   },
+];
+
+// OC：住在威爾森內心深處的那隻狼
+const MERIDIAN = [
+  { k: "身分", v: "住在威爾森內心深處的投射，是他希望成為的完美角色（但其實也不完美 www）" },
+  { k: "個性", v: "陽光、溫暖的大狗狗，熱愛旅行和探險" },
+  { k: "年齡", v: "看起來 23 歲，其實才 15 歲" },
+  { k: "生日", v: "不可知" },
+  { k: "怪癖", v: "一隻不愛吃肉的狼；整天拿著地質錘到處找東西敲，有點破壞狂" },
+  { k: "配色", v: "這個網站的深藍、米白、金、橘、青綠，都是從他身上取的" },
 ];
 
 const LIKES = ["畫畫", "烹飪", "看劇", "看電影", "收藏書"];
@@ -126,6 +137,37 @@ export default function AboutPage() {
                 </dd>
               </div>
             </dl>
+          </section>
+          <section>
+            <Label>{"// 04 住在心裡的那隻狼"}</Label>
+            <div className="mt-3 grid gap-6 border-t-4 border-foreground pt-6 sm:grid-cols-[200px_minmax(0,1fr)]">
+              <div className="relative mx-auto w-48 sm:w-full">
+                <div
+                  className="absolute inset-x-2 bottom-0 top-10 -skew-x-6 bg-[var(--navy)]"
+                  aria-hidden="true"
+                />
+                <Image
+                  src="/img/meridian/globe.webp"
+                  alt="子午線 Meridian：戴圓框眼鏡和白色棒球帽的灰狼，用手指轉著地球儀"
+                  width={518}
+                  height={720}
+                  className="relative"
+                />
+              </div>
+              <div>
+                <p className="text-2xl font-black">
+                  子午線 <span className="font-mono-label text-base text-muted-foreground">MERIDIAN</span>
+                </p>
+                <dl className="mt-3">
+                  {MERIDIAN.map((m) => (
+                    <div key={m.k} className="grid grid-cols-[3.5rem_1fr] gap-3 border-b border-foreground/20 py-2.5">
+                      <dt className="font-mono-label text-sm font-bold text-[var(--rose)]">{m.k}</dt>
+                      <dd className="text-sm font-bold leading-relaxed">{m.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
           </section>
         </div>
 
