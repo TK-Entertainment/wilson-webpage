@@ -190,7 +190,7 @@ export default function Home({
             </span>
           </h1>
           <p className="hm-lead">
-            來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像；出門留下足跡，也把研究慢慢寫下來。
+            來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像；也出門，也做研究。
           </p>
           <ul className="hm-menu">
             {MENU.map((m) => (
