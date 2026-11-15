@@ -26,12 +26,15 @@
   --glitch-b: #4cb8b0;
   --glitch-blend: multiply;
 
-  /* 新配色（取自 Meridian）：深藍、米白、金、橘、青綠 */
+  /* 新配色（取自 Meridian）：深藍、米白、金、橘、青綠＋輔助色灰綠、灰紫 */
   --navy: #26304f;
   --cream: #efe4c8;
   --gold: #d6a53c;
   --orange: #e2782d;
   --teal: #4cb8b0;
+  /* 輔助色（低彩度，只用在分頁色塊與點綴）：灰綠、灰紫 */
+  --sage: #8fa878;
+  --plum: #9c88b6;
 }
 
 :root.dark {

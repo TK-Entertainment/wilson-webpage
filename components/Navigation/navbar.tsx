@@ -15,8 +15,8 @@ const sections = [
   { href: "/blog", label: "日常碎念", no: "01", color: "var(--gold)" },
   { href: "/docs", label: "學習日常", no: "02", color: "var(--teal)" },
   { href: "/gallery", label: "生活影像", no: "03", color: "var(--orange)" },
-  { href: "/map", label: "足跡地圖", no: "04", color: "var(--teal)" },
-  { href: "/docs/research", label: "研究", no: "05", color: "var(--gold)" },
+  { href: "/map", label: "足跡地圖", no: "04", color: "var(--sage)" },
+  { href: "/docs/research", label: "研究", no: "05", color: "var(--plum)" },
 ];
 
 // 研究放在 /docs/research 底下（共用筆記系統），所以在研究頁時不要把「學習日常」標成目前頁面
