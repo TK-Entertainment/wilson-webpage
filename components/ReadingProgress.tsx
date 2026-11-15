@@ -12,8 +12,11 @@ const NAV_HEIGHT = 64;
  */
 export default function ReadingProgress({
   target = "[data-reading-body]",
+  color,
 }: {
   target?: string;
+  /** 指定單一顏色（筆記頁用課程色）；沒給就用橘／金／藍三段 */
+  color?: string;
 }) {
   const barRef = useRef<HTMLDivElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -76,6 +79,7 @@ export default function ReadingProgress({
         style={{
           clipPath: "inset(0 100% 0 0)",
           background:
+            color ??
             "linear-gradient(to right, #e2782d 0 33.34%, #d6a53c 33.34% 66.67%, #26304f 66.67% 100%)",
         }}
       />

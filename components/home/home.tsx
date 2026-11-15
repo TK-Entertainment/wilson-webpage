@@ -181,7 +181,7 @@ export default function Home({
           <p className="hm-boot font-mono-label">
             &gt; boot wilson_notes.exe
             <br />
-            &gt; loading 茶・咖啡・果汁 ... <span>OK</span>
+            &gt; loading 茶・咖啡・果汁・出門・論文 ... <span>OK</span>
           </p>
           <h1 className="hm-title" ref={titleRef}>
             <span>威爾森的</span>
@@ -190,7 +190,7 @@ export default function Home({
             </span>
           </h1>
           <p className="hm-lead">
-            來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像。
+            來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像；出門留下足跡，也把研究慢慢寫下來。
           </p>
           <ul className="hm-menu">
             {MENU.map((m) => (

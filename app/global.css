@@ -231,6 +231,22 @@ button[aria-label="Scroll to Top"] {
 .nd-prose blockquote {
   border-left: 4px solid var(--course, #26304f);
 }
+/* 不要斜體（中文沒有真斜體，只會被硬拉歪）和英文彎引號 */
+.nd-prose blockquote {
+  font-style: normal;
+  font-weight: inherit;
+}
+.nd-prose blockquote p:first-of-type::before,
+.nd-prose blockquote p:last-of-type::after {
+  content: none;
+}
+/* 課程頁：側欄目前頁、右側目錄的強調色換成課程色（文字用，所以亮度依模式調） */
+[data-course-hs] {
+  --primary: var(--course-hs) 36%;
+}
+.dark [data-course-hs] {
+  --primary: var(--course-hs) 70%;
+}
 /* 筆記裡的提示框：底色帶一點課程色；「易錯」用灰玫瑰、「觀念題／口訣／重點」用金 */
 [data-course] blockquote {
   background: color-mix(in srgb, var(--course) 10%, transparent);

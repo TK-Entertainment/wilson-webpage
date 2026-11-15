@@ -43,7 +43,7 @@ export default async function Page(props: Props) {
 
   return (
     <DocsPage toc={toc} footer={neighbour}>
-      <ReadingProgress />
+      <ReadingProgress color={course} />
       <MDXContent>
         {(params.slug ?? []).length === 0 ? (
           <div className="nd-not-prose">
@@ -59,9 +59,13 @@ export default async function Page(props: Props) {
             <GlitchText text={page.title} />
           </h1>
         )}
-        <p className="nd-not-prose -mt-4 mb-8 font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
-          閱讀時間 // {readingTimeLabel(page.body.raw)}
-        </p>
+        {(params.slug ?? []).length === 0 ? (
+          <></>
+        ) : (
+          <p className="nd-not-prose -mt-4 mb-8 font-mono-label text-sm font-bold text-bh-blue dark:text-bh-yellow">
+            閱讀時間 // {readingTimeLabel(page.body.raw)}
+          </p>
+        )}
         <div
           data-reading-body
           data-course={course ? "" : undefined}

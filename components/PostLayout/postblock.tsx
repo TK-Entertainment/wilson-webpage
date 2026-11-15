@@ -39,7 +39,7 @@ export default function PostBlock({ page }: { page: Blog }) {
               className="inline-flex items-center gap-1 transition-colors hover:text-[var(--c)]"
             >
               <span className="h-1.5 w-1.5 flex-none bg-[var(--c)]" aria-hidden="true" />
-              #{tag}
+              {tag}
             </Link>
           ))}
         </div>

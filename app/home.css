@@ -132,6 +132,10 @@
 .hm-menu a:focus-visible::before {
   transform: skewX(-16deg) scaleX(1);
 }
+.hm-menu a:hover :is(.t, .n, .d),
+.hm-menu a:focus-visible :is(.t, .n, .d) {
+  color: #1c2135;
+}
 .hm-menu a:hover .t {
   animation: hm-rgb 0.3s steps(2) 1;
 }

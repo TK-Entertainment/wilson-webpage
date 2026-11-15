@@ -67,7 +67,7 @@ export default function TagSidebar({ activeTag }: { activeTag?: string }) {
               }`}
             >
               <span className="h-1.5 w-1.5 flex-none bg-[var(--c)]" aria-hidden="true" />
-              #{tag}
+              {tag}
             </Link>
           ))}
         </div>

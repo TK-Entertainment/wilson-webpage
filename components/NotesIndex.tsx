@@ -6,13 +6,6 @@ type Node = (typeof Tree)["children"][number];
 type Folder = Extract<Node, { type: "folder" }>;
 type Page = Extract<Node, { type: "page" }>;
 
-const markers = [
-  "rounded-full",
-  "[clip-path:polygon(50%_0,100%_100%,0_100%)]",
-  "",
-  "rounded-[50%_0]",
-];
-
 // 學習日常首頁的筆記目錄：依側欄的資料夾（課程）自動列出所有筆記
 export default function NotesIndex({ tree }: { tree: typeof Tree }) {
   // 研究內容有自己的「研究」分頁，不列在學習日常的課程目錄裡
@@ -52,9 +45,10 @@ export default function NotesIndex({ tree }: { tree: typeof Tree }) {
               role="heading"
               aria-level={2}
               className="flex items-center gap-3 border-b-2 border-foreground pb-2 text-xl font-black"
+              style={group.color ? { borderColor: group.color } : undefined}
             >
               <span
-                className={`h-4 w-4 flex-none ${markers[i % markers.length]}`}
+                className="h-4 w-4 flex-none"
                 style={{ background: group.color ?? PALETTE[i % PALETTE.length] }}
                 aria-hidden="true"
               />

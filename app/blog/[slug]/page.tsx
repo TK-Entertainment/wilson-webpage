@@ -80,7 +80,7 @@ export default async function BlogSlug(props: Props) {
                     className="inline-flex items-center gap-1.5 border-2 border-foreground px-2 py-1 transition-colors hover:bg-[var(--c)] hover:text-bh-ink"
                   >
                     <span className="h-2 w-2 flex-none bg-[var(--c)]" aria-hidden="true" />
-                    #{tag}
+                    {tag}
                   </Link>
                 ))}
               </div>

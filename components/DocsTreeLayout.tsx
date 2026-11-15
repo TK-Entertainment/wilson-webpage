@@ -2,7 +2,8 @@
 
 import { DocsLayout } from "next-docs-ui/layout";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { courseColor, courseHS } from "@/utils/palette";
 import type { notesTree as NotesTree } from "@/app/source";
 
 // 依目前網址選側欄：研究頁只顯示研究的目錄，其他筆記頁只顯示課程筆記
@@ -18,7 +19,13 @@ export default function DocsTreeLayout({
   const pathname = usePathname();
   const isResearch = pathname.startsWith("/docs/research");
   const tree = isResearch ? researchTree : notesTree;
+  // 在某門課裡時，側欄目前頁、右側目錄、連結強調色都換成這門課的顏色
+  const hs = courseHS(pathname);
+  const style = hs
+    ? ({ ["--course" as string]: courseColor(pathname), ["--course-hs" as string]: hs } as CSSProperties)
+    : undefined;
   return (
+    <div className="contents" data-course-hs={hs ? "" : undefined} style={style}>
     <DocsLayout
       tree={tree}
       nav={{ enabled: false }}
@@ -27,5 +34,6 @@ export default function DocsTreeLayout({
     >
       {children}
     </DocsLayout>
+    </div>
   );
 }
