@@ -196,7 +196,8 @@ export function IsochronDemo() {
             );
           })}
           <circle cx={x(0)} cy={y(r0)} r={5} fill={C.rose} stroke={INK} />
-          <text x={x(0.08)} y={y(r0) - 8} style={{ fontSize: 11, fontWeight: 800, fill: C.rose, ...halo }}>截距 = (⁸⁷Sr/⁸⁶Sr)₀</text>
+          <line x1={x(0)} y1={y(r0)} x2={x(0.25)} y2={y(0.86)} stroke={C.rose} strokeWidth={1} />
+          <text x={x(0.28)} y={y(0.86) + 4} style={{ fontSize: 11, fontWeight: 800, fill: C.rose, ...halo }}>截距 = (⁸⁷Sr/⁸⁶Sr)₀</text>
           <Axes W={W} H={H} L={L} R={R} T={T} B={B} xl="⁸⁷Rb / ⁸⁶Sr" yl="⁸⁷Sr / ⁸⁶Sr" />
         </svg>
         <div className="ix-panel">
@@ -552,41 +553,38 @@ export function FoldPartsFig() {
 /* ═════════════ 構造 Ch12：Ramsay 等傾角線分類 ═════════════ */
 
 export function RamsayFig() {
-  // 每一類：外弧半徑 Ro、內弧（翼部厚度 tl、軸部厚度 th）用簡化形狀畫
-  const cls: [string, string, number, number, string][] = [
-    ["1A", "收斂強；軸部薄", 26, 12, C.blue],
-    ["1B", "平行褶皺；層厚不變", 20, 20, C.teal],
-    ["1C", "收斂弱；翼部稍薄", 18, 24, C.sage],
-    ["2", "相似褶皺；等傾角線平行", 14, 30, C.orange],
-    ["3", "發散；軸部厚", 10, 36, C.rose],
+  const R = 46, yc = 128;
+  type P = [number, number];
+  // 外弧上傾角 φ（-90..90）的點；內弧由各類的規則決定
+  const outer = (cx: number, f: number): P => [cx + R * Math.sin(f), yc - R * Math.cos(f)];
+  const rules: [string, string, string, (cx: number, f: number) => P][] = [
+    ["1A", "收斂強；軸部薄", C.blue, (cx, f) => { const t = 10 + 12 * Math.abs(Math.sin(f)); const [x, y] = outer(cx, f); return [x - t * Math.sin(f), y + t * Math.cos(f)]; }],
+    ["1B", "平行褶皺；層厚不變", C.teal, (cx, f) => { const t = 18; const [x, y] = outer(cx, f); return [x - t * Math.sin(f), y + t * Math.cos(f)]; }],
+    ["1C", "收斂弱；翼部稍薄", C.sage, (cx, f) => { const [x, y] = outer(cx, f); return [x - 10 * Math.sin(f), y + 10 * Math.cos(f) + 12]; }],
+    ["2", "相似褶皺；等傾角線平行", C.orange, (cx, f) => { const [x, y] = outer(cx, f); return [x, y + 24]; }],
+    ["3", "發散；軸部厚、翼部薄", C.rose, (cx, f) => { const [x, y] = outer(cx, f); return [x + 9 * Math.sin(f) * Math.abs(Math.cos(f)) * 2 - 3 * Math.sin(f), y + 30]; }],
   ];
+  const deg = (d: number) => (d * Math.PI) / 180;
+  const path = (f: (a: number) => P) => Array.from({ length: 61 }, (_, i) => deg(-90 + i * 3)).map((a) => f(a).join(",")).join(" ");
   return (
-    <Fig caption="Ramsay 依等傾角線（同一層上下兩個層面上傾角相同的點的連線）把褶皺分成三類。Class 1 等傾角線向內弧收斂：1B 是平行褶皺，垂直層面的厚度處處相同，代表硬層主動拱彎；1A、1C 是它的兩側變化。Class 2 等傾角線互相平行，內外弧形狀相同，是相似褶皺，平行軸面量的厚度處處相同，代表被動流動的軟岩。Class 3 等傾角線向內弧發散，常見於夾在硬層之間的軟層。" source="Ramsay (1967)；Fossen (2016) Fig. 11.9；課堂投影片 Ch12 p.15–19">
-      <svg viewBox="0 0 640 210" className="ix-svg" role="img" aria-label="Ramsay 褶皺分類" style={{ maxWidth: 680, margin: "0 auto" }}>
-        <Marks />
-        {cls.map(([n, s, tl, th, c], i) => {
+    <Fig caption="Ramsay 依等傾角線（同一層上下兩個層面上傾角相同的點的連線，虛線）把褶皺分成三類。Class 1 等傾角線向內弧收斂：1B 是平行褶皺，垂直層面的厚度處處相同，代表硬層主動拱彎；1A 收斂更強、軸部變薄；1C 收斂較弱、翼部稍薄。Class 2 等傾角線互相平行，內外弧形狀相同，是相似褶皺，平行軸面量的厚度處處相同，代表被動流動的軟岩。Class 3 等傾角線向內弧發散，軸部厚、翼部很薄，常見於夾在硬層之間的軟層。" source="Ramsay (1967)；Fossen (2016) Fig. 11.9；課堂投影片 Ch12 p.15–19">
+      <svg viewBox="0 0 640 220" className="ix-svg" role="img" aria-label="Ramsay 褶皺分類" style={{ maxWidth: 680, margin: "0 auto" }}>
+        {rules.map(([n, s_, c, inner], i) => {
           const cx = 66 + i * 126;
-          const top = 40;
-          // 外弧（上面那條）：半圓，半徑 44；內弧往下偏移
-          const outer = `M${cx - 50},150 C${cx - 50},${top} ${cx + 50},${top} ${cx + 50},150`;
-          const inner = `M${cx - 50 + tl},150 C${cx - 50 + tl},${top + th + 30} ${cx + 50 - tl},${top + th + 30} ${cx + 50 - tl},150`;
-          // 等傾角線：在樞紐（垂直）和左右翼各畫一條
-          const isoY0 = top + 22, isoY1 = top + th + 47;
           return (
             <g key={n}>
-              <path d={outer} fill="none" stroke={c} strokeWidth={2.6} />
-              <path d={inner} fill="none" stroke={c} strokeWidth={2.6} />
-              <line x1={cx} x2={cx} y1={isoY0} y2={isoY1} stroke={INK} strokeWidth={1.4} strokeDasharray="3 3" />
-              <line x1={cx - 50} x2={cx - 50 + tl} y1={130} y2={130} stroke={INK} strokeWidth={1.4} strokeDasharray="3 3" />
-              <line x1={cx + 50} x2={cx + 50 - tl} y1={130} y2={130} stroke={INK} strokeWidth={1.4} strokeDasharray="3 3" />
-              <line x1={cx - 33} x2={cx - 33 + (tl - th / 2) * 0.6} y1={80} y2={80 + th * 0.9} stroke={INK} strokeWidth={1.4} strokeDasharray="3 3" />
-              <line x1={cx + 33} x2={cx + 33 - (tl - th / 2) * 0.6} y1={80} y2={80 + th * 0.9} stroke={INK} strokeWidth={1.4} strokeDasharray="3 3" />
-              <text x={cx} y={176} textAnchor="middle" style={{ fontSize: 15, fontWeight: 800, fill: c }}>Class {n}</text>
-              <text x={cx} y={196} textAnchor="middle" style={{ fontSize: 10.5 }}>{s}</text>
+              <polyline points={path((a) => outer(cx, a))} fill="none" stroke={c} strokeWidth={2.6} />
+              <polyline points={path((a) => inner(cx, a))} fill="none" stroke={c} strokeWidth={2.6} />
+              {[-60, -30, 0, 30, 60].map((d) => {
+                const o = outer(cx, deg(d)), q = inner(cx, deg(d));
+                return <line key={d} x1={o[0]} y1={o[1]} x2={q[0]} y2={q[1]} stroke={INK} strokeWidth={1.3} strokeDasharray="3 2" />;
+              })}
+              <text x={cx} y={190} textAnchor="middle" style={{ fontSize: 15, fontWeight: 800, fill: c }}>Class {n}</text>
+              <text x={cx} y={208} textAnchor="middle" style={{ fontSize: 10.5 }}>{s_}</text>
             </g>
           );
         })}
-        <text x={320} y={20} textAnchor="middle" style={{ fontSize: 11.5, opacity: 0.85 }}>虛線：等傾角線（示意）　上弧：外弧　下弧：內弧</text>
+        <text x={320} y={20} textAnchor="middle" style={{ fontSize: 11.5, opacity: 0.85 }}>上弧：外弧　下弧：內弧　虛線：傾角 0°、±30°、±60° 的等傾角線</text>
       </svg>
     </Fig>
   );
@@ -595,34 +593,52 @@ export function RamsayFig() {
 /* ═════════════ 構造 Ch12：寄生褶皺 Z–M–S ═════════════ */
 
 export function ParasiticFig() {
-  const big = (x: number) => 150 - 95 * Math.sin(((x - 60) / 440) * Math.PI);
+  const big = (x: number) => 160 - 100 * Math.sin(((x - 60) / 440) * Math.PI);
+  const slope = (x: number) => (big(x + 1) - big(x - 1)) / 2;
+  // 沿主褶皺疊加不對稱小褶皺：skew 在左翼 +、樞紐 0、右翼 −
   const pts: string[] = [];
-  for (let x = 60; x <= 500; x += 2) {
-    const base = big(x);
-    // 寄生褶皺：在主褶皺上疊加小波，振幅在樞紐對稱
-    pts.push(`${x},${base + 7 * Math.sin((x - 60) / 9)}`);
+  for (let x = 60; x <= 500; x += 1) {
+    const k = Math.cos(((x - 60) / 440) * Math.PI) * 0.95;
+    const u = (x - 60) / 7;
+    const off = 7 * Math.sin(u - k * Math.sin(u));
+    const sl = slope(x);
+    const n = Math.hypot(1, sl);
+    pts.push(`${x + (-sl / n) * off * 0},${big(x) + off / n}`);
   }
   const lab: [number, string, string][] = [
-    [120, "Z", C.blue],
+    [125, "Z", C.blue],
     [280, "M", C.teal],
-    [440, "S", C.orange],
+    [435, "S", C.orange],
   ];
+  const shear = (x: number, dir: 1 | -1, c: string, id: string) => {
+    const sl = slope(x), n = Math.hypot(1, sl);
+    const ux = 1 / n, uy = sl / n; // 沿翼部方向（往右）
+    const nx = -uy, ny = ux; // 法線（往下）
+    const L = 26;
+    const up = { x: x - nx * 22, y: big(x) - ny * 22 }, dn = { x: x + nx * 22, y: big(x) + ny * 22 };
+    return (
+      <g>
+        <line x1={up.x - (dir * ux * L) / 2} y1={up.y - (dir * uy * L) / 2} x2={up.x + (dir * ux * L) / 2} y2={up.y + (dir * uy * L) / 2} stroke={c} strokeWidth={2} markerEnd={`url(#${id})`} />
+        <line x1={dn.x + (dir * ux * L) / 2} y1={dn.y + (dir * uy * L) / 2} x2={dn.x - (dir * ux * L) / 2} y2={dn.y - (dir * uy * L) / 2} stroke={c} strokeWidth={2} markerEnd={`url(#${id})`} />
+      </g>
+    );
+  };
   return (
-    <Fig caption="順著傾伏方向看一個類背斜：左翼的寄生褶皺是 Z 形（長翼相對短翼順時針），樞紐是對稱的 M 形，右翼是 S 形。原因是曲滑時上層往樞紐方向滑，左翼是順時針的剪切、右翼是逆時針。類向斜剛好反過來（左 S、右 Z）。所以在一個露頭看到 Z 或 S，就知道大褶皺的樞紐在哪一邊；但從反方向看時 S、Z 會互換，一定要先確定觀察方向。" source="Fossen (2016) Fig. 11.13；課堂投影片 Ch12 p.21、p.51">
-      <svg viewBox="0 0 640 220" className="ix-svg" role="img" aria-label="寄生褶皺在類背斜上的分布" style={{ maxWidth: 640, margin: "0 auto" }}>
+    <Fig caption="順著傾伏方向看一個類背斜。曲滑時上面的層相對下面的層往樞紐方向滑（箭頭），左翼是順時針的剪切、右翼是逆時針，所以左翼的寄生褶皺是 Z 形（長翼相對短翼順時針）、樞紐是對稱的 M 形、右翼是 S 形。類向斜剛好反過來（左 S、右 Z）。在一個露頭看到 Z 或 S，就知道大褶皺的樞紐在哪一邊；但從反方向看時 S、Z 會互換，一定要先確定觀察方向。" source="Fossen (2016) Fig. 11.13；課堂投影片 Ch12 p.21、p.51">
+      <svg viewBox="0 0 640 230" className="ix-svg" role="img" aria-label="寄生褶皺在類背斜上的分布" style={{ maxWidth: 640, margin: "0 auto" }}>
         <Marks />
-        <polyline points={pts.join(" ")} fill="none" stroke={C.navy} strokeWidth={3} />
-        <polyline points={Array.from({ length: 221 }, (_, i) => 60 + i * 2).map((x) => `${x},${big(x)}`).join(" ")} fill="none" stroke={INK} strokeDasharray="4 4" strokeOpacity={0.45} />
+        <polyline points={Array.from({ length: 221 }, (_, i) => 60 + i * 2).map((x) => `${x},${big(x)}`).join(" ")} fill="none" stroke={INK} strokeDasharray="4 4" strokeOpacity={0.4} />
+        <polyline points={pts.join(" ")} fill="none" stroke={C.navy} strokeWidth={2.6} />
         {lab.map(([x, t, c]) => (
           <g key={t}>
-            <circle cx={x} cy={big(x) - 34} r={16} fill={c} fillOpacity={0.2} stroke={c} strokeWidth={2} />
-            <text x={x} y={big(x) - 28} textAnchor="middle" style={{ fontSize: 17, fontWeight: 800, fill: c }}>{t}</text>
+            <circle cx={x} cy={big(x) - 44} r={15} fill={c} fillOpacity={0.2} stroke={c} strokeWidth={2} />
+            <text x={x} y={big(x) - 38} textAnchor="middle" style={{ fontSize: 16, fontWeight: 800, fill: c }}>{t}</text>
           </g>
         ))}
-        <path d="M150,170 a26,26 0 1,1 30,0" fill="none" stroke={C.blue} strokeWidth={2} markerEnd="url(#nv-b)" transform="translate(-60,20)" />
-        <text x={70} y={214} style={{ fontSize: 11.5, fill: C.blue, fontWeight: 700 }}>左翼：順時針剪切</text>
-        <path d="M500,170 a26,26 0 1,0 -30,0" fill="none" stroke={C.orange} strokeWidth={2} markerEnd="url(#nv-o)" transform="translate(40,20)" />
-        <text x={570} y={214} textAnchor="end" style={{ fontSize: 11.5, fill: C.orange, fontWeight: 700 }}>右翼：逆時針剪切</text>
+        {shear(150, 1, C.blue, "nv-b")}
+        {shear(410, -1, C.orange, "nv-o")}
+        <text x={70} y={224} style={{ fontSize: 11.5, fill: C.blue, fontWeight: 700 }}>左翼：上層往右上（樞紐）滑 → 順時針</text>
+        <text x={590} y={224} textAnchor="end" style={{ fontSize: 11.5, fill: C.orange, fontWeight: 700 }}>右翼：上層往左上滑 → 逆時針</text>
         <text x={280} y={22} textAnchor="middle" style={{ fontSize: 12, fontWeight: 800 }}>類背斜（順著傾伏方向看）</text>
       </svg>
     </Fig>
