@@ -35,8 +35,8 @@ const MENU = [
   { href: "/blog", n: "01", t: "日常碎念", d: "茶", c: "var(--gold)" },
   { href: "/docs", n: "02", t: "學習日常", d: "咖啡", c: "var(--teal)" },
   { href: "/gallery", n: "03", t: "生活影像", d: "果汁", c: "var(--orange)" },
-  { href: "/map", n: "04", t: "足跡地圖", d: "出門", c: "var(--sage)" },
-  { href: "/docs/research", n: "05", t: "研究", d: "論文", c: "var(--plum)" },
+  { href: "/map", n: "04", t: "足跡地圖", d: "甜點", c: "var(--sage)" },
+  { href: "/docs/research", n: "05", t: "研究", d: "飯碗", c: "var(--plum)" },
 ];
 
 const loc = (p: HomePhoto) =>
@@ -181,7 +181,7 @@ export default function Home({
           <p className="hm-boot font-mono-label">
             &gt; boot wilson_notes.exe
             <br />
-            &gt; loading 茶・咖啡・果汁・出門・論文 ... <span>OK</span>
+            &gt; loading 茶・咖啡・果汁・甜點・飯碗 ... <span>OK</span>
           </p>
           <h1 className="hm-title" ref={titleRef}>
             <span>威爾森的</span>
@@ -190,7 +190,7 @@ export default function Home({
             </span>
           </h1>
           <p className="hm-lead">
-            來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像；也出門，也做研究。
+            來杯好茶聊聊日常碎念，來杯咖啡記下學習日常，來杯果汁收藏生活影像；帶份甜點出門走走，端起飯碗做研究。
           </p>
           <ul className="hm-menu">
             {MENU.map((m) => (
