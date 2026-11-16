@@ -80,6 +80,31 @@ export default function NotFoundScreen({ compact }: { compact?: boolean }) {
         </p>
       </div>
 
+      {/* 子午線待機動畫（逐格 4 格）：只在完整版 404、md 以上顯示 */}
+      {!compact && (
+        <figure className="nf-meridian pointer-events-none absolute bottom-0 right-[3vw] hidden w-[min(24vw,300px)] md:block">
+          <p className="relative mb-3 ml-[-30%] w-max max-w-[16rem] border-2 border-foreground bg-background px-3 py-2 text-sm font-black shadow-[4px_4px_0_var(--orange)]">
+            這裡沒有石頭可以敲⋯⋯
+            <br />
+            要不要去別的地方找找？
+            <span
+              className="absolute -bottom-[9px] right-10 h-4 w-4 rotate-45 border-b-2 border-r-2 border-foreground bg-background"
+              aria-hidden="true"
+            />
+          </p>
+          <picture>
+            <source srcSet="/img/meridian/idle-still.webp" media="(prefers-reduced-motion: reduce)" />
+            <img
+              src="/img/meridian/idle.webp"
+              alt="子午線 Meridian 拿著地質錘站著，尾巴輕輕擺動"
+              width={336}
+              height={472}
+              className="block h-auto w-full"
+            />
+          </picture>
+        </figure>
+      )}
+
       <nav aria-label="回到其他頁面" className="mt-10">
         <ul className="sweep-menu">
           {routes.map((route) => (
