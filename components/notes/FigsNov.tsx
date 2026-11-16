@@ -558,7 +558,7 @@ export function RamsayFig() {
   // 外弧上傾角 φ（-90..90）的點；內弧由各類的規則決定
   const outer = (cx: number, f: number): P => [cx + R * Math.sin(f), yc - R * Math.cos(f)];
   const rules: [string, string, string, (cx: number, f: number) => P][] = [
-    ["1A", "收斂強；軸部薄", C.blue, (cx, f) => { const t = 10 + 12 * Math.abs(Math.sin(f)); const [x, y] = outer(cx, f); return [x - t * Math.sin(f), y + t * Math.cos(f)]; }],
+    ["1A", "收斂強；軸部薄", C.blue, (cx, f) => { const t = 12 + 9 * Math.sin(f) * Math.sin(f); const [x, y] = outer(cx, f); return [x - t * Math.sin(f), y + t * Math.cos(f)]; }],
     ["1B", "平行褶皺；層厚不變", C.teal, (cx, f) => { const t = 18; const [x, y] = outer(cx, f); return [x - t * Math.sin(f), y + t * Math.cos(f)]; }],
     ["1C", "收斂弱；翼部稍薄", C.sage, (cx, f) => { const [x, y] = outer(cx, f); return [x - 10 * Math.sin(f), y + 10 * Math.cos(f) + 12]; }],
     ["2", "相似褶皺；等傾角線平行", C.orange, (cx, f) => { const [x, y] = outer(cx, f); return [x, y + 24]; }],
@@ -598,12 +598,11 @@ export function ParasiticFig() {
   // 沿主褶皺疊加不對稱小褶皺：skew 在左翼 +、樞紐 0、右翼 −
   const pts: string[] = [];
   for (let x = 60; x <= 500; x += 1) {
-    const k = Math.cos(((x - 60) / 440) * Math.PI) * 0.95;
-    const u = (x - 60) / 7;
-    const off = 7 * Math.sin(u - k * Math.sin(u));
-    const sl = slope(x);
-    const n = Math.hypot(1, sl);
-    pts.push(`${x + (-sl / n) * off * 0},${big(x) + off / n}`);
+    const k = Math.cos(((x - 60) / 440) * Math.PI) * 0.9;
+    const u = (x - 60) / 10;
+    // 緩升急降（左翼，伸向樞紐）→ Z；右翼相反 → S；樞紐對稱 → M
+    const off = 10 * Math.sin(u - k * Math.sin(u));
+    pts.push(`${x},${big(x) - off}`);
   }
   const lab: [number, string, string][] = [
     [125, "Z", C.blue],
@@ -631,8 +630,8 @@ export function ParasiticFig() {
         <polyline points={pts.join(" ")} fill="none" stroke={C.navy} strokeWidth={2.6} />
         {lab.map(([x, t, c]) => (
           <g key={t}>
-            <circle cx={x} cy={big(x) - 44} r={15} fill={c} fillOpacity={0.2} stroke={c} strokeWidth={2} />
-            <text x={x} y={big(x) - 38} textAnchor="middle" style={{ fontSize: 16, fontWeight: 800, fill: c }}>{t}</text>
+            <circle cx={x} cy={big(x) - 50} r={15} fill={c} fillOpacity={0.2} stroke={c} strokeWidth={2} />
+            <text x={x} y={big(x) - 44} textAnchor="middle" style={{ fontSize: 16, fontWeight: 800, fill: c }}>{t}</text>
           </g>
         ))}
         {shear(150, 1, C.blue, "nv-b")}
