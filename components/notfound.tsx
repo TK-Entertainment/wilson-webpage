@@ -80,9 +80,9 @@ export default function NotFoundScreen({ compact }: { compact?: boolean }) {
         </p>
       </div>
 
-      {/* 子午線待機動畫（逐格 4 格）：只在完整版 404、md 以上顯示 */}
+      {/* 子午線待機動畫（逐格 4 格）：只在完整版 404、md 以上顯示；腳貼齊第一屏底部 */}
       {!compact && (
-        <figure className="nf-meridian pointer-events-none absolute bottom-0 right-[3vw] hidden w-[min(24vw,300px)] md:block">
+        <figure className="nf-meridian pointer-events-none absolute right-[3vw] top-[calc(100vh-4rem)] hidden -translate-y-full w-[min(24vw,300px)] md:block">
           <p className="relative mb-3 ml-[-30%] w-max max-w-[16rem] border-2 border-foreground bg-background px-3 py-2 text-sm font-black shadow-[4px_4px_0_var(--orange)]">
             這裡沒有石頭可以敲⋯⋯
             <br />
