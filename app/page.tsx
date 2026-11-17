@@ -96,10 +96,11 @@ export default function HomePage() {
   // 最近動態：碎念、筆記、打卡、相簿依日期混在一起；同一天同一門課的筆記、同一天的打卡併成一則
   const added = notesAdded as Record<string, string>;
   const courseTitle = (folder: string) =>
-    allMeta.find((m) => m._raw.sourceFileDir === folder)?.title ?? folder;
+    allMeta.find((m) => m._raw.sourceFileDir.replace(/^docs\//, "") === folder)?.title ?? folder;
   const noteGroups = new Map<string, { date: string; folder: string; docs: { title: string; url: string }[] }>();
   for (const doc of allDocs) {
-    const path = doc._raw.flattenedPath;
+    // flattenedPath 是 docs/<課程>/<頁>，notesAdded 的鍵沒有 docs/
+    const path = doc._raw.flattenedPath.replace(/^docs\//, "");
     const date = added[path];
     const folder = path.split("/")[0];
     if (!date || !path.includes("/")) continue;
@@ -121,6 +122,9 @@ export default function HomePage() {
     sub: g.docs.length === 1 ? undefined : g.docs.map((d) => short(d.title)).slice(0, 4).join("、") + (g.docs.length > 4 ? "⋯⋯" : ""),
     href: g.docs[0].url,
   }));
+  // 捷徑打卡的名稱有時會帶整串英文地址，去掉地址、重複的字
+  const placeName = (n: string) =>
+    [...new Set(n.replace(/\s+Taiwan\b.*$/, "").split(/\s+/))].join(" ");
   const checkinDays = new Map<string, typeof allPlaces>();
   for (const p of allPlaces) {
     if (!p.date || p.date.length < 10) continue;
@@ -132,8 +136,8 @@ export default function HomePage() {
     date: dot(d),
     kind: "打卡",
     color: "var(--sage)",
-    title: ps.length === 1 ? `${ps[0].countyName}・${ps[0].name}` : `${ps[0].countyName}等地打卡 ${ps.length} 處`,
-    sub: ps.length === 1 ? undefined : ps.map((p) => p.name).slice(0, 4).join("、") + (ps.length > 4 ? "⋯⋯" : ""),
+    title: ps.length === 1 ? `${ps[0].countyName}・${placeName(ps[0].name)}` : `${ps[0].countyName}等地打卡 ${ps.length} 處`,
+    sub: ps.length === 1 ? undefined : ps.map((p) => placeName(p.name)).slice(0, 4).join("、") + (ps.length > 4 ? "⋯⋯" : ""),
     href: `/map?place=${encodeURIComponent(ps[0].id)}`,
   }));
   const activity: HomeActivity[] = [
