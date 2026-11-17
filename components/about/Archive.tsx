@@ -11,8 +11,9 @@ export type ArchiveItem = {
   sub: string;
   year?: string;
   img: string;
-  /** 電影：橫式劇照 */
-  still?: string;
+  /** 電影：直式海報（大圖第一張）＋橫式劇照（之後幾張） */
+  poster?: string;
+  stills?: string[];
   /** 歌：Spotify 歌曲 id */
   spotify?: string;
   href?: string;
@@ -71,6 +72,14 @@ export default function Archive({ tabs }: { tabs: ArchiveTab[] }) {
   const i = sel[t];
   const it = tab.items[i];
   const isMusic = !!it.spotify;
+  const isFilm = !!it.stills;
+  // 電影：第 0 張是海報，之後是劇照
+  const [shot, setShot] = useState(0);
+  const slides = isFilm ? [it.poster ?? it.img, ...(it.stills ?? [])] : [];
+  const go = (d: number) => {
+    setShot((n) => (n + d + slides.length) % slides.length);
+    setSwap((n) => n + 1);
+  };
 
   // ---- Spotify：切到「音」就先準備播放器，點歌的當下才能直接播（瀏覽器只允許點擊當下開始播放）----
   const host = useRef<HTMLDivElement>(null);
@@ -103,6 +112,7 @@ export default function Archive({ tabs }: { tabs: ArchiveTab[] }) {
   }, [isMusic]);
 
   const pick = (k: number) => {
+    setShot(0);
     setSel((s) => s.map((v, j) => (j === t ? k : v)));
     setSwap((n) => n + 1);
     const item = tab.items[k];
@@ -126,6 +136,7 @@ export default function Archive({ tabs }: { tabs: ArchiveTab[] }) {
             className={k === t ? "on" : ""}
             onClick={() => {
               setT(k);
+              setShot(0);
               setSwap((n) => n + 1);
             }}
           >
@@ -137,28 +148,55 @@ export default function Archive({ tabs }: { tabs: ArchiveTab[] }) {
       </div>
 
       {/* ---- 目前這一筆 ---- */}
-      <div className={`ax-view ${it.still ? "is-wide" : ""} ${isMusic ? "is-music" : ""}`}>
-        <div key={`${t}-${i}-${swap}`} className="ax-frame ax-swap">
-          <span className="ax-img">
-            <img src={it.still ?? it.img} alt={`${it.title}${it.still ? " 劇照" : ""}`} referrerPolicy="no-referrer" />
-            {isMusic ? (
-              <span
-                className={`ax-disc ${playing ? "spin" : ""}`}
-                aria-hidden="true"
-                style={{ backgroundImage: `url(${it.img})` }}
-              />
-            ) : null}
-          </span>
-          <i />
-          <i />
-          <i />
-          <i />
-          {it.still ? (
+      <div className={`ax-view ${isFilm ? "is-wide" : ""} ${isMusic ? "is-music" : ""}`}>
+        {isFilm ? (
+          <div className="ax-frame ax-screen">
+            <div key={`${i}-${shot}-${swap}`} className="ax-img ax-swap">
+              {shot === 0 ? (
+                <>
+                  {/* 海報：後面墊一張放大、變暗的劇照 */}
+                  <img className="ax-bgfill" src={slides[1] ?? slides[0]} alt="" referrerPolicy="no-referrer" />
+                  <img className="ax-poster" src={slides[0]} alt={`《${it.title}》海報`} referrerPolicy="no-referrer" />
+                </>
+              ) : (
+                <img className="ax-still" src={slides[shot]} alt={`《${it.title}》劇照 ${shot}`} referrerPolicy="no-referrer" />
+              )}
+            </div>
             <span className="ax-rec font-mono-label" aria-hidden="true">
-              ● REC <b>{pad(i + 1)}</b>
+              ● REC <b>{pad(i + 1)}</b> {shot === 0 ? "POSTER" : "STILL"}
             </span>
-          ) : null}
-        </div>
+            <span className="ax-count font-mono-label" aria-live="polite">
+              IMG {pad(shot + 1)} / {pad(slides.length)}
+            </span>
+            <button type="button" className="ax-nav prev" onClick={() => go(-1)} aria-label="上一張">
+              ‹
+            </button>
+            <button type="button" className="ax-nav next" onClick={() => go(1)} aria-label="下一張">
+              ›
+            </button>
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+        ) : (
+          <div key={`${t}-${i}-${swap}`} className="ax-frame ax-swap">
+            <span className="ax-img">
+              <img src={it.img} alt={it.title} referrerPolicy="no-referrer" />
+              {isMusic ? (
+                <span
+                  className={`ax-disc ${playing ? "spin" : ""}`}
+                  aria-hidden="true"
+                  style={{ backgroundImage: `url(${it.img})` }}
+                />
+              ) : null}
+            </span>
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+        )}
 
         <div className="ax-meta">
           <p className="ax-cmd font-mono-label">

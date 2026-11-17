@@ -368,3 +368,66 @@
     animation: none;
   }
 }
+
+/* ---- 電影：海報＋劇照輪播 ---- */
+.ax-screen .ax-img {
+  position: relative;
+  aspect-ratio: 2.39 / 1;
+  overflow: hidden;
+  background: #07080f;
+}
+.ax-screen .ax-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.ax-screen .ax-still {
+  object-fit: cover;
+}
+.ax-screen .ax-bgfill {
+  object-fit: cover;
+  filter: blur(14px) brightness(0.35) grayscale(0.4);
+  transform: scale(1.15);
+}
+.ax-screen .ax-poster {
+  object-fit: contain;
+  padding: 14px 0;
+  filter: drop-shadow(0 10px 24px rgb(0 0 0 / 0.6));
+}
+.ax-count {
+  position: absolute;
+  z-index: 3;
+  right: 20px;
+  bottom: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+}
+.ax-nav {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  translate: 0 -50%;
+  width: 36px;
+  height: 52px;
+  font-size: 28px;
+  line-height: 1;
+  color: #fff;
+  background: rgb(7 8 15 / 0.45);
+  border: 1px solid rgb(255 255 255 / 0.35);
+  opacity: 0.7;
+  transition: opacity 0.2s, background 0.2s;
+}
+.ax-nav:hover {
+  opacity: 1;
+  background: rgb(7 8 15 / 0.75);
+}
+.ax-nav.prev {
+  left: 16px;
+}
+.ax-nav.next {
+  right: 16px;
+}
