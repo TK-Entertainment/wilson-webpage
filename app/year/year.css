@@ -1,0 +1,189 @@
+/* 年度回顧（app/year/[year]/page.tsx） */
+.yr-years {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.yr-years a {
+  padding: 2px 10px;
+  border: 2px solid hsl(var(--foreground) / 0.3);
+}
+.yr-years a[aria-current="page"] {
+  border-color: hsl(var(--foreground));
+  background: var(--gold);
+  color: #14182b;
+}
+.yr-big {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 40px;
+  border-top: 4px solid hsl(var(--foreground));
+}
+.yr-big > div {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 22px 0 20px;
+  border-bottom: 2px solid hsl(var(--foreground) / 0.15);
+}
+.yr-big .k {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--c);
+}
+.yr-big .v {
+  font-size: clamp(44px, 6vw, 72px);
+  font-weight: 900;
+  line-height: 1;
+}
+.yr-big .u {
+  font-weight: 900;
+  color: hsl(var(--muted-foreground));
+}
+.yr-sec {
+  margin-top: 64px;
+}
+.yr-months {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 8px;
+  height: 240px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 4px solid hsl(var(--foreground));
+}
+.yr-months .col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  min-width: 0;
+}
+.yr-months .bar {
+  display: flex;
+  flex-direction: column-reverse;
+  min-height: 2px;
+  background: hsl(var(--foreground) / 0.12);
+}
+.yr-months .bar i {
+  display: block;
+  flex-basis: 0;
+}
+.yr-months .n {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.yr-months .m {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+.yr-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+.yr-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.yr-legend i {
+  width: 10px;
+  height: 10px;
+}
+.yr-note {
+  margin-top: 12px;
+  line-height: 1.8;
+  color: hsl(var(--muted-foreground));
+}
+.yr-note b {
+  color: hsl(var(--foreground));
+}
+.yr-courses {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 4px solid hsl(var(--foreground));
+}
+.yr-courses li {
+  display: grid;
+  grid-template-columns: minmax(0, 13rem) 1fr 4rem;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 2px solid hsl(var(--foreground) / 0.15);
+  font-weight: 900;
+}
+.yr-courses a:hover {
+  color: var(--c);
+}
+.yr-courses .track {
+  height: 12px;
+  background: hsl(var(--foreground) / 0.08);
+}
+.yr-courses .track i {
+  display: block;
+  height: 100%;
+  background: var(--c);
+}
+.yr-courses li > span:last-child {
+  text-align: right;
+  font-size: 13px;
+}
+.yr-counties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 16px 0 0;
+  list-style: none;
+  border-top: 4px solid hsl(var(--foreground));
+}
+.yr-counties li {
+  padding: 4px 12px;
+  border: 2px solid hsl(var(--foreground));
+  font-weight: 900;
+  box-shadow: 3px 3px 0 var(--sage);
+}
+.yr-link {
+  font-weight: 900;
+  color: hsl(var(--foreground));
+}
+.yr-link:hover {
+  color: var(--sage);
+}
+.yr-foot {
+  margin-top: 56px;
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+@media (max-width: 760px) {
+  .yr-big {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .yr-months {
+    gap: 3px;
+    height: 180px;
+  }
+  .yr-months .m {
+    font-size: 10px;
+  }
+  .yr-courses li {
+    grid-template-columns: minmax(0, 8rem) 1fr 3rem;
+    gap: 10px;
+  }
+}

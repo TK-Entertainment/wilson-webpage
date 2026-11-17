@@ -37,6 +37,12 @@ export default function Footer() {
               </li>
             ))}
           </ul>
+          <Link
+            href="/year"
+            className="w-max font-mono-label text-xs font-bold text-[var(--gold)] hover:underline"
+          >
+            → 年度回顧
+          </Link>
           <p className="font-mono-label text-xs opacity-70">
             © 2023–{new Date(Date.now()).getFullYear()} 威爾森 (Wilson Chen)
           </p>

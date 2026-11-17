@@ -68,6 +68,14 @@ const SECTIONS = {
     color: "#c98b84",
     ghost: "ABOUT",
   },
+  year: {
+    no: "YR",
+    label: "年度回顧",
+    latin: "YEAR // IN REVIEW",
+    description: "這一年寫了幾篇、去了哪裡，網站自己算給你看。",
+    color: C.gold,
+    ghost: "YEAR",
+  },
 };
 
 /* ---------------- 讀取 MDX frontmatter ---------------- */
