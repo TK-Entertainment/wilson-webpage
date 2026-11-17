@@ -137,7 +137,7 @@ export default function Archive({ tabs }: { tabs: ArchiveTab[] }) {
       </div>
 
       {/* ---- 目前這一筆 ---- */}
-      <div className={`ax-view ${it.still ? "is-wide" : ""}`}>
+      <div className={`ax-view ${it.still ? "is-wide" : ""} ${isMusic ? "is-music" : ""}`}>
         <div key={`${t}-${i}-${swap}`} className="ax-frame ax-swap">
           <span className="ax-img">
             <img src={it.still ?? it.img} alt={`${it.title}${it.still ? " 劇照" : ""}`} referrerPolicy="no-referrer" />

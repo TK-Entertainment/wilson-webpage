@@ -61,6 +61,10 @@
 .ax-view.is-wide {
   grid-template-columns: minmax(0, 1fr);
 }
+/* 歌：黑膠會從封套右邊滑出來，留位置給它 */
+.ax-view.is-music {
+  gap: 120px;
+}
 .ax-frame {
   position: relative;
   border: 1.5px solid hsl(var(--foreground) / 0.7);
@@ -88,7 +92,7 @@
   height: auto;
 }
 .is-wide .ax-img img {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 2.39 / 1; /* 電影寬銀幕比例 */
   object-fit: cover;
 }
 /* 細掃描線 */
@@ -263,7 +267,7 @@
   border-top: 1px solid hsl(var(--foreground) / 0.25);
 }
 .g-books {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 .g-music {
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -339,12 +343,18 @@
 
 @media (max-width: 760px) {
   .ax-view {
-    grid-template-columns: minmax(0, 150px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 140px) minmax(0, 1fr);
     gap: 18px;
     padding-inline: 6px;
   }
+  .ax-view.is-music {
+    gap: 64px;
+  }
+  .ax-disc.spin {
+    translate: 36% 0;
+  }
   .g-books {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .g-music,
   .g-films {
