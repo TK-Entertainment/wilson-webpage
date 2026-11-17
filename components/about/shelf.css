@@ -1,0 +1,376 @@
+/* 關於我：書架（Bookshelf.tsx）與唱片機（RecordPlayer.tsx） */
+
+/* ---------- 書架 ---------- */
+.bs {
+  margin-top: 12px;
+  border-top: 4px solid hsl(var(--foreground));
+  padding-top: 20px;
+}
+.bs-shelf {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 230px;
+  padding: 0 18px;
+  background:
+    linear-gradient(90deg, #6e4a2f 0 10px, transparent 10px calc(100% - 10px), #6e4a2f calc(100% - 10px)),
+    linear-gradient(#3d2a1d, #4a3324);
+}
+.bs-book {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 10px;
+  background:
+    linear-gradient(90deg, rgb(0 0 0 / 0.25), transparent 18%, rgb(255 255 255 / 0.12) 50%, transparent 82%, rgb(0 0 0 / 0.3)),
+    var(--c);
+  color: #14182b;
+  border: 2px solid #14182b;
+  border-bottom: 0;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.bs-book::before,
+.bs-book::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 3px;
+  background: rgb(20 24 43 / 0.55);
+}
+.bs-book::before {
+  top: 6px;
+}
+.bs-book::after {
+  bottom: 30%;
+}
+.bs-book:hover {
+  transform: translateY(-8px);
+}
+.bs-book.is-out {
+  transform: translateY(-34px) rotate(-4deg);
+  box-shadow: 6px 10px 0 rgb(0 0 0 / 0.35);
+  z-index: 1;
+}
+.bs-book .t {
+  writing-mode: vertical-rl;
+  font-weight: 900;
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.bs-book .a {
+  writing-mode: vertical-rl;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+.bs-rock {
+  width: 64px;
+  margin-left: 6px;
+  flex: none;
+}
+.bs-rock path {
+  fill: #8a8f9c;
+  stroke: #14182b;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.bs-rock .ln {
+  fill: none;
+  stroke-width: 1.5;
+  opacity: 0.6;
+}
+.bs-board {
+  height: 16px;
+  background: linear-gradient(#8a5d3b, #6e4a2f);
+  border: 2px solid #14182b;
+  box-shadow: 0 6px 0 rgb(0 0 0 / 0.25);
+}
+.bs-info {
+  min-height: 92px;
+  padding: 16px 0 0;
+}
+.bs-info .t {
+  font-size: 22px;
+  font-weight: 900;
+  text-decoration: underline;
+  text-decoration-color: var(--c);
+  text-decoration-thickness: 4px;
+  text-underline-offset: 6px;
+}
+.bs-info .a {
+  margin-top: 6px;
+  font-size: 14px;
+  color: hsl(var(--muted-foreground));
+}
+.bs-info .n {
+  margin-top: 6px;
+  font-weight: 700;
+}
+.bs-info .hint {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+
+/* ---------- 唱片機 ---------- */
+.rp {
+  margin-top: 12px;
+  border-top: 4px solid hsl(var(--foreground));
+  padding-top: 20px;
+}
+.rp-deck {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  max-width: 560px;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.06), transparent 40%),
+    var(--navy);
+  border: 3px solid #14182b;
+  border-radius: 14px;
+  box-shadow: 8px 8px 0 var(--rose);
+}
+.rp-platter {
+  position: absolute;
+  left: 6%;
+  top: 8%;
+  width: 56%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #1a1f33;
+  border: 3px solid #0d1020;
+  box-shadow: inset 0 0 0 6px #2c3555;
+}
+.rp-vinyl {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.16), transparent 32%),
+    repeating-radial-gradient(circle, #111 0 2px, #1d1d1d 2px 4px);
+  display: grid;
+  place-items: center;
+  opacity: 0.35;
+  transform: scale(0.94);
+  transition: opacity 0.3s, transform 0.3s;
+  animation: rp-spin 1.8s linear infinite;
+  animation-play-state: paused;
+}
+.rp-vinyl.is-on {
+  opacity: 1;
+  transform: scale(1);
+}
+.rp-platter.is-playing .rp-vinyl {
+  animation-play-state: running;
+}
+@keyframes rp-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+.rp-label {
+  width: 38%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--c);
+  color: #14182b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.25);
+  position: relative;
+}
+.rp-label::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #14182b;
+}
+.rp-label b {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.rp-label i {
+  font-style: normal;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.2;
+  max-height: 2.4em;
+  overflow: hidden;
+  margin-top: 4px;
+}
+/* 唱臂：以右上的軸心旋轉；收著 → 待命 → 落在唱片上 */
+.rp-arm {
+  position: absolute;
+  right: 12%;
+  top: 10%;
+  width: 0;
+  height: 0;
+  transform: rotate(-18deg);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.rp-arm.is-ready {
+  transform: rotate(6deg);
+}
+.rp-arm.is-down {
+  transform: rotate(14deg);
+}
+.rp-arm .pivot {
+  position: absolute;
+  left: -18px;
+  top: -18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 3px solid #14182b;
+}
+.rp-arm .rod {
+  position: absolute;
+  left: -4px;
+  top: 0;
+  width: 8px;
+  height: clamp(120px, 26vw, 210px);
+  background: linear-gradient(90deg, #cfd3dc, #9aa0ad);
+  border: 2px solid #14182b;
+  border-radius: 4px;
+  transform-origin: top center;
+  transform: rotate(14deg);
+}
+.rp-arm .head {
+  position: absolute;
+  left: calc(-4px - clamp(120px, 26vw, 210px) * 0.24 - 9px);
+  top: calc(clamp(120px, 26vw, 210px) * 0.97 - 6px);
+  width: 22px;
+  height: 30px;
+  background: var(--gold);
+  border: 2px solid #14182b;
+  border-radius: 3px;
+  transform: rotate(14deg);
+}
+.rp-btn {
+  position: absolute;
+  right: 6%;
+  bottom: 9%;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #14182b;
+  background: var(--cream);
+  border: 2px solid #14182b;
+  box-shadow: 3px 3px 0 #14182b;
+}
+.rp-btn:disabled {
+  opacity: 0.45;
+}
+.rp-btn:not(:disabled):active {
+  translate: 2px 2px;
+  box-shadow: 1px 1px 0 #14182b;
+}
+.rp-led {
+  position: absolute;
+  right: 6%;
+  bottom: calc(9% + 44px);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4a1f1f;
+  border: 2px solid #14182b;
+}
+.rp-led.on {
+  background: #ff5a4d;
+  box-shadow: 0 0 10px #ff5a4d;
+}
+.rp-now {
+  margin-top: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+.rp-embed:not(:empty) {
+  margin-top: 10px;
+}
+.rp-embed iframe {
+  border-radius: 12px;
+}
+.rp-crate {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 12px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.rp-sleeve {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 8px;
+  text-align: left;
+  color: #14182b;
+  background:
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.14) 0 6px, transparent 6px 14px),
+    var(--c);
+  border: 2px solid #14182b;
+  box-shadow: 4px 4px 0 #14182b;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.rp-sleeve .disc {
+  position: absolute;
+  right: -34%;
+  top: 8%;
+  width: 80%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, #111 0 2px, #222 2px 4px);
+  transition: right 0.3s;
+}
+.rp-sleeve:hover .disc,
+.rp-sleeve.is-out .disc {
+  right: -12%;
+}
+.rp-sleeve:hover {
+  transform: translateY(-3px);
+}
+.rp-sleeve.is-out {
+  outline: 3px solid hsl(var(--foreground));
+  outline-offset: 3px;
+}
+.rp-sleeve .t {
+  position: relative;
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rp-sleeve .a {
+  position: relative;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.8;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rp-vinyl {
+    animation: none;
+  }
+}

@@ -1,10 +1,10 @@
 // 安全標頭：限制網頁能載入的外部資源、禁止被其他網站嵌入、強制 HTTPS
 // - 'unsafe-eval'：文章內容（contentlayer MDX）在瀏覽器端以 new Function 執行，必須保留
-// - giscus.app：留言區 iframe；youtube-nocookie.com：相簿的 <YouTube> 影片
+// - giscus.app：留言區 iframe；youtube-nocookie.com：相簿的 <YouTube> 影片；open.spotify.com：關於我的唱片機（iFrame API＋播放器）
 // - cloudflareinsights：Cloudflare 若開啟網頁分析會自動注入的統計程式
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://open.spotify.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
