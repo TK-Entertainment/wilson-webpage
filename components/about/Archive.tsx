@@ -277,7 +277,7 @@ export default function Archive({ tabs }: { tabs: ArchiveTab[] }) {
         ))}
       </ul>
       <p className="ax-credit font-mono-label">
-        {"// 圖片來源：書封 博客來、專輯封面 Spotify、海報與劇照 TMDB；版權屬原出版社、唱片公司與片商"}
+        {"// 圖片來源：書封 博客來、專輯封面 Spotify、海報與劇照 TMDB；版權屬原出版社、唱片公司、片商與電視台"}
       </p>
     </div>
   );

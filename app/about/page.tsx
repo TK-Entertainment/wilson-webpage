@@ -41,7 +41,7 @@ const MUSIC: { when: string; artists: { name: string; href: string }[] }[] = [
   },
 ];
 
-// 收藏庫：書、歌、電影。要加一本書／一首歌／一部片，在對應陣列加一筆就好
+// 收藏庫：書、歌、電影、劇。要加一本書／一首歌／一部片，在對應陣列加一筆就好
 // 書封自架在 public/img/shelf/（來源博客來）；歌的 spotify 是 open.spotify.com/track/<id>；電影 tmdb 是 themoviedb.org/movie/<id>
 const SPOTIFY_IMG = (h: string) => `https://i.scdn.co/image/${h}`;
 const TMDB_IMG = (size: string, f: string) => `https://image.tmdb.org/t/p/${size}/${f}`;
@@ -82,6 +82,24 @@ const ARCHIVE: ArchiveTab[] = [
     { title: "動物方城市2", sub: "", year: "2025", img: TMDB_IMG("w342", "qKGxhmQb1IAdTF03mJTMuaLCLBo.jpg"), poster: TMDB_IMG("w500", "qKGxhmQb1IAdTF03mJTMuaLCLBo.jpg"), stills: STILLS(["lgotja3xMoJZbynwHfcQcJAEMWH", "5h2EsPKNDdB3MAtOk9MB9Ycg9Rz", "4I4KTPcFRvEQmQQ18Mx51rgxVMn", "7nfpkR9XsQ1lBNCXSSHxGV7Dkxe", "5BeOSbwt6BR7q2Fax70lF4AIshD"]), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1084242" } },
     { title: "海洋奇緣", sub: "", year: "2016", img: TMDB_IMG("w342", "zyldaLGUo7oZpI9Z1bYPg59uPQw.jpg"), poster: TMDB_IMG("w500", "zyldaLGUo7oZpI9Z1bYPg59uPQw.jpg"), stills: STILLS(["qLVNZFHYUR6Li64He67SWl6BHQe", "iYLKMV7PIBtFmtygRrhSiyzcVsF", "rPCvRf72tkMCao9mRT99DYJUZLE", "oWU6dgu3RgdSZElkhbZuoPtkWAJ", "dJ9wwB7MlOw0i9Omsz1Qb25WlqG"]), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/277834" } },
     { title: "海洋奇緣2", sub: "", year: "2024", img: TMDB_IMG("w342", "zKFLEeUTO0nGwcff5HPddwZPk1q.jpg"), poster: TMDB_IMG("w500", "zKFLEeUTO0nGwcff5HPddwZPk1q.jpg"), stills: STILLS(["vYqt6kb4lcF8wwqsMMaULkP9OEn", "zo8CIjJ2nfNOevqNajwMRO6Hwka", "tElnmtQ6yz1PjN1kePNl8yMSb59", "rVlwDjh8Fw8m6HVJR7KRWmRdPZl", "z6H78tQNcryTO4sgDjg8Knc6H9W"]), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1241982" } },
+  ] },
+  { key: "drama", kanji: "劇", en: "DRAMA", items: [
+    { title: "如果我不曾見過太陽", sub: "", year: "2025", img: TMDB_IMG("w342", "rq3Zj093CdVXT47JeDfhGb6ogxQ.jpg"), poster: TMDB_IMG("w500", "rq3Zj093CdVXT47JeDfhGb6ogxQ.jpg"), stills: STILLS(["b9nrdh1VaspBckmaDwftW4mcOyC", "mTsft56kw9FpOBOeSv4Rx4Qly6a", "wYx2bYP0xlXlH5Du5XP6idJAqh2", "4IDPntce9HQyazyOFwaAzqqFZEv", "zA00C63k7aiZcM8ZpP38t9JNE1J"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/241576" } },
+    { title: "影后", sub: "", year: "2024", img: TMDB_IMG("w342", "y0CGjq8HeFJZ5iPXiUEJDZpf9op.jpg"), poster: TMDB_IMG("w500", "y0CGjq8HeFJZ5iPXiUEJDZpf9op.jpg"), stills: STILLS(["pYppQQIDK9AJDSskRYZNqvSnpVu", "sYf17GmFslAVxRZuWqA7ho8abNw", "okgPPVPX1yjwVFOqaT7c7GVoKzj", "onvmuMqsaIfbl17XFHnKzhYaJap", "ahcU6La7NkY0GRbAEe27sUuERq1"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/245264" } },
+    { title: "俗女養成記", sub: "", year: "2019", note: "第一、二季", img: TMDB_IMG("w342", "sHXT7wXvTttEsBaLVcpdrzBPuQi.jpg"), poster: TMDB_IMG("w500", "sHXT7wXvTttEsBaLVcpdrzBPuQi.jpg"), stills: STILLS(["v4oKm7cHJseFjlBjKmPCdj1PAZo", "6AxFWiVRRctvYDBywaVlDN6M3uR", "wdIJqry3xTD4uGeVnfOUJV0xLY0", "qKamtaAlj4kG5Dgxpry44bJs9I8"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/92925" } },
+    { title: "回魂計", sub: "", year: "2025", img: TMDB_IMG("w342", "6IgMzHFDVFs26RAlT3CBd4lIsWy.jpg"), poster: TMDB_IMG("w500", "6IgMzHFDVFs26RAlT3CBd4lIsWy.jpg"), stills: STILLS(["h8sF926rL0b7zdMSWjo9rYiy3Lk", "hvSHnrbLlR829PqGdf1PXQZuDPb", "jDSmJFGCtb3rh8CxuIyqyGKYIK2", "3rbgGb4TUeeVq5HiIvU8hcE3x2d", "f2gw3a7wVQSEVoaSeWlxQkG0bro"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/252135" } },
+    { title: "我的婆婆怎麼那麼可愛", sub: "", year: "2020", img: TMDB_IMG("w342", "mhdWP9lQvg66Ljbcl4QVtbnqVdp.jpg"), poster: TMDB_IMG("w500", "mhdWP9lQvg66Ljbcl4QVtbnqVdp.jpg"), stills: STILLS(["lJMLgj2EjWhezkRP5jHAL6Z16EH", "aUwvnqPXFkMIUbHDiJkZKKAhnuz"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/105269" } },
+    { title: "鐵拳教育", sub: "", year: "2026", img: TMDB_IMG("w342", "1ZjaTxLcQsTZ9XmU5Nzpd3pBMHW.jpg"), poster: TMDB_IMG("w500", "1ZjaTxLcQsTZ9XmU5Nzpd3pBMHW.jpg"), stills: STILLS(["sGitHICLzIQQBiwE67lZLy6W67u", "vyG93jhmPL7tBIhRtCLa5mdBKob", "fOV6dJGG6EghbeXkU7RVQpDhFyp", "59RxNAp2OOQu01OQM1rjkdNECT8", "7I5o1pauNbi9fpp6Bq4OzRjaQfC"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/276161" } },
+    { title: "我是遺物整理師", sub: "", year: "2021", img: TMDB_IMG("w342", "6DsOylD3a7NZGTd1uY8uMsK5Nbe.jpg"), poster: TMDB_IMG("w500", "6DsOylD3a7NZGTd1uY8uMsK5Nbe.jpg"), stills: STILLS(["tsdhmP9H7ZDveYDE0wkh90tjX3S", "bOxHzDenLU9T10MfZXdg5bXtQC1", "bFsEIKJu5CIO3WIdR3RZPK4nX8I", "6Igxzc3E6BWDm9fysGfPz7pni1P", "qoujIYdGNFhlHj851APJmNPz36A"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/96571" } },
+    { title: "光陰的故事", sub: "", year: "2008", img: TMDB_IMG("w342", "t80mmXmq3P9A9893KCr1XaodBWx.jpg"), poster: TMDB_IMG("w500", "t80mmXmq3P9A9893KCr1XaodBWx.jpg"), stills: STILLS(["4Gk58iM9OVaoDk5QSUOYCtapUo7", "gA68xGVTLYb599VKfjnBQ8JF8zS"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/57162" } },
+    { title: "三體（騰訊版）", sub: "", year: "2023", img: TMDB_IMG("w342", "q2sNliRi4j0ncXKUO1x0MldR20A.jpg"), poster: TMDB_IMG("w500", "q2sNliRi4j0ncXKUO1x0MldR20A.jpg"), stills: STILLS(["zxfBtHz5UmSTfIEC4O4GngyjHwa", "9JytHwIUnwIkm1pgDTE3b6HXB60", "bjH9oKKZAt28d3L6O7p4HyhurZD", "4cA6IoSm5NJ7538JSdWlMUlGQKY", "pdGCDDLCvjDTrVfsrlqdYZlPPh1"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/204541" } },
+    { title: "3 體（Netflix）", sub: "", year: "2024", img: TMDB_IMG("w342", "yO6Yd5MR2QXyzoyHdZYR0ai5pxH.jpg"), poster: TMDB_IMG("w500", "yO6Yd5MR2QXyzoyHdZYR0ai5pxH.jpg"), stills: STILLS(["ciizJ9Okzt9tBBGK7Q3T14LFT2j", "bsQM8tL1HgkpNGqtotzz6iQ2NfT", "kSh5AfkJ38UqjbUvFrPQlvKNU0v", "u8FQAP59l29q1KptwJMnN8xdJre", "jtrBKhwBOLkq3XfiztaWTg7NoqN"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/108545" } },
+    { title: "放課後的病歷表", sub: "", year: "2024", img: TMDB_IMG("w342", "wYy1c2EkYsNyt5QW8ZWgjTjXR7I.jpg"), poster: TMDB_IMG("w500", "wYy1c2EkYsNyt5QW8ZWgjTjXR7I.jpg"), stills: STILLS(["8ueIcC39li5WZrKOFdVgAd9DpfP"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/271360" } },
+    { title: "浪漫速成班", sub: "", year: "2023", img: TMDB_IMG("w342", "2XhusUlXuOK3swfUO8mACiM1467.jpg"), poster: TMDB_IMG("w500", "2XhusUlXuOK3swfUO8mACiM1467.jpg"), stills: STILLS(["o3tS28maAJTDt9Zmnn4JvNv2Hix", "16M5khLLfZJCb2y9JlyujiGPPBQ", "exGBa2mjAWFRuHjPzKmBbXgSnOt", "8UVuv2TNv4w444TKa2hJ0lw8bLy", "v6uljyarnaWpePuldznKviIfx2N"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/202318" } },
+    { title: "後宮甄嬛傳", sub: "", year: "2011", img: TMDB_IMG("w342", "2ucGJSsqgQ1XNKJiv7D3cFwir1r.jpg"), poster: TMDB_IMG("w500", "2ucGJSsqgQ1XNKJiv7D3cFwir1r.jpg"), stills: STILLS(["oaEIYMBx3IEtjWzyDyHu9MTtuv8", "c41yiFWQcJd1i8HLlyj8rEbeUcV", "ePFAvZJUficTSl8AOCZn5U0gfx8", "qoMQF9809QTi2dCoqG5J9pMQH2C", "dwVWrTDvv5cSOtmaf5ENFzM52Zb"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/50878" } },
+    { title: "進擊的巨人", sub: "", year: "2013", img: TMDB_IMG("w342", "by4f66EHK82OZNyEuYbOW5RxFBa.jpg"), poster: TMDB_IMG("w500", "by4f66EHK82OZNyEuYbOW5RxFBa.jpg"), stills: STILLS(["rqbCbjB19amtOtFQbb3K2lgm2zv", "2b0s0iMNl9CgrCMz0VGKlMw3vZw", "wg0GsFpeHAFPbbcfsntTQBggWCo", "3T5N0Fg6hE3lE6JHJJPKrjtdI4j", "uACJw45EEkB5mfFw4SgMtgZgBBJ"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/1429" } },
+    { title: "地。關於地球的運動", sub: "", year: "2024", img: TMDB_IMG("w342", "s1a9CYX3hUiDLzkyodZL3eCZzkC.jpg"), poster: TMDB_IMG("w500", "s1a9CYX3hUiDLzkyodZL3eCZzkC.jpg"), stills: STILLS(["o5GDX8zmKLpOxRkBoAonoQL8gbg", "7VV0rFVMFjztQgfEIeltGYWdtEf", "q9E0TTfc8uGzoH5jgfemAaz0vUD", "ojhGBPmpQLmBni5QQWDzwLRErzp"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/204635" } },
+    { title: "槍彈辯駁", sub: "", year: "2013", note: "I／II／III 都看了", img: TMDB_IMG("w342", "2XKziwAUwPiOonJfSJxnEzFPNSU.jpg"), poster: TMDB_IMG("w500", "2XKziwAUwPiOonJfSJxnEzFPNSU.jpg"), stills: STILLS(["eAj5C3Sb4LCQReg3LMCnJ2wh45T", "fltHqeEzVbcCdHAjUGif34CvZyk", "kDAvpFwUZvGtRmjquusM6lwqkxd", "rLLlTSR0znm7ZYmL11XV0zPNeyF", "tMqaJBsJZ1jLBzOd4fTyfsPkpK9"]), src: { label: "TMDB", url: "https://www.themoviedb.org/tv/49471" } },
   ] },
 ];
 
@@ -225,7 +243,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <Label>{"// 05 收藏庫：讀過的、在聽的、看過的"}</Label>
+            <Label>{"// 05 收藏庫：讀過的、在聽的、看過的、追過的"}</Label>
             <Archive tabs={ARCHIVE} />
           </section>
         </div>

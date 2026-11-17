@@ -268,7 +268,8 @@
 .g-music {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
-.g-films {
+.g-films,
+.g-drama {
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .ax-grid button {
@@ -297,7 +298,8 @@
 .g-music .th img {
   aspect-ratio: 1;
 }
-.g-films .th img {
+.g-films .th img,
+.g-drama .th img {
   aspect-ratio: 2 / 3;
 }
 .ax-grid button:hover .th img,
@@ -353,7 +355,8 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .g-music,
-  .g-films {
+  .g-films,
+  .g-drama {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
