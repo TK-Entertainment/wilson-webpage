@@ -1,7 +1,9 @@
 import { formatDate } from "@/utils/date";
-import { allBlogs, allAlbums, allPlaces } from "contentlayer/generated";
+import { allBlogs, allAlbums, allPlaces, allDocs, allMeta } from "contentlayer/generated";
+import notesAdded from "@/components/home/notesAdded.json";
+import { courseColor } from "@/utils/palette";
 import { getCheckinAlbums } from "@/utils/checkinAlbums";
-import Home, { type HomePhoto } from "@/components/home/home";
+import Home, { type HomePhoto, type HomeActivity } from "@/components/home/home";
 import { pageMetadata, siteName } from "@/utils/seo";
 import "./home.css";
 
@@ -91,12 +93,80 @@ export default function HomePage() {
     .slice(0, 2)
     .map(({ sort, ...album }) => album);
 
+  // 最近動態：碎念、筆記、打卡、相簿依日期混在一起；同一天同一門課的筆記、同一天的打卡併成一則
+  const added = notesAdded as Record<string, string>;
+  const courseTitle = (folder: string) =>
+    allMeta.find((m) => m._raw.sourceFileDir === folder)?.title ?? folder;
+  const noteGroups = new Map<string, { date: string; folder: string; docs: { title: string; url: string }[] }>();
+  for (const doc of allDocs) {
+    const path = doc._raw.flattenedPath;
+    const date = added[path];
+    const folder = path.split("/")[0];
+    if (!date || !path.includes("/")) continue;
+    const key = `${date}|${folder}`;
+    const g = noteGroups.get(key) ?? { date, folder, docs: [] };
+    g.docs.push({ title: doc.title, url: `/docs/${path}` });
+    noteGroups.set(key, g);
+  }
+  const short = (t: string) => t.split("　")[0];
+  const noteItems: (HomeActivity & { sort: string })[] = [...noteGroups.values()].map((g) => ({
+    sort: g.date,
+    date: dot(g.date),
+    kind: g.folder === "research" ? "研究" : "筆記",
+    color: courseColor(g.folder) ?? "var(--teal)",
+    title:
+      g.docs.length === 1
+        ? `${courseTitle(g.folder)}：${g.docs[0].title}`
+        : `${courseTitle(g.folder)}新增 ${g.docs.length} 篇筆記`,
+    sub: g.docs.length === 1 ? undefined : g.docs.map((d) => short(d.title)).slice(0, 4).join("、") + (g.docs.length > 4 ? "⋯⋯" : ""),
+    href: g.docs[0].url,
+  }));
+  const checkinDays = new Map<string, typeof allPlaces>();
+  for (const p of allPlaces) {
+    if (!p.date || p.date.length < 10) continue;
+    const d = p.date.slice(0, 10);
+    checkinDays.set(d, [...(checkinDays.get(d) ?? []), p]);
+  }
+  const checkinItems: (HomeActivity & { sort: string })[] = [...checkinDays.entries()].map(([d, ps]) => ({
+    sort: d,
+    date: dot(d),
+    kind: "打卡",
+    color: "var(--sage)",
+    title: ps.length === 1 ? `${ps[0].countyName}・${ps[0].name}` : `${ps[0].countyName}等地打卡 ${ps.length} 處`,
+    sub: ps.length === 1 ? undefined : ps.map((p) => p.name).slice(0, 4).join("、") + (ps.length > 4 ? "⋯⋯" : ""),
+    href: `/map?place=${encodeURIComponent(ps[0].id)}`,
+  }));
+  const activity: HomeActivity[] = [
+    ...allBlogs.filter((b) => !b.outside).map((b) => ({
+      sort: b.date.slice(0, 10),
+      date: dot(b.date),
+      kind: "碎念",
+      color: "var(--gold)",
+      title: b.title,
+      href: `/blog/${b.slug}`,
+    })),
+    ...allAlbums.map((a) => ({
+      sort: a.date.slice(0, 10),
+      date: dot(a.date),
+      kind: "影像",
+      color: "var(--orange)",
+      title: a.title,
+      href: `/gallery/${a.slug}`,
+    })),
+    ...noteItems,
+    ...checkinItems,
+  ]
+    .sort((a, b) => b.sort.localeCompare(a.sort))
+    .slice(0, 8)
+    .map(({ sort, ...item }) => item);
+
   return (
     <main>
       <Home
         photos={photos}
         posts={posts}
         albums={albums}
+        activity={activity}
         postCount={allBlogs.length}
         albumCount={allAlbums.length + checkinAlbums.length}
       />

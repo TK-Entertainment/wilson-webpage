@@ -31,6 +31,15 @@ export type HomeAlbum = {
   cover?: string;
 };
 
+export type HomeActivity = {
+  href: string;
+  title: string;
+  sub?: string;
+  date: string;
+  kind: string;
+  color: string;
+};
+
 const MENU = [
   { href: "/blog", n: "01", t: "日常碎念", d: "茶", c: "var(--gold)" },
   { href: "/docs", n: "02", t: "學習日常", d: "咖啡", c: "var(--teal)" },
@@ -75,12 +84,14 @@ export default function Home({
   albums,
   postCount,
   albumCount,
+  activity,
 }: {
   photos: HomePhoto[];
   posts: HomePost[];
   albums: HomeAlbum[];
   postCount: number;
   albumCount: number;
+  activity: HomeActivity[];
 }) {
   const reduce = useReducedMotion();
   const router = useRouter();
@@ -293,6 +304,28 @@ export default function Home({
           </>
         ) : null}
       </section>
+
+      {activity.length ? (
+        <section className="hm-activity">
+          <div className="hm-head">
+            <i aria-hidden="true" />
+            <h2>最近動態</h2>
+            <span className="font-mono-label">LOG // 全站</span>
+          </div>
+          <ol>
+            {activity.map((a) => (
+              <li key={`${a.kind}${a.href}${a.date}`} style={{ ["--c" as string]: a.color }}>
+                <span className="d font-mono-label">{a.date}</span>
+                <span className="k">{a.kind}</span>
+                <div>
+                  <Link href={a.href}>{a.title}</Link>
+                  {a.sub ? <p>{a.sub}</p> : null}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
 
       <section className="hm-latest">
         <div>

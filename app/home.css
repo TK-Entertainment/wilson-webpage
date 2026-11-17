@@ -558,3 +558,71 @@
     transition: none !important;
   }
 }
+
+/* ---------- 最近動態（全站時間軸） ---------- */
+.hm-activity {
+  padding: 110px 44px 0;
+}
+.hm-activity .hm-head span {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+.hm-activity ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 56px;
+}
+.hm-activity li {
+  display: grid;
+  grid-template-columns: 96px 52px 1fr;
+  align-items: baseline;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 2px solid hsl(var(--foreground) / 0.15);
+}
+.hm-activity .d {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+.hm-activity .k {
+  justify-self: start;
+  padding: 1px 7px;
+  font-size: 12px;
+  font-weight: 900;
+  color: #14182b;
+  background: var(--c);
+}
+.hm-activity a {
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 1.5;
+  background: linear-gradient(var(--c), var(--c)) 0 92% / 0 30% no-repeat;
+  transition: background-size 0.25s;
+}
+.hm-activity a:hover {
+  background-size: 100% 30%;
+}
+.hm-activity p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: hsl(var(--muted-foreground));
+}
+@media (max-width: 860px) {
+  .hm-activity {
+    padding: 72px 20px 0;
+  }
+  .hm-activity ol {
+    grid-template-columns: 1fr;
+  }
+  .hm-activity li {
+    grid-template-columns: 84px 46px 1fr;
+    gap: 10px;
+  }
+}
