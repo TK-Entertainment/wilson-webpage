@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
-import Bookshelf, { type Book } from "@/components/about/Bookshelf";
-import RecordPlayer, { type Artist } from "@/components/about/RecordPlayer";
-import Cinema, { type Movie } from "@/components/about/Cinema";
+import Archive, { type ArchiveTab } from "@/components/about/Archive";
 import { pageMetadata } from "@/utils/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -43,54 +41,47 @@ const MUSIC: { when: string; artists: { name: string; href: string }[] }[] = [
   },
 ];
 
-// 書架：短評、星等之後想寫再補（note 欄位）
-// color：書背顏色；h：書背高度（%）；w：厚度（px）
-const BOOKS: Book[] = [
-  { title: "被討厭的勇氣", author: "岸見一郎、古賀史健", color: "var(--plum)", h: 86, w: 54 },
-  { title: "牧羊少年奇幻之旅", author: "保羅・科爾賀", color: "var(--gold)", h: 80, w: 46 },
-  { title: "三體Ⅰ", author: "劉慈欣", color: "var(--teal)", h: 94, w: 58, href: "/blog/three-body-1", note: "寫過一篇讀後心得" },
-  { title: "我的神鬼人生", author: "李家維、廖宏霖", color: "var(--sage)", h: 84, w: 50 },
-];
-
-// 歌單：id 是 Spotify 歌曲網址 open.spotify.com/track/<id> 的最後一段
-const SONGS: Artist[] = [
-  { name: "Tani Yuuki", color: "var(--teal)", songs: [
-    { title: "W/X/Y", id: "3ZnMe3b6WeuZislPMmCTZN" },
-    { title: "もう一度", id: "40gt89icqkSFqWWfMlqagb" },
+// 收藏庫：書、歌、電影。要加一本書／一首歌／一部片，在對應陣列加一筆就好
+// 書封自架在 public/img/shelf/（來源博客來）；歌的 spotify 是 open.spotify.com/track/<id>；電影 tmdb 是 themoviedb.org/movie/<id>
+const SPOTIFY_IMG = (h: string) => `https://i.scdn.co/image/${h}`;
+const TMDB_IMG = (size: string, f: string) => `https://image.tmdb.org/t/p/${size}/${f}`;
+const BOOK = (id: string) => ({ label: "博客來", url: `https://www.books.com.tw/products/${id}` });
+const ARCHIVE: ArchiveTab[] = [
+  { key: "books", kanji: "本", en: "BOOKS", items: [
+    { title: "被討厭的勇氣", sub: "岸見一郎、古賀史健", img: "/img/shelf/courage.webp", src: BOOK("0010653153") },
+    { title: "牧羊少年奇幻之旅", sub: "保羅・科爾賀", img: "/img/shelf/alchemist.webp", src: BOOK("0011067603") },
+    { title: "三體", sub: "劉慈欣", img: "/img/shelf/three-body.webp", href: "/blog/three-body-1", note: "寫過一篇讀後心得", src: BOOK("0010950747") },
+    { title: "我的神鬼人生", sub: "李家維、廖宏霖", img: "/img/shelf/shengui.webp", src: BOOK("0010973965") },
   ] },
-  { name: "あいみょん", color: "var(--orange)", songs: [
-    { title: "スケッチ", id: "2HCw2hGOPVUim9RWk3wh0C" },
-    { title: "君の夢を聞きながら、僕は笑えるアイデアを！", id: "2SoUv5PuyA99w2XwwwQRST" },
+  { key: "music", kanji: "音", en: "MUSIC", items: [
+    { title: "W/X/Y", sub: "Tani Yuuki", spotify: "3ZnMe3b6WeuZislPMmCTZN", img: SPOTIFY_IMG("ab67616d00001e02e0d7f6e80ce383cb2ccef66d"), src: { label: "Spotify", url: "https://open.spotify.com/track/3ZnMe3b6WeuZislPMmCTZN" } },
+    { title: "もう一度", sub: "Tani Yuuki", spotify: "40gt89icqkSFqWWfMlqagb", img: SPOTIFY_IMG("ab67616d00001e027d9d131027e15c39857682ce"), src: { label: "Spotify", url: "https://open.spotify.com/track/40gt89icqkSFqWWfMlqagb" } },
+    { title: "スケッチ", sub: "あいみょん", spotify: "2HCw2hGOPVUim9RWk3wh0C", img: SPOTIFY_IMG("ab67616d00001e02ce2db1dfb891b878060d7cf3"), src: { label: "Spotify", url: "https://open.spotify.com/track/2HCw2hGOPVUim9RWk3wh0C" } },
+    { title: "君の夢を聞きながら、僕は笑えるアイデアを！", sub: "あいみょん", spotify: "2SoUv5PuyA99w2XwwwQRST", img: SPOTIFY_IMG("ab67616d00001e02ac2aee5ac331309a79bc6e6a"), src: { label: "Spotify", url: "https://open.spotify.com/track/2SoUv5PuyA99w2XwwwQRST" } },
+    { title: "Born This Way", sub: "Lady Gaga", spotify: "30XU4suKzCeoCK9YFzdufg", img: SPOTIFY_IMG("ab67616d00001e02a5d31644260279be8d0c46c0"), src: { label: "Spotify", url: "https://open.spotify.com/track/30XU4suKzCeoCK9YFzdufg" } },
+    { title: "no tears left to cry", sub: "Ariana Grande", spotify: "2qT1uLXPVPzGgFOx4jtEuo", img: SPOTIFY_IMG("ab67616d00001e02c3af0c2355c24ed7023cd394"), src: { label: "Spotify", url: "https://open.spotify.com/track/2qT1uLXPVPzGgFOx4jtEuo" } },
+    { title: "像我這樣的人", sub: "毛不易", spotify: "7pZYb3XtZ0wMtORwnVY9SE", img: SPOTIFY_IMG("ab67616d00001e024f11d50a19bd09efa1c1fbda"), src: { label: "Spotify", url: "https://open.spotify.com/track/7pZYb3XtZ0wMtORwnVY9SE" } },
+    { title: "給你給我", sub: "毛不易", spotify: "0uIfbYtrvFEcueiw3GNFJt", img: SPOTIFY_IMG("ab67616d00001e024f11d50a19bd09efa1c1fbda"), src: { label: "Spotify", url: "https://open.spotify.com/track/0uIfbYtrvFEcueiw3GNFJt" } },
+    { title: "平凡的一天", sub: "毛不易", spotify: "6RsXZQiT0Bhlo7tQefEbuW", img: SPOTIFY_IMG("ab67616d00001e024f11d50a19bd09efa1c1fbda"), src: { label: "Spotify", url: "https://open.spotify.com/track/6RsXZQiT0Bhlo7tQefEbuW" } },
+    { title: "アオイ", sub: "サカナクション", spotify: "73TEyhGLxixHAwzOdoamgV", img: SPOTIFY_IMG("ab67616d00001e026dd4b6207e6e3780e50a24d6"), src: { label: "Spotify", url: "https://open.spotify.com/track/73TEyhGLxixHAwzOdoamgV" } },
+    { title: "怪獣", sub: "サカナクション", spotify: "7sMRDjjwsB7wQEBOkdfg0i", img: SPOTIFY_IMG("ab67616d00001e022337f03620420d4561c7e6c9"), src: { label: "Spotify", url: "https://open.spotify.com/track/7sMRDjjwsB7wQEBOkdfg0i" } },
   ] },
-  { name: "Lady Gaga", color: "var(--rose)", songs: [{ title: "Born This Way", id: "30XU4suKzCeoCK9YFzdufg" }] },
-  { name: "Ariana Grande", color: "var(--plum)", songs: [{ title: "no tears left to cry", id: "2qT1uLXPVPzGgFOx4jtEuo" }] },
-  { name: "毛不易", color: "var(--sage)", songs: [
-    { title: "像我這樣的人", id: "7pZYb3XtZ0wMtORwnVY9SE" },
-    { title: "給你給我", id: "0uIfbYtrvFEcueiw3GNFJt" },
-    { title: "平凡的一天", id: "6RsXZQiT0Bhlo7tQefEbuW" },
+  { key: "films", kanji: "映", en: "FILMS", items: [
+    { title: "星際效應", sub: "", year: "2014", img: TMDB_IMG("w342", "v7Iib57HHgSEI9B7XYRF6qrs11T.jpg"), still: TMDB_IMG("w780", "8sNiAPPYU14PUepFNeSNGUTiHW.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/157336" } },
+    { title: "奧德賽", sub: "", year: "2026", img: TMDB_IMG("w342", "d7MiRRamaAe58DacYEo2ZgziBBv.jpg"), still: TMDB_IMG("w780", "mIi99BK2mDpLp2lGsa8jCBDFit4.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1368337" } },
+    { title: "陽光女子合唱團", sub: "", year: "2025", img: TMDB_IMG("w342", "ryCanTADyAo7bqRr1aca2ThuTeE.jpg"), still: TMDB_IMG("w780", "5K8zQhHIr6GiOIpM18DWsgy2COv.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1481955" } },
+    { title: "哆啦A夢：大雄的繪畫世界物語", sub: "", year: "2025", img: TMDB_IMG("w342", "puAxWoIq2AIEHsZpQZzOXng8JvC.jpg"), still: TMDB_IMG("w780", "vncMpsAUDnL1JOb73e5q48gX32S.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1372489" } },
+    { title: "哆啦A夢：新‧大雄的海底鬼岩城", sub: "", year: "2026", img: TMDB_IMG("w342", "a6j3pLB0P89TR7YkhD3k7MBkBqE.jpg"), still: TMDB_IMG("w780", "pxd9rc03EMMln3tVFdfd427Fpsi.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1542261" } },
+    { title: "穿著PRADA的惡魔", sub: "", year: "2006", img: TMDB_IMG("w342", "he6k1x5nlGGhahh1xSyApU4fGeR.jpg"), still: TMDB_IMG("w780", "gkh6Nt8DtY1XT4gQsyFq9XAVJlJ.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/350" } },
+    { title: "穿著PRADA的惡魔2", sub: "", year: "2026", img: TMDB_IMG("w342", "pep61TOT2GJjT0ck2JbtMwIZNyJ.jpg"), still: TMDB_IMG("w780", "dRoFlUbH1l51ACmx5oPCI3jfvZq.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1314481" } },
+    { title: "沙丘", sub: "", year: "2021", img: TMDB_IMG("w342", "qtSzr3bY8wP3lUDfTx2Qg5y5Qri.jpg"), still: TMDB_IMG("w780", "qVgZu5BTx6pu4owCvVOm4zjTfOi.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/438631" } },
+    { title: "沙丘：第二部", sub: "", year: "2024", img: TMDB_IMG("w342", "1p25wDEdFRRTtwtPFbtPHISefzG.jpg"), still: TMDB_IMG("w780", "eZ239CUp1d6OryZEBPnO2n87gMG.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/693134" } },
+    { title: "Jim Queen：肌情四射", sub: "", year: "2026", img: TMDB_IMG("w342", "ue2Orwc7nNYFixoOLBHpse2H1uX.jpg"), still: TMDB_IMG("w780", "gZDF8oChSplhdwTCjFR1SHwKw8s.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1061798" } },
+    { title: "動物方城市", sub: "", year: "2016", img: TMDB_IMG("w342", "rGZ6fQ7CPrExi1ox5SPMMhdvX1a.jpg"), still: TMDB_IMG("w780", "9tOkjBEiiGcaClgJFtwocStZvIT.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/269149" } },
+    { title: "動物方城市2", sub: "", year: "2025", img: TMDB_IMG("w342", "qKGxhmQb1IAdTF03mJTMuaLCLBo.jpg"), still: TMDB_IMG("w780", "lgotja3xMoJZbynwHfcQcJAEMWH.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1084242" } },
+    { title: "海洋奇緣", sub: "", year: "2016", img: TMDB_IMG("w342", "zyldaLGUo7oZpI9Z1bYPg59uPQw.jpg"), still: TMDB_IMG("w780", "qLVNZFHYUR6Li64He67SWl6BHQe.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/277834" } },
+    { title: "海洋奇緣2", sub: "", year: "2024", img: TMDB_IMG("w342", "zKFLEeUTO0nGwcff5HPddwZPk1q.jpg"), still: TMDB_IMG("w780", "vYqt6kb4lcF8wwqsMMaULkP9OEn.jpg"), src: { label: "TMDB", url: "https://www.themoviedb.org/movie/1241982" } },
   ] },
-  { name: "サカナクション", color: "var(--sky)", songs: [
-    { title: "アオイ", id: "73TEyhGLxixHAwzOdoamgV" },
-    { title: "怪獣", id: "7sMRDjjwsB7wQEBOkdfg0i" },
-  ] },
-];
-
-// 放映廳：tmdb 是 themoviedb.org/movie/<id> 的編號；still 是 TMDB 劇照檔名
-const MOVIES: Movie[] = [
-  { title: "星際效應", year: "2014", tmdb: "157336", still: "8sNiAPPYU14PUepFNeSNGUTiHW.jpg" },
-  { title: "奧德賽", year: "2026", tmdb: "1368337", still: "mIi99BK2mDpLp2lGsa8jCBDFit4.jpg" },
-  { title: "陽光女子合唱團", year: "2025", tmdb: "1481955", still: "5K8zQhHIr6GiOIpM18DWsgy2COv.jpg" },
-  { title: "哆啦A夢：大雄的繪畫世界物語", year: "2025", tmdb: "1372489", still: "vncMpsAUDnL1JOb73e5q48gX32S.jpg" },
-  { title: "哆啦A夢：新‧大雄的海底鬼岩城", year: "2026", tmdb: "1542261", still: "pxd9rc03EMMln3tVFdfd427Fpsi.jpg" },
-  { title: "穿著PRADA的惡魔", year: "2006", tmdb: "350", still: "gkh6Nt8DtY1XT4gQsyFq9XAVJlJ.jpg" },
-  { title: "穿著PRADA的惡魔2", year: "2026", tmdb: "1314481", still: "dRoFlUbH1l51ACmx5oPCI3jfvZq.jpg" },
-  { title: "沙丘", year: "2021", tmdb: "438631", still: "qVgZu5BTx6pu4owCvVOm4zjTfOi.jpg" },
-  { title: "沙丘：第二部", year: "2024", tmdb: "693134", still: "eZ239CUp1d6OryZEBPnO2n87gMG.jpg" },
-  { title: "Jim Queen：肌情四射", year: "2026", tmdb: "1061798", still: "gZDF8oChSplhdwTCjFR1SHwKw8s.jpg" },
-  { title: "動物方城市", year: "2016", tmdb: "269149", still: "9tOkjBEiiGcaClgJFtwocStZvIT.jpg" },
-  { title: "動物方城市2", year: "2025", tmdb: "1084242", still: "lgotja3xMoJZbynwHfcQcJAEMWH.jpg" },
-  { title: "海洋奇緣", year: "2016", tmdb: "277834", still: "qLVNZFHYUR6Li64He67SWl6BHQe.jpg" },
-  { title: "海洋奇緣2", year: "2024", tmdb: "1241982", still: "vYqt6kb4lcF8wwqsMMaULkP9OEn.jpg" },
 ];
 
 // OC：住在威爾森內心深處的那隻狼
@@ -233,21 +224,8 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <Label>{"// 05 書架"}</Label>
-            <Bookshelf books={BOOKS} />
-          </section>
-
-          <section>
-            <Label>{"// 06 唱片機"}</Label>
-            <RecordPlayer artists={SONGS} />
-            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-              播放器來自 Spotify：沒登入可以試聽約 30 秒，登入後可以聽完整首。
-            </p>
-          </section>
-
-          <section>
-            <Label>{"// 07 放映廳"}</Label>
-            <Cinema movies={MOVIES} />
+            <Label>{"// 05 收藏庫：讀過的、在聽的、看過的"}</Label>
+            <Archive tabs={ARCHIVE} />
           </section>
         </div>
 
