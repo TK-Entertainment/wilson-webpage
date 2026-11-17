@@ -724,3 +724,12 @@ button[aria-label="Scroll to Top"] {
   background: linear-gradient(transparent 58%, color-mix(in srgb, var(--rose) 55%, transparent) 58% 92%, transparent 92%);
   padding: 0 0.1em;
 }
+
+/* 側欄：課程資料夾名稱前的課程色方塊（components/DocsTreeLayout.tsx） */
+.course-sq {
+  display: inline-block;
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.15rem;
+}

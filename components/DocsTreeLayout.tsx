@@ -2,9 +2,23 @@
 
 import { DocsLayout } from "next-docs-ui/layout";
 import { usePathname } from "next/navigation";
-import type { CSSProperties, ReactNode } from "react";
+import { useMemo, type CSSProperties, type ReactNode } from "react";
 import { courseColor, courseHS } from "@/utils/palette";
 import type { notesTree as NotesTree } from "@/app/source";
+
+type TreeNode = (typeof NotesTree)["children"][number];
+// 資料夾的代表網址：有首頁用首頁，沒有就用第一個子頁
+function firstUrl(node: TreeNode): string | undefined {
+  if (node.type === "page") return node.url;
+  if (node.type === "folder") {
+    if (node.index) return node.index.url;
+    for (const child of node.children) {
+      const u = firstUrl(child);
+      if (u) return u;
+    }
+  }
+  return undefined;
+}
 
 // 依目前網址選側欄：研究頁只顯示研究的目錄，其他筆記頁只顯示課程筆記
 export default function DocsTreeLayout({
@@ -18,7 +32,23 @@ export default function DocsTreeLayout({
 }) {
   const pathname = usePathname();
   const isResearch = pathname.startsWith("/docs/research");
-  const tree = isResearch ? researchTree : notesTree;
+  const baseTree = isResearch ? researchTree : notesTree;
+  // 每門課的資料夾名稱前加一個課程色方塊（和筆記目錄的方形標記一致）
+  const tree = useMemo(
+    () => ({
+      ...baseTree,
+      children: baseTree.children.map((node) => {
+        if (node.type !== "folder") return node;
+        const c = courseColor(firstUrl(node) ?? "");
+        if (!c) return node;
+        return {
+          ...node,
+          icon: <span className="course-sq" style={{ background: c }} aria-hidden="true" />,
+        };
+      }),
+    }),
+    [baseTree],
+  );
   // 在某門課裡時，側欄目前頁、右側目錄、連結強調色都換成這門課的顏色
   const hs = courseHS(pathname);
   const style = hs

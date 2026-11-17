@@ -93,14 +93,15 @@ export default function Navbar() {
 
   return (
     <nav className="nd-sticky nd-top-0 nd-h-16 nd-z-50 border-b border-foreground/15 bg-background">
-      <div className="nd-flex nd-flex-row nd-items-center nd-h-full gap-2 px-4 sm:gap-4 sm:px-5 lg:px-[44px]">
+      <div className="nd-flex nd-flex-row nd-items-center nd-h-full gap-2 px-4 sm:gap-4 sm:px-5 lg:px-6 xl:px-[44px]">
         <Link
           href="/"
           className="group flex flex-none flex-row items-center gap-2 whitespace-nowrap text-base font-black sm:gap-3 sm:text-lg"
         >
           <Logo className="h-3.5 w-10 flex-none jitter-hover sm:h-4 sm:w-12" />
-          <span className="max-sm:hidden">威爾森的生活札記</span>
+          <span className="max-sm:hidden lg:max-xl:hidden">威爾森的生活札記</span>
           <span className="sm:hidden max-[400px]:hidden">生活札記</span>
+          <span className="hidden lg:max-xl:inline">生活札記</span>
         </Link>
         {blog && !isMobile ? (
           <Link
@@ -122,7 +123,7 @@ export default function Navbar() {
               aria-current={
                 isCurrent(section.href, pathname) ? "page" : undefined
               }
-              className="nav-sec group/sec relative nd-flex items-baseline gap-1.5 px-1.5 py-1 text-[15px] sm:px-2 font-black"
+              className="nav-sec group/sec relative nd-flex items-baseline gap-1.5 whitespace-nowrap px-1.5 py-1 text-[15px] sm:px-2 lg:max-xl:gap-1 lg:max-xl:px-1.5 font-black"
               style={{ ["--c" as string]: section.color }}
             >
               <span className="font-mono-label text-[11px] font-bold text-muted-foreground">
