@@ -312,7 +312,7 @@ export default function Home({
             <h2>最近動態</h2>
             <span className="font-mono-label">LOG // 全站</span>
           </div>
-          <ol>
+          <ol style={{ ["--rows" as string]: Math.ceil(activity.length / 2) }}>
             {activity.map((a) => (
               <li key={`${a.kind}${a.href}${a.date}`} style={{ ["--c" as string]: a.color }}>
                 <span className="d font-mono-label">{a.date}</span>

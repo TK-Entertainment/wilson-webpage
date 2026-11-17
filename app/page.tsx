@@ -118,7 +118,7 @@ export default function HomePage() {
     title:
       g.docs.length === 1
         ? `${courseTitle(g.folder)}：${g.docs[0].title}`
-        : `${courseTitle(g.folder)}新增 ${g.docs.length} 篇筆記`,
+        : `${courseTitle(g.folder)} 新增 ${g.docs.length} 篇筆記`,
     sub: g.docs.length === 1 ? undefined : g.docs.map((d) => short(d.title)).slice(0, 4).join("、") + (g.docs.length > 4 ? "⋯⋯" : ""),
     href: g.docs[0].url,
   }));
@@ -161,6 +161,12 @@ export default function HomePage() {
     ...checkinItems,
   ]
     .sort((a, b) => b.sort.localeCompare(a.sort))
+    // 筆記一次常加很多篇，最多佔一半，碎念、打卡、影像才看得到
+    .filter(
+      (item, _, all) =>
+        (item.kind !== "筆記" && item.kind !== "研究") ||
+        all.filter((x) => x.kind === "筆記" || x.kind === "研究").indexOf(item) < 4,
+    )
     .slice(0, 8)
     .map(({ sort, ...item }) => item);
 
