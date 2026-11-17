@@ -91,10 +91,6 @@
   width: 100%;
   height: auto;
 }
-.is-wide .ax-img img {
-  aspect-ratio: 2.39 / 1; /* 電影寬銀幕比例 */
-  object-fit: cover;
-}
 /* 細掃描線 */
 .ax-img::after {
   content: "";
@@ -372,25 +368,25 @@
 /* ---- 電影：海報＋劇照輪播 ---- */
 .ax-screen .ax-img {
   position: relative;
-  aspect-ratio: 2.39 / 1;
+  aspect-ratio: 2.39 / 1; /* 電影寬銀幕比例 */
   overflow: hidden;
   background: #07080f;
 }
-.ax-screen .ax-img img {
+.ax-screen .ax-img > img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
-.ax-screen .ax-still {
+.ax-screen .ax-img > .ax-still {
   object-fit: cover;
 }
-.ax-screen .ax-bgfill {
+.ax-screen .ax-img > .ax-bgfill {
   object-fit: cover;
   filter: blur(14px) brightness(0.35) grayscale(0.4);
   transform: scale(1.15);
 }
-.ax-screen .ax-poster {
+.ax-screen .ax-img > .ax-poster {
   object-fit: contain;
   padding: 14px 0;
   filter: drop-shadow(0 10px 24px rgb(0 0 0 / 0.6));
