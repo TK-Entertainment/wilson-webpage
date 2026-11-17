@@ -1,6 +1,7 @@
 // 安全標頭：限制網頁能載入的外部資源、禁止被其他網站嵌入、強制 HTTPS
 // - 'unsafe-eval'：文章內容（contentlayer MDX）在瀏覽器端以 new Function 執行，必須保留
 // - giscus.app：留言區 iframe；youtube-nocookie.com：相簿的 <YouTube> 影片；open.spotify.com：關於我的唱片機（iFrame API＋播放器）
+// - earthquake.usgs.gov、eonet.gsfc.nasa.gov、www.gdacs.org：今日地球在瀏覽器抓即時資料
 // - cloudflareinsights：Cloudflare 若開啟網頁分析會自動注入的統計程式
 const csp = [
   "default-src 'self'",
@@ -8,7 +9,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://cloudflareinsights.com",
+  "connect-src 'self' https://cloudflareinsights.com https://earthquake.usgs.gov https://eonet.gsfc.nasa.gov https://www.gdacs.org",
   "frame-src https://giscus.app https://www.youtube-nocookie.com https://open.spotify.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",

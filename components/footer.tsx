@@ -43,6 +43,12 @@ export default function Footer() {
           >
             → 年度回顧
           </Link>
+          <Link
+            href="/earth"
+            className="w-max font-mono-label text-xs font-bold text-[var(--teal)] hover:underline"
+          >
+            → 今日地球
+          </Link>
           <p className="font-mono-label text-xs opacity-70">
             © 2023–{new Date(Date.now()).getFullYear()} 威爾森 (Wilson Chen)
           </p>

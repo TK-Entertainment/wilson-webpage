@@ -68,6 +68,14 @@ const SECTIONS = {
     color: "#c98b84",
     ghost: "ABOUT",
   },
+  earth: {
+    no: "EA",
+    label: "今日地球",
+    latin: "EARTH // NOW",
+    description: "此刻地球上正在發生的事：即時地震、野火與風暴、全球災害警報。",
+    color: C.teal,
+    ghost: "EARTH",
+  },
   year: {
     no: "YR",
     label: "年度回顧",
