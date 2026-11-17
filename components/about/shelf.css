@@ -10,7 +10,7 @@
   display: flex;
   align-items: flex-end;
   gap: 3px;
-  height: 230px;
+  height: 250px;
   padding: 0 18px;
   background:
     linear-gradient(90deg, #6e4a2f 0 10px, transparent 10px calc(100% - 10px), #6e4a2f calc(100% - 10px)),
@@ -211,54 +211,39 @@
   overflow: hidden;
   margin-top: 4px;
 }
-/* 唱臂：以右上的軸心旋轉；收著 → 待命 → 落在唱片上 */
-.rp-arm {
+/* 唱臂（SVG）：軸心在 (138,14) */
+.rp-armsvg {
   position: absolute;
-  right: 12%;
-  top: 10%;
-  width: 0;
-  height: 0;
-  transform: rotate(-18deg);
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.rp-arm {
+  transform-origin: 138px 14px;
+  transform: rotate(-6deg);
+  transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .rp-arm.is-ready {
-  transform: rotate(6deg);
+  transform: rotate(40deg);
 }
 .rp-arm.is-down {
-  transform: rotate(14deg);
-}
-.rp-arm .pivot {
-  position: absolute;
-  left: -18px;
-  top: -18px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--cream);
-  border: 3px solid #14182b;
+  transform: rotate(50deg);
 }
 .rp-arm .rod {
-  position: absolute;
-  left: -4px;
-  top: 0;
-  width: 8px;
-  height: clamp(120px, 26vw, 210px);
-  background: linear-gradient(90deg, #cfd3dc, #9aa0ad);
-  border: 2px solid #14182b;
-  border-radius: 4px;
-  transform-origin: top center;
-  transform: rotate(14deg);
+  stroke: #cfd3dc;
+  stroke-width: 2.6;
+  stroke-linecap: round;
 }
 .rp-arm .head {
-  position: absolute;
-  left: calc(-4px - clamp(120px, 26vw, 210px) * 0.24 - 9px);
-  top: calc(clamp(120px, 26vw, 210px) * 0.97 - 6px);
-  width: 22px;
-  height: 30px;
-  background: var(--gold);
-  border: 2px solid #14182b;
-  border-radius: 3px;
-  transform: rotate(14deg);
+  fill: var(--gold);
+  stroke: #14182b;
+  stroke-width: 1;
+}
+.rp-armsvg .pivot {
+  fill: var(--cream);
+  stroke: #14182b;
+  stroke-width: 1.2;
 }
 .rp-btn {
   position: absolute;
@@ -371,6 +356,183 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .rp-vinyl {
+    animation: none;
+  }
+}
+
+/* ---------- 放映廳 ---------- */
+.cn {
+  margin-top: 12px;
+  border-top: 4px solid hsl(var(--foreground));
+  padding-top: 20px;
+}
+.cn-hall {
+  position: relative;
+  overflow: hidden;
+  padding: 34px 9% 64px;
+  background: radial-gradient(ellipse at 50% 110%, #2a1420 0%, #0b0d18 60%);
+  border: 3px solid #14182b;
+  box-shadow: 8px 8px 0 var(--rose);
+}
+.cn-curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8%;
+  background:
+    repeating-linear-gradient(90deg, #7a1424 0 6px, #a3203a 6px 12px, #5c0e1b 12px 16px);
+  z-index: 2;
+}
+.cn-curtain.l {
+  left: 0;
+  border-bottom-right-radius: 40% 12%;
+}
+.cn-curtain.r {
+  right: 0;
+  border-bottom-left-radius: 40% 12%;
+}
+.cn-valance {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 22px;
+  background:
+    radial-gradient(circle at 12px 0, #a3203a 12px, transparent 13px) 0 0 / 24px 22px repeat-x,
+    #7a1424;
+  z-index: 3;
+}
+.cn-screen {
+  position: relative;
+  aspect-ratio: 21 / 9;
+  background: #e9e4d6;
+  border: 3px solid #000;
+  border-radius: 50% / 5%;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgb(233 228 214 / 0.18);
+}
+.cn-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: cn-on 0.9s ease-out;
+}
+@keyframes cn-on {
+  0% { opacity: 0; filter: brightness(2.2) blur(3px); }
+  30% { opacity: 0.6; }
+  45% { opacity: 0.3; }
+  100% { opacity: 1; filter: none; }
+}
+/* 放映機光束：從觀眾席後方打到銀幕 */
+.cn-beam {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 84%;
+  height: 92%;
+  translate: -50% 0;
+  clip-path: polygon(48% 100%, 52% 100%, 100% 0, 0 0);
+  background: linear-gradient(to top, rgb(255 244 214 / 0.32), rgb(255 244 214 / 0.02) 80%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: cn-flicker 3.2s steps(1) infinite;
+}
+@keyframes cn-flicker {
+  0%, 100% { opacity: 0.75; }
+  7% { opacity: 0.55; }
+  9% { opacity: 0.8; }
+  52% { opacity: 0.65; }
+  54% { opacity: 0.85; }
+}
+.cn-seats {
+  position: absolute;
+  inset: auto 0 0;
+  height: 48px;
+  background:
+    radial-gradient(ellipse 22px 26px at 26px 30px, #050610 96%, transparent) 0 0 / 52px 48px repeat-x,
+    radial-gradient(ellipse 22px 26px at 0 44px, #10121f 96%, transparent) 0 0 / 52px 48px repeat-x;
+  z-index: 1;
+}
+.cn-now {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 16px;
+  margin-top: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+.cn-now b {
+  color: hsl(var(--foreground));
+}
+.cn-now a:hover,
+.cn-credit a:hover {
+  color: var(--rose);
+}
+.cn-tickets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+/* 電影票：左邊撕角票根，中間虛線、兩側半圓缺口 */
+.cn-ticket {
+  display: flex;
+  width: 100%;
+  text-align: left;
+  color: #14182b;
+  background:
+    radial-gradient(circle at 54px 0, transparent 7px, var(--cream) 8px) top / 100% 51% no-repeat,
+    radial-gradient(circle at 54px 100%, transparent 7px, var(--cream) 8px) bottom / 100% 51% no-repeat;
+  filter: drop-shadow(3px 3px 0 #14182b);
+  transition: transform 0.2s, filter 0.2s;
+}
+.cn-ticket:hover {
+  transform: translateY(-2px) rotate(-1deg);
+}
+.cn-ticket.is-on {
+  background:
+    radial-gradient(circle at 54px 0, transparent 7px, var(--gold) 8px) top / 100% 51% no-repeat,
+    radial-gradient(circle at 54px 100%, transparent 7px, var(--gold) 8px) bottom / 100% 51% no-repeat;
+  filter: drop-shadow(3px 3px 0 var(--rose));
+}
+.cn-ticket .stub {
+  flex: none;
+  width: 54px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  border-right: 2px dashed rgb(20 24 43 / 0.5);
+}
+.cn-ticket .body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  min-width: 0;
+}
+.cn-ticket .body b {
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.3;
+}
+.cn-ticket .body span {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.7;
+}
+.cn-credit {
+  margin-top: 12px;
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+@media (prefers-reduced-motion: reduce) {
+  .cn-screen img,
+  .cn-beam {
     animation: none;
   }
 }

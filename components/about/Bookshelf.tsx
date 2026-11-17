@@ -37,7 +37,6 @@ export default function Bookshelf({ books }: { books: Book[] }) {
             aria-label={`${book.title}，${book.author}`}
           >
             <span className="t">{book.title}</span>
-            <span className="a">{book.author}</span>
           </button>
         ))}
         {/* 書擋：一塊地科人會撿回家的石頭 */}

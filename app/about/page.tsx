@@ -3,6 +3,7 @@ import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import Bookshelf, { type Book } from "@/components/about/Bookshelf";
 import RecordPlayer, { type Artist } from "@/components/about/RecordPlayer";
+import Cinema, { type Movie } from "@/components/about/Cinema";
 import { pageMetadata } from "@/utils/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -72,6 +73,24 @@ const SONGS: Artist[] = [
     { title: "アオイ", id: "73TEyhGLxixHAwzOdoamgV" },
     { title: "怪獣", id: "7sMRDjjwsB7wQEBOkdfg0i" },
   ] },
+];
+
+// 放映廳：tmdb 是 themoviedb.org/movie/<id> 的編號；still 是 TMDB 劇照檔名
+const MOVIES: Movie[] = [
+  { title: "星際效應", year: "2014", tmdb: "157336", still: "8sNiAPPYU14PUepFNeSNGUTiHW.jpg" },
+  { title: "奧德賽", year: "2026", tmdb: "1368337", still: "mIi99BK2mDpLp2lGsa8jCBDFit4.jpg" },
+  { title: "陽光女子合唱團", year: "2025", tmdb: "1481955", still: "5K8zQhHIr6GiOIpM18DWsgy2COv.jpg" },
+  { title: "哆啦A夢：大雄的繪畫世界物語", year: "2025", tmdb: "1372489", still: "vncMpsAUDnL1JOb73e5q48gX32S.jpg" },
+  { title: "哆啦A夢：新‧大雄的海底鬼岩城", year: "2026", tmdb: "1542261", still: "pxd9rc03EMMln3tVFdfd427Fpsi.jpg" },
+  { title: "穿著PRADA的惡魔", year: "2006", tmdb: "350", still: "gkh6Nt8DtY1XT4gQsyFq9XAVJlJ.jpg" },
+  { title: "穿著PRADA的惡魔2", year: "2026", tmdb: "1314481", still: "dRoFlUbH1l51ACmx5oPCI3jfvZq.jpg" },
+  { title: "沙丘", year: "2021", tmdb: "438631", still: "qVgZu5BTx6pu4owCvVOm4zjTfOi.jpg" },
+  { title: "沙丘：第二部", year: "2024", tmdb: "693134", still: "eZ239CUp1d6OryZEBPnO2n87gMG.jpg" },
+  { title: "Jim Queen：肌情四射", year: "2026", tmdb: "1061798", still: "gZDF8oChSplhdwTCjFR1SHwKw8s.jpg" },
+  { title: "動物方城市", year: "2016", tmdb: "269149", still: "9tOkjBEiiGcaClgJFtwocStZvIT.jpg" },
+  { title: "動物方城市2", year: "2025", tmdb: "1084242", still: "lgotja3xMoJZbynwHfcQcJAEMWH.jpg" },
+  { title: "海洋奇緣", year: "2016", tmdb: "277834", still: "qLVNZFHYUR6Li64He67SWl6BHQe.jpg" },
+  { title: "海洋奇緣2", year: "2024", tmdb: "1241982", still: "vYqt6kb4lcF8wwqsMMaULkP9OEn.jpg" },
 ];
 
 // OC：住在威爾森內心深處的那隻狼
@@ -224,6 +243,11 @@ export default function AboutPage() {
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
               播放器來自 Spotify：沒登入可以試聽約 30 秒，登入後可以聽完整首。
             </p>
+          </section>
+
+          <section>
+            <Label>{"// 07 放映廳"}</Label>
+            <Cinema movies={MOVIES} />
           </section>
         </div>
 

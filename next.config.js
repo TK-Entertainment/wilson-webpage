@@ -4,7 +4,7 @@
 // - cloudflareinsights：Cloudflare 若開啟網頁分析會自動注入的統計程式
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://open.spotify.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://open.spotify.com https://embed-cdn.spotifycdn.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",

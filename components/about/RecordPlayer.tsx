@@ -89,11 +89,14 @@ export default function RecordPlayer({ artists }: { artists: Artist[] }) {
             </span>
           </div>
         </div>
-        <div className={`rp-arm ${cur ? (playing ? "is-down" : "is-ready") : ""}`} aria-hidden="true">
-          <i className="pivot" />
-          <i className="rod" />
-          <i className="head" />
-        </div>
+        {/* 唱臂：座標和唱盤共用 160×100 的畫布，繞軸心旋轉：收著 → 待命 → 落在唱片外圈 */}
+        <svg className="rp-armsvg" viewBox="0 0 160 100" aria-hidden="true">
+          <g className={`rp-arm ${cur ? (playing ? "is-down" : "is-ready") : ""}`}>
+            <line x1="138" y1="14" x2="138" y2="74" className="rod" />
+            <rect x="133" y="70" width="10" height="14" rx="1.5" className="head" />
+          </g>
+          <circle cx="138" cy="14" r="7" className="pivot" />
+        </svg>
         <button
           type="button"
           className="rp-btn font-mono-label"
