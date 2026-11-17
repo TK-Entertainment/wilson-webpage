@@ -50,33 +50,58 @@ export default function RecordPlayer({ artists }: { artists: Artist[] }) {
   const [cur, setCur] = useState<(typeof songs)[number] | null>(null);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
+  const [hint, setHint] = useState(false);
   const host = useRef<HTMLDivElement>(null);
   const ctrl = useRef<Controller | null>(null);
+  const pending = useRef<string | null>(null);
 
+  // 唱片機捲進畫面時就先把 Spotify 播放器準備好，點唱片時才能馬上播（瀏覽器只允許「點擊當下」開始播放）
   useEffect(() => {
-    if (!cur) return;
-    const uri = `spotify:track:${cur.id}`;
+    const el = host.current;
+    if (!el) return;
+    let alive = true;
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      loadApi().then((api) => {
+        if (!alive || !host.current || ctrl.current) return;
+        const box = document.createElement("div");
+        host.current.appendChild(box);
+        api.createController(box, { uri: `spotify:track:${songs[0].id}`, width: "100%", height: 80 }, (c) => {
+          ctrl.current = c;
+          setReady(true);
+          c.addListener("playback_update", (e) => {
+            setPlaying(!e.data.isPaused);
+            if (!e.data.isPaused) setHint(false);
+          });
+          if (pending.current) {
+            c.loadUri(pending.current);
+            c.play();
+          }
+        });
+      });
+    }, { rootMargin: "300px" });
+    io.observe(el);
+    return () => {
+      alive = false;
+      io.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const choose = (s: (typeof songs)[number]) => {
+    setCur(s);
+    setHint(false);
+    const uri = `spotify:track:${s.id}`;
     if (ctrl.current) {
       ctrl.current.loadUri(uri);
       ctrl.current.play();
-      return;
+    } else {
+      pending.current = uri;
     }
-    let alive = true;
-    loadApi().then((api) => {
-      if (!alive || !host.current) return;
-      const el = document.createElement("div");
-      host.current.appendChild(el);
-      api.createController(el, { uri, width: "100%", height: 80 }, (c) => {
-        ctrl.current = c;
-        setReady(true);
-        c.addListener("playback_update", (e) => setPlaying(!e.data.isPaused));
-        c.addListener("ready", () => c.play());
-      });
-    });
-    return () => {
-      alive = false;
-    };
-  }, [cur]);
+    // 有些瀏覽器擋自動播放：一秒半後還沒開始，就提示按播放器上的 ▶
+    window.setTimeout(() => setHint(true), 1500);
+  };
 
   return (
     <div className="rp">
@@ -100,7 +125,7 @@ export default function RecordPlayer({ artists }: { artists: Artist[] }) {
         <button
           type="button"
           className="rp-btn font-mono-label"
-          disabled={!ready}
+          disabled={!ready || !cur}
           onClick={() => ctrl.current?.togglePlay()}
           aria-label={playing ? "暫停" : "播放"}
         >
@@ -110,7 +135,8 @@ export default function RecordPlayer({ artists }: { artists: Artist[] }) {
       </div>
 
       <div className="rp-now font-mono-label" aria-live="polite">
-        {cur ? `NOW PLAYING // ${cur.artist}〈${cur.title}〉` : "// 從下面的唱片箱挑一張放上去"}
+        {cur ? `${playing ? "NOW PLAYING" : "ON DECK"} // ${cur.artist}〈${cur.title}〉` : "// 從下面的唱片箱挑一張放上去"}
+        {cur && hint && !playing ? <b className="rp-hint">沒聲音的話，按下面播放器的 ▶</b> : null}
       </div>
       <div ref={host} className="rp-embed" />
 
@@ -121,7 +147,7 @@ export default function RecordPlayer({ artists }: { artists: Artist[] }) {
               type="button"
               className={`rp-sleeve ${cur?.id === s.id ? "is-out" : ""}`}
               style={{ ["--c" as string]: s.color }}
-              onClick={() => setCur(s)}
+              onClick={() => choose(s)}
               aria-pressed={cur?.id === s.id}
               aria-label={`播放 ${s.artist}〈${s.title}〉`}
             >

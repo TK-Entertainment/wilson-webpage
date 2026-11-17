@@ -21,6 +21,7 @@ export default function Bookshelf({ books }: { books: Book[] }) {
   const b = pick === null ? null : books[pick];
   return (
     <div className="bs">
+      <div className="bs-stage">
       <div className="bs-shelf">
         {books.map((book, i) => (
           <button
@@ -46,6 +47,7 @@ export default function Bookshelf({ books }: { books: Book[] }) {
         </svg>
       </div>
       <div className="bs-board" aria-hidden="true" />
+      </div>
       <div className="bs-info" aria-live="polite">
         {b ? (
           <>

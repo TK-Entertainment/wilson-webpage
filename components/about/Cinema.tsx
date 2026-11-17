@@ -13,9 +13,8 @@ export default function Cinema({ movies }: { movies: Movie[] }) {
   return (
     <div className="cn">
       <div className="cn-hall">
-        <i className="cn-curtain l" aria-hidden="true" />
-        <i className="cn-curtain r" aria-hidden="true" />
-        <i className="cn-valance" aria-hidden="true" />
+        <i className="cn-side l" aria-hidden="true" />
+        <i className="cn-side r" aria-hidden="true" />
         <div className="cn-screen">
           {/* key 換片時重新播放「開燈」動畫 */}
           <img
