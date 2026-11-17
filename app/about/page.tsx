@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
+import Playlist, { type Artist } from "@/components/about/Playlist";
 import { pageMetadata } from "@/utils/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -38,6 +39,37 @@ const MUSIC: { when: string; artists: { name: string; href: string }[] }[] = [
       { name: "毛不易", href: "https://open.spotify.com/search/%E6%AF%9B%E4%B8%8D%E6%98%93" },
     ],
   },
+];
+
+// 書架：短評、星等之後想寫再補（note 欄位）
+const BOOKS: { title: string; author: string; href?: string; note?: string }[] = [
+  { title: "被討厭的勇氣", author: "岸見一郎、古賀史健" },
+  { title: "牧羊少年奇幻之旅", author: "保羅・科爾賀" },
+  { title: "三體 I", author: "劉慈欣", href: "/blog/three-body-1", note: "寫過一篇讀後心得" },
+  { title: "我的神鬼人生", author: "李家維、廖宏霖" },
+];
+
+// 歌單：id 是 Spotify 歌曲網址 open.spotify.com/track/<id> 的最後一段
+const SONGS: Artist[] = [
+  { name: "Tani Yuuki", songs: [
+    { title: "W/X/Y", id: "3ZnMe3b6WeuZislPMmCTZN" },
+    { title: "もう一度", id: "40gt89icqkSFqWWfMlqagb" },
+  ] },
+  { name: "あいみょん", songs: [
+    { title: "スケッチ", id: "2HCw2hGOPVUim9RWk3wh0C" },
+    { title: "君の夢を聞きながら、僕は笑えるアイデアを！", id: "2SoUv5PuyA99w2XwwwQRST" },
+  ] },
+  { name: "Lady Gaga", songs: [{ title: "Born This Way", id: "30XU4suKzCeoCK9YFzdufg" }] },
+  { name: "Ariana Grande", songs: [{ title: "no tears left to cry", id: "2qT1uLXPVPzGgFOx4jtEuo" }] },
+  { name: "毛不易", songs: [
+    { title: "像我這樣的人", id: "7pZYb3XtZ0wMtORwnVY9SE" },
+    { title: "給你給我", id: "0uIfbYtrvFEcueiw3GNFJt" },
+    { title: "平凡的一天", id: "6RsXZQiT0Bhlo7tQefEbuW" },
+  ] },
+  { name: "サカナクション", songs: [
+    { title: "アオイ", id: "73TEyhGLxixHAwzOdoamgV" },
+    { title: "怪獣", id: "7sMRDjjwsB7wQEBOkdfg0i" },
+  ] },
 ];
 
 // OC：住在威爾森內心深處的那隻狼
@@ -177,6 +209,35 @@ export default function AboutPage() {
                 </dl>
               </div>
             </div>
+          </section>
+
+          <section>
+            <Label>{"// 05 書架"}</Label>
+            <ul className="mt-3 grid gap-3 border-t-4 border-foreground pt-4 sm:grid-cols-2">
+              {BOOKS.map((b) => (
+                <li key={b.title} className="border-2 border-foreground p-4 shadow-[4px_4px_0_var(--rose)]">
+                  <p className="text-lg font-black">
+                    {b.href ? (
+                      <a href={b.href} className="underline decoration-[var(--rose)] decoration-2 underline-offset-4 hover:text-[var(--rose)]">
+                        {b.title}
+                      </a>
+                    ) : (
+                      b.title
+                    )}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{b.author}</p>
+                  {b.note ? <p className="mt-2 text-sm font-bold">{b.note}</p> : null}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section>
+            <Label>{"// 06 歌單"}</Label>
+            <Playlist artists={SONGS} />
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              播放器來自 Spotify：沒登入可以試聽約 30 秒，登入後可以聽完整首。
+            </p>
           </section>
         </div>
 

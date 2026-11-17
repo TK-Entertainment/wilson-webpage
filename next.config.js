@@ -9,7 +9,7 @@ const csp = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "connect-src 'self' https://cloudflareinsights.com",
-  "frame-src https://giscus.app https://www.youtube-nocookie.com",
+  "frame-src https://giscus.app https://www.youtube-nocookie.com https://open.spotify.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
