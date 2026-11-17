@@ -402,6 +402,7 @@
 }
 .cn-screen {
   position: relative;
+  z-index: 1; /* 光束在銀幕後面，只露出銀幕和觀眾席之間那段 */
   aspect-ratio: 21 / 9;
   background: #e9e4d6;
   border: 3px solid #000;
