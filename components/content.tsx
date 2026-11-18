@@ -20,6 +20,7 @@ import * as EMDemos from "@/components/notes/EMDemos";
 import * as FigsNov from "@/components/notes/FigsNov";
 import * as FigsHW from "@/components/notes/FigsHW";
 import * as FigsFab from "@/components/notes/FigsFab";
+import * as FigsRes from "@/components/notes/FigsRes";
 import { DailyReview } from "@/components/notes/DailyReview";
 import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
 
@@ -42,6 +43,7 @@ const components = {
   ...FigsNov,
   ...FigsHW,
   ...FigsFab,
+  ...FigsRes,
   DailyReview,
   StateFunctionDemo,
   MeltingGDemo,
