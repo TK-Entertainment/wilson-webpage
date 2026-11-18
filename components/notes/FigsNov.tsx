@@ -849,3 +849,76 @@ export function StokesDemo() {
     </figure>
   );
 }
+
+// 地化作業 Week 10-1：Equation 2 的線性近似（e^(−x) ≈ 1 − x）差多少
+export function ThLinearDemo() {
+  const [t, setT] = useState(20); // ka
+  const [d, setD] = useState(146);
+  const W = 360, H = 250, L = 46, R = 14, T = 12, B = 38;
+  const TMAX = 80, YMAX = 0.9;
+  const x = (k: number) => L + (k / TMAX) * (W - L - R);
+  const y = (v: number) => T + ((YMAX - v) / YMAX) * (H - T - B);
+  const lin = (k: number) => (1 + d / 1000) * L230 * k * 1000;
+  const ks = Array.from({ length: 81 }, (_, i) => i);
+  const exact = ks.map((k) => `${x(k)},${y(thRatio(k * 1000, d))}`).join(" ");
+  const linear = ks.filter((k) => lin(k) <= YMAX).map((k) => `${x(k)},${y(lin(k))}`).join(" ");
+  const v = thRatio(t * 1000, d);
+  const tLin = v / ((1 + d / 1000) * L230) / 1000; // 用 Equation 2 反推的年齡（千年）
+  const err = t > 0 ? ((tLin - t) / t) * 100 : 0;
+  return (
+    <figure className="nd-not-prose ix-wrap">
+      <figcaption className="ix-head">
+        <b>互動：Equation 2 的線性近似</b>
+        <span>拉年齡，看直線和真正的曲線差多少</span>
+      </figcaption>
+      <div className="ix-body">
+        <svg viewBox={`0 0 ${W} ${H}`} className="ix-svg" role="img" aria-label="230Th 生長的精確曲線與線性近似">
+          {[0, 0.2, 0.4, 0.6, 0.8].map((q) => (
+            <g key={q}>
+              <line x1={L} x2={W - R} y1={y(q)} y2={y(q)} stroke={INK} strokeOpacity={0.1} />
+              <text x={L - 5} y={y(q) + 4} textAnchor="end" style={{ fontSize: 11 }}>{q}</text>
+            </g>
+          ))}
+          {[0, 20, 40, 60, 80].map((k) => (
+            <text key={k} x={x(k)} y={H - B + 15} textAnchor="middle" style={{ fontSize: 11 }}>{k}</text>
+          ))}
+          <rect x={x(50)} y={T} width={x(TMAX) - x(50)} height={H - T - B} fill={INK} fillOpacity={0.06} />
+          <text x={x(65)} y={y(0.12)} textAnchor="middle" style={{ fontSize: 10.5, opacity: 0.8 }}>題目範圍外</text>
+          <text x={x(65)} y={y(0.12) + 13} textAnchor="middle" style={{ fontSize: 10.5, opacity: 0.8 }}>（&gt; 5 萬年）</text>
+          <polyline points={linear} fill="none" stroke={C.teal} strokeWidth={2} strokeDasharray="6 4" />
+          <polyline points={exact} fill="none" stroke={C.orange} strokeWidth={3} />
+          <line x1={x(t)} x2={x(t)} y1={T} y2={H - B} stroke={INK} strokeDasharray="3 3" strokeOpacity={0.5} />
+          {lin(t) <= YMAX && <circle cx={x(t)} cy={y(lin(t))} r={4.5} fill={C.teal} stroke={INK} />}
+          <circle cx={x(t)} cy={y(v)} r={6} fill={C.orange} stroke={INK} />
+          <g style={{ fontSize: 11, fontWeight: 800 }}>
+            <text x={L + 8} y={T + 14} style={{ fill: C.orange, ...halo }}>━ 精確（Equation 1）</text>
+            <text x={L + 8} y={T + 30} style={{ fill: C.teal, ...halo }}>╌ 線性（Equation 2）</text>
+          </g>
+          <Axes W={W} H={H} L={L} R={R} T={T} B={B} xl="年齡（千年）" yl="長出來的 [²³⁰Th/²³⁸U]" />
+        </svg>
+        <div className="ix-panel">
+          <div className="ix-row">
+            <label>
+              <span>真實年齡</span>
+              <span>{fmt(t)} 千年</span>
+            </label>
+            <input type="range" min={0} max={TMAX} step={1} value={t} onChange={(e) => setT(+e.target.value)} />
+          </div>
+          <div className="ix-row">
+            <label>
+              <span>δ²³⁴U（‰）</span>
+              <span>{fmt(d)}</span>
+            </label>
+            <input type="range" min={0} max={150} step={2} value={d} onChange={(e) => setD(+e.target.value)} />
+          </div>
+          <div className="ix-readout">
+            量到的 [²³⁰Th/²³⁸U] = <b>{fmt(v, 3)}</b>
+            <br />用 Equation 2 反推 = <b>{fmt(tLin, 1)} 千年</b>
+            <br />誤差 {fmt(err, 1)}%
+          </div>
+          <div className="ix-note">Equation 2 把 e^(−λt) 換成 1 − λt，等於假設 ²³⁰Th 長出來後還來不及衰變。年齡越大，²³⁰Th 自己的衰變越明顯，直線就越高估長出量；拿同一個量到的比值去反推，年齡就偏年輕。1 萬年約差 4%，5 萬年約差 20%。</div>
+        </div>
+      </div>
+    </figure>
+  );
+}
