@@ -80,16 +80,42 @@ A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput
 ptime = U()
 A.append(act("is.workflow.actions.properties.images", UUID=ptime, WFContentItemPropertyName="Date Taken", WFInput=attach(out(first, "清單中的項目"))))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="拍照日期", WFInput=attach(out(ptime, "拍攝日期"))))
-# 照片沒有位置（截圖、LINE 存下來的、關了定位）→ 先用目前位置，下一步再讓使用者確認
+# 照片沒有位置（截圖、LINE 存下來的、別人傳的、事後補打卡）
+#   有放照片／短片 → 直接搜尋地點。不能用目前位置：事後在別的地方補打卡會整個跑掉
+#     （2026-11-25 豆腐岬、20 號橋就是這樣變成台北）。目前位置只拿來當搜尋的中心點
+#   沒放照片（不放照片、YouTube）→ 多半是在現場打卡，先用目前位置，下一步再確認
 gi = U()
 A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gi, WFControlFlowMode=0, WFCondition=101,
              WFInput={"Type": "Variable", "Variable": attach(var("位置"))}))
+gh = U()
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gh, WFControlFlowMode=0, WFCondition=100,
+             WFInput={"Type": "Variable", "Variable": attach(var("媒體"))}))
+center = U()
+A.append(act("is.workflow.actions.getcurrentlocation", UUID=center))
+q0 = U()
+A.append(act("is.workflow.actions.ask", UUID=q0, WFAskActionPrompt="照片沒有位置資訊，搜尋拍照的地點（地標、店名或地址，例如：豆腐岬、逢甲夜市）", WFInputType="Text"))
+found0 = U()
+A.append(act("is.workflow.actions.searchlocalbusinesses", UUID=found0, WFSearchQuery=tstr(out(q0, "提供的輸入")),
+             WFInput=attach(out(center, "目前位置")), WFSearchRadius=400))
+pick0 = U()
+A.append(act("is.workflow.actions.choosefromlist", UUID=pick0, WFInput=attach(out(found0, "本地商家")),
+             WFChooseFromListActionPrompt="選一個地點"))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(pick0, "選取的項目"))))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="地點名稱", WFInput=attach(out(pick0, "選取的項目"))))
+done = U()
+A.append(act("is.workflow.actions.gettext", UUID=done, WFTextActionText="1"))
+A.append(act("is.workflow.actions.setvariable", WFVariableName="已選地點", WFInput=attach(out(done, "文字"))))
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gh, WFControlFlowMode=1))
 cur = U()
 A.append(act("is.workflow.actions.getcurrentlocation", UUID=cur))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(cur, "目前位置"))))
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gh, WFControlFlowMode=2, UUID=U()))
 A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gi, WFControlFlowMode=2, UUID=U()))
 
-# 送出前確認位置：對／用現在位置／搜尋地點
+# 送出前確認位置：對／用現在位置／搜尋地點（上面已經搜尋選過地點就跳過）
+gc = U()
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gc, WFControlFlowMode=0, WFCondition=101,
+             WFInput={"Type": "Variable", "Variable": attach(var("已選地點"))}))
 gm = U()
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=0,
              WFMenuPrompt=tstr("位置：", var("位置"), "，對嗎？"), WFMenuItems=["對", "用現在位置", "搜尋地點"]))
@@ -111,6 +137,7 @@ A.append(act("is.workflow.actions.choosefromlist", UUID=pick, WFInput=attach(out
 A.append(act("is.workflow.actions.setvariable", WFVariableName="位置", WFInput=attach(out(pick, "選取的項目"))))
 A.append(act("is.workflow.actions.setvariable", WFVariableName="地點名稱", WFInput=attach(out(pick, "選取的項目"))))
 A.append(act("is.workflow.actions.choosefrommenu", GroupingIdentifier=gm, WFControlFlowMode=2, UUID=U()))
+A.append(act("is.workflow.actions.conditional", GroupingIdentifier=gc, WFControlFlowMode=2, UUID=U()))
 
 lat = U(); lng = U()
 A.append(act("is.workflow.actions.properties.locations", UUID=lat, WFContentItemPropertyName="Latitude", WFInput=attach(var("位置"))))
