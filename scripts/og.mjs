@@ -76,6 +76,14 @@ const SECTIONS = {
     color: C.teal,
     ghost: "EARTH",
   },
+  forest: {
+    no: "KF",
+    label: "知識森林",
+    latin: "KNOWLEDGE // FOREST",
+    description: "四門地科課的名詞長成四棵樹，跨科相關的概念用線連起來。",
+    color: "#8fa878",
+    ghost: "FOREST",
+  },
   year: {
     no: "YR",
     label: "年度回顧",

@@ -1,0 +1,401 @@
+/* 知識森林（components/forest/KnowledgeForest.tsx） */
+.kf-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  margin-top: 28px;
+}
+@media (max-width: 1100px) {
+  .kf-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 搜尋 */
+.kf-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.kf-tools input {
+  flex: 1;
+  max-width: 340px;
+  padding: 6px 10px;
+  border: 1.5px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  font-size: 14px;
+}
+.kf-tools input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.kf-tools span {
+  font-size: 11px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+.kf-hits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+.kf-hits button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1.5px solid var(--c);
+  background: transparent;
+  color: hsl(var(--foreground));
+  font-size: 13px;
+  cursor: pointer;
+}
+.kf-hits button span {
+  font-size: 10px;
+  opacity: 0.7;
+}
+.kf-hits button:hover {
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+}
+.kf-more {
+  align-self: center;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* 畫布：細掃描線 */
+.kf-svgbox {
+  position: relative;
+  overflow-x: auto;
+  border: 1.5px solid hsl(var(--border));
+  background: hsl(var(--card));
+}
+.kf-svgbox::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0 3px, hsl(var(--foreground) / 0.025) 3px 4px);
+}
+.kf-svg {
+  display: block;
+  width: 100%;
+  min-width: 860px;
+  height: auto;
+  color: hsl(var(--foreground));
+}
+.kf-trunk {
+  fill: hsl(var(--foreground) / 0.55);
+}
+.kf-branch {
+  fill: none;
+  stroke: hsl(var(--foreground) / 0.45);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+.kf-code {
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  fill: hsl(var(--muted-foreground));
+}
+.kf-subj {
+  font-size: 15px;
+  font-weight: 900;
+  fill: hsl(var(--foreground));
+}
+.kf-count {
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  fill: hsl(var(--muted-foreground));
+  letter-spacing: 0.06em;
+}
+.kf-ground {
+  stroke: hsl(var(--foreground) / 0.6);
+  stroke-width: 1.5;
+}
+.kf-tick {
+  stroke: hsl(var(--foreground) / 0.35);
+}
+
+/* 連線：概念（實線、金）＋同名（虛線） */
+.kf-link {
+  fill: none;
+  stroke-width: 1;
+  pointer-events: none;
+}
+.kf-link.concept {
+  stroke: var(--gold);
+  stroke-opacity: 0.32;
+}
+.kf-link.same {
+  stroke: hsl(var(--foreground));
+  stroke-opacity: 0.16;
+  stroke-dasharray: 3 4;
+}
+.kf-link.on {
+  stroke-opacity: 1;
+  stroke-width: 2;
+}
+.kf-link.on.same {
+  stroke: var(--cream);
+}
+
+/* 葉子 */
+.kf-leaf {
+  cursor: pointer;
+}
+.kf-leaf .hit {
+  fill: transparent;
+}
+.kf-leaf rect {
+  stroke: hsl(var(--card));
+  stroke-width: 0.8;
+  transition: opacity 0.2s;
+}
+.kf-leaf.linked rect {
+  stroke: var(--gold);
+  stroke-width: 1.2;
+}
+.kf-leaf:hover rect {
+  stroke: hsl(var(--foreground));
+  stroke-width: 1.5;
+}
+.kf-svg.searching .kf-leaf rect,
+.kf-svg.focusing .kf-leaf rect {
+  opacity: 0.4;
+}
+.kf-svg.focusing .kf-link {
+  stroke-opacity: 0.08;
+}
+.kf-svg.focusing .kf-link.on {
+  stroke-opacity: 1;
+}
+.kf-overlay {
+  pointer-events: none;
+}
+.kf-hitring {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2;
+}
+.kf-near {
+  fill: none;
+  stroke: var(--cream);
+  stroke-width: 1.5;
+}
+.kf-cur {
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 2.5;
+  animation: kf-pulse 1.4s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes kf-pulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.kf-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+.kf-legend .sw {
+  display: inline-block;
+  width: 22px;
+  height: 0;
+  border-top: 2px solid var(--gold);
+  margin-right: -8px;
+}
+.kf-legend .sw.same {
+  border-top: 2px dashed hsl(var(--foreground) / 0.6);
+}
+.kf-legend .ring {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--gold);
+  transform: rotate(45deg);
+  margin-right: -6px;
+}
+
+/* 右側面板：終端機風格 */
+.kf-hud {
+  align-self: start;
+  position: sticky;
+  top: 5rem;
+  padding: 16px 18px;
+  border: 1.5px solid hsl(var(--border));
+  border-left: 4px solid var(--gold);
+  background: hsl(var(--card));
+  min-height: 220px;
+}
+.kf-path {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+.kf-path i {
+  width: 10px;
+  height: 10px;
+  background: var(--c);
+}
+.kf-hud h2 {
+  margin: 8px 0 6px;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.3;
+}
+.kf-desc {
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.kf-from {
+  margin-top: 6px;
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+.kf-rel {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.kf-rel button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: 1.5px solid hsl(var(--border));
+  border-left: 3px solid var(--c);
+  background: transparent;
+  color: hsl(var(--foreground));
+  cursor: pointer;
+}
+.kf-rel button:hover {
+  border-color: var(--c);
+}
+.kf-rel .font-mono-label {
+  font-size: 10.5px;
+  color: hsl(var(--muted-foreground));
+}
+.kf-rel b {
+  font-size: 15px;
+}
+.kf-rel .why {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+}
+.kf-go {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--orange);
+}
+.kf-go:hover {
+  text-decoration: underline;
+}
+.kf-idle p {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.kf-idle p:first-child {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+}
+.kf-idle b {
+  color: var(--gold);
+}
+.kf-gen {
+  font-size: 10.5px;
+  color: hsl(var(--muted-foreground));
+}
+/* 換名詞時錯位閃一下（同首頁的 swap） */
+.kf-swap {
+  animation: kf-swap 0.22s steps(2);
+}
+@keyframes kf-swap {
+  0% {
+    transform: translateX(3px);
+    filter: drop-shadow(-3px 0 var(--orange)) drop-shadow(3px 0 var(--teal));
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* 下方索引 */
+.kf-index {
+  grid-column: 1 / -1;
+  margin-top: 12px;
+}
+.kf-index h2 {
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 8px;
+}
+.kf-index details {
+  border-top: 1px solid hsl(var(--border));
+  padding: 8px 0;
+}
+.kf-index summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 800;
+}
+.kf-index summary i {
+  width: 10px;
+  height: 10px;
+  background: var(--c);
+}
+.kf-index summary span {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+.kf-index p {
+  margin: 6px 0 0 18px;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.kf-index p a {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kf-cur,
+  .kf-swap {
+    animation: none;
+  }
+}

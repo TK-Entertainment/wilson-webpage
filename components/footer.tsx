@@ -49,6 +49,12 @@ export default function Footer() {
           >
             → 今日地球
           </Link>
+          <Link
+            href="/forest"
+            className="w-max font-mono-label text-xs font-bold text-[var(--sage)] hover:underline"
+          >
+            → 知識森林
+          </Link>
           <p className="font-mono-label text-xs opacity-70">
             © 2023–{new Date(Date.now()).getFullYear()} 威爾森 (Wilson Chen)
           </p>
