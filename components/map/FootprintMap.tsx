@@ -45,6 +45,22 @@ const PIN = 7; // 打卡點在螢幕上的大小（像素，不隨縮放改變�
 const LIST_LIMIT = 8; // 清單先列幾筆
 const TOTAL = 22; // 台灣縣市數
 
+// 地質圖：scripts/fetch-geomap.mjs 從地質調查及礦業管理中心 WMS 抓下來，範圍和主圖投影一樣（0 0 600 805）
+const GEO_W = 600;
+const GEO_H = 805;
+// 主要地質區的名稱標在大致的中心（經緯度）
+const GEO_LABELS = [
+  { t: "海岸平原", lng: 120.32, lat: 23.45 },
+  { t: "西部麓山帶", lng: 120.78, lat: 24.22 },
+  { t: "雪山山脈帶", lng: 121.18, lat: 24.6 },
+  { t: "脊樑山脈（板岩）", lng: 120.92, lat: 23.15 },
+  { t: "大南澳片岩", lng: 121.42, lat: 24.02 },
+  { t: "海岸山脈", lng: 121.39, lat: 23.28 },
+  { t: "大屯火山群", lng: 121.55, lat: 25.2 },
+  { t: "澎湖玄武岩", lng: 119.58, lat: 23.78 },
+  { t: "綠島・蘭嶼", lng: 121.52, lat: 22.4 },
+];
+
 const fmtDate = (d: string) => (d ? d.replace(/-/g, ".") : "日期待補");
 const byDate = (a: CheckIn, b: CheckIn) =>
   (b.date || "0").localeCompare(a.date || "0");
@@ -160,7 +176,10 @@ export default function FootprintMap({
     let popNext = true;
 
     const gInsets = svgEl("g", {}, svg);
+    const gGeoBase = svgEl("g", { class: "fm-geo-base" }, svg); // 地層色塊（在縣市底下）
     const gCounties = svgEl("g", {}, svg);
+    const gGeoTop = svgEl("g", { class: "fm-geo-top" }, svg); // 斷層線（在縣市上面）
+    const gGeoLabels = svgEl("g", { class: "fm-geo-labels" }, svg);
     const gPins = svgEl("g", {}, svg);
 
     // ---------- 故障風（同首頁 app/home.css 的 hm-rgb／hm-swap／空心字亂碼） ----------
@@ -286,10 +305,41 @@ export default function FootprintMap({
 
     // ---------- 打卡點 ----------
     const unit = () => vb[2] / svg.getBoundingClientRect().width; // 1 螢幕像素＝幾個地圖單位
+    // ---------- 地質圖開關：第一次打開才載入圖片 ----------
+    let geoOn = false;
+    let geoLoaded = false;
+    const geoBtn = $<HTMLButtonElement>(".fm-geo-btn");
+    const geoNote = $(".fm-geo-note");
+    function drawGeoLabels() {
+      gGeoLabels.replaceChildren();
+      if (!geoOn) return;
+      const u = unit();
+      for (const L of GEO_LABELS) {
+        const [x, y] = proj("", L.lng, L.lat);
+        svgEl("text", { class: "fm-geo-label", x, y, "font-size": 11.5 * u, "stroke-width": 3.5 * u }, gGeoLabels).textContent = L.t;
+      }
+    }
+    function setGeo(v: boolean) {
+      geoOn = v;
+      if (v && !geoLoaded) {
+        geoLoaded = true;
+        const img = { x: 0, y: 0, width: GEO_W, height: GEO_H, preserveAspectRatio: "none" };
+        svgEl("image", { ...img, href: "/img/geomap/strata-1m-1986.webp" }, gGeoBase);
+        svgEl("image", { ...img, href: "/img/geomap/faults-500k-2000.webp" }, gGeoTop);
+      }
+      mapbox.classList.toggle("geo", v);
+      geoBtn.setAttribute("aria-pressed", String(v));
+      geoNote.hidden = !v;
+      swap(gGeoBase);
+      drawGeoLabels();
+    }
+    on(geoBtn, "click", () => setGeo(!geoOn));
+
     function drawPins() {
       const pop = popNext && !REDUCE;
       popNext = false;
       gPins.replaceChildren();
+      drawGeoLabels();
       const u = unit();
       const s = PIN * u;
       // 南邊先畫、北邊疊在上面；選中的最後畫
@@ -627,6 +677,21 @@ export default function FootprintMap({
               </li>
             ))}
           </ul>
+          <div className="fm-geo-note" hidden>
+            <p className="font-mono-label">GEOLOGY {"//"} 1:1,000,000</p>
+            <p>
+              顏色是地層單位：西邊淡黃色是平原的沖積層，往東大致依序是西部麓山帶、雪山山脈帶、脊樑山脈的板岩、大南澳片岩，東海岸是海岸山脈；米白色的線是斷層。點縣市放大可以看細部。
+            </p>
+            <p className="fm-credit font-mono-label">
+              地層：一百萬分之一臺灣區域地質圖（1986）
+              <br />
+              斷層：五十萬分之一臺灣地質圖（2000）
+              <br />
+              經濟部地質調查及礦業管理中心 WMS（政府資料開放授權條款第 1 版）
+              <br />
+              金門、馬祖小框沒有疊地質圖
+            </p>
+          </div>
         </section>
 
         <article className="fm-card" aria-live="polite">
@@ -655,6 +720,9 @@ export default function FootprintMap({
       <section className="fm-mapwrap" aria-label="台灣足跡地圖">
         <div className="fm-mapbox">
           <div className="fm-ctl">
+            <button type="button" className="fm-geo-btn font-mono-label" aria-pressed="false" title="疊上臺灣地質圖">
+              ▦ 地質
+            </button>
             <button type="button" className="fm-back font-mono-label">
               ← 回到全台
             </button>

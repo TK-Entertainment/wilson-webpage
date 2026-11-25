@@ -458,6 +458,10 @@
 .fm-back {
   display: none;
 }
+.fm-ctl button[aria-pressed="true"] {
+  border-color: var(--teal);
+  color: var(--teal);
+}
 .zoomed .fm-back {
   display: block;
 }
@@ -789,4 +793,61 @@
   .fm-hud {
     display: none;
   }
+}
+
+/* ---------- 地質圖（▦ 地質 開關） ---------- */
+.fm-geo-base,
+.fm-geo-top,
+.fm-geo-labels {
+  pointer-events: none;
+}
+.fm-geo-base image {
+  opacity: 0.88;
+  filter: saturate(0.8) brightness(0.92);
+}
+.fm-geo-top image {
+  opacity: 0.75;
+}
+.fm-geo-label {
+  fill: var(--cream);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: var(--navy);
+  stroke-linejoin: round;
+}
+/* 打開地質圖時縣市只留邊界；去過的縣市改用金色邊線 */
+.geo .fm-county {
+  fill: transparent;
+  stroke: rgba(239, 228, 200, 0.35);
+}
+.geo .fm-county.on {
+  fill: transparent;
+  stroke: var(--gold);
+  stroke-width: 2;
+}
+.geo .fm-county:hover,
+.geo .fm-county.on:hover {
+  fill: rgba(255, 243, 214, 0.12);
+  stroke: var(--orange);
+}
+.geo.zoomed .fm-county:not(.focus) {
+  fill: rgba(28, 33, 53, 0.6);
+}
+.fm-geo-note {
+  margin-top: 18px;
+  padding-left: 12px;
+  border-left: 2px solid var(--teal);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+.fm-geo-note > p:first-child {
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.fm-geo-note .fm-credit {
+  margin-top: 8px;
 }
