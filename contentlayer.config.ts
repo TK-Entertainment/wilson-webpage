@@ -159,12 +159,17 @@ function countyOf(lng: number, lat: number) {
 }
 
 // 建置時超過 24MB 的檔案會被 scripts/optimize-places.mjs 移除（Cloudflare 單檔上限 25MB），這裡也一併略過
+// 0 位元組的也略過：捷徑偶爾會傳出空檔（例：2026-11-25 北關第 1 張），放上去只會是破圖
 function mediaOf(flattenedPath: string, ext: RegExp) {
   const id = flattenedPath.split("/").pop() ?? "";
   const dir = path.join("public", "img", "places", id);
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
-    .filter((f) => ext.test(f) && statSync(path.join(dir, f)).size <= 24 * 1024 * 1024)
+    .filter((f) => {
+      if (!ext.test(f)) return false;
+      const size = statSync(path.join(dir, f)).size;
+      return size > 0 && size <= 24 * 1024 * 1024;
+    })
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
     .map((f) => `/img/places/${id}/${f}`);
 }
