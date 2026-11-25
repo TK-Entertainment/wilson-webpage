@@ -22,6 +22,7 @@ import * as FigsHW from "@/components/notes/FigsHW";
 import * as FigsFab from "@/components/notes/FigsFab";
 import * as FigsRes from "@/components/notes/FigsRes";
 import * as FigsIso from "@/components/notes/FigsIso";
+import * as FigsShear from "@/components/notes/FigsShear";
 import { DailyReview } from "@/components/notes/DailyReview";
 import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
 
@@ -46,6 +47,7 @@ const components = {
   ...FigsFab,
   ...FigsRes,
   ...FigsIso,
+  ...FigsShear,
   DailyReview,
   StateFunctionDemo,
   MeltingGDemo,
