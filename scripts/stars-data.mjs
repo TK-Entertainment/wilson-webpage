@@ -1,9 +1,9 @@
-// 知識森林的資料：從各科筆記的「先認識的名詞」表抽出名詞，產生 components/forest/forestData.json
+// 知識星圖的資料：從各科筆記的「先認識的名詞」表抽出名詞，產生 components/stars/starData.json
 //
-//   node scripts/forest-data.mjs（建置時自動跑）
+//   node scripts/stars-data.mjs（建置時自動跑）
 //
-// 一門課一棵樹、一頁筆記一根枝、一個名詞一片葉。
-// 連線有兩種：不同科出現同一個名詞（自動），以及 data/forest-links.json 手寫的跨科概念（附一句為什麼）。
+// 一個名詞一顆星，同一門課聚成一團星雲。
+// 連線有兩種：不同科出現同一個名詞（自動），以及 data/star-links.json 手寫的跨科概念（附一句為什麼）。
 import fs from "node:fs";
 import path from "node:path";
 
@@ -84,13 +84,13 @@ const find = (subj, word) => {
   const w = norm(word);
   return all.find((x) => x.subj === subj && x.full === w) ?? all.find((x) => x.subj === subj && x.full.includes(w));
 };
-const curated = JSON.parse(fs.readFileSync("data/forest-links.json", "utf8"));
+const curated = JSON.parse(fs.readFileSync("data/star-links.json", "utf8"));
 let missing = 0;
 for (const L of curated) {
   const A = find(...L.a), B = find(...L.b);
   if (!A || !B) {
     missing++;
-    console.warn(`[forest] 找不到連線的名詞：${L.a.join("/")} ↔ ${L.b.join("/")}`);
+    console.warn(`[stars] 找不到連線的名詞：${L.a.join("/")} ↔ ${L.b.join("/")}`);
     continue;
   }
   const k = key(A.id, B.id);
@@ -99,7 +99,7 @@ for (const L of curated) {
   else out.links.push({ a: A.id, b: B.id, kind: "concept", why: L.why });
 }
 
-fs.mkdirSync("components/forest", { recursive: true });
-fs.writeFileSync("components/forest/forestData.json", JSON.stringify(out));
+fs.mkdirSync("components/stars", { recursive: true });
+fs.writeFileSync("components/stars/starData.json", JSON.stringify(out));
 const nCh = out.subjects.reduce((s, x) => s + x.chapters.length, 0);
-console.log(`forest: ${out.subjects.length} 棵樹、${nCh} 根枝、${all.length} 片葉、${out.links.length} 條連線${missing ? `（${missing} 條手寫連線找不到名詞）` : ""}`);
+console.log(`stars: ${out.subjects.length} 門課、${nCh} 頁、${all.length} 顆星、${out.links.length} 條連線${missing ? `（${missing} 條手寫連線找不到名詞）` : ""}`);

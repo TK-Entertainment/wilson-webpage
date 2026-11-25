@@ -1,0 +1,483 @@
+/* 知識星圖（components/stars/StarMap.tsx）：觀測儀器風，天空固定是深色 */
+.sm-wrap {
+  --sky: #141a2b;
+  --star: #efe4c8;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  margin-top: 28px;
+}
+@media (max-width: 1100px) {
+  .sm-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 搜尋列：終端機 */
+.sm-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.sm-tools > span:first-child {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+}
+.sm-tools input {
+  flex: 1;
+  max-width: 320px;
+  padding: 5px 2px;
+  border: 0;
+  border-bottom: 1.5px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--foreground));
+  font-size: 14px;
+}
+.sm-tools input:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+}
+.sm-count {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.06em;
+}
+.sm-hits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+.sm-hits button {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2px 8px;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--foreground));
+  font-size: 13px;
+  cursor: pointer;
+}
+.sm-hits button span {
+  font-size: 10px;
+  color: hsl(var(--muted-foreground));
+}
+.sm-hits button:hover,
+.sm-hits button[aria-pressed="true"] {
+  border-color: var(--gold);
+}
+.sm-more {
+  align-self: center;
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+
+/* 外框：四角金色對位記號（同收藏庫） */
+.sm-frame,
+.sm-hud {
+  position: relative;
+}
+.sm-frame .c,
+.sm-hud .c {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid var(--gold);
+  z-index: 2;
+  pointer-events: none;
+}
+.c.tl {
+  top: -6px;
+  left: -6px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+.c.tr {
+  top: -6px;
+  right: -6px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+.c.bl {
+  bottom: 22px;
+  left: -6px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+}
+.c.br {
+  bottom: 22px;
+  right: -6px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+}
+.sm-hud .c.br {
+  bottom: -6px;
+}
+
+.sm-box {
+  position: relative;
+  overflow-x: auto;
+  background: var(--sky);
+}
+/* 掃描線＋雜訊 */
+.sm-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 2px, rgba(239, 228, 200, 0.03) 2px 3px),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
+}
+.sm-svg {
+  display: block;
+  width: 100%;
+  min-width: 820px;
+  height: auto;
+}
+.sm-grid line {
+  stroke: rgba(239, 228, 200, 0.05);
+}
+.sm-ticks line {
+  stroke: rgba(239, 228, 200, 0.3);
+}
+.sm-ticks text {
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 9px;
+  fill: rgba(239, 228, 200, 0.35);
+}
+
+/* 星：平常灰白，帶光芒的有跨科連線 */
+.sm-star {
+  cursor: crosshair;
+}
+.sm-star .hit {
+  fill: transparent;
+}
+.sm-star .dot {
+  fill: var(--star);
+}
+.sm-star.tw .dot {
+  animation: sm-tw 4.5s ease-in-out var(--d) infinite;
+}
+@keyframes sm-tw {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+.sm-svg.dim .sm-star {
+  opacity: 0.18 !important;
+}
+.sm-tags .tag {
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  fill: rgba(239, 228, 200, 0.55);
+}
+.sm-tags .sub {
+  font-size: 10.5px;
+  fill: rgba(239, 228, 200, 0.4);
+}
+
+/* 觀測線：慢慢從左掃到右 */
+.sm-scan {
+  animation: sm-scan 11s linear infinite;
+  pointer-events: none;
+}
+.sm-scan line {
+  stroke: rgba(76, 184, 176, 0.35);
+}
+@keyframes sm-scan {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(1290px);
+  }
+}
+
+/* 選取時疊上去的東西 */
+.sm-overlay {
+  pointer-events: none;
+}
+.sm-overlay .cross {
+  stroke: rgba(239, 228, 200, 0.22);
+  stroke-dasharray: 2 4;
+}
+.sm-overlay .read {
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--teal);
+}
+.sm-overlay .con {
+  fill: none;
+  stroke: rgba(239, 228, 200, 0.35);
+  stroke-width: 0.8;
+}
+.sm-overlay .link {
+  stroke-width: 1.3;
+}
+.sm-overlay .link.concept {
+  stroke: var(--gold);
+}
+.sm-overlay .link.same {
+  stroke: rgba(239, 228, 200, 0.75);
+  stroke-dasharray: 4 3;
+}
+.sm-overlay .ring,
+.sm-overlay .hov {
+  fill: none;
+  stroke: rgba(239, 228, 200, 0.7);
+  stroke-width: 1;
+}
+.sm-overlay .hitring {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.2;
+}
+.sm-overlay .pulse {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sm-pulse 1.6s ease-out infinite;
+}
+@keyframes sm-pulse {
+  from {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+.sm-overlay .bracket {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+}
+.sm-overlay .lab {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--star);
+  paint-order: stroke;
+  stroke: var(--sky);
+  stroke-width: 3px;
+}
+.sm-overlay .lab.cur {
+  font-size: 13.5px;
+  fill: var(--gold);
+}
+
+.sm-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 16px;
+  margin-top: 6px;
+  font-size: 10.5px;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.04em;
+}
+.sm-foot .ln {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  margin: 0 4px 3px 10px;
+  border-top: 1.5px solid var(--gold);
+  vertical-align: middle;
+}
+.sm-foot .ln.same {
+  border-top: 1.5px dashed hsl(var(--muted-foreground));
+}
+.sm-foot .sp {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin: 0 4px 1px 10px;
+  background: hsl(var(--muted-foreground));
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+}
+
+/* 右側面板：終端機 */
+.sm-hud {
+  align-self: start;
+  position: sticky;
+  top: 5rem;
+  padding: 18px 18px 16px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  min-height: 220px;
+}
+.sm-cat {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 0.05em;
+}
+.sm-path {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+.sm-path i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--c);
+}
+.sm-hud h2 {
+  margin: 10px 0 6px;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.3;
+}
+.sm-desc {
+  font-size: 14.5px;
+  line-height: 1.75;
+}
+.sm-sec {
+  margin-top: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal);
+}
+.sm-rel {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.sm-rel button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border: 0;
+  border-left: 2px solid var(--c);
+  background: hsl(var(--foreground) / 0.04);
+  color: hsl(var(--foreground));
+  cursor: pointer;
+}
+.sm-rel button:hover {
+  background: hsl(var(--foreground) / 0.09);
+}
+.sm-rel .font-mono-label {
+  font-size: 10.5px;
+  color: hsl(var(--muted-foreground));
+}
+.sm-rel b {
+  font-size: 15px;
+}
+.sm-rel .why {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+}
+.sm-go {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.sm-go:hover {
+  text-decoration: underline;
+}
+.sm-idle p {
+  font-size: 14px;
+  line-height: 1.75;
+  margin-bottom: 8px;
+}
+.sm-idle b {
+  color: var(--gold);
+}
+.sm-gen {
+  font-size: 10.5px;
+  color: hsl(var(--muted-foreground));
+}
+/* 換目標時錯位閃一下 */
+.sm-swap {
+  animation: sm-swap 0.22s steps(2);
+}
+@keyframes sm-swap {
+  0% {
+    transform: translateX(3px);
+    filter: drop-shadow(-3px 0 var(--orange)) drop-shadow(3px 0 var(--teal));
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* 星表索引 */
+.sm-index {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+}
+.sm-index h2 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+.sm-index details {
+  border-top: 1px solid hsl(var(--border));
+  padding: 8px 0;
+}
+.sm-index summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 800;
+}
+.sm-index summary .font-mono-label {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+.sm-index summary .n {
+  margin-left: auto;
+}
+.sm-index p {
+  margin: 6px 0 0 12px;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.sm-index p a {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sm-star.tw .dot,
+  .sm-scan,
+  .sm-overlay .pulse,
+  .sm-swap {
+    animation: none;
+  }
+  .sm-scan {
+    display: none;
+  }
+}

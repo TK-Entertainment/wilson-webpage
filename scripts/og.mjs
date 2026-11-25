@@ -76,13 +76,13 @@ const SECTIONS = {
     color: C.teal,
     ghost: "EARTH",
   },
-  forest: {
-    no: "KF",
-    label: "知識森林",
-    latin: "KNOWLEDGE // FOREST",
-    description: "四門地科課的名詞長成四棵樹，跨科相關的概念用線連起來。",
-    color: "#8fa878",
-    ghost: "FOREST",
+  stars: {
+    no: "KS",
+    label: "知識星圖",
+    latin: "KNOWLEDGE // SKY",
+    description: "四門地科課的 470 個名詞散成一片星空，跨科相關的概念連成星座。",
+    color: "#d6a53c",
+    ghost: "STARS",
   },
   year: {
     no: "YR",
