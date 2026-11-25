@@ -99,6 +99,68 @@ for (const L of curated) {
   else out.links.push({ a: A.id, b: B.id, kind: "concept", why: L.why });
 }
 
+// ---- 星的排列照古星圖〈天文分野之圖〉印好的星點（data/star-chart.json，由 scripts/stars-chart.py 產生）
+// 一門課占圓盤的一個扇區（從正上方「子」順時針，大小照名詞數），
+// 一頁筆記在扇區裡聚成一群相鄰的星點，再用最小生成樹連成星座。
+const chart = JSON.parse(fs.readFileSync("data/star-chart.json", "utf8"));
+const { cx, cy } = chart;
+const pool = chart.points
+  .map(([x, y, r, red]) => ({ x, y, r, red, a: (Math.atan2(x - cx, -(y - cy)) + 2 * Math.PI) % (2 * Math.PI) }))
+  .sort((p, q) => p.a - q.a);
+const T = out.subjects.reduce((s, S) => s + S.chapters.reduce((a, c) => a + c.terms.length, 0), 0);
+if (T > pool.length) throw new Error(`[stars] 名詞 ${T} 個，比星圖上的星點 ${pool.length} 個還多`);
+const d2 = (p, q) => (p.x - q.x) ** 2 + (p.y - q.y) ** 2;
+let done = 0;
+for (const S of out.subjects) {
+  const need = S.chapters.map((c) => c.terms.length);
+  const tot = need.reduce((a, b) => a + b, 0);
+  const pts = pool.slice(Math.round((pool.length * done) / T), Math.round((pool.length * (done + tot)) / T));
+  done += tot;
+  // 起點：扇區照角度切成幾段，各段的重心
+  let seeds = [];
+  let k = 0;
+  for (const n of need) {
+    const part = pts.slice(Math.round((pts.length * k) / tot), Math.round((pts.length * (k + n)) / tot));
+    k += n;
+    seeds.push({ x: part.reduce((s, p) => s + p.x, 0) / part.length, y: part.reduce((s, p) => s + p.y, 0) / part.length });
+  }
+  // 有名額的分群：離誰近就歸誰，滿了就換下一個，重算重心再來一次
+  let own;
+  for (let it = 0; it < 10; it++) {
+    const pairs = [];
+    pts.forEach((p, i) => seeds.forEach((s, j) => pairs.push([d2(p, s), i, j])));
+    pairs.sort((a, b) => a[0] - b[0]);
+    own = need.map(() => []);
+    const used = new Set();
+    for (const [, i, j] of pairs) {
+      if (used.has(i) || own[j].length >= need[j]) continue;
+      used.add(i);
+      own[j].push(pts[i]);
+    }
+    seeds = own.map((g) => ({ x: g.reduce((s, p) => s + p.x, 0) / g.length, y: g.reduce((s, p) => s + p.y, 0) / g.length }));
+  }
+  S.chapters.forEach((ch, j) => {
+    const g = own[j];
+    // 最小生成樹（Prim），從最靠近重心的星開始；名詞照表格順序放進樹的走訪順序
+    const root = g.reduce((b, p) => (d2(p, seeds[j]) < d2(b, seeds[j]) ? p : b), g[0]);
+    const order = [root];
+    const edges = [];
+    const left = new Set(g.filter((p) => p !== root));
+    while (left.size) {
+      let best = null;
+      for (const p of left) for (const [qi, q] of order.entries()) if (!best || d2(p, q) < best[0]) best = [d2(p, q), p, qi];
+      edges.push([best[2], order.length]);
+      order.push(best[1]);
+      left.delete(best[1]);
+    }
+    ch.terms.forEach((t, i) => Object.assign(t, { x: order[i].x, y: order[i].y, r: order[i].r }));
+    for (const p of order) p.used = true;
+    ch.edges = edges; // 用名詞的 i 表示
+  });
+}
+// 沒放名詞的星點也畫出來（淡淡的），整張星圖的排列才看得出來
+out.chart = { ...chart, points: undefined, nPoints: chart.points.length, bg: pool.filter((p) => !p.used).map((p) => [p.x, p.y, p.r]) };
+
 fs.mkdirSync("components/stars", { recursive: true });
 fs.writeFileSync("components/stars/starData.json", JSON.stringify(out));
 const nCh = out.subjects.reduce((s, x) => s + x.chapters.length, 0);
