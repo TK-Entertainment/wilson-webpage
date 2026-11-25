@@ -1,92 +1,92 @@
 "use client";
 
-// 知識星圖：一個名詞一顆星，同一門課聚成一團星雲，同一頁筆記是星雲裡的一小群；
-// 選一顆星，同一頁的名詞連成淡淡的星座，跨科相關的名詞用金線連起來。
-// 平常全是灰白的星點，只有選取時才上色（網站風格：科技、日式、雜訊）。
-// 資料由 scripts/stars-data.mjs 從各頁「先認識的名詞」表產生（starData.json）
+// 知識星圖：底圖是真的古星圖（保井春海〈天文分野之圖〉1677，京都大學數學教室圖書室所藏）。
+// 紙上印好的星點有一部分被借來當名詞：一門課占圓盤的一個扇區，一頁筆記是一群相鄰的星。
+// 程式不畫任何東西本身，只疊互動：觀測掃描線、游標附近的星表、選取後的星座和跨科連線。
+// 資料：scripts/stars-chart.py 找星點 → scripts/stars-data.mjs 分配名詞（starData.json）
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { courseColor } from "@/utils/palette";
 
-type Term = { i: number; name: string; desc: string };
-type Chapter = { page: string; code: string; title: string; url: string; terms: Term[] };
+type Term = { i: number; name: string; desc: string; x: number; y: number; red?: number };
+type Chapter = { page: string; code: string; title: string; url: string; terms: Term[]; edges: [number, number][] };
 type Subject = { id: string; name: string; chapters: Chapter[] };
 type LinkT = { a: string; b: string; kind: "same" | "concept"; why?: string };
-export type StarData = { generated: string; subjects: Subject[]; links: LinkT[] };
+type Chart = { title: string; author: string; year: number; credit: string; source: string; size: number; h: number; cx: number; cy: number; edge: number; nPoints: number };
+export type StarData = { generated: string; subjects: Subject[]; links: LinkT[]; chart: Chart };
 
 type Star = {
   id: string;
   n: number; // 星表編號
   x: number;
   y: number;
-  mag: number; // 0–1，越大越亮
+  a: number; // 從正上方順時針的角度（弧度）
+  rho: number; // 離圓心的距離，外圈＝1
   subj: Subject;
-  si: number;
   ch: Chapter;
   term: Term;
-  color: string;
+  color: string; // 網站上的課程色（面板用）
+  ink: string; // 印在紙上的顏色
 };
 
-const W = 1200, H = 720;
-const GOLDEN = 2.39996;
+const IMG = "/img/stars/tenmon-bunya-1677";
+const SWEEP = 18; // 觀測線轉一圈的秒數
 const TAG: Record<string, string> = { geochemistry: "GEOCHEM", "structural-geology": "STRUCT", mineralogy: "MINERAL", "earth-materials": "EARTH-MAT" };
-// 星雲中心：左右排開、上下錯落
-const CENTERS = [
-  [175, 330],
-  [462, 395],
-  [742, 315],
-  [1022, 390],
-];
+// 紙上用的墨色：比網站的課程色深，印在米色紙上才看得清楚
+const INK: Record<string, string> = { geochemistry: "#b0401f", "structural-geology": "#136a64", mineralogy: "#5f3b7d", "earth-materials": "#4a6820" };
+const PAPER = "#efe6d1";
 
-// 由字串算出 0–1 的固定亂數：每次畫出來的星空都一樣
-function hash(s: string, k = 0) {
-  let h = 2166136261 ^ k;
-  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
-  return ((h >>> 0) % 100000) / 100000;
-}
-
-function layout(data: StarData) {
+function build(data: StarData) {
+  const { cx, cy, edge } = data.chart;
   const stars: Star[] = [];
   let n = 0;
-  data.subjects.forEach((S, si) => {
-    const total = S.chapters.reduce((a, c) => a + c.terms.length, 0);
-    const R = 44 + 10 * Math.sqrt(total);
-    const [cx, cy] = CENTERS[si % CENTERS.length];
-    const color = courseColor(S.id) ?? "var(--gold)";
-    S.chapters.forEach((ch, k) => {
-      const a = k * GOLDEN + si;
-      const rr = R * 0.78 * Math.sqrt((k + 0.5) / S.chapters.length);
-      const gx = cx + rr * Math.cos(a), gy = cy + rr * Math.sin(a);
-      ch.terms.forEach((t) => {
-        const id = `${S.id}/${ch.page}#${t.i}`;
-        const r = 5 + 23 * Math.sqrt(hash(id, 1)), th = 2 * Math.PI * hash(id, 2);
-        stars.push({ id, n: ++n, x: gx + r * Math.cos(th), y: gy + r * Math.sin(th), mag: hash(id, 3), subj: S, si, ch, term: t, color });
-      });
-    });
-  });
+  for (const S of data.subjects)
+    for (const ch of S.chapters)
+      for (const t of ch.terms) {
+        const a = (Math.atan2(t.x - cx, -(t.y - cy)) + 2 * Math.PI) % (2 * Math.PI);
+        stars.push({
+          id: `${S.id}/${ch.page}#${t.i}`,
+          n: ++n,
+          x: t.x,
+          y: t.y,
+          a,
+          rho: Math.hypot(t.x - cx, t.y - cy) / edge,
+          subj: S,
+          ch,
+          term: t,
+          color: courseColor(S.id) ?? "var(--gold)",
+          ink: INK[S.id] ?? "#7a5a10",
+        });
+      }
   return { stars, byId: new Map(stars.map((s) => [s.id, s])) };
 }
 
-// 假的天球座標：讓讀數看起來像觀測儀器（x → 赤經、y → 赤緯）
-const ra = (x: number) => {
-  const h = (x / W) * 24;
-  return `${String(Math.floor(h)).padStart(2, "0")}h${String(Math.floor((h % 1) * 60)).padStart(2, "0")}m`;
-};
-const dec = (y: number) => {
-  const d = 60 - (y / H) * 120;
-  return `${d >= 0 ? "+" : "−"}${Math.abs(d).toFixed(1)}°`;
-};
-const sparkle = (x: number, y: number, r: number) =>
-  `M${x},${y - r}L${x + r * 0.22},${y - r * 0.22}L${x + r},${y}L${x + r * 0.22},${y + r * 0.22}L${x},${y + r}L${x - r * 0.22},${y + r * 0.22}L${x - r},${y}L${x - r * 0.22},${y - r * 0.22}Z`;
+const deg = (a: number) => `${((a * 180) / Math.PI).toFixed(1)}°`;
+// 圓盤上角度 φ、半徑 r 的點（φ 從正上方順時針）
+const polar = (cx: number, cy: number, r: number, f: number) => [cx + r * Math.sin(f), cy - r * Math.cos(f)] as const;
 
 export default function StarMap({ data }: { data: StarData }) {
-  const { stars, byId } = useMemo(() => layout(data), [data]);
+  const { chart } = data;
+  const { size: W, h: H, cx, cy, edge } = chart;
+  const { stars, byId } = useMemo(() => build(data), [data]);
   const [hover, setHover] = useState<string | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
+  const [pt, setPt] = useState<{ x: number; y: number } | null>(null);
+  const [focus, setFocus] = useState<string | null>(null);
   const [q, setQ] = useState("");
+  const [u, setU] = useState(W / 900); // 圖上幾個單位＝螢幕 1px
+  const paperRef = useRef<HTMLDivElement>(null);
   const hudRef = useRef<HTMLElement>(null);
   const A = picked ? byId.get(picked) : undefined;
   const Hv = hover && hover !== picked ? byId.get(hover) : undefined;
+
+  useEffect(() => {
+    const el = paperRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => el.clientWidth && setU(W / el.clientWidth));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [W]);
 
   const adj = useMemo(() => {
     const m = new Map<string, { other: string; link: LinkT }[]>();
@@ -106,85 +106,51 @@ export default function StarMap({ data }: { data: StarData }) {
     return [...inName, ...inDesc];
   }, [query, stars]);
 
-  // 不會變的部分：格線、刻度、星點、星雲標籤
-  const sky = useMemo(
+  // 觀測線掃過時，被借來當名詞的星會閃一下（動畫延遲照角度排，跟掃描線同步）
+  const sweep = useMemo(
     () => (
-      <g>
-        <g className="sm-grid">
-          {Array.from({ length: 11 }, (_, i) => (
-            <line key={`v${i}`} x1={(i + 1) * 100} x2={(i + 1) * 100} y1={0} y2={H} />
-          ))}
-          {Array.from({ length: 6 }, (_, i) => (
-            <line key={`h${i}`} x1={0} x2={W} y1={(i + 1) * 100} y2={(i + 1) * 100} />
-          ))}
-        </g>
-        <g className="sm-ticks">
-          {Array.from({ length: 61 }, (_, i) => (
-            <line key={`t${i}`} x1={i * 20} x2={i * 20} y1={0} y2={i % 5 ? 4 : 9} />
-          ))}
-          {Array.from({ length: 13 }, (_, i) => (
-            <text key={`r${i}`} x={i * 100 + 4} y={20}>
-              {String(i * 2).padStart(2, "0")}h
-            </text>
-          ))}
-          {Array.from({ length: 37 }, (_, i) => (
-            <line key={`s${i}`} x1={0} x2={i % 5 ? 4 : 9} y1={i * 20} y2={i * 20} />
-          ))}
-          {[0, 1, 2, 3, 4, 5, 6].map((i) => (
-            <text key={`d${i}`} x={13} y={i * 100 + 4} className="dec">
-              {i === 0 ? "" : `${60 - i * 20 >= 0 ? "+" : "−"}${Math.abs(60 - i * 20)}°`}
-            </text>
-          ))}
-        </g>
-        <g>
-          {stars.map((s) => {
-            const linked = adj.has(s.id);
-            const r = 0.9 + 1.5 * s.mag + (linked ? 0.5 : 0);
-            return (
-              <g key={s.id} data-t={s.id} className={`sm-star${linked ? " linked" : ""}${s.mag > 0.82 ? " tw" : ""}`} style={{ ["--d" as string]: `${(s.mag * 7).toFixed(2)}s`, opacity: 0.38 + 0.55 * s.mag }}>
-                <circle cx={s.x} cy={s.y} r={7} className="hit" />
-                {linked ? <path d={sparkle(s.x, s.y, r * 2.3)} className="dot" /> : <circle cx={s.x} cy={s.y} r={r} className="dot" />}
-              </g>
-            );
+      <g aria-hidden>
+        <g className="sm-sweep" style={{ transformOrigin: `${cx}px ${cy}px` }}>
+          {Array.from({ length: 14 }, (_, i) => {
+            const f0 = (-(i + 1) * 2 * Math.PI) / 180, f1 = (-i * 2 * Math.PI) / 180;
+            const [x0, y0] = polar(cx, cy, edge, f0), [x1, y1] = polar(cx, cy, edge, f1);
+            return <path key={i} d={`M${cx},${cy}L${x0},${y0}A${edge},${edge} 0 0 1 ${x1},${y1}Z`} style={{ opacity: 0.09 * (1 - i / 14) }} className="trail" />;
           })}
+          <line x1={cx} y1={cy} x2={cx} y2={cy - edge} strokeWidth={1.3 * u} />
         </g>
-        <g className="sm-tags">
-          {data.subjects.map((S, si) => {
-            const total = S.chapters.reduce((a, c) => a + c.terms.length, 0);
-            const R = 44 + 10 * Math.sqrt(total);
-            const [cx, cy] = CENTERS[si % CENTERS.length];
-            return (
-              <g key={S.id}>
-                <text x={cx} y={cy + R * 0.78 + 46} textAnchor="middle" className="tag">
-                  [{TAG[S.id] ?? S.id.toUpperCase()}]
-                </text>
-                <text x={cx} y={cy + R * 0.78 + 62} textAnchor="middle" className="sub">
-                  {S.name} {"//"} {total}
-                </text>
-              </g>
-            );
-          })}
+        <g className="sm-blips">
+          {stars.map((s) => (
+            <circle key={s.id} cx={s.x} cy={s.y} r={7 * u} strokeWidth={1.2 * u} style={{ animationDelay: `${((s.a / (2 * Math.PI)) * SWEEP - SWEEP).toFixed(2)}s` }} />
+          ))}
         </g>
       </g>
     ),
-    [data, stars, adj],
+    [stars, cx, cy, edge, u],
   );
 
-  // 同一頁的名詞連成星座：依繞中心的角度排序後連起來
-  const constellation = (s: Star) => {
-    const sib = stars.filter((x) => x.ch === s.ch);
-    const mx = sib.reduce((a, x) => a + x.x, 0) / sib.length, my = sib.reduce((a, x) => a + x.y, 0) / sib.length;
-    const ord = [...sib].sort((p, q2) => Math.atan2(p.y - my, p.x - mx) - Math.atan2(q2.y - my, q2.x - mx));
-    return { sib, d: ord.map((x, i) => `${i ? "L" : "M"}${x.x},${x.y}`).join("") + "Z" };
-  };
   const near = A ? adj.get(A.id) ?? [] : [];
-
   const pick = (id: string | null) => {
     setPicked(id);
     if (id && window.matchMedia("(max-width: 1100px)").matches) {
       window.setTimeout(() => hudRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 50);
     }
   };
+  // 螢幕座標 → 圖上座標，找最近的星
+  const locate = (e: React.PointerEvent | React.MouseEvent) => {
+    const r = (e.currentTarget as Element).getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * W, y = ((e.clientY - r.top) / r.height) * H;
+    let best: Star | undefined, bd = (18 * u) ** 2;
+    for (const s of stars) {
+      const d = (s.x - x) ** 2 + (s.y - y) ** 2;
+      if (d < bd) [best, bd] = [s, d];
+    }
+    return { x, y, best };
+  };
+  const reveal = pt ? stars.filter((s) => (s.x - pt.x) ** 2 + (s.y - pt.y) ** 2 < (110 * u) ** 2) : [];
+  const fs = (px: number) => ({ fontSize: px * u, strokeWidth: 4 * u });
+  const ring = (s: Star, r: number, cls: string, color?: string) => (
+    <circle key={`${cls}-${s.id}`} cx={s.x} cy={s.y} r={r * u} strokeWidth={1.4 * u} className={cls} style={color ? { stroke: color } : undefined} />
+  );
 
   return (
     <div className="sm-wrap">
@@ -192,7 +158,7 @@ export default function StarMap({ data }: { data: StarData }) {
         <div className="sm-tools">
           <span className="font-mono-label">&gt; find</span>
           <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="名詞，例如：糜稜岩、平衡、光" aria-label="搜尋名詞" />
-          <span className="font-mono-label sm-count">{query ? `${hits.length} HIT` : `${stars.length} OBJ // ${data.links.length} LINK`}</span>
+          <span className="font-mono-label sm-count">{query ? `${hits.length} HIT` : `${stars.length} / ${chart.nPoints} OBJ`}</span>
         </div>
         {query && hits.length > 0 && (
           <ul className="sm-hits">
@@ -214,83 +180,126 @@ export default function StarMap({ data }: { data: StarData }) {
           <i className="c bl" />
           <i className="c br" />
           <div className="sm-box">
-            <svg
-              viewBox={`0 0 ${W} ${H}`}
-              role="img"
-              aria-label="知識星圖：四門課的名詞散成星點，相關的名詞連成星座"
-              className={`sm-svg${A || query ? " dim" : ""}`}
-              onPointerOver={(e) => {
-                const g = (e.target as Element).closest("[data-t]");
-                setHover(g ? g.getAttribute("data-t") : null);
-              }}
-              onPointerLeave={() => setHover(null)}
-              onClick={(e) => {
-                const g = (e.target as Element).closest("[data-t]");
-                pick(g ? g.getAttribute("data-t") : null);
-              }}
-            >
-              {sky}
-              <defs>
-                <linearGradient id="sm-scan-g" x1="0" x2="1">
-                  <stop offset="0" stopColor="#4cb8b0" stopOpacity="0" />
-                  <stop offset="1" stopColor="#4cb8b0" stopOpacity="0.1" />
-                </linearGradient>
-              </defs>
-              <g className="sm-scan">
-                <rect x={-90} y={0} width={90} height={H} fill="url(#sm-scan-g)" />
-                <line x1={0} x2={0} y1={0} y2={H} />
-              </g>
-              <g className="sm-overlay">
-                {hits.map((h) => (
-                  <circle key={h.id} cx={h.x} cy={h.y} r={6} className="hitring" />
-                ))}
-                {A &&
-                  (() => {
-                    const { sib, d } = constellation(A);
-                    return (
-                      <g>
-                        <line x1={0} x2={W} y1={A.y} y2={A.y} className="cross" />
-                        <line x1={A.x} x2={A.x} y1={0} y2={H} className="cross" />
-                        <text x={A.x + 6} y={36} className="read">RA {ra(A.x)}</text>
-                        <text x={W - 6} y={A.y - 6} textAnchor="end" className="read">DEC {dec(A.y)}</text>
-                        <path d={d} className="con" />
-                        {sib.map((s) => (
-                          <circle key={s.id} cx={s.x} cy={s.y} r={1.9} style={{ fill: A.color }} />
-                        ))}
-                        {near.map(({ other, link }) => {
-                          const B = byId.get(other)!;
-                          return (
-                            <g key={other}>
-                              <line x1={A.x} y1={A.y} x2={B.x} y2={B.y} className={`link ${link.kind}`} />
-                              <circle cx={B.x} cy={B.y} r={3.2} style={{ fill: B.color }} />
-                              <circle cx={B.x} cy={B.y} r={8} className="ring" />
-                              <text x={B.x + 11} y={B.y + 4} className="lab">{B.term.name}</text>
-                            </g>
-                          );
-                        })}
-                        <circle cx={A.x} cy={A.y} r={4} style={{ fill: A.color }} />
-                        <circle cx={A.x} cy={A.y} r={12} className="pulse" />
-                        <path d={`M${A.x - 20},${A.y - 20}h7M${A.x - 20},${A.y - 20}v7M${A.x + 20},${A.y - 20}h-7M${A.x + 20},${A.y - 20}v7M${A.x - 20},${A.y + 20}h7M${A.x - 20},${A.y + 20}v-7M${A.x + 20},${A.y + 20}h-7M${A.x + 20},${A.y + 20}v-7`} className="bracket" />
-                        <text x={A.x + 24} y={A.y - 10} className="lab cur">{A.term.name}</text>
-                      </g>
-                    );
-                  })()}
-                {Hv && (
-                  <g>
-                    <circle cx={Hv.x} cy={Hv.y} r={7} className="hov" />
-                    <text x={Hv.x + 10} y={Hv.y - 8} className="lab">{Hv.term.name}</text>
-                  </g>
-                )}
-              </g>
-            </svg>
+            <div className="sm-paper" ref={paperRef}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- 底圖要和 SVG 疊在一起、尺寸固定 */}
+              <img
+                src={`${IMG}-2400.webp`}
+                srcSet={`${IMG}-1200.webp 1200w, ${IMG}-2400.webp 2400w`}
+                sizes="(max-width: 1100px) 100vw, 900px"
+                width={W}
+                height={H}
+                alt={`${chart.title}（${chart.author}，${chart.year}）：圓形星圖，北極在中心，四周是二十八宿的分野`}
+                draggable={false}
+              />
+              <svg
+                viewBox={`0 0 ${W} ${H}`}
+                className={`sm-svg${A || query || focus ? " busy" : ""}`}
+                role="img"
+                aria-label="名詞放在古星圖的星點上；選一顆星，同一頁的名詞連成星座、跨科相關的名詞連線過來"
+                onPointerMove={(e) => {
+                  const { x, y, best } = locate(e);
+                  setPt({ x, y });
+                  setHover(best?.id ?? null);
+                }}
+                onPointerLeave={() => {
+                  setPt(null);
+                  setHover(null);
+                }}
+                onClick={(e) => pick(locate(e).best?.id ?? null)}
+              >
+                {sweep}
+                <g className="sm-overlay">
+                  {reveal.map((s) => ring(s, 7, "near"))}
+                  {focus && stars.filter((s) => s.subj.id === focus).map((s) => ring(s, 8, "focus", s.ink))}
+                  {hits.map((h) => ring(h, 11, "hitring"))}
+                  {A && (
+                    <g>
+                      {(() => {
+                        const [rx, ry] = polar(cx, cy, edge, A.a);
+                        const right = rx >= cx;
+                        return (
+                          <g className="polar">
+                            <line x1={cx} y1={cy} x2={rx} y2={ry} strokeWidth={1.1 * u} strokeDasharray={`${3 * u} ${5 * u}`} />
+                            <circle cx={cx} cy={cy} r={A.rho * edge} strokeWidth={1.1 * u} strokeDasharray={`${3 * u} ${5 * u}`} />
+                            <text x={rx + (right ? -8 : 8) * u} y={ry + (ry > cy ? -8 : 16) * u} textAnchor={right ? "end" : "start"} className="read" style={fs(10.5)}>
+                              θ {deg(A.a)} · ρ {A.rho.toFixed(2)}
+                            </text>
+                          </g>
+                        );
+                      })()}
+                      {A.ch.edges.map(([i, j]) => {
+                        const p = A.ch.terms[i], r = A.ch.terms[j];
+                        return <line key={`${i}-${j}`} x1={p.x} y1={p.y} x2={r.x} y2={r.y} className="con" strokeWidth={2 * u} style={{ stroke: A.ink }} />;
+                      })}
+                      {A.ch.terms.map((t) => (
+                        <circle key={t.i} cx={t.x} cy={t.y} r={6 * u} strokeWidth={1.5 * u} className="sib" style={{ stroke: A.ink }} />
+                      ))}
+                      {near.map(({ other, link }) => {
+                        const B = byId.get(other)!;
+                        return (
+                          <g key={other}>
+                            <line x1={A.x} y1={A.y} x2={B.x} y2={B.y} className={`link ${link.kind}`} strokeWidth={2 * u} strokeDasharray={link.kind === "same" ? `${6 * u} ${5 * u}` : undefined} />
+                            {ring(B, 9, "ring", B.ink)}
+                            <text x={B.x + 13 * u} y={B.y + 4 * u} className="lab" style={fs(12)}>
+                              {B.term.name}
+                            </text>
+                          </g>
+                        );
+                      })}
+                      {ring(A, 12, "sel", A.ink)}
+                      <circle cx={A.x} cy={A.y} r={12 * u} strokeWidth={1.5 * u} className="pulse" style={{ stroke: A.ink }} />
+                      <path
+                        d={[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([sx, sy]) => `M${A.x + sx * 22 * u},${A.y + sy * 15 * u}v${sy * 7 * u}h${-sx * 7 * u}`).join("")}
+                        className="bracket"
+                        strokeWidth={1.6 * u}
+                      />
+                      <text x={A.x + 26 * u} y={A.y - 10 * u} className="lab cur" style={{ ...fs(14), fill: A.ink }}>
+                        {A.term.name}
+                      </text>
+                    </g>
+                  )}
+                  {Hv && (
+                    <g>
+                      {ring(Hv, 9, "hov", Hv.ink)}
+                      <text x={Hv.x + 12 * u} y={Hv.y - 9 * u} className="lab" style={fs(12)}>
+                        {Hv.term.name}
+                      </text>
+                    </g>
+                  )}
+                </g>
+              </svg>
+            </div>
           </div>
-          <p className="sm-foot font-mono-label">
-            <span>OBS // KNOWLEDGE SKY</span>
-            <span>
-              <i className="ln concept" /> 跨科概念 <i className="ln same" /> 同一個名詞 <i className="sp" /> 有連線的星
-            </span>
-          </p>
         </div>
+        <div className="sm-foot font-mono-label">
+          <span className="sm-legend">
+            {data.subjects.map((S) => (
+              <button
+                key={S.id}
+                type="button"
+                style={{ ["--ink" as string]: INK[S.id] }}
+                aria-pressed={focus === S.id}
+                onMouseEnter={() => setFocus(S.id)}
+                onMouseLeave={() => setFocus(null)}
+                onFocus={() => setFocus(S.id)}
+                onBlur={() => setFocus(null)}
+                onClick={() => setFocus((f) => (f === S.id ? null : S.id))}
+              >
+                <i /> {TAG[S.id] ?? S.id} <span>{S.chapters.reduce((a, c) => a + c.terms.length, 0)}</span>
+              </button>
+            ))}
+          </span>
+          <span>
+            <i className="ln concept" /> 跨科概念 <i className="ln same" /> 同一個名詞
+          </span>
+        </div>
+        <p className="sm-credit">
+          底圖：{chart.author}〈{chart.title}〉，{chart.year} 年。{chart.credit}（
+          <a href={chart.source} target="_blank" rel="noopener noreferrer">
+            京都大学貴重資料デジタルアーカイブ
+          </a>
+          ）
+        </p>
       </div>
 
       <aside className="sm-hud" aria-live="polite" ref={hudRef}>
@@ -299,8 +308,15 @@ export default function StarMap({ data }: { data: StarData }) {
         {A ? (
           <div key={A.id} className="sm-swap">
             <p className="font-mono-label sm-cat">
-              KS-{String(A.n).padStart(4, "0")} {"//"} RA {ra(A.x)} DEC {dec(A.y)}
+              KS-{String(A.n).padStart(4, "0")} {"//"} θ {deg(A.a)} ρ {A.rho.toFixed(2)}
             </p>
+            <div
+              className="sm-zoom"
+              style={{ backgroundImage: `url(${IMG}-2400.webp)`, backgroundSize: `${W}px ${H}px`, backgroundPosition: `calc(50% + ${W / 2 - A.x}px) calc(50% + ${H / 2 - A.y}px)` }}
+              aria-hidden
+            >
+              <span className="font-mono-label">IMG {"//"} 紙上原樣 1:1</span>
+            </div>
             <p className="font-mono-label sm-path" style={{ ["--c" as string]: A.color }}>
               <i /> {A.subj.name} {"//"} {A.ch.code} {A.ch.title}
             </p>
@@ -327,7 +343,7 @@ export default function StarMap({ data }: { data: StarData }) {
                 </ul>
               </>
             ) : (
-              <p className="font-mono-label sm-sec">&gt; linked 0 // 同一頁的名詞連成星座</p>
+              <p className="font-mono-label sm-sec">&gt; linked 0 {"//"} 同一頁的名詞連成星座</p>
             )}
             <Link href={`${A.ch.url}#先認識的名詞`} className="sm-go font-mono-label">
               open {A.ch.page} →
@@ -337,9 +353,9 @@ export default function StarMap({ data }: { data: StarData }) {
           <div className="sm-idle">
             <p className="font-mono-label sm-cat">&gt; sky.status</p>
             <p>
-              {data.subjects.length} 團星雲、<b>{stars.length}</b> 顆星、<b>{data.links.length}</b> 條跨科連線。
+              這張是 {chart.year} 年保井（澀川）春海刻印的〈{chart.title}〉：他把中國的分野星圖改成日本版，四周的地名換成日本的國名。紙上 {chart.nPoints} 個星點裡，有 <b>{stars.length}</b> 個借來放筆記裡的名詞。
             </p>
-            <p>點一顆星：同一頁筆記的名詞連成星座，其他課裡相關的名詞用金線連過來。帶光芒的星有跨科連線。</p>
+            <p>觀測線掃過時會亮一下的就是名詞星。點一顆：同一頁筆記的名詞連成星座，其他課裡相關的名詞連線過來（共 <b>{data.links.length}</b> 條）。</p>
             <p className="font-mono-label sm-gen">updated {data.generated}</p>
           </div>
         )}

@@ -1,7 +1,5 @@
-/* 知識星圖（components/stars/StarMap.tsx）：觀測儀器風，天空固定是深色 */
+/* 知識星圖（components/stars/StarMap.tsx）：真的古星圖＋觀測儀器風的互動層 */
 .sm-wrap {
-  --sky: #141a2b;
-  --star: #efe4c8;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 24px;
@@ -106,152 +104,134 @@
   border-right-width: 2px;
 }
 .c.bl {
-  bottom: 22px;
+  bottom: -6px;
   left: -6px;
   border-bottom-width: 2px;
   border-left-width: 2px;
 }
 .c.br {
-  bottom: 22px;
+  bottom: -6px;
   right: -6px;
   border-bottom-width: 2px;
   border-right-width: 2px;
 }
-.sm-hud .c.br {
-  bottom: -6px;
-}
 
+/* 古星圖本身：真的紙，程式只疊互動 */
 .sm-box {
   position: relative;
   overflow-x: auto;
-  background: var(--sky);
+  background: #e7dcc4;
+  box-shadow: 0 22px 44px -28px rgba(0, 0, 0, 0.6);
 }
-/* 掃描線＋雜訊 */
-.sm-box::after {
+.sm-paper {
+  position: relative;
+}
+.sm-paper img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+.dark .sm-paper img {
+  filter: brightness(0.9);
+}
+/* 很淡的掃描線＋四角暗角：像隔著觀測螢幕看 */
+.sm-paper::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    repeating-linear-gradient(to bottom, transparent 0 2px, rgba(239, 228, 200, 0.03) 2px 3px),
-    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
+    repeating-linear-gradient(to bottom, transparent 0 2px, rgba(40, 30, 10, 0.035) 2px 3px),
+    radial-gradient(ellipse at center, transparent 62%, rgba(30, 20, 5, 0.22) 100%);
 }
 .sm-svg {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  min-width: 820px;
-  height: auto;
-}
-.sm-grid line {
-  stroke: rgba(239, 228, 200, 0.05);
-}
-.sm-ticks line {
-  stroke: rgba(239, 228, 200, 0.3);
-}
-.sm-ticks text {
-  font-family: var(--font-mono), "Space Mono", monospace;
-  font-size: 9px;
-  fill: rgba(239, 228, 200, 0.35);
-}
-
-/* 星：平常灰白，帶光芒的有跨科連線 */
-.sm-star {
+  height: 100%;
   cursor: crosshair;
 }
-.sm-star .hit {
-  fill: transparent;
-}
-.sm-star .dot {
-  fill: var(--star);
-}
-.sm-star.tw .dot {
-  animation: sm-tw 4.5s ease-in-out var(--d) infinite;
-}
-@keyframes sm-tw {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.25;
-  }
-}
-.sm-svg.dim .sm-star {
-  opacity: 0.18 !important;
-}
-.sm-tags .tag {
-  font-family: var(--font-mono), "Space Mono", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  fill: rgba(239, 228, 200, 0.55);
-}
-.sm-tags .sub {
-  font-size: 10.5px;
-  fill: rgba(239, 228, 200, 0.4);
-}
 
-/* 觀測線：慢慢從左掃到右 */
-.sm-scan {
-  animation: sm-scan 11s linear infinite;
+/* 觀測線：繞北極轉，掃過的名詞星閃一下 */
+.sm-sweep {
+  transform-box: view-box;
+  animation: sm-rot 18s linear infinite;
   pointer-events: none;
 }
-.sm-scan line {
-  stroke: rgba(76, 184, 176, 0.35);
+.sm-sweep line {
+  stroke: rgba(19, 106, 100, 0.55);
 }
-@keyframes sm-scan {
-  from {
-    transform: translateX(0);
-  }
+.sm-sweep .trail {
+  fill: #136a64;
+}
+@keyframes sm-rot {
   to {
-    transform: translateX(1290px);
+    transform: rotate(360deg);
   }
+}
+.sm-blips circle {
+  fill: none;
+  stroke: #136a64;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sm-blip 18s linear infinite;
+}
+@keyframes sm-blip {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.55);
+  }
+  5% {
+    opacity: 0.35;
+    transform: scale(1.15);
+  }
+  10%,
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+.sm-svg.busy .sm-sweep,
+.sm-svg.busy .sm-blips {
+  opacity: 0.25;
 }
 
-/* 選取時疊上去的東西 */
+/* 疊在紙上的東西：墨色、紙色描邊 */
 .sm-overlay {
   pointer-events: none;
 }
-.sm-overlay .cross {
-  stroke: rgba(239, 228, 200, 0.22);
-  stroke-dasharray: 2 4;
+.sm-overlay circle {
+  fill: none;
+}
+.sm-overlay .near {
+  stroke: rgba(29, 26, 22, 0.45);
+}
+.sm-overlay .hitring {
+  stroke: #b0401f;
+}
+.sm-overlay .polar line,
+.sm-overlay .polar circle {
+  stroke: rgba(19, 106, 100, 0.6);
 }
 .sm-overlay .read {
   font-family: var(--font-mono), "Space Mono", monospace;
-  font-size: 10px;
   font-weight: 700;
-  fill: var(--teal);
+  fill: #136a64;
+  paint-order: stroke;
+  stroke: #efe6d1;
 }
 .sm-overlay .con {
-  fill: none;
-  stroke: rgba(239, 228, 200, 0.35);
-  stroke-width: 0.8;
-}
-.sm-overlay .link {
-  stroke-width: 1.3;
+  opacity: 0.85;
 }
 .sm-overlay .link.concept {
-  stroke: var(--gold);
+  stroke: #9a6c00;
 }
 .sm-overlay .link.same {
-  stroke: rgba(239, 228, 200, 0.75);
-  stroke-dasharray: 4 3;
-}
-.sm-overlay .ring,
-.sm-overlay .hov {
-  fill: none;
-  stroke: rgba(239, 228, 200, 0.7);
-  stroke-width: 1;
-}
-.sm-overlay .hitring {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 1.2;
+  stroke: rgba(29, 26, 22, 0.75);
 }
 .sm-overlay .pulse {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 1.5;
   transform-box: fill-box;
   transform-origin: center;
   animation: sm-pulse 1.6s ease-out infinite;
@@ -262,37 +242,64 @@
     opacity: 1;
   }
   to {
-    transform: scale(1.8);
+    transform: scale(2);
     opacity: 0;
   }
 }
 .sm-overlay .bracket {
   fill: none;
-  stroke: var(--gold);
-  stroke-width: 1.5;
+  stroke: #1d1a16;
 }
 .sm-overlay .lab {
-  font-size: 12px;
-  font-weight: 700;
-  fill: var(--star);
+  font-weight: 800;
+  fill: #1d1a16;
   paint-order: stroke;
-  stroke: var(--sky);
-  stroke-width: 3px;
-}
-.sm-overlay .lab.cur {
-  font-size: 13.5px;
-  fill: var(--gold);
+  stroke: #efe6d1;
+  stroke-linejoin: round;
 }
 
 .sm-foot {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   gap: 6px 16px;
-  margin-top: 6px;
+  margin-top: 12px;
   font-size: 10.5px;
   color: hsl(var(--muted-foreground));
   letter-spacing: 0.04em;
+}
+.sm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.sm-legend button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+.sm-legend button i {
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+}
+.sm-legend button span {
+  opacity: 0.7;
+}
+.sm-legend button:hover,
+.sm-legend button[aria-pressed="true"] {
+  color: hsl(var(--foreground));
+  border-bottom-color: var(--gold);
 }
 .sm-foot .ln {
   display: inline-block;
@@ -305,13 +312,15 @@
 .sm-foot .ln.same {
   border-top: 1.5px dashed hsl(var(--muted-foreground));
 }
-.sm-foot .sp {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin: 0 4px 1px 10px;
-  background: hsl(var(--muted-foreground));
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+.sm-credit {
+  margin-top: 6px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+}
+.sm-credit a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* 右側面板：終端機 */
@@ -329,6 +338,47 @@
   font-weight: 700;
   color: var(--teal);
   letter-spacing: 0.05em;
+}
+/* 選到的星在紙上的原樣（1:1 放大） */
+.sm-zoom {
+  position: relative;
+  height: 170px;
+  margin-top: 10px;
+  background-color: #e7dcc4;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+.sm-zoom::before,
+.sm-zoom::after {
+  content: "";
+  position: absolute;
+  background: rgba(19, 106, 100, 0.55);
+}
+.sm-zoom::before {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  -webkit-mask: linear-gradient(to right, #000 0 calc(50% - 16px), transparent calc(50% - 16px) calc(50% + 16px), #000 calc(50% + 16px));
+  mask: linear-gradient(to right, #000 0 calc(50% - 16px), transparent calc(50% - 16px) calc(50% + 16px), #000 calc(50% + 16px));
+}
+.sm-zoom::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  -webkit-mask: linear-gradient(to bottom, #000 0 calc(50% - 16px), transparent calc(50% - 16px) calc(50% + 16px), #000 calc(50% + 16px));
+  mask: linear-gradient(to bottom, #000 0 calc(50% - 16px), transparent calc(50% - 16px) calc(50% + 16px), #000 calc(50% + 16px));
+}
+.sm-zoom span {
+  position: absolute;
+  left: 6px;
+  bottom: 4px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #136a64;
+  background: rgba(239, 230, 209, 0.85);
+  padding: 0 4px;
 }
 .sm-path {
   display: flex;
@@ -471,13 +521,16 @@
   color: var(--gold);
 }
 @media (prefers-reduced-motion: reduce) {
-  .sm-star.tw .dot,
-  .sm-scan,
+  .sm-sweep,
+  .sm-blips circle,
   .sm-overlay .pulse,
   .sm-swap {
     animation: none;
   }
-  .sm-scan {
+  .sm-sweep {
     display: none;
+  }
+  .sm-blips circle {
+    opacity: 0.3;
   }
 }
