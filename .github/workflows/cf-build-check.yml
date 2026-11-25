@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - redesign-life-notes
+      - feat/forest # 暫時：查 Cloudflare 建置失敗，上線前拿掉
   workflow_dispatch:
 
 jobs:
