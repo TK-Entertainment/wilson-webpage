@@ -133,88 +133,170 @@
     repeating-linear-gradient(to bottom, transparent 0 2px, rgba(239, 228, 200, 0.03) 2px 3px),
     radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
 }
+/* 星空畫在 canvas；SVG 疊在上面放選取時的線和字 */
+.sm-cv {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 .sm-svg {
+  position: relative;
   display: block;
   width: 100%;
   height: auto;
   cursor: crosshair;
 }
-/* 盤面：同心圓、方位線、刻度、十二支 */
-.sm-grid line,
-.sm-grid circle {
-  fill: none;
-  stroke: rgba(239, 228, 200, 0.06);
+.sm-svg.zoomed {
+  cursor: grab;
 }
-.sm-ticks line,
-.sm-ticks circle {
-  fill: none;
-  stroke: rgba(239, 228, 200, 0.28);
+.sm-svg.zoomed:active {
+  cursor: grabbing;
 }
-.sm-ticks text {
-  font-weight: 700;
-  fill: rgba(239, 228, 200, 0.4);
+.sm-svg .sm-overlay {
+  transition: opacity 0.25s;
 }
-
-/* 星：古星圖上的每一顆都畫，名詞星亮一點，帶光芒的有跨科連線 */
-.sm-bg circle {
-  fill: var(--star);
-  opacity: 0.22;
-}
-.sm-star {
-  fill: var(--star);
-  opacity: 0.62;
-}
-.sm-star.linked {
-  opacity: 0.95;
-}
-.sm-svg.busy .sm-star,
-.sm-svg.busy .sm-bg circle {
-  opacity: 0.16;
-}
-
-/* 觀測線：繞北極轉，掃過的名詞星閃一下 */
-.sm-sweep {
-  transform-box: view-box;
-  animation: sm-rot 18s linear infinite;
-  pointer-events: none;
-}
-.sm-sweep line {
-  stroke: rgba(76, 184, 176, 0.45);
-}
-.sm-sweep .trail {
-  fill: #4cb8b0;
-}
-@keyframes sm-rot {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.sm-blips circle {
-  fill: none;
-  stroke: #4cb8b0;
+.sm-svg.hide .sm-overlay {
   opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: sm-blip 18s linear infinite;
 }
-@keyframes sm-blip {
+
+/* 左上角讀數：描星進度、曝光時間（文字由動畫迴圈直接寫） */
+.sm-read {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(76, 184, 176, 0.45);
+}
+/* 右上角：曝光、縮放 */
+.sm-ctl {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.sm-ctl button {
+  min-width: 28px;
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid rgba(239, 228, 200, 0.22);
+  background: rgba(20, 26, 43, 0.75);
+  color: rgba(239, 228, 200, 0.8);
+  font: inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.sm-ctl button:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.sm-ctl button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.sm-ctl span {
+  margin-left: 4px;
+  color: var(--teal);
+}
+/* 完成星座、接到流星：上方閃一條訊息 */
+.sm-toast {
+  position: absolute;
+  top: 44px;
+  left: 50%;
+  max-width: calc(100% - 24px);
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid var(--c);
+  border-left-width: 3px;
+  background: rgba(20, 26, 43, 0.88);
+  color: var(--star);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation:
+    sm-toast-in 0.3s steps(3) both,
+    sm-toast-out 0.5s 3.1s ease-in forwards;
+}
+.sm-toast b {
+  color: var(--c);
+  margin-right: 6px;
+}
+@keyframes sm-toast-in {
   0% {
-    opacity: 0.8;
-    transform: scale(0.55);
-  }
-  5% {
-    opacity: 0.3;
-    transform: scale(1.15);
-  }
-  10%,
-  100% {
     opacity: 0;
-    transform: scale(1.25);
+    transform: translateX(-48%);
+    filter: drop-shadow(-3px 0 var(--orange)) drop-shadow(3px 0 var(--teal));
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%);
+    filter: none;
   }
 }
-.sm-svg.busy .sm-sweep,
-.sm-svg.busy .sm-blips {
-  opacity: 0.3;
+@keyframes sm-toast-out {
+  to {
+    opacity: 0;
+  }
+}
+/* 手機：選取的星在星圖下緣先給一行，點了再捲到面板 */
+.sm-cap {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .sm-cap {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+    padding: 7px 10px;
+    border: 0;
+    border-left: 3px solid var(--c);
+    background: rgba(20, 26, 43, 0.9);
+    color: var(--star);
+    text-align: left;
+    cursor: pointer;
+  }
+  .sm-cap .font-mono-label {
+    flex: none;
+    font-size: 10px;
+    color: rgba(239, 228, 200, 0.6);
+  }
+  .sm-cap b {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sm-cap .d {
+    order: 3;
+    flex-basis: 100%;
+    min-width: 0;
+    font-size: 12px;
+    color: rgba(239, 228, 200, 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* 選取時疊上去的東西 */
@@ -253,8 +335,75 @@
   paint-order: stroke;
   stroke: var(--sky);
 }
+/* 星座：線一條一條畫出來（pathLength=1），星一顆一顆點亮；完成時整個閃三下 */
 .sm-overlay .con {
+  fill: none;
+  opacity: 0.75;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: sm-draw 0.32s ease-out both;
+}
+@keyframes sm-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+.sm-overlay .ign {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sm-ign 0.45s ease-out both;
+}
+@keyframes sm-ign {
+  0% {
+    opacity: 0;
+    transform: scale(3.5);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+.sm-overlay .flash .con {
+  animation: sm-flash 0.5s 3 ease-in-out;
+}
+@keyframes sm-flash {
+  50% {
+    opacity: 1;
+    stroke-width: 3px;
+    filter: drop-shadow(0 0 4px var(--gold));
+  }
+}
+/* 連到畫面外的星：邊緣的箭頭 */
+.sm-overlay .ptr {
+  pointer-events: all;
+  cursor: pointer;
+}
+.sm-overlay .ptr .hit {
+  fill: transparent;
+  stroke: none;
+}
+.sm-overlay .ptr path {
+  fill: var(--gold);
+}
+.sm-overlay .ptr.same path {
+  fill: rgba(239, 228, 200, 0.75);
+}
+.sm-overlay .ptr text {
+  font-weight: 700;
+  fill: var(--gold);
+  paint-order: stroke;
+  stroke: var(--sky);
+  stroke-linejoin: round;
+}
+.sm-overlay .ptr.same text {
+  fill: var(--star);
+}
+.sm-overlay .ptr .tag {
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 0.75em;
   opacity: 0.7;
+}
+.sm-overlay .ptr:hover path {
+  filter: drop-shadow(0 0 3px var(--gold));
 }
 .sm-overlay .link.concept {
   stroke: var(--gold);
@@ -295,6 +444,15 @@
 }
 .sm-overlay .lab.cur {
   fill: var(--gold);
+}
+/* 放大時浮出的名字 */
+.sm-overlay .lab.dim {
+  font-weight: 500;
+  fill: rgba(239, 228, 200, 0.5);
+}
+.sm-overlay .lab.mate {
+  font-weight: 500;
+  fill: rgba(239, 228, 200, 0.85);
 }
 
 .sm-foot {
@@ -409,6 +567,29 @@
 .sm-desc {
   font-size: 14.5px;
   line-height: 1.75;
+}
+.sm-prog {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 10.5px;
+  color: hsl(var(--muted-foreground));
+}
+.sm-prog i {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, var(--c) calc(var(--k) * 100%), hsl(var(--border)) 0);
+}
+.sm-reset {
+  margin-left: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
 .sm-sec {
   margin-top: 16px;
@@ -527,13 +708,12 @@
   color: var(--gold);
 }
 @media (prefers-reduced-motion: reduce) {
-  .sm-sweep,
-  .sm-blips circle,
   .sm-overlay .pulse,
+  .sm-overlay .con,
+  .sm-overlay .ign,
+  .sm-overlay .flash .con,
+  .sm-toast,
   .sm-swap {
     animation: none;
-  }
-  .sm-sweep {
-    display: none;
   }
 }
