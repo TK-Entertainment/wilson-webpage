@@ -164,7 +164,7 @@
 /* 左上角讀數：描星進度、曝光時間（文字由動畫迴圈直接寫） */
 .sm-read {
   position: absolute;
-  top: 10px;
+  top: 42px;
   left: 12px;
   margin: 0;
   font-size: 10.5px;
@@ -204,9 +204,144 @@
   opacity: 0.35;
   cursor: default;
 }
-.sm-ctl span {
+.sm-ctl > span {
   margin-left: 4px;
   color: var(--teal);
+}
+.sm-ctl button[aria-pressed="true"] {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+/* 左上角：尋星 */
+.sm-ctl.l {
+  right: auto;
+  left: 10px;
+}
+.sm-ctl .quest {
+  border-color: rgba(214, 165, 60, 0.55);
+  color: var(--gold);
+}
+@media (max-width: 560px) {
+  .sm-ctl .tx {
+    display: none;
+  }
+}
+
+/* 尋星的題目卡：桌機放在右邊面板最上面，手機放在星圖正下方（不蓋到星） */
+.sm-quest {
+  margin-top: 8px;
+  padding: 10px 12px 10px 14px;
+  border: 1px solid rgba(239, 228, 200, 0.18);
+  border-left: 3px solid var(--c);
+  background: rgba(20, 26, 43, 0.94);
+  color: var(--star);
+  transition: opacity 0.25s;
+}
+.sm-quest.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+.sm-quest.hud {
+  display: none;
+  margin: 0 0 16px;
+}
+@media (min-width: 1101px) {
+  .sm-quest.frame {
+    display: none;
+  }
+  .sm-quest.hud {
+    display: block;
+  }
+}
+.sm-quest p {
+  margin: 0;
+}
+.sm-quest .qh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+.sm-quest .qh b {
+  color: var(--gold);
+}
+.sm-quest .qh span {
+  color: rgba(239, 228, 200, 0.55);
+}
+.sm-quest .qh button {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  color: rgba(239, 228, 200, 0.6);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sm-quest .qc {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.sm-quest .qc b {
+  color: var(--c);
+}
+.sm-quest .qi {
+  margin-top: 6px;
+  font-size: 10.5px;
+  color: rgba(239, 228, 200, 0.6);
+}
+.sm-quest .qr {
+  margin-top: 8px;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--star);
+}
+/* 手機尋星時，題目卡在星圖下面，右邊面板沒有東西就收起來 */
+@media (max-width: 1100px) {
+  .sm-hud.q {
+    display: none;
+  }
+}
+.sm-quest .qm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--teal);
+}
+.sm-quest .cells {
+  letter-spacing: 0.08em;
+  color: rgba(239, 228, 200, 0.3);
+}
+.sm-quest .cells b {
+  color: var(--gold);
+  font-weight: 400;
+}
+.sm-quest .qm .n {
+  margin-left: auto;
+  color: rgba(239, 228, 200, 0.5);
+}
+.sm-quest .qa {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.sm-quest .qa button {
+  padding: 3px 10px;
+  border: 1px solid rgba(239, 228, 200, 0.25);
+  background: none;
+  color: var(--star);
+  font-family: var(--font-mono), "Space Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.sm-quest .qa button:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 /* 完成星座、接到流星：上方閃一條訊息 */
 .sm-toast {
@@ -449,6 +584,22 @@
 .sm-overlay .lab.dim {
   font-weight: 500;
   fill: rgba(239, 228, 200, 0.5);
+}
+/* 尋星點錯的那顆：橘色叉，抖一下 */
+.sm-overlay .miss path {
+  fill: none;
+  stroke: var(--orange);
+}
+.sm-overlay .miss {
+  animation: sm-shake 0.3s;
+}
+@keyframes sm-shake {
+  25% {
+    transform: translateX(-0.4%);
+  }
+  75% {
+    transform: translateX(0.4%);
+  }
 }
 .sm-overlay .lab.mate {
   font-weight: 500;
@@ -712,6 +863,7 @@
   .sm-overlay .con,
   .sm-overlay .ign,
   .sm-overlay .flash .con,
+  .sm-overlay .miss,
   .sm-toast,
   .sm-swap {
     animation: none;

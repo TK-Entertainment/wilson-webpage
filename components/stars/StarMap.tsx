@@ -5,13 +5,30 @@
 // 星空畫在 canvas（星點、閃爍、觀測線、星軌、流星、跨科跳躍的彗星），選取時的線和字疊在上面的 SVG。
 // 互動參考：WikiGalaxy 點星就飛進星群、Skyrim 技能星座「點過的星會亮」、長時間曝光的星軌照片、星座早見盤。
 // 平常全是灰白的星點，選取時才上色（網站風格：科技、日式、雜訊）。
+// 尋星任務：每天 3 題（大家同一組，像 Wordle），只給名詞的定義，在天上找出那顆星。
+// 網址 ?p=課/頁&t=名詞序號 可以直接飛到某顆星（筆記頁「在星圖上看」用的就是這個）。
 // 資料：scripts/stars-chart.py 找星點 → scripts/stars-data.mjs 分配名詞（starData.json）
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { courseColor } from "@/utils/palette";
+import { makeSfx, type Sfx } from "./sfx";
 
-type Term = { i: number; name: string; desc: string; x: number; y: number; r: number };
-type Chapter = { page: string; code: string; title: string; url: string; terms: Term[]; edges: number[][] }; // edges：星座的線，用名詞的 i 表示
+type Term = {
+  i: number;
+  name: string;
+  desc: string;
+  x: number;
+  y: number;
+  r: number;
+};
+type Chapter = {
+  page: string;
+  code: string;
+  title: string;
+  url: string;
+  terms: Term[];
+  edges: number[][];
+}; // edges：星座的線，用名詞的 i 表示
 type Subject = { id: string; name: string; chapters: Chapter[] };
 type LinkT = { a: string; b: string; kind: "same" | "concept"; why?: string };
 type Chart = {
@@ -26,7 +43,12 @@ type Chart = {
   nPoints: number;
   bg: number[][]; // 沒放名詞的星點 [x, y, 墨點大小]
 };
-export type StarData = { generated: string; subjects: Subject[]; links: LinkT[]; chart: Chart };
+export type StarData = {
+  generated: string;
+  subjects: Subject[];
+  links: LinkT[];
+  chart: Chart;
+};
 
 type Star = {
   id: string;
@@ -43,7 +65,20 @@ type Star = {
 };
 type Cam = { x: number; y: number; w: number }; // 鏡頭：畫面中心和寬度（星圖座標）
 // canvas 上的每一顆星。kind：0 背景星、1 名詞星、2 有跨科連線的名詞星
-type Dot = { x: number; y: number; r: number; kind: number; id: string | null; a: number; th: number; d: number; amp: number; lum: number; w: number; ph: number };
+type Dot = {
+  x: number;
+  y: number;
+  r: number;
+  kind: number;
+  id: string | null;
+  a: number;
+  th: number;
+  d: number;
+  amp: number;
+  lum: number;
+  w: number;
+  ph: number;
+};
 type Toast = { key: number; head: string; text: string; color: string };
 type Anim = {
   intro: number; // 開場描星開始的時間（秒），-1＝還沒開始
@@ -55,7 +90,22 @@ type Anim = {
   meteor: { x0: number; y0: number; x1: number; y1: number; t0: number } | null;
   nextMeteor: number;
   busy: number; // 選取時星空變暗的程度（0–1，慢慢過渡）
+  burst: { x: number; y: number; t0: number } | null; // 尋星找到時的星爆
 };
+// 尋星任務。phase：seek 還在找、shown 找到（或看了答案）
+type Quest = {
+  kind: "daily" | "free";
+  day: string;
+  ids: string[];
+  idx: number;
+  tries: number;
+  total: number;
+  res: number[];
+  phase: "seek" | "shown";
+  prox: number | null;
+  trend: number;
+};
+type QLog = { day: string; streak: number; res: number[] }; // 最後一次完成每日尋星
 
 const SWEEP = 18; // 觀測線轉一圈的秒數
 const INTRO = 2.6; // 開場：觀測線快轉一圈，把星描上去
@@ -65,8 +115,16 @@ const JUMP = 1.5; // 跨科跳躍
 const METEOR = 0.9;
 const SIDEREAL = 23 * 60 + 56; // 一個恆星日（分）
 const STORE = "ks-seen-v1";
+const QSTORE = "ks-quest-v1";
+const SND = "ks-sound";
+const BURST = 1.4;
 const POOL = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ0123456789";
-const TAG: Record<string, string> = { geochemistry: "GEOCHEM", "structural-geology": "STRUCT", mineralogy: "MINERAL", "earth-materials": "EARTH-MAT" };
+const TAG: Record<string, string> = {
+  geochemistry: "GEOCHEM",
+  "structural-geology": "STRUCT",
+  mineralogy: "MINERAL",
+  "earth-materials": "EARTH-MAT",
+};
 // 古星圖外圈的十二支（子在上、卯在左、午在下、酉在右）
 const BRANCH = ["子", "亥", "戌", "酉", "申", "未", "午", "巳", "辰", "卯", "寅", "丑"];
 const SK = "239,228,200"; // 星的顏色
@@ -117,10 +175,39 @@ const now = () => performance.now() / 1000;
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 // 點到線段的距離
 const segDist = (x: number, y: number, x0: number, y0: number, x1: number, y1: number) => {
-  const dx = x1 - x0, dy = y1 - y0, L = dx * dx + dy * dy || 1;
+  const dx = x1 - x0,
+    dy = y1 - y0,
+    L = dx * dx + dy * dy || 1;
   const k = clamp(((x - x0) * dx + (y - y0) * dy) / L, 0, 1);
   return Math.hypot(x - x0 - k * dx, y - y0 - k * dy);
 };
+// 台北的日期（每日尋星照這個換題）
+const taipeiDay = (ms = Date.now()) => new Date(ms + 8 * 3600e3).toISOString().slice(0, 10);
+const prevDay = (d: string) => new Date(Date.parse(d) - 864e5).toISOString().slice(0, 10);
+// 用字串當種子的亂數：同一天每個人抽到同一組題目
+const rng = (seed: string) => {
+  let h = 1779033703 ^ seed.length;
+  for (const c of seed) {
+    h = Math.imul(h ^ c.charCodeAt(0), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return () => {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  };
+};
+// 尋星題型：def＝給中文定義、en＝給英文名；定義太短或是公式（有等號）的不出題
+const clueKind = (S: Star) => (/[一-鿿]/.test(S.term.desc) ? (S.term.desc.length >= 8 && !/[=＝]/.test(S.term.desc) ? "def" : null) : S.term.desc.length >= 4 ? "en" : null);
+// 外圈課名的方位：太靠近十二支的字就往旁邊挪
+const tagAngle = (a0: number, a1: number) => {
+  const m = (a0 + a1) / 2,
+    k = Math.round(m / (Math.PI / 6)) * (Math.PI / 6);
+  return Math.abs(m - k) < 0.17 ? k + (m >= k ? 0.17 : -0.17) : m;
+};
+// 沿著圓周寫字：下半圈轉 180°，字才不會倒過來
+const tagTurn = (m: number) => (m > Math.PI / 2 && m < (3 * Math.PI) / 2 ? m - Math.PI : m);
 
 // 換目標時，字先變成亂碼再一個一個解出來
 function Scramble({ text }: { text: string }) {
@@ -166,6 +253,10 @@ export default function StarMap({ data }: { data: StarData }) {
   const [mode, setMode] = useState<"idle" | "expose" | "jump">("idle"); // 長曝光、跨科跳躍時先把疊圖收起來
   const [toast, setToast] = useState<Toast | null>(null);
   const [reduced, setReduced] = useState(false);
+  const [sound, setSound] = useState(false);
+  const [quest, setQuest] = useState<Quest | null>(null);
+  const [qlog, setQlog] = useState<QLog | null>(null);
+  const [miss, setMiss] = useState<{ id: string; key: number } | null>(null); // 尋星時點錯的那顆
   const boxRef = useRef<HTMLDivElement>(null);
   const cvRef = useRef<HTMLCanvasElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -173,11 +264,58 @@ export default function StarMap({ data }: { data: StarData }) {
   const readRef = useRef<HTMLParagraphElement>(null);
   const camRef = useRef(cam);
   const seenRef = useRef(seen);
-  const anim = useRef<Anim>({ intro: -1, sweep0: 0, expo: -1, expoOn: false, fly: null, jump: null, meteor: null, nextMeteor: 0, busy: 0 });
-  const live = useRef({ busy: false, seen: seen, done: [] as Chapter[], dirty: true });
-  const cb = useRef<{ cam: (c: Cam) => void; endJump: (b: Star) => void; endExpo: () => void; esc: () => void }>({ cam: () => {}, endJump: () => {}, endExpo: () => {}, esc: () => {} });
-  const drag = useRef<{ x: number; y: number; cam: Cam; moved: boolean } | null>(null);
+  const anim = useRef<Anim>({
+    intro: -1,
+    sweep0: 0,
+    expo: -1,
+    expoOn: false,
+    fly: null,
+    jump: null,
+    meteor: null,
+    nextMeteor: 0,
+    busy: 0,
+    burst: null,
+  });
+  const live = useRef({
+    busy: false,
+    quest: false,
+    seen: seen,
+    done: [] as Chapter[],
+    hl: [] as string[],
+    qt: null as number[] | null,
+    dirty: true,
+  });
+  const cb = useRef<{
+    cam: (c: Cam) => void;
+    endJump: (b: Star) => void;
+    endExpo: () => void;
+    esc: () => void;
+    meteor: () => void;
+    deep: (id: string) => void;
+  }>({
+    cam: () => {},
+    endJump: () => {},
+    endExpo: () => {},
+    esc: () => {},
+    meteor: () => {},
+    deep: () => {},
+  });
+  const drag = useRef<{
+    x: number;
+    y: number;
+    cam: Cam;
+    moved: boolean;
+  } | null>(null);
   const dragged = useRef(false);
+  // 手機雙指縮放：記住每根手指的位置
+  const pts = useRef(new Map<number, { x: number; y: number }>());
+  const pinch = useRef<{ d: number; mx: number; my: number; cam: Cam } | null>(null);
+  const deepRef = useRef<string | null>(null); // 網址指定的星：開場描完星再飛過去
+  const sfx = useRef<Sfx | null>(null);
+  const snd = useRef(false);
+  const play = (f: (s: Sfx) => void) => {
+    if (snd.current) f((sfx.current ??= makeSfx()));
+  };
 
   const A = picked ? byId.get(picked) : undefined;
   const Hv = hover && hover !== picked ? byId.get(hover) : undefined;
@@ -198,24 +336,40 @@ export default function StarMap({ data }: { data: StarData }) {
   // 鏡頭不能拉出圓盤外
   const fit = (c: Cam): Cam => {
     const w = clamp(c.w, (2 * R) / 8, 2 * R);
-    return { w, x: clamp(c.x, cx - R + w / 2, cx + R - w / 2), y: clamp(c.y, cy - R + w / 2, cy + R - w / 2) };
+    return {
+      w,
+      x: clamp(c.x, cx - R + w / 2, cx + R - w / 2),
+      y: clamp(c.y, cy - R + w / 2, cy + R - w / 2),
+    };
   };
   // 飛過去：中心直線移動、寬度照對數內插；距離遠時中途先拉遠一點，才看得出是從哪裡飛到哪裡
   const flyTo = (to: Cam, dur = 0.9) => {
-    const f = fit(to), from = camRef.current;
+    const f = fit(to),
+      from = camRef.current;
     if (reduced) {
       anim.current.fly = null;
       setCam(f);
       return;
     }
     const dist = Math.hypot(f.x - from.x, f.y - from.y);
-    anim.current.fly = { from, to: f, t0: now(), dur, bump: clamp((dist / Math.max(from.w, f.w)) * 0.5, 0, 0.9) };
+    anim.current.fly = {
+      from,
+      to: f,
+      t0: now(),
+      dur,
+      bump: clamp((dist / Math.max(from.w, f.w)) * 0.5, 0, 0.9),
+    };
   };
   // 一頁筆記的星座剛好填滿畫面
   const frameOf = (ch: Chapter): Cam => {
-    const xs = ch.terms.map((t) => t.x), ys = ch.terms.map((t) => t.y);
+    const xs = ch.terms.map((t) => t.x),
+      ys = ch.terms.map((t) => t.y);
     const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
-    return { x: (x0 + x1) / 2, y: (y0 + y1) / 2, w: clamp(Math.max(x1 - x0, y1 - y0) * 1.8 + 0.2 * edge, (2 * R) / 7, 2 * R * 0.8) };
+    return {
+      x: (x0 + x1) / 2,
+      y: (y0 + y1) / 2,
+      w: clamp(Math.max(x1 - x0, y1 - y0) * 1.8 + 0.2 * edge, (2 * R) / 7, 2 * R * 0.8),
+    };
   };
 
   const adj = useMemo(() => {
@@ -232,7 +386,13 @@ export default function StarMap({ data }: { data: StarData }) {
   const sky = useMemo(() => {
     const dots: Dot[] = [
       ...chart.bg.map(([x, y, r]) => ({ x, y, r, kind: 0, id: null })),
-      ...stars.map((s) => ({ x: s.x, y: s.y, r: s.r, kind: adj.has(s.id) ? 2 : 1, id: s.id })),
+      ...stars.map((s) => ({
+        x: s.x,
+        y: s.y,
+        r: s.r,
+        kind: adj.has(s.id) ? 2 : 1,
+        id: s.id,
+      })),
     ].map((p, i) => ({
       ...p,
       a: (Math.atan2(p.x - cx, -(p.y - cy)) + TAU) % TAU,
@@ -257,6 +417,16 @@ export default function StarMap({ data }: { data: StarData }) {
       ),
     [data, stars],
   );
+  // 外圈的課名（canvas 平常畫灰的；選到那門課時 SVG 換成課程色）
+  const tags = useMemo(
+    () =>
+      data.subjects.map((S) => ({
+        id: S.id,
+        tag: TAG[S.id] ?? S.id,
+        m: tagAngle(...sectors.get(S.id)!),
+      })),
+    [data, sectors],
+  );
   const nCh = useMemo(() => data.subjects.reduce((a, S) => a + S.chapters.length, 0), [data]);
   // 名詞全部點過的頁＝完成的星座
   const done = useMemo(() => data.subjects.flatMap((S) => S.chapters.filter((ch) => ch.terms.every((t) => seen.has(`${S.id}/${ch.page}#${t.i}`)))), [data, seen]);
@@ -268,7 +438,7 @@ export default function StarMap({ data }: { data: StarData }) {
     const inDesc = stars.filter((s) => !s.term.name.toLowerCase().includes(query) && s.term.desc.toLowerCase().includes(query));
     return [...inName, ...inDesc];
   }, [query, stars]);
-  const near = A ? adj.get(A.id) ?? [] : [];
+  const near = A ? (adj.get(A.id) ?? []) : [];
 
   // 點過的星記在瀏覽器裡（只有自己看得到）；一頁的名詞全點過就完成那個星座
   const markSeen = (S: Star) => {
@@ -281,13 +451,32 @@ export default function StarMap({ data }: { data: StarData }) {
       localStorage.setItem(STORE, JSON.stringify([...n]));
     } catch {}
     const pre = `${S.subj.id}/${S.ch.page}#`;
-    if (S.ch.terms.every((t) => n.has(pre + t.i)))
-      setToast({ key: Date.now(), head: "CONSTELLATION COMPLETE", text: `${TAG[S.subj.id] ?? S.subj.id} ${S.ch.code} ${S.ch.title} · ${S.ch.terms.length}/${S.ch.terms.length}`, color: S.color });
+    if (S.ch.terms.every((t) => n.has(pre + t.i))) {
+      setToast({
+        key: Date.now(),
+        head: "CONSTELLATION COMPLETE",
+        text: `${TAG[S.subj.id] ?? S.subj.id} ${S.ch.code} ${S.ch.title} · ${S.ch.terms.length}/${S.ch.terms.length}`,
+        color: S.color,
+      });
+      play((s) => s.chord(S.rho, 0.5 + S.ch.edges.length * Math.min(0.07, 1.2 / S.ch.terms.length)));
+    }
   };
+  const rhoOf = (t: Term) => Math.hypot(t.x - cx, t.y - cy) / edge;
   const select = (id: string | null, fly = true) => {
+    const prev = picked ? byId.get(picked) : undefined;
     setPicked(id);
     const S = id ? byId.get(id) : undefined;
     if (!S) return;
+    // 換到另一個星座時，線一條一條畫出來，每條一個音
+    play((s) => {
+      s.star(S.rho);
+      if (prev?.ch !== S.ch)
+        s.arp(
+          S.ch.edges.map(([, j]) => rhoOf(S.ch.terms[j])),
+          0.3,
+          Math.min(0.07, 1.2 / S.ch.terms.length),
+        );
+    });
     markSeen(S);
     if (fly) flyTo(frameOf(S.ch));
   };
@@ -300,6 +489,7 @@ export default function StarMap({ data }: { data: StarData }) {
     anim.current.jump = { a: A, b: B, t0: now(), gold: link?.kind !== "same" };
     setMode("jump");
     setHover(null);
+    play((s) => s.comet(JUMP));
     flyTo(frameOf(B.ch), JUMP);
   };
   // 長曝光：星空繞北極轉一整圈，留下星軌
@@ -308,6 +498,130 @@ export default function StarMap({ data }: { data: StarData }) {
     Object.assign(anim.current, { expo: now(), expoOn: true });
     setMode("expose");
     setHover(null);
+    play((s) => s.expose(EXPO));
+  };
+  const toggleSound = () => {
+    const v = !snd.current;
+    snd.current = v;
+    setSound(v);
+    try {
+      localStorage.setItem(SND, v ? "1" : "0");
+    } catch {}
+    if (v) {
+      (sfx.current ??= makeSfx()).ready();
+      sfx.current.star(0.3);
+    }
+  };
+
+  // ── 尋星任務 ──
+  // 題目有兩種：有中文定義的給定義（定義裡出現名詞本身就遮掉）；只有英文對照的（礦物學全是）給英文，找中文名詞
+  const pool = useMemo(() => stars.filter((s) => clueKind(s)), [stars]);
+  const clue = (S: Star) => {
+    const parts = S.term.name
+      .split(/[（）()、，,=／/\s]+/)
+      .filter((p) => p.length >= 2)
+      .sort((a, b) => b.length - a.length);
+    return parts.reduce((d, p) => d.split(p).join("〇〇"), S.term.desc);
+  };
+  // 三題各來自不同的課
+  const pickQuest = (seed: string) => {
+    const r = rng(seed),
+      subs = data.subjects.filter((S) => pool.some((s) => s.subj === S));
+    for (let i = subs.length - 1; i > 0; i--) {
+      const j = Math.floor(r() * (i + 1));
+      [subs[i], subs[j]] = [subs[j], subs[i]];
+    }
+    return subs.slice(0, 3).map((S) => {
+      const c = pool.filter((s) => s.subj === S);
+      return c[Math.floor(r() * c.length)].id;
+    });
+  };
+  const today = qlog ? taipeiDay() : "";
+  const streak = qlog && (qlog.day === today || qlog.day === prevDay(today)) ? qlog.streak : 0;
+  const QT = quest ? byId.get(quest.ids[quest.idx]) : undefined;
+  const qlvl = quest ? (quest.tries >= 6 ? 2 : quest.tries >= 3 ? 1 : 0) : 0; // 點錯越多次，提示越多
+  const startQuest = (free = false) => {
+    const day = taipeiDay();
+    const daily = !free && qlog?.day !== day;
+    setQuest({
+      kind: daily ? "daily" : "free",
+      day,
+      ids: pickQuest(daily ? `ks-${day}` : `free-${Date.now()}`),
+      idx: 0,
+      tries: 0,
+      total: 0,
+      res: [],
+      phase: "seek",
+      prox: null,
+      trend: 0,
+    });
+    setPicked(null);
+    setMiss(null);
+    setQ("");
+    flyTo(HOME);
+    play((s) => s.star(0.1));
+  };
+  const endQuest = () => {
+    setQuest(null);
+    setMiss(null);
+  };
+  // 找到（ok=1）或看答案（ok=0）
+  const solve = (ok: 0 | 1) => {
+    if (!quest || !QT) return;
+    const res = [...quest.res, ok],
+      total = quest.total + ok;
+    setQuest({ ...quest, res, total, phase: "shown" });
+    setMiss(null);
+    select(QT.id);
+    if (ok) {
+      if (!reduced) anim.current.burst = { x: QT.x, y: QT.y, t0: now() };
+      play((s) => s.found());
+      setToast({
+        key: Date.now(),
+        head: "FOUND",
+        text: `${quest.idx + 1}/${quest.ids.length} ${QT.term.name} · 點了 ${quest.tries + 1} 次`,
+        color: QT.color,
+      });
+    }
+    if (quest.idx === quest.ids.length - 1) play((s) => s.chord(0.2, 0.6));
+    if (quest.idx === quest.ids.length - 1 && quest.kind === "daily") {
+      const prev = qlog;
+      const st = prev?.day === quest.day ? prev.streak : prev?.day === prevDay(quest.day) ? prev.streak + 1 : 1;
+      const L: QLog = { day: quest.day, streak: st, res };
+      setQlog(L);
+      try {
+        localStorage.setItem(QSTORE, JSON.stringify(L));
+      } catch {}
+    }
+  };
+  const nextQuest = () => {
+    if (!quest) return;
+    setQuest({
+      ...quest,
+      idx: quest.idx + 1,
+      tries: 0,
+      phase: "seek",
+      prox: null,
+      trend: 0,
+    });
+    setPicked(null);
+    setMiss(null);
+    flyTo(HOME);
+  };
+  // 點錯：告訴你離答案多遠（點的那顆星和答案的距離）、比上一次近還是遠
+  const missQuest = (S: Star) => {
+    if (!quest || !QT) return;
+    const prox = 1 - clamp(Math.hypot(S.x - QT.x, S.y - QT.y) / edge / 0.8, 0, 1);
+    setQuest({
+      ...quest,
+      tries: quest.tries + 1,
+      total: quest.total + 1,
+      prox,
+      trend: quest.prox === null ? 0 : Math.sign(Math.round((prox - quest.prox) * 8)),
+    });
+    setMiss({ id: S.id, key: Date.now() });
+    markSeen(S);
+    play((s) => s.miss());
   };
 
   useEffect(() => {
@@ -327,7 +641,31 @@ export default function StarMap({ data }: { data: StarData }) {
         setSeen(n);
       }
     } catch {}
+    try {
+      const v = JSON.parse(localStorage.getItem(QSTORE) ?? "null");
+      if (v && typeof v.day === "string" && typeof v.streak === "number" && Array.isArray(v.res)) setQlog(v);
+    } catch {}
+    try {
+      if (localStorage.getItem(SND) === "1") snd.current = true;
+      setSound(snd.current);
+    } catch {}
+    // 網址 ?p=課/頁&t=名詞序號：描完星就飛過去
+    const u = new URLSearchParams(window.location.search),
+      p = u.get("p");
+    const id = p && `${p}#${Number(u.get("t")) || 0}`;
+    if (id && byId.has(id)) {
+      deepRef.current = id;
+      boxRef.current?.scrollIntoView({ block: "nearest" });
+    }
   }, [byId]);
+  // 選到的星寫進網址，複製網址就能分享
+  useEffect(() => {
+    if (deepRef.current || (!picked && !new URLSearchParams(window.location.search).has("p"))) return;
+    const S = picked ? byId.get(picked) : undefined;
+    const u = new URL(window.location.href);
+    u.search = S ? `?p=${S.subj.id}/${S.ch.page}&t=${S.term.i}` : "";
+    if (u.href !== window.location.href) window.history.replaceState(window.history.state, "", u.href);
+  }, [picked, byId]);
   useEffect(() => {
     if (!toast) return;
     const id = window.setTimeout(() => setToast(null), 3600);
@@ -335,7 +673,16 @@ export default function StarMap({ data }: { data: StarData }) {
   }, [toast]);
   // 每次 render 後把最新狀態交給動畫迴圈
   useEffect(() => {
-    Object.assign(live.current, { busy: !!(A || query || focus), seen, done, dirty: true });
+    const hl = [focus, A?.subj.id, quest?.phase === "seek" ? QT?.subj.id : null].filter((x): x is string => !!x);
+    Object.assign(live.current, {
+      busy: !!(A || query || focus),
+      quest: !!quest,
+      seen,
+      done,
+      hl,
+      qt: quest?.phase === "seek" && QT ? [QT.x, QT.y] : null,
+      dirty: true,
+    });
     cb.current = {
       cam: (c) => setCam(fit(c)),
       endJump: (b) => {
@@ -344,12 +691,15 @@ export default function StarMap({ data }: { data: StarData }) {
       },
       endExpo: () => setMode("idle"),
       esc: () => (picked ? setPicked(null) : zoomed && flyTo(HOME)),
+      meteor: () => play((s) => s.meteor()),
+      deep: (id) => select(id),
     };
   });
 
   // 動畫迴圈：整片星空每一格重畫
   useEffect(() => {
-    const cv = cvRef.current, box = boxRef.current;
+    const cv = cvRef.current,
+      box = boxRef.current;
     const ctx = cv?.getContext("2d");
     if (!cv || !box || !ctx) return;
     const css = getComputedStyle(box);
@@ -358,15 +708,21 @@ export default function StarMap({ data }: { data: StarData }) {
     const sans = css.fontFamily;
     const red = reducedMotion();
     const { dots, angles } = sky;
-    let visible = false, raf = 0;
+    let visible = false,
+      raf = 0;
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
       live.current.dirty = true;
     });
     io.observe(box);
     // 開發時給測試腳本用（正式建置會整段拿掉）
-    if (process.env.NODE_ENV === "development") (window as unknown as { __ks: unknown }).__ks = { anim: anim.current, cam: camRef };
-    const spark =(x: number, y: number, r: number) => {
+    if (process.env.NODE_ENV === "development")
+      (window as unknown as { __ks: unknown }).__ks = {
+        anim: anim.current,
+        cam: camRef,
+        live: live.current,
+      };
+    const spark = (x: number, y: number, r: number) => {
       const k = r * 0.22;
       ctx.moveTo(x, y - r);
       ctx.lineTo(x + k, y - k);
@@ -395,19 +751,31 @@ export default function StarMap({ data }: { data: StarData }) {
     const frame = (ms: number) => {
       raf = requestAnimationFrame(frame);
       if (!visible) return;
-      const t = ms / 1000, an = anim.current, L = live.current;
+      const t = ms / 1000,
+        an = anim.current,
+        L = live.current;
       if (an.intro < 0) {
         an.intro = red ? t - INTRO : t;
         an.sweep0 = an.intro + INTRO;
         an.nextMeteor = t + 10 + 10 * Math.random();
       }
       if (an.fly) {
-        const f = an.fly, k = ease(clamp((t - f.t0) / f.dur, 0, 1));
+        const f = an.fly,
+          k = ease(clamp((t - f.t0) / f.dur, 0, 1));
         const w = Math.exp(lerp(Math.log(f.from.w), Math.log(f.to.w), k)) * (1 + f.bump * Math.sin(Math.PI * k));
-        cb.current.cam({ x: lerp(f.from.x, f.to.x, k), y: lerp(f.from.y, f.to.y, k), w });
+        cb.current.cam({
+          x: lerp(f.from.x, f.to.x, k),
+          y: lerp(f.from.y, f.to.y, k),
+          w,
+        });
         if (k >= 1) an.fly = null;
       }
-      if (red && !L.dirty) return;
+      if (deepRef.current && t - an.intro >= INTRO) {
+        const id = deepRef.current;
+        deepRef.current = null;
+        cb.current.deep(id);
+      }
+      if (red && !L.dirty && !an.burst) return;
       L.dirty = false;
 
       const Wp = cv.clientWidth;
@@ -416,15 +784,24 @@ export default function StarMap({ data }: { data: StarData }) {
       if (cv.width !== Math.round(Wp * dpr)) cv.width = cv.height = Math.round(Wp * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, Wp, Wp);
-      const c = camRef.current, s = Wp / c.w, ox = c.x - c.w / 2, oy = c.y - c.w / 2;
-      const pcx = (cx - ox) * s, pcy = (cy - oy) * s, pe = edge * s;
-      const sc = clamp(Wp / 900, 0.55, 1), zs = ((2 * R) / c.w) ** 0.45;
+      const c = camRef.current,
+        s = Wp / c.w,
+        ox = c.x - c.w / 2,
+        oy = c.y - c.w / 2;
+      const pcx = (cx - ox) * s,
+        pcy = (cy - oy) * s,
+        pe = edge * s;
+      const sc = clamp(Wp / 900, 0.55, 1),
+        zs = ((2 * R) / c.w) ** 0.45;
       const dp = (r: number) => (0.55 + 0.2 * r) * sc * zs;
 
       // 開場：觀測線快轉一圈，掃過的地方才出現星
-      const ip = clamp((t - an.intro) / INTRO, 0, 1), front = easeOut(ip) * TAU, intro = ip < 1;
+      const ip = clamp((t - an.intro) / INTRO, 0, 1),
+        front = easeOut(ip) * TAU,
+        intro = ip < 1;
       // 長曝光：轉的角度 phi；轉滿一圈剛好回到原位，星軌再慢慢淡掉
-      let phi = 0, trail = 0;
+      let phi = 0,
+        trail = 0;
       if (an.expo >= 0) {
         const e = t - an.expo;
         if (e < EXPO) [phi, trail] = [ease(e / EXPO) * TAU, 1];
@@ -437,9 +814,12 @@ export default function StarMap({ data }: { data: StarData }) {
           if (trail <= 0) an.expo = -1;
         }
       }
-      const rot = phi >= TAU ? 0 : phi, cr = Math.cos(-rot), sr = Math.sin(-rot);
+      const rot = phi >= TAU ? 0 : phi,
+        cr = Math.cos(-rot),
+        sr = Math.sin(-rot);
       const P = (x: number, y: number) => {
-        const dx = x - cx, dy = y - cy;
+        const dx = x - cx,
+          dy = y - cy;
         return [pcx + (dx * cr - dy * sr) * s, pcy + (dx * sr + dy * cr) * s] as const;
       };
       an.busy += ((L.busy ? 1 : 0) - an.busy) * (red ? 1 : 0.18);
@@ -465,7 +845,8 @@ export default function StarMap({ data }: { data: StarData }) {
       ctx.moveTo(pcx + pe, pcy);
       ctx.arc(pcx, pcy, pe, 0, TAU);
       for (let i = 0; i < 72; i++) {
-        const f = (i * Math.PI) / 36, Lk = i % 6 ? 5 : 11;
+        const f = (i * Math.PI) / 36,
+          Lk = i % 6 ? 5 : 11;
         ctx.moveTo(pcx + pe * Math.sin(f), pcy - pe * Math.cos(f));
         ctx.lineTo(pcx + (pe + Lk) * Math.sin(f), pcy - (pe + Lk) * Math.cos(f));
       }
@@ -476,6 +857,19 @@ export default function StarMap({ data }: { data: StarData }) {
       ctx.textBaseline = "middle";
       ctx.fillStyle = `rgba(${SK},0.4)`;
       BRANCH.forEach((b, i) => ctx.fillText(b, pcx + lr * Math.sin((i * Math.PI) / 6), pcy - lr * Math.cos((i * Math.PI) / 6)));
+      // 外圈的課名：沿著圓周寫，選到那門課時改由 SVG 用課程色畫
+      ctx.font = `700 ${Math.min(10, 0.05 * pe)}px ${mono}`;
+      ctx.fillStyle = `rgba(${SK},0.42)`;
+      if ("letterSpacing" in ctx) ctx.letterSpacing = "0.12em";
+      for (const g of tags) {
+        if (L.hl.includes(g.id)) continue;
+        ctx.save();
+        ctx.translate(pcx + 1.125 * pe * Math.sin(g.m), pcy - 1.125 * pe * Math.cos(g.m));
+        ctx.rotate(tagTurn(g.m));
+        ctx.fillText(g.tag, 0, 0);
+        ctx.restore();
+      }
+      if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
       ctx.globalAlpha = 1;
 
       // 完成的星座：線留在天上
@@ -485,19 +879,29 @@ export default function StarMap({ data }: { data: StarData }) {
         ctx.beginPath();
         for (const ch of L.done)
           for (const [i, j] of ch.edges) {
-            const [x0, y0] = P(ch.terms[i].x, ch.terms[i].y), [x1, y1] = P(ch.terms[j].x, ch.terms[j].y);
+            const [x0, y0] = P(ch.terms[i].x, ch.terms[i].y),
+              [x1, y1] = P(ch.terms[j].x, ch.terms[j].y);
             ctx.moveTo(x0, y0);
             ctx.lineTo(x1, y1);
           }
         ctx.stroke();
+        // 星座名寫在星座正下方，像真的星圖；放大後連章名一起寫
         ctx.font = `700 9px ${mono}`;
-        ctx.textAlign = "left";
-        ctx.textBaseline = "alphabetic";
-        ctx.fillStyle = `rgba(${SK},${0.45 * (1 - 0.6 * B)})`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillStyle = `rgba(${SK},${0.6 * (1 - 0.6 * B)})`;
+        if ("letterSpacing" in ctx) ctx.letterSpacing = "0.1em";
         for (const ch of L.done) {
-          const [x, y] = P(ch.terms[0].x, ch.terms[0].y);
-          ctx.fillText(ch.code, x + 6, y - 6);
+          let mx = 0,
+            yb = -Infinity;
+          for (const tm of ch.terms) {
+            const [x, y] = P(tm.x, tm.y);
+            mx += x / ch.terms.length;
+            yb = Math.max(yb, y);
+          }
+          ctx.fillText(zs > 1.6 ? `${ch.code} ${ch.title}` : ch.code, mx, yb + 8);
         }
+        if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
       }
 
       // 星軌
@@ -518,7 +922,8 @@ export default function StarMap({ data }: { data: StarData }) {
       if (sweepOn) {
         ctx.fillStyle = `rgb(${TEAL})`;
         for (let i = 0; i < 14; i++) {
-          const f0 = psi - ((i + 1) * TAU) / 180, f1 = psi - (i * TAU) / 180;
+          const f0 = psi - ((i + 1) * TAU) / 180,
+            f1 = psi - (i * TAU) / 180;
           ctx.globalAlpha = 0.07 * (1 - i / 14) * (1 - 0.7 * B) * (intro ? 1.8 : 1);
           ctx.beginPath();
           ctx.moveTo(pcx, pcy);
@@ -579,7 +984,7 @@ export default function StarMap({ data }: { data: StarData }) {
         ctx.lineWidth = 1.1;
         const rb = 6 * sc * Math.min(zs, 1.6);
         for (const st of stars) {
-          const f = (((psi - st.a) % TAU) + TAU) % TAU / TAU;
+          const f = ((((psi - st.a) % TAU) + TAU) % TAU) / TAU;
           if (f >= 0.1) continue;
           const [op, k] = f < 0.05 ? [lerp(0.8, 0.3, f / 0.05), lerp(0.55, 1.15, f / 0.05)] : [lerp(0.3, 0, (f - 0.05) / 0.05), lerp(1.15, 1.25, (f - 0.05) / 0.05)];
           const [x, y] = P(st.x, st.y);
@@ -598,8 +1003,10 @@ export default function StarMap({ data }: { data: StarData }) {
           an.jump = null;
           cb.current.endJump(J.b);
         } else {
-          const k = ease(clamp(e, 0, 1)), k0 = ease(clamp(e - 0.22, 0, 1));
-          const [ax, ay] = P(J.a.x, J.a.y), [bx, by] = P(J.b.x, J.b.y);
+          const k = ease(clamp(e, 0, 1)),
+            k0 = ease(clamp(e - 0.22, 0, 1));
+          const [ax, ay] = P(J.a.x, J.a.y),
+            [bx, by] = P(J.b.x, J.b.y);
           const col = J.gold ? gold : `rgb(${SK})`;
           ctx.globalAlpha = 0.22;
           ctx.strokeStyle = col;
@@ -626,15 +1033,53 @@ export default function StarMap({ data }: { data: StarData }) {
       }
 
       // 流星：沒在看東西的時候，偶爾劃過畫面
-      if (!red && !intro && an.expo < 0 && !L.busy && !an.jump && !an.meteor && t > an.nextMeteor) {
+      if (!red && !intro && an.expo < 0 && !L.busy && !L.quest && !an.jump && !an.meteor && t > an.nextMeteor) {
         for (let tries = 0; tries < 12; tries++) {
-          const mx = ox + c.w * (0.15 + 0.7 * Math.random()), my = oy + c.w * (0.15 + 0.7 * Math.random());
+          const mx = ox + c.w * (0.15 + 0.7 * Math.random()),
+            my = oy + c.w * (0.15 + 0.7 * Math.random());
           if (Math.hypot(mx - cx, my - cy) > edge * 0.92) continue;
-          const g = Math.random() * TAU, len = c.w * (0.18 + 0.12 * Math.random());
-          an.meteor = { x0: mx - (Math.cos(g) * len) / 2, y0: my - (Math.sin(g) * len) / 2, x1: mx + (Math.cos(g) * len) / 2, y1: my + (Math.sin(g) * len) / 2, t0: t };
+          const g = Math.random() * TAU,
+            len = c.w * (0.18 + 0.12 * Math.random());
+          an.meteor = {
+            x0: mx - (Math.cos(g) * len) / 2,
+            y0: my - (Math.sin(g) * len) / 2,
+            x1: mx + (Math.cos(g) * len) / 2,
+            y1: my + (Math.sin(g) * len) / 2,
+            t0: t,
+          };
+          cb.current.meteor();
           break;
         }
         if (!an.meteor) an.nextMeteor = t + 5;
+      }
+      // 尋星找到：三圈波紋＋八道光芒
+      const Bu = an.burst;
+      if (Bu) {
+        const e = (t - Bu.t0) / BURST;
+        if (e >= 1) an.burst = null;
+        else {
+          const [x, y] = P(Bu.x, Bu.y);
+          ctx.strokeStyle = gold;
+          ctx.lineWidth = 1.2;
+          for (let i = 0; i < 3; i++) {
+            const k = clamp(e * 1.5 - i * 0.2, 0, 1);
+            if (!k || k >= 1) continue;
+            ctx.globalAlpha = (1 - k) * 0.85;
+            ctx.beginPath();
+            ctx.arc(x, y, 4 + 70 * sc * easeOut(k), 0, TAU);
+            ctx.stroke();
+          }
+          ctx.globalAlpha = (1 - e) * 0.9;
+          ctx.beginPath();
+          for (let i = 0; i < 8; i++) {
+            const g = (i * TAU) / 8 + 0.2,
+              r0 = (8 + 34 * easeOut(e)) * sc,
+              r1 = r0 + 16 * sc * (1 - e);
+            ctx.moveTo(x + r0 * Math.cos(g), y + r0 * Math.sin(g));
+            ctx.lineTo(x + r1 * Math.cos(g), y + r1 * Math.sin(g));
+          }
+          ctx.stroke();
+        }
       }
       const M = an.meteor;
       if (M) {
@@ -643,8 +1088,10 @@ export default function StarMap({ data }: { data: StarData }) {
           an.meteor = null;
           an.nextMeteor = t + 16 + 26 * Math.random();
         } else if (e < 1.3) {
-          const k = clamp(e, 0, 1), k0 = clamp(e - 0.35, 0, 1);
-          const sx = (x: number) => (x - ox) * s, sy = (y: number) => (y - oy) * s;
+          const k = clamp(e, 0, 1),
+            k0 = clamp(e - 0.35, 0, 1);
+          const sx = (x: number) => (x - ox) * s,
+            sy = (y: number) => (y - oy) * s;
           streak(sx(lerp(M.x0, M.x1, k0)), sy(lerp(M.y0, M.y1, k0)), sx(lerp(M.x0, M.x1, k)), sy(lerp(M.y0, M.y1, k)), `rgb(${SK})`, 1.8, e > 0.8 ? clamp(1 - (e - 0.8) / 0.5, 0, 1) : 1);
         }
       }
@@ -655,7 +1102,8 @@ export default function StarMap({ data }: { data: StarData }) {
       if (rd) {
         let txt = "";
         if (intro) {
-          let lo = 0, hi = angles.length;
+          let lo = 0,
+            hi = angles.length;
           while (lo < hi) {
             const mid = (lo + hi) >> 1;
             if (angles[mid] <= front) lo = mid + 1;
@@ -674,7 +1122,7 @@ export default function StarMap({ data }: { data: StarData }) {
       cancelAnimationFrame(raf);
       io.disconnect();
     };
-  }, [sky, stars, chart, cx, cy, edge, R]);
+  }, [sky, stars, chart, cx, cy, edge, R, tags]);
 
   // 觸控板捏合（ctrl＋滾輪）縮放；一般的滾輪留給頁面捲動
   useEffect(() => {
@@ -683,9 +1131,12 @@ export default function StarMap({ data }: { data: StarData }) {
     const onWheel = (e: WheelEvent) => {
       if (!e.ctrlKey) return;
       e.preventDefault();
-      const b = el.getBoundingClientRect(), c = camRef.current;
-      const fx = (e.clientX - b.left) / b.width, fy = (e.clientY - b.top) / b.height;
-      const X = c.x - c.w / 2 + fx * c.w, Y = c.y - c.w / 2 + fy * c.w;
+      const b = el.getBoundingClientRect(),
+        c = camRef.current;
+      const fx = (e.clientX - b.left) / b.width,
+        fy = (e.clientY - b.top) / b.height;
+      const X = c.x - c.w / 2 + fx * c.w,
+        Y = c.y - c.w / 2 + fy * c.w;
       const w = clamp(c.w * Math.exp(e.deltaY * 0.012), (2 * R) / 8, 2 * R);
       anim.current.fly = null;
       cb.current.cam({ w, x: X - fx * w + w / 2, y: Y - fy * w + w / 2 });
@@ -701,9 +1152,12 @@ export default function StarMap({ data }: { data: StarData }) {
 
   // 螢幕座標 → 圖上座標，找最近的名詞星
   const locate = (e: { clientX: number; clientY: number; currentTarget: Element }) => {
-    const b = e.currentTarget.getBoundingClientRect(), c = camRef.current;
-    const x = c.x - c.w / 2 + ((e.clientX - b.left) / b.width) * c.w, y = c.y - c.w / 2 + ((e.clientY - b.top) / b.height) * c.w;
-    let best: Star | undefined, bd = ((c.w / b.width) * 16) ** 2;
+    const b = e.currentTarget.getBoundingClientRect(),
+      c = camRef.current;
+    const x = c.x - c.w / 2 + ((e.clientX - b.left) / b.width) * c.w,
+      y = c.y - c.w / 2 + ((e.clientY - b.top) / b.height) * c.w;
+    let best: Star | undefined,
+      bd = ((c.w / b.width) * 16) ** 2;
     for (const s of stars) {
       const dd = (s.x - x) ** 2 + (s.y - y) ** 2;
       if (dd < bd) [best, bd] = [s, dd];
@@ -717,6 +1171,12 @@ export default function StarMap({ data }: { data: StarData }) {
     }
     if (mode !== "idle") return;
     const { x, y, best } = locate(e);
+    sfx.current?.ready();
+    // 尋星：點對了就找到，點錯告訴你多遠
+    if (quest?.phase === "seek" && QT) {
+      if (best) return best.id === QT.id ? solve(1) : missQuest(best);
+      return;
+    }
     // 接到流星：帶你去它落下的地方
     const M = anim.current.meteor;
     if (M) {
@@ -724,7 +1184,13 @@ export default function StarMap({ data }: { data: StarData }) {
       if (now() - M.t0 < METEOR * 2 && segDist(x, y, M.x0, M.y0, lerp(M.x0, M.x1, k), lerp(M.y0, M.y1, k)) < 30 * uz) {
         const land = stars.reduce((b, s) => ((s.x - M.x1) ** 2 + (s.y - M.y1) ** 2 < (b.x - M.x1) ** 2 + (b.y - M.y1) ** 2 ? s : b), stars[0]);
         Object.assign(anim.current, { meteor: null, nextMeteor: now() + 20 });
-        setToast({ key: Date.now(), head: "METEOR CAUGHT", text: `落在 KS-${pad(land.n)} ${land.term.name}`, color: land.color });
+        setToast({
+          key: Date.now(),
+          head: "METEOR CAUGHT",
+          text: `落在 KS-${pad(land.n)} ${land.term.name}`,
+          color: land.color,
+        });
+        play((s) => s.caught());
         return select(land.id);
       }
     }
@@ -736,18 +1202,28 @@ export default function StarMap({ data }: { data: StarData }) {
   const reveal = pt && mode === "idle" ? stars.filter((s) => (s.x - pt.x) ** 2 + (s.y - pt.y) ** 2 < (90 * uz) ** 2) : [];
   const fs = (px: number) => ({ fontSize: px * uz, strokeWidth: 3.5 * uz });
   const out = (px: number) => Math.min(px * uz, (px / 24) * 0.085 * edge); // 外圈文字離圓多遠：手機上要限制在畫面裡
-  const ring = (s: Star, r: number, cls: string, color?: string) => (
-    <circle key={`${cls}-${s.id}`} cx={s.x} cy={s.y} r={r * uz} strokeWidth={1.2 * uz} className={cls} style={color ? { stroke: color } : undefined} />
-  );
+  const ring = (s: Star, r: number, cls: string, color?: string) => <circle key={`${cls}-${s.id}`} cx={s.x} cy={s.y} r={r * uz} strokeWidth={1.2 * uz} className={cls} style={color ? { stroke: color } : undefined} />;
   // 一門課占的方位：外圈一段弧線＋標籤
   const sectorArc = (S: Subject) => {
     const [a0, a1] = sectors.get(S.id)!;
-    const [tx, ty] = polar(cx, cy, edge + out(44), (a0 + a1) / 2);
+    // 和 canvas 上灰色的課名同一個位置，只是換成課程色
+    const m = tags.find((g) => g.id === S.id)!.m;
+    const [tx, ty] = polar(cx, cy, 1.125 * edge, m);
     return (
       <g key={`sec-${S.id}`} className="sector" style={{ ["--c" as string]: courseColor(S.id) }}>
         <path d={arc(cx, cy, edge + out(8), a0 - 0.03, a1 + 0.03)} strokeWidth={2 * uz} />
-        <text x={tx} y={ty} dy="0.35em" textAnchor="middle" style={fs(10)}>
-          [{TAG[S.id] ?? S.id}]
+        <text
+          x={tx}
+          y={ty}
+          dy="0.35em"
+          textAnchor="middle"
+          transform={`rotate(${(tagTurn(m) * 180) / Math.PI} ${tx} ${ty})`}
+          style={{
+            fontSize: Math.min(10 * uz, 0.05 * edge),
+            strokeWidth: 3.5 * uz,
+          }}
+        >
+          {TAG[S.id] ?? S.id}
         </text>
       </g>
     );
@@ -756,10 +1232,14 @@ export default function StarMap({ data }: { data: StarData }) {
   const pointer = (Bs: Star, gold: boolean) => {
     if (!A) return null;
     const o = inView(A.x, A.y) ? A : { x: cam.x, y: cam.y };
-    const dx = Bs.x - o.x, dy = Bs.y - o.y, ins = 26 * uz;
+    const dx = Bs.x - o.x,
+      dy = Bs.y - o.y,
+      ins = 26 * uz;
     const tx = dx > 0 ? (vx1 - ins - o.x) / dx : dx < 0 ? (vx0 + ins - o.x) / dx : Infinity;
     const ty = dy > 0 ? (vy1 - ins - o.y) / dy : dy < 0 ? (vy0 + ins - o.y) / dy : Infinity;
-    const k = Math.max(0, Math.min(tx, ty)), L = Math.hypot(dx, dy) || 1, [ux, uy] = [dx / L, dy / L];
+    const k = Math.max(0, Math.min(tx, ty)),
+      L = Math.hypot(dx, dy) || 1,
+      [ux, uy] = [dx / L, dy / L];
     const [px, py] = [o.x + dx * k, o.y + dy * k];
     const side = tx < ty ? (dx > 0 ? "end" : "start") : "middle";
     const [lx, ly] = side === "middle" ? [px, py + (dy > 0 ? -14 : 20) * uz] : [px - ux * 4 * uz + (dx > 0 ? -12 : 12) * uz, py + 4 * uz];
@@ -843,6 +1323,81 @@ export default function StarMap({ data }: { data: StarData }) {
     [data],
   );
 
+  // 尋星任務的題目卡：桌機放在右邊面板最上面，手機放在星圖正下方（兩個位置用 CSS 切換，不蓋到星）
+  const questCard = (where: "frame" | "hud") =>
+    quest &&
+    QT && (
+      <div className={`sm-quest ${where}${mode !== "idle" ? " hide" : ""}`} style={{ ["--c" as string]: QT.color }}>
+        <p className="font-mono-label qh">
+          <b>◎ {quest.kind === "daily" ? `今日尋星 ${quest.day.slice(5).replace("-", "/")}` : "尋星練習"}</b>
+          <span>
+            {quest.idx + 1}/{quest.ids.length}
+          </span>
+          <button type="button" onClick={endQuest} aria-label="結束尋星">
+            ×
+          </button>
+        </p>
+        {quest.phase === "seek" ? (
+          <>
+            <p className="font-mono-label qi">{clueKind(QT) === "en" ? "英文名 → 找出中文名詞" : "定義 → 找出名詞"}</p>
+            <p className="qc">{clue(QT)}</p>
+            <p className="font-mono-label qi">
+              提示 {"//"} {QT.subj.name}
+              {qlvl >= 1 && ` · ${QT.ch.code} ${QT.ch.title}`}
+              {qlvl >= 2 && " · 那一頁的星已圈出"}
+            </p>
+            {(() => {
+              const n = Math.round((quest.prox ?? 0) * 8),
+                p = quest.prox ?? 0;
+              return (
+                <p className="font-mono-label qm">
+                  <span className="cells" aria-hidden>
+                    <b>{"■".repeat(n)}</b>
+                    {"□".repeat(8 - n)}
+                  </span>
+                  <span>{quest.prox === null ? "點一顆星試試" : `${p >= 0.85 ? "HOT" : p >= 0.6 ? "WARM" : "COLD"}${quest.trend > 0 ? " ▲ 更近" : quest.trend < 0 ? " ▼ 更遠" : ""}`}</span>
+                  <span className="n">點了 {quest.tries} 次</span>
+                </p>
+              );
+            })()}
+            <p className="qa">
+              <button type="button" onClick={() => solve(0)}>
+                看答案
+              </button>
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="qc">
+              {quest.res[quest.idx] ? "✓ 找到了：" : "答案是："}
+              <b>{QT.term.name}</b>
+            </p>
+            {quest.idx < quest.ids.length - 1 ? (
+              <p className="qa">
+                <button type="button" onClick={nextQuest}>
+                  下一題 →
+                </button>
+              </p>
+            ) : (
+              <>
+                <p className="font-mono-label qr">
+                  {quest.res.map((r) => (r ? "✓" : "✗")).join(" ")} · 共點了 {quest.total} 次{quest.kind === "daily" && qlog?.day === quest.day && ` · 連續 ${qlog.streak} 天`}
+                </p>
+                <p className="qa">
+                  <button type="button" onClick={() => startQuest(true)}>
+                    再玩一輪（隨機）
+                  </button>
+                  <button type="button" onClick={endQuest}>
+                    結束
+                  </button>
+                </p>
+              </>
+            )}
+          </>
+        )}
+      </div>
+    );
+
   return (
     <div className="sm-wrap">
       <div className="sm-stage">
@@ -878,17 +1433,59 @@ export default function StarMap({ data }: { data: StarData }) {
               ref={svgRef}
               viewBox={`${vx0} ${vy0} ${cam.w} ${cam.w}`}
               className={`sm-svg${mode !== "idle" ? " hide" : ""}${zoomed ? " zoomed" : ""}`}
-              style={{ touchAction: zoomed ? "none" : "manipulation" }}
+              style={{ touchAction: zoomed ? "none" : "pan-y" }}
               role="img"
               aria-label={`知識星圖：星的排列照 ${chart.year} 年的〈${chart.title}〉，北極在中心；選一顆星，鏡頭飛進同一頁名詞連成的星座，跨科相關的名詞連線過來`}
               onPointerDown={(e) => {
-                drag.current = { x: e.clientX, y: e.clientY, cam: camRef.current, moved: false };
+                pts.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
                 dragged.current = false;
+                // 第二根手指放下：開始雙指縮放
+                if (pts.current.size === 2 && mode === "idle") {
+                  const [p, r] = [...pts.current.values()];
+                  pinch.current = {
+                    d: Math.hypot(p.x - r.x, p.y - r.y) || 1,
+                    mx: (p.x + r.x) / 2,
+                    my: (p.y + r.y) / 2,
+                    cam: camRef.current,
+                  };
+                  drag.current = null;
+                  dragged.current = true;
+                  anim.current.fly = null;
+                  return;
+                }
+                drag.current = {
+                  x: e.clientX,
+                  y: e.clientY,
+                  cam: camRef.current,
+                  moved: false,
+                };
               }}
               onPointerMove={(e) => {
+                if (pts.current.has(e.pointerId)) pts.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+                const P = pinch.current;
+                if (P && pts.current.size >= 2) {
+                  const [p, r] = [...pts.current.values()],
+                    b = e.currentTarget.getBoundingClientRect();
+                  const w = clamp((P.cam.w * P.d) / (Math.hypot(p.x - r.x, p.y - r.y) || 1), (2 * R) / 8, 2 * R);
+                  // 兩指中點底下的那一點跟著手指走
+                  const X = P.cam.x - P.cam.w / 2 + ((P.mx - b.left) / b.width) * P.cam.w,
+                    Y = P.cam.y - P.cam.w / 2 + ((P.my - b.top) / b.height) * P.cam.w;
+                  const mx = (p.x + r.x) / 2,
+                    my = (p.y + r.y) / 2;
+                  setCam(
+                    fit({
+                      w,
+                      x: X - ((mx - b.left) / b.width) * w + w / 2,
+                      y: Y - ((my - b.top) / b.height) * w + w / 2,
+                    }),
+                  );
+                  setHover(null);
+                  return;
+                }
                 const d = drag.current;
                 if (d && zoomed && mode === "idle") {
-                  const dx = e.clientX - d.x, dy = e.clientY - d.y;
+                  const dx = e.clientX - d.x,
+                    dy = e.clientY - d.y;
                   if (!d.moved && Math.hypot(dx, dy) > 6) {
                     d.moved = dragged.current = true;
                     e.currentTarget.setPointerCapture(e.pointerId);
@@ -896,7 +1493,13 @@ export default function StarMap({ data }: { data: StarData }) {
                   if (d.moved) {
                     const k = d.cam.w / e.currentTarget.getBoundingClientRect().width;
                     anim.current.fly = null;
-                    setCam(fit({ x: d.cam.x - dx * k, y: d.cam.y - dy * k, w: d.cam.w }));
+                    setCam(
+                      fit({
+                        x: d.cam.x - dx * k,
+                        y: d.cam.y - dy * k,
+                        w: d.cam.w,
+                      }),
+                    );
                     setHover(null);
                     return;
                   }
@@ -906,8 +1509,16 @@ export default function StarMap({ data }: { data: StarData }) {
                 setPt({ x, y });
                 setHover(best?.id ?? null);
               }}
-              onPointerUp={() => (drag.current = null)}
-              onPointerCancel={() => (drag.current = null)}
+              onPointerUp={(e) => {
+                pts.current.delete(e.pointerId);
+                if (pts.current.size < 2) pinch.current = null;
+                drag.current = null;
+              }}
+              onPointerCancel={(e) => {
+                pts.current.delete(e.pointerId);
+                if (pts.current.size < 2) pinch.current = null;
+                drag.current = null;
+              }}
               onPointerLeave={() => {
                 setPt(null);
                 setHover(null);
@@ -929,6 +1540,28 @@ export default function StarMap({ data }: { data: StarData }) {
                   </g>
                 )}
                 {hits.map((h) => ring(h, 9, "hitring"))}
+                {/* 尋星：一開始就標出那門課的方位；點錯 6 次以上，把那一頁的星都圈起來 */}
+                {quest?.phase === "seek" && QT && (
+                  <g>
+                    {focusS !== QT.subj && sectorArc(QT.subj)}
+                    {qlvl >= 2 && QT.ch.terms.map((t) => <circle key={`qh-${t.i}`} cx={t.x} cy={t.y} r={7 * uz} strokeWidth={1.2 * uz} className="focus" style={{ stroke: QT.color }} />)}
+                  </g>
+                )}
+                {miss &&
+                  quest?.phase === "seek" &&
+                  (() => {
+                    const M = byId.get(miss.id);
+                    if (!M) return null;
+                    const k = 5 * uz;
+                    return (
+                      <g key={miss.key} className="miss">
+                        <path d={`M${M.x - k},${M.y - k}L${M.x + k},${M.y + k}M${M.x + k},${M.y - k}L${M.x - k},${M.y + k}`} strokeWidth={1.5 * uz} />
+                        <text x={M.x + 9 * uz} y={M.y - 7 * uz} className="lab" style={fs(11)}>
+                          {M.term.name}
+                        </text>
+                      </g>
+                    );
+                  })()}
                 {A && (
                   <g>
                     {(() => {
@@ -950,11 +1583,34 @@ export default function StarMap({ data }: { data: StarData }) {
                     {/* 星座：照最小生成樹的順序一條一條畫出來，星一顆一顆點亮 */}
                     <g key={A.ch.url} className={toast?.head === "CONSTELLATION COMPLETE" && done.includes(A.ch) ? "flash" : undefined}>
                       {A.ch.edges.map(([i, j], k) => {
-                        const p = A.ch.terms[i], r = A.ch.terms[j];
-                        return <path key={`${i}-${j}`} d={`M${p.x},${p.y}L${r.x},${r.y}`} pathLength={1} className="con" strokeWidth={1.3 * uz} style={{ stroke: A.color, animationDelay: `${0.3 + k * step}s` }} />;
+                        const p = A.ch.terms[i],
+                          r = A.ch.terms[j];
+                        return (
+                          <path
+                            key={`${i}-${j}`}
+                            d={`M${p.x},${p.y}L${r.x},${r.y}`}
+                            pathLength={1}
+                            className="con"
+                            strokeWidth={1.3 * uz}
+                            style={{
+                              stroke: A.color,
+                              animationDelay: `${0.3 + k * step}s`,
+                            }}
+                          />
+                        );
                       })}
                       {A.ch.terms.map((t) => (
-                        <circle key={t.i} cx={t.x} cy={t.y} r={dot(t.r) + 0.8 * uz} className="ign" style={{ fill: A.color, animationDelay: `${0.3 + t.i * step}s` }} />
+                        <circle
+                          key={t.i}
+                          cx={t.x}
+                          cy={t.y}
+                          r={dot(t.r) + 0.8 * uz}
+                          className="ign"
+                          style={{
+                            fill: A.color,
+                            animationDelay: `${0.3 + t.i * step}s`,
+                          }}
+                        />
                       ))}
                     </g>
                     {mates.map((t) => (
@@ -985,7 +1641,14 @@ export default function StarMap({ data }: { data: StarData }) {
                     <circle cx={A.x} cy={A.y} r={dot(A.r) + 1.5 * uz} style={{ fill: A.color }} />
                     <circle cx={A.x} cy={A.y} r={12 * uz} strokeWidth={1.5 * uz} className="pulse" />
                     <path
-                      d={[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([sx, sy]) => `M${A.x + sx * 20 * uz},${A.y + sy * 13 * uz}v${sy * 7 * uz}h${-sx * 7 * uz}`).join("")}
+                      d={[
+                        [-1, -1],
+                        [1, -1],
+                        [-1, 1],
+                        [1, 1],
+                      ]
+                        .map(([sx, sy]) => `M${A.x + sx * 20 * uz},${A.y + sy * 13 * uz}v${sy * 7 * uz}h${-sx * 7 * uz}`)
+                        .join("")}
                       className="bracket"
                       strokeWidth={1.5 * uz}
                     />
@@ -1005,10 +1668,15 @@ export default function StarMap({ data }: { data: StarData }) {
               </g>
             </svg>
             <p className="sm-read font-mono-label" ref={readRef} aria-hidden />
+            <div className="sm-ctl l font-mono-label">
+              <button type="button" className="quest" onClick={() => (quest ? endQuest() : startQuest())} aria-pressed={!!quest} title="每天 3 題：只給定義，在天上找出那顆星">
+                ◎ 尋星
+              </button>
+            </div>
             <div className="sm-ctl font-mono-label">
               {!reduced && (
-                <button type="button" onClick={expose} disabled={mode !== "idle"} title="長時間曝光：星空繞北極轉一整圈（一個恆星日），留下星軌">
-                  ◐ 曝光
+                <button type="button" onClick={expose} disabled={mode !== "idle"} title="長時間曝光：星空繞北極轉一整圈（一個恆星日），留下星軌" aria-label="曝光">
+                  ◐<span className="tx"> 曝光</span>
                 </button>
               )}
               <button type="button" onClick={() => flyTo({ ...camRef.current, w: camRef.current.w / 1.8 }, 0.5)} aria-label="放大" disabled={Z >= 7.9}>
@@ -1017,8 +1685,11 @@ export default function StarMap({ data }: { data: StarData }) {
               <button type="button" onClick={() => flyTo({ ...camRef.current, w: camRef.current.w * 1.8 }, 0.5)} aria-label="縮小" disabled={!zoomed}>
                 －
               </button>
-              <button type="button" onClick={() => flyTo(HOME)} disabled={!zoomed}>
-                ⤢ 全天
+              <button type="button" onClick={() => flyTo(HOME)} disabled={!zoomed} aria-label="全天">
+                ⤢<span className="tx"> 全天</span>
+              </button>
+              <button type="button" onClick={toggleSound} aria-pressed={sound} aria-label="音效" title={sound ? "關掉音效" : "打開音效"}>
+                ♪<span className="tx"> {sound ? "ON" : "OFF"}</span>
               </button>
               {zoomed && <span>×{Z.toFixed(1)}</span>}
             </div>
@@ -1028,7 +1699,17 @@ export default function StarMap({ data }: { data: StarData }) {
               </p>
             )}
             {A && mode === "idle" && (
-              <button type="button" className="sm-cap" style={{ ["--c" as string]: A.color }} onClick={() => hudRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })}>
+              <button
+                type="button"
+                className="sm-cap"
+                style={{ ["--c" as string]: A.color }}
+                onClick={() =>
+                  hudRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                  })
+                }
+              >
                 <span className="font-mono-label">
                   [{TAG[A.subj.id]}] {A.ch.code}
                 </span>
@@ -1038,6 +1719,7 @@ export default function StarMap({ data }: { data: StarData }) {
               </button>
             )}
           </div>
+          {questCard("frame")}
         </div>
         <div className="sm-foot font-mono-label">
           <span className="sm-legend">
@@ -1062,7 +1744,8 @@ export default function StarMap({ data }: { data: StarData }) {
           </span>
         </div>
         <p className="sm-credit">
-          星的位置取自{chart.author}〈{chart.title}〉（{chart.year}），{chart.credit}（
+          星的位置取自{chart.author}〈{chart.title}〉（{chart.year}），
+          {chart.credit}（
           <a href={chart.source} target="_blank" rel="noopener noreferrer">
             京都大学貴重資料デジタルアーカイブ
           </a>
@@ -1070,9 +1753,10 @@ export default function StarMap({ data }: { data: StarData }) {
         </p>
       </div>
 
-      <aside className="sm-hud" aria-live="polite" ref={hudRef}>
+      <aside className={`sm-hud${!A && quest ? " q" : ""}`} aria-live="polite" ref={hudRef}>
         <i className="c tl" />
         <i className="c br" />
+        {questCard("hud")}
         {A ? (
           <div key={A.id} className="sm-swap">
             <p className="font-mono-label sm-cat">
@@ -1123,15 +1807,29 @@ export default function StarMap({ data }: { data: StarData }) {
               open {A.ch.page} →
             </Link>
           </div>
-        ) : (
+        ) : quest ? null : (
           <div className="sm-idle">
             <p className="font-mono-label sm-cat">&gt; sky.status</p>
             <p>
-              星的排列照 {chart.year} 年的〈{chart.title}〉：北極在中心，越往外越南，外圈是十二支方位。圖上 {chart.nPoints} 顆星裡，<b>{stars.length}</b> 顆放了筆記的名詞，一門課占一個方位。
+              星的排列照 {chart.year} 年的〈{chart.title}
+              〉：北極在中心，越往外越南，外圈是十二支方位。圖上 {chart.nPoints} 顆星裡，<b>{stars.length}</b> 顆放了筆記的名詞，一門課占一個方位。
             </p>
-            <p>點一顆星，鏡頭會飛進那一頁筆記的星座；跨科的連線（共 <b>{data.links.length}</b> 條）點下去，會沿著線飛到另一門課。</p>
             <p>
-              點過的星會留著光；一頁的名詞全部點過，星座就完成，線會留在天上。按 <b>◐ 曝光</b>，星空繞北極轉一整圈，留下星軌。偶爾會有流星，點得到它，就帶你去它落下的地方。
+              點一顆星，鏡頭會飛進那一頁筆記的星座；跨科的連線（共 <b>{data.links.length}</b> 條）點下去，會沿著線飛到另一門課。
+            </p>
+            <p>
+              點過的星會留著光；一頁的名詞全部點過，星座就完成，線會留在天上。按 <b>◐ 曝光</b>
+              ，星空繞北極轉一整圈，留下星軌。偶爾會有流星，點得到它，就帶你去它落下的地方。
+            </p>
+            <p>
+              左上角 <b>◎ 尋星</b>：每天 3 題，每個人同一組。只給名詞的定義，你要在天上找出那顆星；點錯會告訴你離答案多遠，點錯越多提示越多。右上角 <b>♪</b> 可以開音效。
+            </p>
+            <p className="font-mono-label sm-gen">
+              QUEST {qlog?.day === today ? `今日 ${qlog.res.map((r) => (r ? "✓" : "✗")).join("")} 已完成` : "今日還沒找"}
+              {streak > 0 && ` · 連續 ${streak} 天`}{" "}
+              <button type="button" className="sm-reset" onClick={() => startQuest()}>
+                {qlog?.day === today ? "再玩一輪" : "開始"}
+              </button>
             </p>
             <p className="font-mono-label sm-gen">
               SEEN {seen.size}/{stars.length} · CONST {done.length}/{nCh} {"//"} updated {data.generated}

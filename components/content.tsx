@@ -25,9 +25,23 @@ import * as FigsIso from "@/components/notes/FigsIso";
 import * as FigsShear from "@/components/notes/FigsShear";
 import { DailyReview } from "@/components/notes/DailyReview";
 import { StateFunctionDemo, MeltingGDemo, GraphiteDiamondDemo } from "@/components/notes/Thermo";
+import { StarLink } from "@/components/stars/StarLink";
+import type { HTMLAttributes } from "react";
+
+const H3 = defaultComponents.h3;
 
 const components = {
   ...defaultComponents,
+  // 「先認識的名詞」底下加一行連到知識星圖
+  h3: (props: HTMLAttributes<HTMLHeadingElement>) =>
+    props.id === "先認識的名詞" ? (
+      <>
+        <H3 {...props} />
+        <StarLink />
+      </>
+    ) : (
+      <H3 {...props} />
+    ),
   Photos,
   Video,
   YouTube,
