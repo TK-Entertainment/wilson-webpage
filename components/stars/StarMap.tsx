@@ -864,7 +864,9 @@ export default function StarMap({ data }: { data: StarData }) {
       for (const g of tags) {
         if (L.hl.includes(g.id)) continue;
         ctx.save();
-        ctx.translate(pcx + 1.125 * pe * Math.sin(g.m), pcy - 1.125 * pe * Math.cos(g.m));
+        // 手機上靠頂端的課名會被右上角的按鈕蓋住，改寫在圓內
+        const gr = Wp < 560 && pcy - 1.125 * pe * Math.cos(g.m) < 44 ? 0.93 : 1.125;
+        ctx.translate(pcx + gr * pe * Math.sin(g.m), pcy - gr * pe * Math.cos(g.m));
         ctx.rotate(tagTurn(g.m));
         ctx.fillText(g.tag, 0, 0);
         ctx.restore();
@@ -1208,7 +1210,8 @@ export default function StarMap({ data }: { data: StarData }) {
     const [a0, a1] = sectors.get(S.id)!;
     // 和 canvas 上灰色的課名同一個位置，只是換成課程色
     const m = tags.find((g) => g.id === S.id)!.m;
-    const [tx, ty] = polar(cx, cy, 1.125 * edge, m);
+    const gr = W < 560 && (cy - 1.125 * edge * Math.cos(m) - vy0) / uz < 44 ? 0.93 : 1.125;
+    const [tx, ty] = polar(cx, cy, gr * edge, m);
     return (
       <g key={`sec-${S.id}`} className="sector" style={{ ["--c" as string]: courseColor(S.id) }}>
         <path d={arc(cx, cy, edge + out(8), a0 - 0.03, a1 + 0.03)} strokeWidth={2 * uz} />
